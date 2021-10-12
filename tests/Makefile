@@ -1,7 +1,9 @@
+SRC_DIR = ../
+
 TESTS = \
-	test_sdl.py
+	sdl/test_sdl.py
 
 .PHONY : check
 
 check: ${TESTS}
-	python3 -m pytest ${TESTS}
+	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS}

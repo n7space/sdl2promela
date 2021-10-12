@@ -1,6 +1,6 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl import Model
+from sdl2promela.sdl.model import Model
 import os
 
 TEST_DIR : str = os.path.dirname(os.path.realpath(__file__))
