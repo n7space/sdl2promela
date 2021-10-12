@@ -1,0 +1,37 @@
+system bare_signals;
+/* CIF TEXT (467, 58), (267, 140) */
+signal signal_1;
+signal signal_2;
+/* CIF ENDTEXT */
+channel c
+from env to bare_signals with signal_1;
+from env to bare_signals with signal_2;
+endchannel;
+block bare_signals;
+signalroute r
+from env to bare_signals with signal_1;
+from env to bare_signals with signal_2;
+connect c and r;
+/* CIF PROCESS (183, 88), (150, 75) */
+process bare_signals;
+/* CIF START (123, 52), (70, 35) */
+START;
+    /* CIF NEXTSTATE (123, 107), (70, 35) */
+    NEXTSTATE state_1;
+/* CIF state (123, 217), (70, 35) */
+state state_1;
+    /* CIF input (123, 272), (70, 35) */
+    input signal_1;
+        /* CIF NEXTSTATE (123, 327), (70, 35) */
+        NEXTSTATE state_2;
+endstate;
+/* CIF state (123, 107), (70, 35) */
+state state_2;
+    /* CIF input (123, 162), (70, 35) */
+    input signal_2;
+        /* CIF NEXTSTATE (123, 217), (70, 35) */
+        NEXTSTATE state_1;
+endstate;
+endprocess bare_signals;
+endblock;
+endsystem;

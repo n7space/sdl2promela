@@ -26,3 +26,16 @@ def test_model_reads_states():
     assert(len(model.states) == 3)
     assert(model.states["state_1"].name == "state_1")
     assert(model.states["state_2"].name == "state_2")
+
+def test_model_reads_inputs():
+    path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
+    process = read_main_process(path)
+    model = Model(process)
+    # state_1, state_2 and special START state
+    assert(len(model.inputs) == 2)
+    assert(model.inputs['signal_1'].name == 'signal_1')
+    assert(len(model.inputs['signal_1'].transitions) == 1)
+    assert(model.states['state_1'] in model.inputs['signal_1'].transitions.values())
+    assert(model.inputs['signal_2'].name == 'signal_2')
+    assert(len(model.inputs['signal_2'].transitions) == 1)
+    assert(model.states['state_2'] in model.inputs['signal_2'].transitions.values())
