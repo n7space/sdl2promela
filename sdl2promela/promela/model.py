@@ -15,9 +15,9 @@ class AtomicBlock(Block):
 
 class Alternative:
     condition : Statement
-    definition : Block
+    definition : List[Statement]
 
-class DoLoop(Statement):
+class Do(Statement):
     alternatives : List[Alternative]
 
 class Switch(Statement):
