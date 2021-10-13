@@ -48,7 +48,7 @@ def test_do():
             .build()).withStatements( \
                 [Skip()]
                 ).build()
-        ).build()    
+        ).build()
     model = ModelBuilder().withInline( \
         InlineBuilder().withName("test") \
             .withDefinition( \
@@ -68,7 +68,7 @@ def test_switch():
             AlternativeBuilder().withStatements( \
                 [Skip()]
                 ).build()
-        ).build()    
+        ).build()
     model = ModelBuilder().withInline( \
         InlineBuilder().withName("test") \
             .withDefinition( \
@@ -100,8 +100,28 @@ def test_binary_operators():
                         .withSource(BinaryExpressionBuilder(BinaryOperator.DIVIDE) \
                             .withLeft(VariableReferenceBuilder("c").build()) \
                             .withRight(VariableReferenceBuilder("2").build()) \
-                            .build()).build(),                            
+                            .build()).build(),
                 ]).build()).build()).build()
 
     generateAndVerify(model, "binary_operators.pml")
 
+def test_call():
+    model = ModelBuilder().withInline( \
+        InlineBuilder().withName("test") \
+            .withDefinition( \
+                BlockBuilder(BlockType.BLOCK).withStatements([
+                    CallBuilder().withTarget("remote_procedure") \
+                        .withParameter(VariableReferenceBuilder("a").build()) \
+                        .withParameter(BinaryExpressionBuilder(BinaryOperator.ADD) \
+                            .withLeft(VariableReferenceBuilder("2").build()) \
+                            .withRight( \
+                                BinaryExpressionBuilder(BinaryOperator.MULTIPLY) \
+                                    .withLeft(VariableReferenceBuilder("7").build()) \
+                                    .withRight(VariableReferenceBuilder("3").build()) \
+                                .build() \
+                            ) \
+                        .build()) \
+                    .build()
+                ]).build()).build()).build()
+
+    generateAndVerify(model, "call.pml")

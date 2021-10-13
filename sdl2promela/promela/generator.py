@@ -53,7 +53,7 @@ def generate(context : Context, call : model.Call):
     context.output("(")
     last_index = len(call.parameters) -1
     for i in range(0, len(call.parameters)):
-        generate(context, call.parameter[i])
+        generate(context, call.parameters[i])
         if i != last_index:
             context.output(", ")
     context.output(")")
