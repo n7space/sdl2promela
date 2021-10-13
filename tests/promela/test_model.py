@@ -16,6 +16,13 @@ def assertLinesMatch(actual : List[str], expected : List[str]):
         expectedLine = expected[i].strip() if i < len(expected) else ""
         assert(actualLine == expectedLine)
 
+def generateAndVerify(model : Model, pathToReference : str):
+    stream = io.StringIO()
+    generateModel(model, stream)
+    result = stream.readlines()
+    reference = readReference(pathToReference)
+    assertLinesMatch(result, reference)
+
 def test_inline():
     model = ModelBuilder().withInline( \
         InlineBuilder().withName("test") \
@@ -24,8 +31,28 @@ def test_inline():
             .withDefinition( \
                 BlockBuilder(BlockType.BLOCK).build()).build()).build()
 
-    stream = io.StringIO()
-    generateModel(model, stream)
-    result = stream.readlines()
-    reference = readReference("inline.pml")
-    assertLinesMatch(result, reference)
+    generateAndVerify(model, "inline.pml")
+
+def test_do():
+    do = DoBuilder().withAlternative( \
+            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.COMPARE) \
+                .withLeft(VariableReferenceBuilder("state").build()) \
+                .withRight(VariableReferenceBuilder("idle").build()) \
+            .build()).withStatements( \
+                [Skip()]
+                ).build()
+        ).withAlternative( \
+            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.COMPARE) \
+                .withLeft(VariableReferenceBuilder("state").build()) \
+                .withRight(VariableReferenceBuilder("running").build()) \
+            .build()).withStatements( \
+                [Skip()]
+                ).build()
+        ).build()    
+    model = ModelBuilder().withInline( \
+        InlineBuilder().withName("test") \
+            .withDefinition( \
+                BlockBuilder(BlockType.BLOCK).withStatements([do]).build()).build()).build()
+
+    generateAndVerify(model, "do.pml")
+

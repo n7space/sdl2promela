@@ -80,14 +80,14 @@ def generate(context : Context, do : model.Do):
     context.output("do\n")
     for alternative in do.alternatives:
         generate(context, alternative)
-    context.output("od\n")
+    context.output("od")
 
 @dispatch(Context, model.Switch)
 def generate(context : Context, switch : model.Switch):
     context.output("if\n")
     for alternative in switch.alternatives:
         generate(context, alternative)
-    context.output("fi\n")
+    context.output("fi")
 
 @dispatch(Context, model.Alternative)
 def generate(context : Context, alternative : model.Alternative):
