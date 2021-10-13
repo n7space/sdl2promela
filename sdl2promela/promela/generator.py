@@ -34,8 +34,16 @@ def generate(context : Context, expression : model.BinaryExpression):
         context.output(" * ")
     elif expression.operator == model.BinaryOperator.DIVIDE:
         context.output(" / ")
-    elif expression.operator == model.BinaryOperator.COMPARE:
+    elif expression.operator == model.BinaryOperator.EQUAL:
         context.output(" == ")
+    elif expression.operator == model.BinaryOperator.LESS:
+        context.output(" < ")
+    elif expression.operator == model.BinaryOperator.GREATER:
+        context.output(" > ")
+    elif expression.operator == model.BinaryOperator.LEQUAL:
+        context.output(" <= ")
+    elif expression.operator == model.BinaryOperator.GEQUAL:
+        context.output(" >= ")                                
     generate(context, expression.right)
     context.output(")")
 

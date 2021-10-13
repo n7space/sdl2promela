@@ -35,14 +35,14 @@ def test_inline():
 
 def test_do():
     do = DoBuilder().withAlternative( \
-            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.COMPARE) \
+            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.EQUAL) \
                 .withLeft(VariableReferenceBuilder("state").build()) \
                 .withRight(VariableReferenceBuilder("idle").build()) \
             .build()).withStatements( \
                 [Skip()]
                 ).build()
         ).withAlternative( \
-            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.COMPARE) \
+            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.EQUAL) \
                 .withLeft(VariableReferenceBuilder("state").build()) \
                 .withRight(VariableReferenceBuilder("running").build()) \
             .build()).withStatements( \
@@ -55,4 +55,53 @@ def test_do():
                 BlockBuilder(BlockType.BLOCK).withStatements([do]).build()).build()).build()
 
     generateAndVerify(model, "do.pml")
+
+def test_switch():
+    switch = SwitchBuilder().withAlternative( \
+            AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.GREATER) \
+                .withLeft(VariableReferenceBuilder("a").build()) \
+                .withRight(VariableReferenceBuilder("threshold").build()) \
+            .build()).withStatements( \
+                [Skip()]
+                ).build()
+        ).withAlternative( \
+            AlternativeBuilder().withStatements( \
+                [Skip()]
+                ).build()
+        ).build()    
+    model = ModelBuilder().withInline( \
+        InlineBuilder().withName("test") \
+            .withDefinition( \
+                BlockBuilder(BlockType.BLOCK).withStatements([switch]).build()).build()).build()
+
+    generateAndVerify(model, "switch.pml")
+
+def test_binary_operators():
+    model = ModelBuilder().withInline( \
+        InlineBuilder().withName("test") \
+            .withDefinition( \
+                BlockBuilder(BlockType.BLOCK).withStatements([
+                    AssignmentBuilder().withTarget(VariableReferenceBuilder("a").build()) \
+                        .withSource(BinaryExpressionBuilder(BinaryOperator.ADD) \
+                            .withLeft(VariableReferenceBuilder("5").build()) \
+                            .withRight(VariableReferenceBuilder("6").build()) \
+                            .build()).build(),
+                    AssignmentBuilder().withTarget(VariableReferenceBuilder("b").build()) \
+                        .withSource(BinaryExpressionBuilder(BinaryOperator.MULTIPLY) \
+                            .withLeft(VariableReferenceBuilder("a").build()) \
+                            .withRight(VariableReferenceBuilder("3").build()) \
+                            .build()).build(),
+                    AssignmentBuilder().withTarget(VariableReferenceBuilder("c").build()) \
+                        .withSource(BinaryExpressionBuilder(BinaryOperator.SUBTRACT) \
+                            .withLeft(VariableReferenceBuilder("a").build()) \
+                            .withRight(VariableReferenceBuilder("b").build()) \
+                            .build()).build(),
+                    AssignmentBuilder().withTarget(VariableReferenceBuilder("d").build()) \
+                        .withSource(BinaryExpressionBuilder(BinaryOperator.DIVIDE) \
+                            .withLeft(VariableReferenceBuilder("c").build()) \
+                            .withRight(VariableReferenceBuilder("2").build()) \
+                            .build()).build(),                            
+                ]).build()).build()).build()
+
+    generateAndVerify(model, "binary_operators.pml")
 

@@ -161,9 +161,8 @@ class AssignmentBuilder:
     def build(self) -> Assignment:
         return self.assignment
 
-    def withTarget(self, target : str) -> 'AssignmentBuilder':
-        self.assignment.target = VariableReference()
-        self.assignment.target.name = target
+    def withTarget(self, target : VariableReference) -> 'AssignmentBuilder':        
+        self.assignment.target = target
         return self
 
     def withSource(self, source : Statement) -> 'AssignmentBuilder':

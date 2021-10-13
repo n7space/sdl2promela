@@ -21,7 +21,11 @@ class BinaryOperator(Enum):
     SUBTRACT = 2
     MULTIPLY = 3
     DIVIDE = 4
-    COMPARE = 5
+    EQUAL = 5
+    LESS = 6
+    GREATER = 7
+    LEQUAL = 8
+    GEQUAL = 9
 
 class BinaryExpression(Statement):
     operator : BinaryOperator
