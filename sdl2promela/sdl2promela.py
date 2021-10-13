@@ -7,10 +7,11 @@ import sys
 import traceback
 
 from opengeode import ogAST
-from sdl import model as sdlmodel
-from promela import model as promelamodel
-from promela import generator as promelagenerator
-import translator
+from .sdl import model as sdlmodel
+from .promela import model as promelamodel
+from .promela import generator as promelagenerator
+from . import translator
+from . import __version__
 
 log = logging.getLogger("sdl2promela")
 
@@ -80,11 +81,15 @@ def parse_arguments():
     parser.add_argument(dest="files", type=str, nargs="+", help="SDL system description; can contain only a single process")
     parser.add_argument("-o", "--output", dest="output_filename", type=str, help="output file name")    
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")    
+    parser.add_argument("--version", action="version", version=__version__)
     return parser.parse_args()
 
-if __name__== "__main__":
+def main():
     logging.basicConfig(level=logging.ERROR)
     arguments = parse_arguments()
     if arguments.verbose:
         log.setLevel(level=logging.INFO)
     translate(arguments.files, arguments.output_filename)
+
+if __name__== "__main__":
+    main()

@@ -43,7 +43,7 @@ def generate(context : Context, expression : model.BinaryExpression):
     elif expression.operator == model.BinaryOperator.LEQUAL:
         context.output(" <= ")
     elif expression.operator == model.BinaryOperator.GEQUAL:
-        context.output(" >= ")                                
+        context.output(" >= ")
     generate(context, expression.right)
     context.output(")")
 
