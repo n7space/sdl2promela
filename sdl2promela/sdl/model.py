@@ -32,6 +32,7 @@ class Model:
         self.transitions = {}
         self._gather_states()
         self._gather_inputs()
+        self._gather_transitions()
 
     def _gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -83,3 +84,9 @@ class Model:
                 id = input.transition_id
                 trigger = self.inputs[input.inputString]
                 trigger.transitions[id] = target
+
+    def _gather_transitions(self):
+        # TODO
+        # Change list into dictionary
+        for i in range(0, len(self.source.transitions)):
+            self.transitions[i] = self.source.transitions[i]
