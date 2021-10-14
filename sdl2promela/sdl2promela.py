@@ -69,7 +69,7 @@ def translate(sdl_files : List[str], output_dir : str):
     try:
         log.info(f"Opening {output_dir} for writing and generating output")
         with open(output_dir, 'w') as file:
-            promelagenerator.generateModel(promela_model, file)
+            promelagenerator.generate_model(promela_model, file)
         log.info(f"Generation done")
     except:
         log.error("Promela model generation failed")
