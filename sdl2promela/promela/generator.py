@@ -3,14 +3,41 @@ from typing import List, Set, Text, Tuple, Type, TextIO
 
 from . import model
 
+INDENT = "  "
+
 class Context:
     stream : TextIO
+    indents : List[str]
+    pending_indent : bool
 
     def __init__(self, stream : TextIO):
         self.stream = stream
+        self.indents = []
+        self.pending_indent = False
+
+    def push_indent(self, indent : str):
+        self.indents.append(indent)
+
+    def pop_indent(self):
+        self.indents.pop()
+
+    def _get_indent(self):
+        return "".join((self.indents))
 
     def output(self, data : str):
-        print(data, file=self.stream, end='')
+        if self.pending_indent:
+            print(self._get_indent(), file=self.stream, end='')
+            self.pending_indent = False
+        lines = data.splitlines(keepends=True)
+        line_count = len(lines)
+        for i in range(0, line_count):
+            line = lines[i]
+            print(line, file=self.stream, end='')
+            if line.endswith("\n"):
+                if i == line_count - 1:
+                    self.pending_indent = True
+                else:
+                    print(self._get_indent(), file=self.stream, end='')
 
 class StatementsWrapper:
     statements : List[model.Statement]
@@ -74,7 +101,9 @@ def generate(context : Context, block : model.Block):
         context.output("atomic {\n")
     else:
         context.output("{\n")
+    context.push_indent(INDENT)
     generate(context, StatementsWrapper(block.statements))
+    context.pop_indent()
     context.output("}\n")
 
 @dispatch(Context, StatementsWrapper)
@@ -105,7 +134,9 @@ def generate(context : Context, alternative : model.Alternative):
     else:
         generate(context, alternative.condition)
     context.output("->\n")
+    context.push_indent(INDENT)
     generate(context, StatementsWrapper(alternative.definition))
+    context.pop_indent()
 
 @dispatch(Context, model.Skip)
 def generate(context : Context, skip : model.Skip):
