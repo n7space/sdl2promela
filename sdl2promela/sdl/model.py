@@ -16,11 +16,39 @@ class Input:
     parameters : List[Parameter]
     transitions : Dict[int, State]
 
+class Action:
+    pass
+
+class Task(Action):
+    pass
+
+class Output(Action):
+    pass
+
+class Terminator(Action):
+    pass
+
+class NextState(Terminator):
+    state_name : str
+
+class Label(Action):
+    pass
+
+class Answer:
+    pass
+
+class Decision(Action):
+    actions : List[Answer]
+
+class Transition:
+    id : int
+    actions : List[Action]
+
 class Model:
     process_name : str
     states : Dict[str, State]
     inputs : Dict[str, Input]
-    transitions : Dict[int, ogAST.Transition]
+    transitions : Dict[int, Transition]
     source : ogAST.Process
 
     def __init__(self, process : ogAST.Process):
@@ -85,8 +113,33 @@ class Model:
                 trigger = self.inputs[input.inputString]
                 trigger.transitions[id] = target
 
+    def _convert_terminator(self, source : ogAST.Terminator) -> Action:        
+        if source.kind == "next_state":
+            if source.inputString == "-":
+                return None # No state switch
+            next_state = NextState()            
+            next_state.state_name = source.inputString
+            return next_state
+        else:
+            raise ValueError("Unsupported terminator type: " + source)
+        return None
+
+    def _convert_transition(self, source : ogAST.Transition) -> Transition:
+        transition = Transition()
+        transition.actions = []
+        for action in source.actions:
+            pass
+        for terminator in source.terminators:            
+            if isinstance(terminator, ogAST.Terminator):
+                action = self._convert_terminator(terminator)
+                if action is not None:
+                    transition.actions.append(action)
+            else:
+                raise ValueError("Unsupported terminator type: " + terminator)
+        return transition
+
+
     def _gather_transitions(self):
-        # TODO
-        # Change list into dictionary
         for i in range(0, len(self.source.transitions)):
-            self.transitions[i] = self.source.transitions[i]
+            self.transitions[i] = self._convert_transition(self.source.transitions[i])
+            self.transitions[i].id = i

@@ -1,6 +1,6 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl.model import Model
+from sdl2promela.sdl.model import Model, NextState
 import os
 
 TEST_DIR : str = os.path.dirname(os.path.realpath(__file__))
@@ -30,8 +30,7 @@ def test_model_reads_states():
 def test_model_reads_inputs():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
-    model = Model(process)
-    # state_1, state_2 and special START state
+    model = Model(process)    
     assert(len(model.inputs) == 2)
     assert(model.inputs['signal_1'].name == 'signal_1')
     assert(len(model.inputs['signal_1'].transitions) == 1)
@@ -39,3 +38,33 @@ def test_model_reads_inputs():
     assert(model.inputs['signal_2'].name == 'signal_2')
     assert(len(model.inputs['signal_2'].transitions) == 1)
     assert(model.states['state_2'] in model.inputs['signal_2'].transitions.values())
+
+def test_model_reads_transitions():
+    path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
+    process = read_main_process(path)
+    model = Model(process)            
+    assert(len(model.transitions) == 3)
+    start_tid = 0
+    signal_1_tid = next(iter(model.inputs['signal_1'].transitions))
+    signal_2_tid = next(iter(model.inputs['signal_2'].transitions))
+    assert(start_tid in model.transitions.keys())
+    assert(signal_1_tid in model.transitions.keys())
+    assert(signal_2_tid in model.transitions.keys())
+
+def test_mode_reads_next_state_action():
+    path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
+    process = read_main_process(path)
+    model = Model(process)
+    signal_1_tid = next(iter(model.inputs['signal_1'].transitions))
+    signal_2_tid = next(iter(model.inputs['signal_2'].transitions))
+    signal_1_transition = model.transitions[signal_1_tid]
+    signal_2_transition = model.transitions[signal_2_tid]
+    assert(len(signal_1_transition.actions) == 1)
+    assert(len(signal_2_transition.actions) == 1)
+    action_1 = signal_1_transition.actions[0]
+    assert(isinstance(action_1, NextState))
+    assert(action_1.state_name == 'state_2')
+    action_2 = signal_2_transition.actions[0]
+    assert(isinstance(action_2, NextState))
+    assert(action_2.state_name == 'state_1')
+

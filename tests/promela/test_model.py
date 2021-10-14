@@ -1,27 +1,22 @@
 from sdl2promela.promela.model import Model
-from sdl2promela.promela.generator import generateModel
+from sdl2promela.promela.generator import generate_model
 from sdl2promela.promela.modelbuilder import *
 import os
 import io
+from tests.utils.utils import assert_lines_match
 
 TEST_DIR : str = os.path.dirname(os.path.realpath(__file__))
 RESOURCE_DIR : str = os.path.join(TEST_DIR, "resources")
 
-def readReference(path : str):
+def read_reference(path : str):
     return io.open(os.path.join(RESOURCE_DIR, path)).readlines()
 
-def assertLinesMatch(actual : List[str], expected : List[str]):
-    for i in range(0, max(len(actual), len(expected))):
-        actualLine = actual[i].strip() if i < len(actual) else ""
-        expectedLine = expected[i].strip() if i < len(expected) else ""
-        assert(actualLine == expectedLine)
-
-def generateAndVerify(model : Model, pathToReference : str):
+def generate_and_verify(model : Model, path_to_reference : str):
     stream = io.StringIO()
-    generateModel(model, stream)
+    generate_model(model, stream)
     result = stream.readlines()
-    reference = readReference(pathToReference)
-    assertLinesMatch(result, reference)
+    reference = read_reference(path_to_reference)
+    assert_lines_match(result, reference)
 
 def test_inline():
     model = ModelBuilder().withInline( \
@@ -31,7 +26,7 @@ def test_inline():
             .withDefinition( \
                 BlockBuilder(BlockType.BLOCK).build()).build()).build()
 
-    generateAndVerify(model, "inline.pml")
+    generate_and_verify(model, "inline.pml")
 
 def test_do():
     do = DoBuilder().withAlternative( \
@@ -54,7 +49,7 @@ def test_do():
             .withDefinition( \
                 BlockBuilder(BlockType.BLOCK).withStatements([do]).build()).build()).build()
 
-    generateAndVerify(model, "do.pml")
+    generate_and_verify(model, "do.pml")
 
 def test_switch():
     switch = SwitchBuilder().withAlternative( \
@@ -74,7 +69,7 @@ def test_switch():
             .withDefinition( \
                 BlockBuilder(BlockType.BLOCK).withStatements([switch]).build()).build()).build()
 
-    generateAndVerify(model, "switch.pml")
+    generate_and_verify(model, "switch.pml")
 
 def test_binary_operators():
     model = ModelBuilder().withInline( \
@@ -103,7 +98,7 @@ def test_binary_operators():
                             .build()).build(),
                 ]).build()).build()).build()
 
-    generateAndVerify(model, "binary_operators.pml")
+    generate_and_verify(model, "binary_operators.pml")
 
 def test_call():
     model = ModelBuilder().withInline( \
@@ -124,4 +119,4 @@ def test_call():
                     .build()
                 ]).build()).build()).build()
 
-    generateAndVerify(model, "call.pml")
+    generate_and_verify(model, "call.pml")

@@ -2,7 +2,8 @@ SRC_DIR = ../
 
 TESTS = \
 	sdl/test_model.py \
-	promela/test_model.py
+	promela/test_model.py \
+	translator/test_translator.py
 
 .PHONY : check
 

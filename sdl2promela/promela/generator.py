@@ -139,7 +139,7 @@ def generate(context : Context, model : model.Model):
         generate(context, inline)
     context.output(model.epilogue)
 
-def generateModel(model : model.Model, output : TextIO):
+def generate_model(model : model.Model, output : TextIO):
     context = Context(output)
     generate(context, model)
     output.seek(0)

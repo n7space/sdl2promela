@@ -1,6 +1,9 @@
 import typing
+from typing import List
+from multipledispatch import dispatch
 
 from opengeode import ogAST
+from opengeode.AdaGenerator import SEPARATOR
 
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -12,7 +15,7 @@ from .promela.modelbuilder import DoBuilder
 from .promela.modelbuilder import BinaryExpressionBuilder
 from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
-from opengeode.AdaGenerator import SEPARATOR
+
 
 from sdl2promela import promela
 
@@ -63,15 +66,32 @@ def generate_input_function(sdl_model : sdlmodel.Model, input : sdlmodel.Input) 
     builder.withDefinition(blockBuilder.build())
     return builder.build()
 
-def generate_transition(sdl_model : sdlmodel.Model, transition : ogAST.Transition):
-    # TODO
-    return [
-        AssignmentBuilder() \
+@dispatch
+def generate_statement(sdl_model, transition, action) -> promelamodel.Statement:
+    raise NotImplementedError("generate_statement not implemented for " + action)
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.NextState)
+def generate_statement(sdl_model : sdlmodel.Model, transition : sdlmodel.Transition, next_state : sdlmodel.NextState) -> promelamodel.Statement:
+    state_variable = get_state_variable_name(sdl_model)
+    state = sdl_model.states[next_state.state_name]
+    state_name = get_state_name(sdl_model, state)
+    return AssignmentBuilder() \
+            .withTarget(VariableReferenceBuilder(state_variable).build()) \
+            .withSource(VariableReferenceBuilder(state_name).build()) \
+            .build()
+
+def generate_transition(sdl_model : sdlmodel.Model, transition : sdlmodel.Transition) -> List[promelamodel.Statement]:
+    statements = []
+    for action in transition.actions:
+        statements.append(generate_statement(sdl_model, transition, action))
+
+    # TODO - this should be conditional
+    statements.append(AssignmentBuilder() \
             .withTarget(VariableReferenceBuilder(TRANSITION_ID).build()) \
             .withSource(VariableReferenceBuilder(INVALID_ID).build()) \
-            .build(),
-        promelamodel.Skip()
-        ]
+            .build())            
+
+    return statements
 
 def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
