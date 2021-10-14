@@ -28,6 +28,15 @@ def test_inline():
 
     generate_and_verify(model, "inline.pml")
 
+def test_declaration():
+    declaration = VariableDeclarationBuilder("id", "int").build()
+    model = ModelBuilder().withInline( \
+        InlineBuilder().withName("test") \
+            .withDefinition( \
+                BlockBuilder(BlockType.BLOCK).withStatements([declaration]).build()).build()).build()
+
+    generate_and_verify(model, "declaration.pml")
+
 def test_do():
     do = DoBuilder().withAlternative( \
             AlternativeBuilder().withCondition(BinaryExpressionBuilder(BinaryOperator.EQUAL) \

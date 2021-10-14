@@ -1,0 +1,4 @@
+inline test()
+{
+    int id;
+}

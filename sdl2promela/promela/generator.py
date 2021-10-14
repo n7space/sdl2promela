@@ -85,6 +85,12 @@ def generate(context : Context, call : model.Call):
             context.output(", ")
     context.output(")")
 
+@dispatch(Context, model.VariableDeclaration)
+def generate(context : Context, declaration : model.VariableDeclaration):
+    context.output(declaration.type)
+    context.output(" ")
+    context.output(declaration.name)
+
 @dispatch(Context, model.VariableReference)
 def generate(context : Context, reference : model.VariableReference):
     context.output(reference.name)

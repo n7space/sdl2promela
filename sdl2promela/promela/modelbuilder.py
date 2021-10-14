@@ -3,7 +3,7 @@ from typing import List, Set, SupportsRound, Tuple, Type, Dict
 from enum import Enum
 
 from sdl2promela.promela.model import InlineParameter, Model, Inline, \
-    Alternative, Block, Break, Skip, Switch, Do, Statement, Call, VariableReference, \
+    Alternative, Block, Break, Skip, Switch, Do, Statement, Call, VariableDeclaration, VariableReference, \
     Assignment, BinaryExpression, BinaryOperator, BlockType
 
 class ModelBuilder:
@@ -46,7 +46,7 @@ class InlineBuilder:
 
     def withDefinition(self, definition : Block) -> 'InlineBuilder':
         self.inline.definition = definition
-        return self       
+        return self
 
     def withParameter(self, parameterName : str) -> 'InlineBuilder':
         parameter = InlineParameter()
@@ -70,7 +70,7 @@ class StatementsBuilder:
     def withStatements(self, statements : List[Statement]) -> 'StatementsBuilder':
        self.statements.extend(statements)
        return self
-    
+
 
 class BlockBuilder:
     block : Block
@@ -150,7 +150,7 @@ class CallBuilder:
 
     def withParameter(self, statement : Statement) -> 'CallBuilder':
         self.call.parameters.append(statement)
-        return self 
+        return self
 
 class AssignmentBuilder:
     assignment : Assignment
@@ -161,7 +161,7 @@ class AssignmentBuilder:
     def build(self) -> Assignment:
         return self.assignment
 
-    def withTarget(self, target : VariableReference) -> 'AssignmentBuilder':        
+    def withTarget(self, target : VariableReference) -> 'AssignmentBuilder':
         self.assignment.target = target
         return self
 
@@ -196,3 +196,14 @@ class VariableReferenceBuilder:
 
     def build(self) -> VariableReference:
         return self.reference
+
+class VariableDeclarationBuilder:
+    declaration : VariableDeclaration
+
+    def __init__(self, name : str, type : str):
+        self.declaration = VariableDeclaration()
+        self.declaration.name = name
+        self.declaration.type = type
+
+    def build(self) -> VariableDeclaration:
+        return self.declaration

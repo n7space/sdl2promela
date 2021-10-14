@@ -5,6 +5,10 @@ from enum import Enum
 class Statement:
     pass
 
+class VariableDeclaration(Statement):
+    name : str
+    type : str
+
 class VariableReference(Statement):
     name : str
 
@@ -34,7 +38,7 @@ class BinaryExpression(Statement):
 
 class BlockType(Enum):
     BLOCK = 1
-    ATOMIC = 2    
+    ATOMIC = 2
 
 class Block(Statement):
     type : BlockType
