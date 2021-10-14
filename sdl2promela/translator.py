@@ -22,12 +22,16 @@ from sdl2promela import promela
 TRANSITION_ID = "transition_id"
 INVALID_ID = "-1"
 STATE_VARIABLE = "state"
+INIT = "init"
 
 def get_transition_function_name(sdl_model : sdlmodel.Model) -> str:
     return sdl_model.process_name + SEPARATOR + "transition"
 
 def get_input_function_name(sdl_model : sdlmodel.Model, input : sdlmodel.Input) -> str:
     return sdl_model.process_name + SEPARATOR + "PI" + SEPARATOR + input.name
+
+def get_init_function_name(sdl_model : sdlmodel.Model) -> str:
+    return sdl_model.process_name + SEPARATOR + INIT
 
 def get_state_variable_name(sdl_model : sdlmodel.Model) -> str:
     return sdl_model.process_name + SEPARATOR + STATE_VARIABLE
@@ -93,6 +97,17 @@ def generate_transition(sdl_model : sdlmodel.Model, transition : sdlmodel.Transi
 
     return statements
 
+def generate_init_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
+    builder = InlineBuilder()
+    builder.withName(get_init_function_name(sdl_model))    
+    blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    transition_function_name = get_transition_function_name(sdl_model)                
+    blockBuilder.withStatements([CallBuilder() \
+                    .withTarget(transition_function_name) \
+                    .withParameter(VariableReferenceBuilder(str(0)).build()).build()])
+    builder.withDefinition(blockBuilder.build())
+    return builder.build()
+
 def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(get_transition_function_name(sdl_model))    
@@ -123,6 +138,7 @@ def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inl
 def translate(sdl_model : sdlmodel.Model) -> promelamodel.Model:
     builder = ModelBuilder()
     builder.withInline(generate_transition_function(sdl_model))
+    builder.withInline(generate_init_function(sdl_model))
     for name, input in sdl_model.inputs.items():
         builder.withInline(generate_input_function(sdl_model, input))
     model = builder.build()

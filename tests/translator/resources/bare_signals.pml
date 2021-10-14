@@ -14,6 +14,10 @@ inline bare_signals_0_transition(transition_id)
     transition_id = -1;
   od;
 }
+inline bare_signals_0_init()
+{
+  bare_signals_0_transition(0);
+}
 inline bare_signals_0_PI_0_signal_1()
 {
   if
