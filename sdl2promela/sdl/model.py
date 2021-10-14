@@ -1,5 +1,6 @@
 import typing
 from typing import List, Set, SupportsRound, Tuple, Type, Dict
+from multipledispatch import dispatch
 import opengeode
 from opengeode import ogAST
 from opengeode import Helper
@@ -23,7 +24,8 @@ class Task(Action):
     pass
 
 class Output(Action):
-    pass
+    name : str
+    parameters : List[Parameter]
 
 class Terminator(Action):
     pass
@@ -43,6 +45,30 @@ class Decision(Action):
 class Transition:
     id : int
     actions : List[Action]
+
+@dispatch
+def convert(source) -> Action:
+    raise NotImplementedError("convert not implemented for " + source)
+
+@dispatch(ogAST.Output)
+def convert(source : ogAST.Output) -> Action:
+    output = Output()
+    # TODO handle parameters
+    output.name = source.output[0]['outputName']
+    output.parameters = []        
+    return output
+
+@dispatch(ogAST.Terminator)
+def convert(source : ogAST.Terminator) -> Action:        
+    if source.kind == "next_state":
+        if source.inputString == "-":
+            return None # No state switch
+        next_state = NextState()            
+        next_state.state_name = source.inputString
+        return next_state
+    else:
+        raise ValueError("Unsupported terminator type: " + source)
+    return None
 
 class Model:
     process_name : str
@@ -113,29 +139,17 @@ class Model:
                 trigger = self.inputs[input.inputString]
                 trigger.transitions[id] = target
 
-    def _convert_terminator(self, source : ogAST.Terminator) -> Action:        
-        if source.kind == "next_state":
-            if source.inputString == "-":
-                return None # No state switch
-            next_state = NextState()            
-            next_state.state_name = source.inputString
-            return next_state
-        else:
-            raise ValueError("Unsupported terminator type: " + source)
-        return None
-
     def _convert_transition(self, source : ogAST.Transition) -> Transition:
         transition = Transition()
         transition.actions = []
-        for action in source.actions:
-            pass
-        for terminator in source.terminators:            
-            if isinstance(terminator, ogAST.Terminator):
-                action = self._convert_terminator(terminator)
-                if action is not None:
-                    transition.actions.append(action)
-            else:
-                raise ValueError("Unsupported terminator type: " + terminator)
+        for source_action in source.actions:
+            action = convert(source_action)
+            if action is not None:
+                transition.actions.append(action)
+        for terminator in source.terminators:                        
+            action = convert(terminator)
+            if action is not None:
+                transition.actions.append(action)            
         return transition
 
 

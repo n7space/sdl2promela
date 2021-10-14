@@ -39,6 +39,9 @@ def get_state_variable_name(sdl_model : sdlmodel.Model) -> str:
 def get_state_name(sdl_model : sdlmodel.Model, state : sdlmodel.State) -> str:
     return sdl_model.process_name + SEPARATOR + state.name
 
+def get_remote_function_name(sdl_model : sdlmodel.Model, output : sdlmodel.Output) -> str:
+    return sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
+
 def generate_input_function(sdl_model : sdlmodel.Model, input : sdlmodel.Input) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(get_input_function_name(sdl_model, input))
@@ -84,6 +87,11 @@ def generate_statement(sdl_model : sdlmodel.Model, transition : sdlmodel.Transit
             .withSource(VariableReferenceBuilder(state_name).build()) \
             .build()
 
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Output)
+def generate_statement(sdl_model : sdlmodel.Model, transition : sdlmodel.Transition, output : sdlmodel.Output) -> promelamodel.Statement:
+    name = get_remote_function_name(sdl_model, output)
+    return CallBuilder().withTarget(name).build()
+
 def generate_transition(sdl_model : sdlmodel.Model, transition : sdlmodel.Transition) -> List[promelamodel.Statement]:
     statements = []
     for action in transition.actions:
@@ -93,15 +101,15 @@ def generate_transition(sdl_model : sdlmodel.Model, transition : sdlmodel.Transi
     statements.append(AssignmentBuilder() \
             .withTarget(VariableReferenceBuilder(TRANSITION_ID).build()) \
             .withSource(VariableReferenceBuilder(INVALID_ID).build()) \
-            .build())            
+            .build())
 
     return statements
 
 def generate_init_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
-    builder.withName(get_init_function_name(sdl_model))    
+    builder.withName(get_init_function_name(sdl_model))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    transition_function_name = get_transition_function_name(sdl_model)                
+    transition_function_name = get_transition_function_name(sdl_model)
     blockBuilder.withStatements([CallBuilder() \
                     .withTarget(transition_function_name) \
                     .withParameter(VariableReferenceBuilder(str(0)).build()).build()])
@@ -110,7 +118,7 @@ def generate_init_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
 
 def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
-    builder.withName(get_transition_function_name(sdl_model))    
+    builder.withName(get_transition_function_name(sdl_model))
     builder.withParameter(TRANSITION_ID)
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
 

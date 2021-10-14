@@ -35,3 +35,6 @@ def translate_and_verify(path_to_source : str, path_to_reference : str):
 def test_translates_bare_inputs():
     translate_and_verify("bare_signals.pr", "bare_signals.pml")
 
+def test_translates_bare_outputs():
+    translate_and_verify("bare_outputs.pr", "bare_outputs.pml")
+

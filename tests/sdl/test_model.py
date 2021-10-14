@@ -1,6 +1,6 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl.model import Model, NextState
+from sdl2promela.sdl.model import Model, NextState, Output
 import os
 
 TEST_DIR : str = os.path.dirname(os.path.realpath(__file__))
@@ -30,7 +30,7 @@ def test_model_reads_states():
 def test_model_reads_inputs():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
-    model = Model(process)    
+    model = Model(process)
     assert(len(model.inputs) == 2)
     assert(model.inputs['signal_1'].name == 'signal_1')
     assert(len(model.inputs['signal_1'].transitions) == 1)
@@ -42,7 +42,7 @@ def test_model_reads_inputs():
 def test_model_reads_transitions():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
-    model = Model(process)            
+    model = Model(process)
     assert(len(model.transitions) == 3)
     start_tid = 0
     signal_1_tid = next(iter(model.inputs['signal_1'].transitions))
@@ -67,4 +67,15 @@ def test_mode_reads_next_state_action():
     action_2 = signal_2_transition.actions[0]
     assert(isinstance(action_2, NextState))
     assert(action_2.state_name == 'state_1')
+
+def test_mode_reads_output():
+    path = os.path.join(RESOURCE_DIR, "bare_outputs.pr")
+    process = read_main_process(path)
+    model = Model(process)
+    tid = next(iter(model.inputs['signal_in'].transitions))
+    transition = model.transitions[tid]
+    assert(len(transition.actions) == 2)
+    action = transition.actions[0]
+    assert(isinstance(action, Output))
+    assert(action.name == "signal_out")
 
