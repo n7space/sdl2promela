@@ -7,7 +7,7 @@ from opengeode.AdaGenerator import SEPARATOR
 
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
-from .promela.modelbuilder import AssignmentBuilder, CallBuilder, InlineBuilder
+from .promela.modelbuilder import AssignmentBuilder, CallBuilder, InlineBuilder, VariableDeclarationBuilder
 from .promela.modelbuilder import VariableReferenceBuilder
 from .promela.modelbuilder import BlockBuilder
 from .promela.modelbuilder import ModelBuilder
@@ -19,6 +19,8 @@ from .promela.modelbuilder import SwitchBuilder
 
 from sdl2promela import promela
 
+TRANSITION_TYPE_NAME = "int"
+TRANSITION_ARGUMENT = "id"
 TRANSITION_ID = "transition_id"
 INVALID_ID = "-1"
 STATE_VARIABLE = "state"
@@ -119,7 +121,7 @@ def generate_init_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
 def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(get_transition_function_name(sdl_model))
-    builder.withParameter(TRANSITION_ID)
+    builder.withParameter(TRANSITION_ARGUMENT)
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
 
     do_builder = DoBuilder()
@@ -139,7 +141,13 @@ def generate_transition_function(sdl_model : sdlmodel.Model) -> promelamodel.Inl
                     .withRight(VariableReferenceBuilder(str(id)).build()).build()) \
             .withStatements(generate_transition(sdl_model, transition)).build())
 
-    blockBuilder.withStatements([do_builder.build()])
+    blockBuilder.withStatements([
+        VariableDeclarationBuilder(TRANSITION_ID, TRANSITION_TYPE_NAME).build(),
+        AssignmentBuilder() \
+            .withTarget(VariableReferenceBuilder(TRANSITION_ID).build()) \
+            .withSource(VariableReferenceBuilder(TRANSITION_ARGUMENT).build()).build(),
+        do_builder.build()
+        ])
     builder.withDefinition(blockBuilder.build())
     return builder.build()
 

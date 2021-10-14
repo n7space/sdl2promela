@@ -5,7 +5,15 @@ TESTS = \
 	promela/test_model.py \
 	translator/test_translator.py
 
-.PHONY : check
+.PHONY : \
+	check \
+	unit \
+	integration
 
-check: ${TESTS}
+unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS}
+
+integration:
+	${MAKE} -C integration check
+
+check: unit integration

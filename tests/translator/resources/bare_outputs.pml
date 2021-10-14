@@ -1,5 +1,7 @@
-inline bare_outputs_0_transition(transition_id)
+inline bare_outputs_0_transition(id)
 {
+  int transition_id;
+  transition_id = id;
   do
   ::(transition_id == -1)->
     break;

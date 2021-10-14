@@ -14,50 +14,52 @@ typedef signal_out_data {
     int dummy;
 };
 
+int inited;
+
 chan signal_in_channel = [1] of {signal_in_data};
 chan signal_out_channel = [1] of {signal_out_data};
 
 inline bare_outputs_0_RI_0_signal_out()
 {
-    signal_out_data data;
-    signal_out_channel!data;
+    signal_out_data var0;
+    signal_out_channel!var0;
 }
 
 // This represents the provided interface's thread
-proctype proc_bare_outputs_singnal_in()
+active proctype proc_bare_outputs_singnal_in()
 {
-    signal_in_data data;
-    do
-    ::signal_in_channel?data ->
-        printf("Received signal in")
+    inited;
+    signal_in_data var1;
+    end: do
+    ::signal_in_channel?var1 ->
+        printf("Received signal in\n")
         bare_outputs_0_PI_0_signal_in()
     od;
 }
 
 // This simulates some external process or environment
-proctype proc_bare_outputs_singnal_out()
+active proctype proc_bare_outputs_singnal_out()
 {
-    signal_out_data data;
-    do
-    ::signal_out_channel?data ->
-        print("Received signal out\n")
+    inited;
+    signal_out_data var2;
+    end: do
+    ::signal_out_channel?var2 ->
+        printf("Received signal out\n")
     od;
 }
 
 // This simulates the environment
-proctype proc_environment()
+active proctype proc_environment()
 {
-    signal_in_data data;
-    // Send the signal once
-    signal_in_channel!data;
+    inited;
+    signal_in_data var3;
+    printf("Sending signal from environment\n")
+    signal_in_channel!var3;
 }
 
 init {
-    // Initialize state machines
+    printf("Initializing the system\n")
     bare_outputs_0_init();
-    // Start threads for provided interfaces
-    run proc_bare_outputs_singnal_in();
-    run proc_bare_outputs_singnal_out();
-    // Start environment
-    run proc_environment();
+    printf("Starting the system\n")
+    inited = 1
 }
