@@ -15,29 +15,34 @@ class Context:
         self.indents = []
         self.pending_indent = False
 
+    def _print(self, data : str):
+        print(data, file=self.stream, end='')
+
+    def _indent(self):
+        self._print(self._get_indent())
+        self.pending_indent = False
+
+    def _get_indent(self):
+        return "".join((self.indents))
+
     def push_indent(self, indent : str):
         self.indents.append(indent)
 
     def pop_indent(self):
         self.indents.pop()
 
-    def _get_indent(self):
-        return "".join((self.indents))
-
     def output(self, data : str):
         if self.pending_indent:
-            print(self._get_indent(), file=self.stream, end='')
-            self.pending_indent = False
+            self._indent()
         lines = data.splitlines(keepends=True)
-        line_count = len(lines)
-        for i in range(0, line_count):
-            line = lines[i]
-            print(line, file=self.stream, end='')
+        if len(lines) == 0:
+            return
+        for line in lines[:-1]:
+            self._print(line)
             if line.endswith("\n"):
-                if i == line_count - 1:
-                    self.pending_indent = True
-                else:
-                    print(self._get_indent(), file=self.stream, end='')
+                self._indent()
+        self._print(lines[-1])
+        self.pending_indent = lines[-1].endswith("\n")
 
 class StatementsWrapper:
     statements : List[model.Statement]
