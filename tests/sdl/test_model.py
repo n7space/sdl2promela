@@ -21,7 +21,9 @@ def read_main_process(path : str) -> ogAST.Process:
 def test_model_reads_states():
     path = os.path.join(RESOURCE_DIR, "only_states.pr")
     process = read_main_process(path)
+
     model = Model(process)
+
     # state_1, state_2 and special START state
     assert(len(model.states) == 3)
     assert(model.states["state_1"].name == "state_1")
@@ -30,7 +32,9 @@ def test_model_reads_states():
 def test_model_reads_inputs():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
+
     model = Model(process)
+
     assert(len(model.inputs) == 2)
     assert(model.inputs['signal_1'].name == 'signal_1')
     assert(len(model.inputs['signal_1'].transitions) == 1)
@@ -42,7 +46,9 @@ def test_model_reads_inputs():
 def test_model_reads_transitions():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
+
     model = Model(process)
+
     assert(len(model.transitions) == 3)
     start_tid = 0
     signal_1_tid = next(iter(model.inputs['signal_1'].transitions))
@@ -54,7 +60,9 @@ def test_model_reads_transitions():
 def test_mode_reads_next_state_action():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
+
     model = Model(process)
+
     signal_1_tid = next(iter(model.inputs['signal_1'].transitions))
     signal_2_tid = next(iter(model.inputs['signal_2'].transitions))
     signal_1_transition = model.transitions[signal_1_tid]
@@ -71,7 +79,9 @@ def test_mode_reads_next_state_action():
 def test_mode_reads_output():
     path = os.path.join(RESOURCE_DIR, "bare_outputs.pr")
     process = read_main_process(path)
+
     model = Model(process)
+
     tid = next(iter(model.inputs['signal_in'].transitions))
     transition = model.transitions[tid]
     assert(len(transition.actions) == 2)

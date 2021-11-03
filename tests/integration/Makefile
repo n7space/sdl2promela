@@ -7,7 +7,7 @@ RES_DIR=resources
 
 TEST_DIR=out
 
-CREATE_TEST_DIR=mkdir -p ${TEST_DIR}
+CREATE_EMPTY_TEST_DIR=rm -r -f ${TEST_DIR} && mkdir -p ${TEST_DIR}
 DELETE_TEST_DIR=rm -r ${TEST_DIR}
 
 TESTS = \
@@ -35,7 +35,7 @@ check: ${TESTS}
 
 test_bare_outputs:
 	echo "Test bare outputs"
-	${CREATE_TEST_DIR}
+	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -o ${TEST_DIR}/bare_outputs.pml ${RES_DIR}/bare_outputs.pr
 	cp ${RES_DIR}/bare_outputs_host.pml ${TEST_DIR}/bare_outputs_host.pml
 	cd ${TEST_DIR} && \

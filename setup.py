@@ -8,7 +8,7 @@ setup(
     description="SDL 2 Promela translator, created within the scope of TASTE Model Checker Project financed by the European Space Agency",
     version=sdl2promela.__version__,
     packages=find_packages(),
-    author="Michal Kurowski",
+    author="Michał Kurowski",
     author_email="mkurowski@n7space.com",
     url="https://github.com/n7space/sdl2promela",
     install_requires=["opengeode>=3.7.14"],

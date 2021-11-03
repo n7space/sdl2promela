@@ -21,12 +21,14 @@ def dump_lines(path : str, lines : List[str]):
         file.writelines(lines)
 
 def translate_and_verify(path_to_source : str, path_to_reference : str):
-    effective_path_to_source = os.path.join(RESOURCE_DIR, path_to_source)    
+    effective_path_to_source = os.path.join(RESOURCE_DIR, path_to_source)
     process = sdl2promela.read_process([effective_path_to_source])
     sdl_model = sdlmodel.Model(process)
+
     promela_model = translator.translate(sdl_model)
+
     stream = io.StringIO()
-    promelagenerator.generate_model(promela_model, stream)    
+    promelagenerator.generate_model(promela_model, stream)
     result = stream.readlines()
     dump_lines(effective_path_to_source + ".translated", result)
     reference = read_reference(path_to_reference)
