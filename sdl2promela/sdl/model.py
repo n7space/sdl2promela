@@ -9,13 +9,24 @@ from opengeode.AdaGenerator import SEPARATOR
 class State:
     name : str
 
+    def __init__(self):
+        self.name = None
+
 class Parameter:
     name : str
+
+    def __init__(self):
+        self.name = None
 
 class Input:
     name : str
     parameters : List[Parameter]
     transitions : Dict[int, State]
+
+    def __init__(self):
+        self.name = None
+        self.parameters = []
+        self.transitions = {}
 
 class Action:
     pass
@@ -27,11 +38,18 @@ class Output(Action):
     name : str
     parameters : List[Parameter]
 
+    def __init__(self):
+        self.name = None
+        self.parameters = []
+
 class Terminator(Action):
     pass
 
 class NextState(Terminator):
     state_name : str
+
+    def __init__(self):
+        self.state_name = None
 
 class Label(Action):
     pass
@@ -42,9 +60,16 @@ class Answer:
 class Decision(Action):
     actions : List[Answer]
 
+    def __init__(self):
+        self.actions = []
+
 class Transition:
     id : int
     actions : List[Action]
+
+    def __init__(self):
+        self.id = 0
+        self.actions = []
 
 @dispatch
 def convert(source) -> Action:
@@ -55,15 +80,15 @@ def convert(source : ogAST.Output) -> Action:
     output = Output()
     # TODO handle parameters
     output.name = source.output[0]['outputName']
-    output.parameters = []        
+    output.parameters = []
     return output
 
 @dispatch(ogAST.Terminator)
-def convert(source : ogAST.Terminator) -> Action:        
+def convert(source : ogAST.Terminator) -> Action:
     if source.kind == "next_state":
         if source.inputString == "-":
             return None # No state switch
-        next_state = NextState()            
+        next_state = NextState()
         next_state.state_name = source.inputString
         return next_state
     else:
@@ -146,10 +171,10 @@ class Model:
             action = convert(source_action)
             if action is not None:
                 transition.actions.append(action)
-        for terminator in source.terminators:                        
+        for terminator in source.terminators:
             action = convert(terminator)
             if action is not None:
-                transition.actions.append(action)            
+                transition.actions.append(action)
         return transition
 
 
