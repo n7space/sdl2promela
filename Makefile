@@ -1,11 +1,18 @@
+BLACK=black
+
 .PHONY : check \
 	all \
-	install
+	install \
+	format
 
-all: check
+all: format check
 
 install:
 	python3 -m pip install --user --upgrade .
 
 check:
 	$(MAKE) -C tests check
+
+format:
+	${BLACK} sdl2promela
+	${BLACK} tests
