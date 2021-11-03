@@ -22,7 +22,7 @@ class Context:
         self._print(self._get_indent())
         self.pending_indent = False
 
-    def _get_indent(self):
+    def _get_indent(self) -> str:
         return "".join((self.indents))
 
     def push_indent(self, indent : str):
