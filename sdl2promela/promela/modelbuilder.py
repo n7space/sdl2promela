@@ -11,9 +11,6 @@ class ModelBuilder:
 
     def __init__(self):
         self.model = Model()
-        self.model.prologue = ""
-        self.model.epilogue = ""
-        self.model.inlines = []
 
     def build(self) -> Model:
         return self.model
@@ -35,7 +32,6 @@ class InlineBuilder:
 
     def __init__(self):
         self.inline = Inline()
-        self.inline.parameters = []
 
     def build(self) -> Inline:
         return self.inline
@@ -78,7 +74,6 @@ class BlockBuilder:
     def __init__(self, type : BlockType):
         self.block = Block()
         self.block.type = type
-        self.block.statements = []
 
     def build(self) -> Block:
         return self.block
@@ -92,8 +87,6 @@ class AlternativeBuilder:
 
     def __init__(self):
         self.alternative = Alternative()
-        self.alternative.condition = None
-        self.alternative.definition = []
 
     def build(self) -> Alternative:
         return self.alternative
@@ -111,7 +104,6 @@ class SwitchBuilder:
 
     def __init__(self):
         self.switch = Switch()
-        self.switch.alternatives = []
 
     def build(self) -> Switch:
         return self.switch
@@ -125,7 +117,6 @@ class DoBuilder:
 
     def __init__(self):
         self.do = Do()
-        self.do.alternatives = []
 
     def build(self) -> Switch:
         return self.do
@@ -139,7 +130,6 @@ class CallBuilder:
 
     def __init__(self):
         self.call = Call()
-        self.call.parameters = []
 
     def build(self) -> Call:
         return self.call
