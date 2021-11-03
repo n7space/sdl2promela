@@ -15,20 +15,29 @@ from . import __version__
 
 __log = logging.getLogger("sdl2promela")
 
+
 def __parse_arguments():
     parser = argparse.ArgumentParser(description="SDL to Promela converter")
-    parser.add_argument(dest="files", type=str, nargs="+", help="SDL system description; can contain only a single process")
-    parser.add_argument("-o", "--output", dest="output_filename", type=str, help="output file name")
+    parser.add_argument(
+        dest="files",
+        type=str,
+        nargs="+",
+        help="SDL system description; can contain only a single process",
+    )
+    parser.add_argument(
+        "-o", "--output", dest="output_filename", type=str, help="output file name"
+    )
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
     parser.add_argument("--version", action="version", version=__version__)
     return parser.parse_args()
 
-def read_process(sdl_files : List[str]) -> ogAST.Process:
-    '''
+
+def read_process(sdl_files: List[str]) -> ogAST.Process:
+    """
     Read a single SDL process from a list of files.
     :param sdl_files: List of names of files containing the SDL model.
     :returns: SDL process.
-    '''
+    """
     try:
         ast, warnings, errors = opengeode.parse(sdl_files)
     except IOError as error:
@@ -41,7 +50,9 @@ def read_process(sdl_files : List[str]) -> ogAST.Process:
         sys.exit(1)
 
     if len(warnings) > 0:
-        __log.error(f"Error: found {len(errors)} warnings (warnings indicate issues with the SDL model and are treated as errors):")
+        __log.error(
+            f"Error: found {len(errors)} warnings (warnings indicate issues with the SDL model and are treated as errors):"
+        )
         for warning in warnings:
             __log.error(warning)
         sys.exit(1)
@@ -51,18 +62,21 @@ def read_process(sdl_files : List[str]) -> ogAST.Process:
             __log.error(error)
         sys.exit(1)
     if len(ast.processes) != 1:
-        __log.error(f"The input SDL files shall contain exactly 1 process, but {len(ast.processes)} were found")
+        __log.error(
+            f"The input SDL files shall contain exactly 1 process, but {len(ast.processes)} were found"
+        )
         sys.exit(1)
 
     return ast.processes[0]
 
-def translate(sdl_files : List[str], output_file_name : str) -> bool:
-    '''
+
+def translate(sdl_files: List[str], output_file_name: str) -> bool:
+    """
     Translate a list of SDL files describing a single process into a Promela model.
     :param sdl_files: List of files describing a single SDL process.
     :param output_file_name: Name of the file to write the output Promela model to.
     :returns: Whether the translation was succesful.
-    '''
+    """
     __log.info(f"Reading process from {sdl_files}")
     process = read_process(sdl_files)
     __log.info(f"Reading done")
@@ -87,7 +101,7 @@ def translate(sdl_files : List[str], output_file_name : str) -> bool:
 
     try:
         __log.info(f"Opening {output_file_name} for writing and generating output")
-        with open(output_file_name, 'w') as file:
+        with open(output_file_name, "w") as file:
             promelagenerator.generate_model(promela_model, file)
         __log.info(f"Generation done")
     except:
@@ -96,10 +110,11 @@ def translate(sdl_files : List[str], output_file_name : str) -> bool:
         return False
     return True
 
+
 def main():
-    '''
+    """
     The main entry point of sdl2promela translator.
-    '''
+    """
     logging.basicConfig(level=logging.ERROR)
     arguments = __parse_arguments()
     if arguments.verbose:
@@ -107,5 +122,6 @@ def main():
     if not translate(arguments.files, arguments.output_filename):
         sys.exit(1)
 
-if __name__== "__main__":
+
+if __name__ == "__main__":
     main()
