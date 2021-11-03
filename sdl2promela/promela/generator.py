@@ -4,54 +4,77 @@ from typing import List, Set, Text, Tuple, Type, TextIO
 from . import model
 
 INDENT = "  "
+'''A unit of indent.'''
 
 class Context:
+    '''Promela file generator context.'''
     stream : TextIO
+    '''Output stream.'''
     indents : List[str]
+    '''Stack of indents.'''
     pending_indent : bool
+    '''Whether there is a pending indent.'''
 
     def __init__(self, stream : TextIO):
         self.stream = stream
         self.indents = []
         self.pending_indent = False
 
-    def _print(self, data : str):
+    def __print(self, data : str):
         print(data, file=self.stream, end='')
 
-    def _indent(self):
-        self._print(self._get_indent())
+    def __indent(self):
+        self.__print(self.__get_indent())
         self.pending_indent = False
 
-    def _get_indent(self) -> str:
+    def __get_indent(self) -> str:
         return "".join((self.indents))
 
     def push_indent(self, indent : str):
+        '''
+        Increase indent by the given unit.
+        :param indent: Unit of indent by which to increase the total indent.
+        '''
         self.indents.append(indent)
 
     def pop_indent(self):
+        '''
+        Decrease indent.
+        '''
         self.indents.pop()
 
     def output(self, data : str):
+        '''
+        Write the data to the output stream, applying the indent.
+        :param data: Data to be written (may consist of several lines).
+        '''
         if self.pending_indent:
-            self._indent()
+            self.__indent()
         lines = data.splitlines(keepends=True)
         if len(lines) == 0:
             return
         for line in lines[:-1]:
-            self._print(line)
+            self.__print(line)
             if line.endswith("\n"):
-                self._indent()
-        self._print(lines[-1])
+                self.__indent()
+        self.__print(lines[-1])
         self.pending_indent = lines[-1].endswith("\n")
 
 class StatementsWrapper:
+    '''Wrapper for passing a list of statements as a single item compatible with dispatch mechanics.'''
     statements : List[model.Statement]
+    '''List of statements.'''
 
     def __init__(self, statements : List[model.Statement]):
         self.statements = statements
 
 @dispatch
 def generate(context, element):
+    '''
+    Generate output for the given element, using the given context.
+    :param context: Generator context.
+    :param element: Element to generate output for.
+    '''
     raise NotImplementedError("generate() not implemented for " + element)
 
 @dispatch(Context, model.BinaryExpression)
@@ -182,6 +205,11 @@ def generate(context : Context, model : model.Model):
     context.output(model.epilogue)
 
 def generate_model(model : model.Model, output : TextIO):
+    '''
+    Serialize the given Promela model to the output stream.
+    :param model: Model to be serialized.
+    :param output: Output stream to serialize the model to.
+    '''
     context = Context(output)
     generate(context, model)
     output.seek(0)
