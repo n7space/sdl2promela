@@ -78,4 +78,3 @@ def test_mode_reads_output():
     action = transition.actions[0]
     assert(isinstance(action, Output))
     assert(action.name == "signal_out")
-

@@ -37,4 +37,3 @@ def test_translates_bare_inputs():
 
 def test_translates_bare_outputs():
     translate_and_verify("bare_outputs.pr", "bare_outputs.pml")
-
