@@ -44,7 +44,7 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
         __log.error("IOError:" + error)
         traceback.print_exc()
         sys.exit(1)
-    except:
+    except Exception:
         __log.error("Unknown parsing error")
         traceback.print_exc()
         sys.exit(1)
@@ -84,7 +84,7 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     try:
         __log.info(f"Simplifying SDL model")
         sdl_model = sdlmodel.Model(process)
-    except:
+    except Exception:
         __log.error("SDL model simplification failed")
         traceback.print_exc()
         return False
@@ -93,7 +93,7 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     try:
         __log.info(f"Translating SDL into Promela")
         promela_model = translator.translate(sdl_model)
-    except:
+    except Exception:
         __log.error("SDL to Promela model translation failed")
         traceback.print_exc()
         return False
@@ -104,7 +104,7 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
         with open(output_file_name, "w") as file:
             promelagenerator.generate_model(promela_model, file)
         __log.info(f"Generation done")
-    except:
+    except Exception:
         __log.error("Promela model generation failed")
         traceback.print_exc()
         return False
