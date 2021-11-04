@@ -8,7 +8,7 @@ jobs:
     steps:
 
     - name: Setup python dependencies
-      run: pip3 install pytest opengeode black pyside2    
+      run: pip3 install pytest opengeode black pyside2 pygraphviz stringtemplate3 singledispatch pexpect
       
     - name: Hack antlr3 as required by opengeode
       run: 	mkdir tmp ;	cd /tmp ; wget -q -O - https://download.tuxfamily.org/taste/antlr3_python3_runtime_3.4.tar.bz2 | tar jxpvf - ; cd antlr3_python3_runtime_3.4 ; python3 -m pip install --user --upgrade .
