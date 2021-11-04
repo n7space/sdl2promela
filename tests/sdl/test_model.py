@@ -8,16 +8,11 @@ RESOURCE_DIR: str = os.path.join(TEST_DIR, "resources")
 
 
 def read_main_process(path: str) -> ogAST.Process:
-    try:
-        ast, warnings, errors = opengeode.parse([path])
-        assert len(warnings) == 0
-        assert len(errors) == 0
-        assert len(ast.processes) == 1
-        return ast.processes[0]
-    except BaseException as error:
-        print("Exception when reading main process: {0}".format(error))
-        assert False
-        return None
+    ast, warnings, errors = opengeode.parse([path])
+    assert len(warnings) == 0
+    assert len(errors) == 0
+    assert len(ast.processes) == 1
+    return ast.processes[0]
 
 
 def test_model_reads_states():
