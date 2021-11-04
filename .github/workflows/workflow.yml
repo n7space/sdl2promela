@@ -1,0 +1,19 @@
+name: Workflow
+on: [pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Functional check
+      run: make check
+
+    - name: Style check
+      run: make check-format
