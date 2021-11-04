@@ -2,9 +2,23 @@ name: Workflow
 on: [pull_request]
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    name: Setup
+    steps:
+    - name: pytest
+      run: pip3 install pytest
+
+    - name: opengeode
+      run: pip3 install opengeode
+
+    - name: black
+      run: pip3 install black
+
   check:
-    runs-on: python-latest
+    runs-on: ubuntu-latest
     name: Check
+    needs: setup
     steps:
 
     - name: Checkout code
