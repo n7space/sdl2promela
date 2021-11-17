@@ -15,6 +15,7 @@ check:
 	$(MAKE) -C tests check
 
 check-format:
+	${BLACK} --version
 	${BLACK} --check sdl2promela
 	${BLACK} --check tests
 
