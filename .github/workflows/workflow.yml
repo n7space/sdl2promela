@@ -1,0 +1,28 @@
+name: Workflow
+on: [pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+
+    - name: Setup apt dependencies
+      run: sudo apt install -y python3-pexpect python3-pygraphviz python3-stringtemplate3 python3-singledispatch spin
+
+    - name: Setup python dependencies
+      run: pip3 install pytest opengeode black==21.10b0 pyside2 multipledispatch
+      
+    - name: Hack antlr3 as required by opengeode
+      run: 	mkdir tmp ;	cd /tmp ; wget -q -O - https://download.tuxfamily.org/taste/antlr3_python3_runtime_3.4.tar.bz2 | tar jxpvf - ; cd antlr3_python3_runtime_3.4 ; python3 -m pip install --user --upgrade .
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Functional check
+      run: make check
+
+    - name: Style check
+      run: make check-format

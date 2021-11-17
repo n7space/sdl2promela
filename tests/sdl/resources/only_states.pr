@@ -1,0 +1,19 @@
+system only_states;
+
+block only_states;
+
+/* CIF PROCESS (183, 88), (150, 75) */
+process only_states;
+/* CIF START (123, 52), (70, 35) */
+START;
+    /* CIF NEXTSTATE (123, 107), (70, 35) */
+    NEXTSTATE state_1;
+/* CIF state (123, 107), (70, 35) */
+state state_1;    
+endstate;    
+/* CIF state (123, 217), (70, 35) */
+state state_2;    
+endstate;
+endprocess only_states;
+endblock;
+endsystem;

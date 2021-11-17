@@ -1,0 +1,3 @@
+inline test(a, b)
+{    
+}
