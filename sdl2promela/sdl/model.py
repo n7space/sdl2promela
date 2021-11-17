@@ -75,7 +75,7 @@ class Terminator(Action):
 
 
 class NextState(Terminator):
-    """ 'Next state action."""
+    """Next state action."""
 
     state_name: str
     """Next state name."""
