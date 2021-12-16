@@ -116,7 +116,7 @@ def __generate_statement(
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
     state_variable = __get_state_variable_name(sdl_model)
-    state = sdl_model.states[next_state.state_name]
+    state = sdl_model.states[next_state.state_name.lower()]
     state_name = __get_state_name(sdl_model, state)
     return (
         AssignmentBuilder()
