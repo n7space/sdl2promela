@@ -30,6 +30,7 @@ __TRANSITION_ID = "transition_id"
 __INVALID_ID = "-1"
 __STATE_VARIABLE = "state"
 __INIT = "init"
+__STATES_SEPARATOR = "_States_"
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
@@ -49,7 +50,7 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
-    return sdl_model.process_name + SEPARATOR + state.name
+    return sdl_model.process_name + __STATES_SEPARATOR + state.name
 
 
 def __get_remote_function_name(

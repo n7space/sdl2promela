@@ -1,4 +1,4 @@
-#define bare_outputs_0_state_1 1
+#define bare_outputs_States_state_1 1
 
 int bare_outputs_0_state;
 
