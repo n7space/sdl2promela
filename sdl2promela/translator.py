@@ -28,7 +28,7 @@ __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
 __TRANSITION_ID = "transition_id"
 __INVALID_ID = "-1"
-__STATE_VARIABLE = "state"
+__STATE_VARIABLE = "_States"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 
@@ -46,7 +46,7 @@ def __get_init_function_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
-    return sdl_model.process_name + SEPARATOR + __STATE_VARIABLE
+    return sdl_model.process_name + __STATE_VARIABLE
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
