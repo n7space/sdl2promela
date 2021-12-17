@@ -1,0 +1,58 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF START (601, 87), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (601, 137), (70, 35) */
+        NEXTSTATE Init;
+    /* CIF state (1230, 464), (70, 35) */
+    state Success;
+        /* CIF input (1230, 519), (70, 35) */
+        input success;
+            /* CIF NEXTSTATE (1230, 574), (70, 35) */
+            NEXTSTATE Success;
+    endstate;
+    /* CIF state (1549, 460), (70, 35) */
+    state Error;
+        /* CIF input (1549, 515), (70, 35) */
+        input success;
+            /* CIF NEXTSTATE (1549, 570), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1095, 446), (70, 35) */
+    state Success;
+        /* CIF input (1095, 501), (70, 35) */
+        input fail;
+            /* CIF NEXTSTATE (1095, 556), (70, 35) */
+            NEXTSTATE Success;
+    endstate;
+    /* CIF state (1362, 455), (70, 35) */
+    state Error;
+        /* CIF input (1362, 510), (70, 35) */
+        input fail;
+            /* CIF NEXTSTATE (1362, 565), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (789, 90), (70, 35) */
+    state Init;
+        /* CIF input (789, 145), (70, 35) */
+        input fail;
+            /* CIF output (789, 200), (70, 35) */
+            output test;
+            /* CIF NEXTSTATE (789, 255), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1076, 80), (70, 35) */
+    state Wait;
+        /* CIF input (1076, 135), (70, 35) */
+        input fail;
+            /* CIF NEXTSTATE (1076, 190), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1316, 90), (70, 35) */
+    state Wait;
+        /* CIF input (1316, 145), (70, 35) */
+        input success;
+            /* CIF NEXTSTATE (1316, 200), (70, 35) */
+            NEXTSTATE Success;
+    endstate;
+endprocess Controller;
