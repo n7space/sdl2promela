@@ -28,9 +28,10 @@ __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
 __TRANSITION_ID = "transition_id"
 __INVALID_ID = "-1"
-__STATE_VARIABLE = "_States"
+__STATE_VARIABLE = "state"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
+__GLOBAL_STATE = "global_state"
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
@@ -46,7 +47,19 @@ def __get_init_function_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
-    return sdl_model.process_name + __STATE_VARIABLE
+    return (
+        __GLOBAL_STATE + "." + sdl_model.process_name.lower() + "." + __STATE_VARIABLE
+    )
+
+
+def __get_variable_name(sdl_model: sdlmodel.Model, variable_name: str) -> str:
+    return (
+        __GLOBAL_STATE
+        + "."
+        + sdl_model.process_name.lower()
+        + "."
+        + variable_name.lower()
+    )
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
