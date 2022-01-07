@@ -4,7 +4,7 @@ on: [pull_request]
 jobs:
   check:
     runs-on: ubuntu-latest
-    container: ghcr.io/n7space/taste-dev-env:feature-tmc-80-docker-image
+    container: ghcr.io/n7space/taste-dev-env:main
     name: Check
     steps:    
 
