@@ -32,6 +32,7 @@ active proctype controller_success() priority 1
     int var0;
     do
     ::  controller_success_channel?var0;
+        printf("Received signal success\n");
         Controller_0_PI_0_success();
     od;
 }
@@ -50,12 +51,22 @@ active proctype actuator_test() priority 1
     int var0;
     do
     ::  actuator_test_channel?var0;
+        printf("Received signal test\n");
         Actuator_0_PI_0_test();
     od;
 }
-init
+active proctype environment() priority 1
 {
+    inited;
+    printf("Sending signal from environment\n");
+    int dummy;
+    actuator_test_channel!dummy;
+}
+init
+  {
+    printf("Initializing the system\n");
     Controller_0_init();
     Actuator_0_init();
+    printf("Starting the system\n");
     inited = 1;
 }

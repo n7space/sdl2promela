@@ -8,12 +8,16 @@ TESTS = \
 .PHONY : \
 	check \
 	unit \
-	integration
+	integration \
+	parameterless
 
 unit: ${TESTS}
-	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS}
+	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv
 
 integration:
 	${MAKE} -C integration check
 
-check: unit integration
+parameterless:
+	${MAKE} -C parameterless check
+
+check: unit integration parameterless
