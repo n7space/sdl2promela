@@ -1,7 +1,5 @@
-import typing
-from typing import List, Set, SupportsRound, Tuple, Type, Dict
+from typing import List, Dict
 from multipledispatch import dispatch
-import opengeode
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
@@ -129,12 +127,19 @@ def convert(source) -> Action:
     raise NotImplementedError("convert not implemented for " + source)
 
 
+@dispatch(ogAST.PrimVariable)
+def convert(source: ogAST.PrimVariable):
+    return source.inputString
+
+
 @dispatch(ogAST.Output)
 def convert(source: ogAST.Output) -> Action:
     output = Output()
     # TODO handle parameters
     output.name = source.output[0]["outputName"]
-    output.parameters = []
+    output.parameters = [
+        convert(expression) for expression in source.output[0]["params"]
+    ]
     return output
 
 
@@ -216,16 +221,16 @@ class Model:
             input.transitions = {}
             self.inputs[input.name] = input
         # Build transition list
-        for state_name in self.source.mapping:
+        for state_name, input_list in self.source.mapping.items():
             target = self.states[state_name]
-            input_list = self.source.mapping[state_name]
             if not isinstance(input_list, List):
                 continue
             # TODO - adjust for multiple inputs in inputString
             for input in input_list:
                 id = input.transition_id
-                trigger = self.inputs[input.inputString]
-                trigger.transitions[id] = target
+                for singleInput in input.inputlist:
+                    trigger = self.inputs[singleInput]
+                    trigger.transitions[id] = target
 
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
