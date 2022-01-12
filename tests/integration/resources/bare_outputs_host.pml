@@ -1,6 +1,14 @@
-#define bare_outputs_0_state_1 1
+#define bare_outputs_States_state_1 1
 
-int bare_outputs_0_state;
+typedef Bare_Outputs_Context {
+  int state;
+}
+
+typedef system_state {
+    Bare_Outputs_Context bare_outputs;
+}
+
+system_state global_state;
 
 // Include the inlines generated from SDL
 

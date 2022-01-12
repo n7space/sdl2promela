@@ -1,0 +1,21 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1035, 175), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param CustomInteger := 0;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (636, 149), (70, 35) */
+    state Wait;
+        /* CIF input (636, 204), (70, 35) */
+        input test;
+            /* CIF output (636, 259), (70, 35) */
+            output success;
+            /* CIF NEXTSTATE (636, 314), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

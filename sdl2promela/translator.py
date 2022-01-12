@@ -30,6 +30,8 @@ __TRANSITION_ID = "transition_id"
 __INVALID_ID = "-1"
 __STATE_VARIABLE = "state"
 __INIT = "init"
+__STATES_SEPARATOR = "_States_"
+__GLOBAL_STATE = "global_state"
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
@@ -45,11 +47,23 @@ def __get_init_function_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
-    return sdl_model.process_name + SEPARATOR + __STATE_VARIABLE
+    return (
+        __GLOBAL_STATE + "." + sdl_model.process_name.lower() + "." + __STATE_VARIABLE
+    )
+
+
+def __get_variable_name(sdl_model: sdlmodel.Model, variable_name: str) -> str:
+    return (
+        __GLOBAL_STATE
+        + "."
+        + sdl_model.process_name.lower()
+        + "."
+        + variable_name.lower()
+    )
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
-    return sdl_model.process_name + SEPARATOR + state.name
+    return sdl_model.process_name + __STATES_SEPARATOR + state.name
 
 
 def __get_remote_function_name(
@@ -115,7 +129,7 @@ def __generate_statement(
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
     state_variable = __get_state_variable_name(sdl_model)
-    state = sdl_model.states[next_state.state_name]
+    state = sdl_model.states[next_state.state_name.lower()]
     state_name = __get_state_name(sdl_model, state)
     return (
         AssignmentBuilder()
