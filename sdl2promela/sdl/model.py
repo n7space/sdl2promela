@@ -155,6 +155,17 @@ def convert(source: ogAST.Terminator) -> Action:
         raise ValueError("Unsupported terminator type: " + source)
     return None
 
+@dispatch(ogAST.Decision)
+def convert(source: ogAST.Decision) -> Action:
+    if source.kind == "question":
+        if source.question != None:
+            raise ValueError("Question " + source.question)
+        else:
+            raise ValueError("Empty (informal?) decision question")
+    else:
+        raise ValueError("Unsupported decision type: " + source.kind)
+    return None
+
 
 class Model:
     """SDL model in a simplified, normalized form (with no nested or parallel states)."""

@@ -57,7 +57,7 @@ def test_model_reads_transitions():
     assert signal_2_tid in model.transitions.keys()
 
 
-def test_mode_reads_next_state_action():
+def test_model_reads_next_state_action():
     path = os.path.join(RESOURCE_DIR, "bare_signals.pr")
     process = read_main_process(path)
 
@@ -77,7 +77,7 @@ def test_mode_reads_next_state_action():
     assert action_2.state_name == "state_1"
 
 
-def test_mode_reads_output():
+def test_model_reads_output():
     path = os.path.join(RESOURCE_DIR, "bare_outputs.pr")
     process = read_main_process(path)
 
@@ -89,3 +89,9 @@ def test_mode_reads_output():
     action = transition.actions[0]
     assert isinstance(action, Output)
     assert action.name == "signal_out"
+
+def test_model_reads_decision():
+    path = os.path.join(RESOURCE_DIR, "complex_sdl.pr")
+    process = read_main_process(path)
+
+    model = Model(process)
