@@ -3,6 +3,7 @@ from multipledispatch import dispatch
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
+from enum import Enum
 
 
 class State:
@@ -40,12 +41,62 @@ class Input:
         self.parameters = []
         self.transitions = {}
 
+class Expression:
+    """Base class for expressions."""
+
+    pass
+
+class Constant(Expression):
+    """Constant value."""
+
+    value: str
+    """Constant value ."""
+
+
+class VariableReference(Expression):
+    """Variable reference."""
+
+    variableName: str
+    """Variable name."""
+
+class BinaryOperator(Enum):
+    GREATER = 1
+    EQUAL = 2
+    LESS = 3
+    LEQUAL = 4
+    GEQUAL = 5
+    ADD = 6
+    SUB = 7
+    MUL = 8
+    DIV = 9
+
+class BinaryExpression(Expression):
+    """Expression involving a binary operator."""
+
+    operator : BinaryOperator
+    """Binary operator."""
+
+    left : Expression
+    """Left side of the expression, can be None if it is partial (e.g. used in Answer)."""
+
+    right : Expression
+    """Right side of the expression, can be None if it is partial (e.g. used in Answer)."""
 
 class Action:
     """Base class for a transition action."""
 
     pass
 
+class ActionSequence(Action):
+    """A sequence of actions."""
+
+
+    actions : List[Action]
+    """Actions."""
+
+
+    def __init__(self):
+        self.actions = []
 
 class Task(Action):
     """Task action."""
@@ -81,6 +132,15 @@ class NextState(Terminator):
     def __init__(self):
         self.state_name = None
 
+class Join(Terminator):
+    """Join action."""
+
+    label_name: str
+    """Label name."""
+
+    def __init__(self):
+        self.label_name = None
+
 
 class Label(Action):
     """Label action."""
@@ -88,14 +148,25 @@ class Label(Action):
     pass
 
 
-class Answer:
+class Answer(Action):
     """Answer to a Decision."""
 
-    pass
+    conditions : List[Expression]
+    """Guard condition."""
+
+    actions : ActionSequence
+    """Sequence of actions to be performed if the answer is applicable"""
+
+    def __init__(self):
+        self.actions = ActionSequence()
+        self.conditions = []
 
 
 class Decision(Action):
     """Decision action."""
+
+    condition : Expression
+    """Decision expression."""
 
     answers: List[Answer]
     """List of possible answers."""
@@ -116,6 +187,29 @@ class Transition:
         self.id = 0
         self.actions = []
 
+@dispatch
+def getBinaryOperatorEnum(op) -> BinaryOperator:
+    """
+    Convert OpenGEODE's binary operator to a consistent enumerated value.
+    :param op: Operator.
+    :returns: Binary operator.
+    """
+    raise NotImplementedError("getBinaryOperatorEnum not implemented for " + op)
+
+@dispatch(str)
+def getBinaryOperatorEnum(op : str) -> BinaryOperator:
+    if op == ">":
+        return BinaryOperator.GREATER
+    else:
+        raise ValueError("Unsupported operator: " + op)
+
+@dispatch(type)
+def getBinaryOperatorEnum(op : type) -> BinaryOperator:
+    if op == ogAST.ExprGt:
+        return BinaryOperator.GREATER
+    else:
+        raise ValueError("Unsupported operator: " + op.__name__)
+
 
 @dispatch
 def convert(source) -> Action:
@@ -129,7 +223,29 @@ def convert(source) -> Action:
 
 @dispatch(ogAST.PrimVariable)
 def convert(source: ogAST.PrimVariable):
-    return source.inputString
+    variableReference = VariableReference()
+    variableReference.variableName = source.inputString
+    return variableReference
+
+@dispatch(ogAST.PrimInteger)
+def convert(source: ogAST.PrimInteger):
+    constant = Constant()
+    constant.value = source.value
+    return constant
+
+@dispatch(ogAST.PrimBoolean)
+def convert(source: ogAST.PrimBoolean):
+    constant = Constant()
+    constant.value = source.value
+    return constant
+
+@dispatch(ogAST.ExprGt)
+def convert(source: ogAST.ExprGt):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
 
 
 @dispatch(ogAST.Output)
@@ -151,15 +267,53 @@ def convert(source: ogAST.Terminator) -> Action:
         next_state = NextState()
         next_state.state_name = source.inputString
         return next_state
+    elif source.kind == "join":
+        join = Join()
+        join.label_name = source.inputString
+        return join
     else:
         raise ValueError("Unsupported terminator type: " + source)
     return None
+
+@dispatch(ogAST.Answer)
+def convert(source: ogAST.Answer) -> Action:
+    answer = Answer()
+    for item in source.answers:
+        if item["kind"] == "open_range":
+            expression = BinaryExpression()
+            expression.operator = getBinaryOperatorEnum(item["content"][0])
+            expression.right = convert(item["content"][1])
+            answer.conditions.append(expression)
+        elif item["kind"] == "constant":
+            expression = BinaryExpression()
+            expression.operator = BinaryOperator.EQUAL
+            expression.right = convert(item["content"][1])
+            answer.conditions.append(expression)
+        else:
+            raise ValueError("Unsupported answer kind: " + item["kind"])
+
+    transition = source.transition
+    for source_action in transition.actions:
+        action = convert(source_action)
+        if action is not None:
+            answer.actions.actions.append(action)
+    for terminator in transition.terminators:
+        action = convert(terminator)
+        if action is not None:
+            answer.actions.actions.append(action)
+
+    return answer
 
 @dispatch(ogAST.Decision)
 def convert(source: ogAST.Decision) -> Action:
     if source.kind == "question":
         if source.question != None:
-            raise ValueError("Question " + source.question)
+            decision = Decision()
+            decision.condition = convert(source.question)
+            for sourceAnswer in source.answers:
+                answer = convert(sourceAnswer)
+                decision.answers.append(answer)
+            return decision
         else:
             raise ValueError("Empty (informal?) decision question")
     else:
