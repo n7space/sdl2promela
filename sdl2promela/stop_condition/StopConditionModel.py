@@ -2,109 +2,137 @@
 # -*- coding: utf-8 -*-
 
 from typing import List, Union
+from abc import ABC, abstractmethod
 
 
-class Expression:
-    pass
+class Expression(ABC):
+    @abstractmethod
+    def visit(self, visitor: "AbstractVisitor"):
+        pass
 
 
 class BinaryExpression(Expression):
     def __init__(self, lhs: Expression, rhs: Expression):
-        super().__init__()
         self.lhs = lhs
         self.rhs = rhs
 
 
 class OrExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_or(self)
 
 
 class AndExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_and(self)
 
 
 class XorExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_xor(self)
 
 
 class EqualExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit.equal(self)
 
 
 class NotEqualExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit.not_equal(self)
 
 
 class LessExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_less(self)
 
 
 class LessEqualExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_less_equal(self)
 
 
 class GreaterExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_greater(self)
 
 
 class GreaterEqualExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_greater_equal(self)
 
 
 class NotExpression(Expression):
     def __init__(self, expr: Expression):
-        super().__init__()
         self.expr = expr
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_not(self)
 
 
 class PlusExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_plus(self)
 
 
 class MinusExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_minus(self)
 
 
 class MulExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_mul(self)
 
 
 class DivExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_div(self)
 
 
 class ModExpression(BinaryExpression):
-    pass
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_mod(self)
 
 
 class NegationExpression(Expression):
     def __init__(self, expr: Expression):
-        super().__init__()
         self.expr = expr
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_negation(self)
 
 
 class IntegerValue(Expression):
     def __init__(self, value: int):
-        super().__init__()
         self.value = value
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_integer(self)
 
 
 class FloatValue(Expression):
     def __init__(self, value: float):
-        super().__init__()
         self.value = value
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_float(self)
 
 
 class BooleanValue(Expression):
     def __init__(self, value: bool):
-        super().__init__()
         self.value = value
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_boolean(self)
 
 
 class VariableReference(Expression):
     def __init__(self, name: str):
-        super().__init__()
         self.name = name
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_variable(self)
 
 
 class Selector(Expression):
@@ -112,15 +140,109 @@ class Selector(Expression):
     SelectorElement = List[Union[VariableReference, "CallExpression"]]
 
     def __init__(self, elements: List[SelectorElement]):
-        super().__init__()
         self.elements = elements
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_selector(self)
 
 
 class CallExpression(Expression):
     def __init__(self, function: Expression, parameters: List[Expression]):
-        super().__init__()
         self.function = function
         self.parameters = parameters
+
+    def visit(self, visitor: "AbstractVisitor"):
+        visitor.visit_call(self)
+
+
+class AbstractVisitor(ABC):
+    @abstractmethod
+    def visit_or(expr: OrExpression):
+        pass
+
+    @abstractmethod
+    def visit_and(expr: AndExpression):
+        pass
+
+    @abstractmethod
+    def visit_xor(expr: AndExpression):
+        pass
+
+    @abstractmethod
+    def visit_equal(expr: EqualExpression):
+        pass
+
+    @abstractmethod
+    def visit_not_equal(expr: NotEqualExpression):
+        pass
+
+    @abstractmethod
+    def visit_less(expr: LessExpression):
+        pass
+
+    @abstractmethod
+    def visit_less_equal(expr: LessEqualExpression):
+        pass
+
+    @abstractmethod
+    def visit_greater(expr: GreaterExpression):
+        pass
+
+    @abstractmethod
+    def visit_greater_equal(expr: GreaterEqualExpression):
+        pass
+
+    @abstractmethod
+    def visit_not(expr: NotExpression):
+        pass
+
+    @abstractmethod
+    def visit_plus(expr: PlusExpression):
+        pass
+
+    @abstractmethod
+    def visit_minus(expr: MinusExpression):
+        pass
+
+    @abstractmethod
+    def visit_mul(expr: MulExpression):
+        pass
+
+    @abstractmethod
+    def visit_div(expr: DivExpression):
+        pass
+
+    @abstractmethod
+    def visit_mod(expr: ModExpression):
+        pass
+
+    @abstractmethod
+    def visit_negation(expr: NegationExpression):
+        pass
+
+    @abstractmethod
+    def visit_integer(expr: IntegerValue):
+        pass
+
+    @abstractmethod
+    def visit_float(expr: FloatValue):
+        pass
+
+    @abstractmethod
+    def visit_boolean(expr: BooleanValue):
+        pass
+
+    @abstractmethod
+    def visit_variable(expr: VariableReference):
+        pass
+
+    @abstractmethod
+    def visit_selector(expr: Selector):
+        pass
+
+    @abstractmethod
+    def visit_call(expr: CallExpression):
+        pass
 
 
 class AlwaysStatement:
