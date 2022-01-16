@@ -91,17 +91,6 @@ class Action:
 
     pass
 
-class ActionSequence(Action):
-    """A sequence of actions."""
-
-
-    actions : List[Action]
-    """Actions."""
-
-
-    def __init__(self):
-        self.actions = []
-
 class Task(Action):
     """Task action."""
 
@@ -158,11 +147,11 @@ class Answer(Action):
     conditions : List[Expression]
     """Guard condition."""
 
-    actions : ActionSequence
+    actions : List[Action]
     """Sequence of actions to be performed if the answer is applicable"""
 
     def __init__(self):
-        self.actions = ActionSequence()
+        self.actions = []
         self.conditions = []
 
 
@@ -282,7 +271,12 @@ def convert(source: ogAST.PrimVariable):
 @dispatch(ogAST.PrimInteger)
 def convert(source: ogAST.PrimInteger):
     constant = Constant()
-    constant.value = source.value
+    if isinstance(source.value, list):
+        if len(source.value) != 1:
+            raise ValueError("Source value is an array with an unsupported number of elements: " + len(source.value))
+        constant.value = source.value[0]
+    else:
+        constant.value = source.value
     return constant
 
 @dispatch(ogAST.PrimBoolean)
@@ -290,6 +284,46 @@ def convert(source: ogAST.PrimBoolean):
     constant = Constant()
     constant.value = source.value
     return constant
+
+@dispatch(ogAST.ExprPlus)
+def convert(source: ogAST.ExprPlus):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprMul)
+def convert(source: ogAST.ExprMul):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprMinus)
+def convert(source: ogAST.ExprMinus):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprEq)
+def convert(source: ogAST.ExprEq):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprNeq)
+def convert(source: ogAST.ExprNeq):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
 
 @dispatch(ogAST.ExprGt)
 def convert(source: ogAST.ExprGt):
@@ -299,6 +333,61 @@ def convert(source: ogAST.ExprGt):
     expression.right = convert(source.right)
     return expression
 
+@dispatch(ogAST.ExprGe)
+def convert(source: ogAST.ExprGe):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprLt)
+def convert(source: ogAST.ExprLt):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprLe)
+def convert(source: ogAST.ExprLe):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprDiv)
+def convert(source: ogAST.ExprDiv):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprMod)
+def convert(source: ogAST.ExprMod):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprRem)
+def convert(source: ogAST.ExprRem):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression
+
+@dispatch(ogAST.ExprAssign)
+def convert(source: ogAST.ExprAssign):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = getBinaryOperatorEnum(source.operand)
+    expression.right = convert(source.right)
+    return expression                                                
 
 @dispatch(ogAST.Output)
 def convert(source: ogAST.Output) -> Action:
@@ -348,11 +437,11 @@ def convert(source: ogAST.Answer) -> Action:
     for source_action in transition.actions:
         action = convert(source_action)
         if action is not None:
-            answer.actions.actions.append(action)
+            answer.actions.append(action)
     for terminator in transition.terminators:
         action = convert(terminator)
         if action is not None:
-            answer.actions.actions.append(action)
+            answer.actions.append(action)
 
     return answer
 

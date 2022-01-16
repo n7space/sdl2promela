@@ -1,6 +1,6 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl.model import Model, NextState, Output
+from sdl2promela.sdl.model import BinaryExpression, Decision, Model, NextState, Output, VariableReference, BinaryOperator
 import os
 
 TEST_DIR: str = os.path.dirname(os.path.realpath(__file__))
@@ -91,7 +91,30 @@ def test_model_reads_output():
     assert action.name == "signal_out"
 
 def test_model_reads_decision():
-    path = os.path.join(RESOURCE_DIR, "complex_sdl.pr")
+    path = os.path.join(RESOURCE_DIR, "value_based_decision.pr")
     process = read_main_process(path)
 
     model = Model(process)
+
+    assert len(model.transitions) == 2
+    decision = model.transitions[1].actions[0]
+    assert isinstance(decision, Decision)
+    assert isinstance(decision.condition, VariableReference)
+    assert decision.condition.variableName == "tmp"
+    assert len(decision.answers) == 2
+
+    assert len(decision.answers[0].conditions) == 1
+    assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
+    assert decision.answers[0].conditions[0].operator == BinaryOperator.GREATER    
+    assert decision.answers[0].conditions[0].right.value == "0"
+    assert len(decision.answers[0].actions) == 1
+    assert isinstance(decision.answers[0].actions[0], NextState)
+
+    assert len(decision.answers[1].conditions) == 1
+    assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
+    assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
+    assert decision.answers[1].conditions[0].right.value == "0"    
+    assert len(decision.answers[1].actions) == 1
+    assert isinstance(decision.answers[1].actions[0], NextState)
+
+    
