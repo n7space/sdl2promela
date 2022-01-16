@@ -167,7 +167,6 @@ class Decision(Action):
     def __init__(self):
         self.answers = []
 
-
 class Transition:
     """SDL state machine transition."""
 
@@ -178,6 +177,18 @@ class Transition:
 
     def __init__(self):
         self.id = 0
+        self.actions = []
+
+class FloatingLabel:
+    """SDL Floating (not attached directly to action sequence) Label"""
+
+    name : str
+    """Label name"""
+    actions: List[Action]
+    """List of label transition actions."""
+
+    def __init__(self):
+        self.name = ""
         self.actions = []
 
 @dispatch
@@ -392,7 +403,7 @@ def convert(source: ogAST.ExprAssign):
     expression.left = convert(source.left)
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
-    return expression                                                
+    return expression
 
 @dispatch(ogAST.Output)
 def convert(source: ogAST.Output) -> Action:
@@ -472,6 +483,8 @@ class Model:
 
     process_name: str
     """SDL process name."""
+    floating_labels : Dict[str, FloatingLabel]
+    """Map associating floating label names with the labels themselves"""
     states: Dict[str, State]
     """Map associating state names with the states themselves."""
     inputs: Dict[str, Input]
@@ -485,12 +498,14 @@ class Model:
         self.source = process
         Helper.flatten(process, sep=SEPARATOR)
         self.process_name = process.processName
+        self.floating_labels = {}
         self.states = {}
         self.inputs = {}
         self.transitions = {}
         self.__gather_states()
         self.__gather_inputs()
         self.__gather_transitions()
+        self.__gather_floating_labels()
 
     def __gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -560,3 +575,19 @@ class Model:
         for i in range(0, len(self.source.transitions)):
             self.transitions[i] = self.__convert_transition(self.source.transitions[i])
             self.transitions[i].id = i
+
+    def __gather_floating_labels(self):
+        for src_label in self.source.content.floating_labels:
+            dst_label = FloatingLabel()
+            dst_label.name = src_label.inputString
+            src_transition = src_label.transition
+            for src_action in src_transition.actions:
+                action = convert(src_action)
+                if action is not None:
+                    dst_label.actions.append(action)
+            for src_terminator in src_transition.terminators:
+                action = convert(src_terminator)
+                if action is not None:
+                    dst_label.actions.append(action)
+            self.floating_labels[dst_label.name] = dst_label
+

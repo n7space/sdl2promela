@@ -105,7 +105,7 @@ def test_model_reads_value_based_decision():
 
     assert len(decision.answers[0].conditions) == 1
     assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
-    assert decision.answers[0].conditions[0].operator == BinaryOperator.GREATER    
+    assert decision.answers[0].conditions[0].operator == BinaryOperator.GREATER
     assert decision.answers[0].conditions[0].right.value == "0"
     assert len(decision.answers[0].actions) == 1
     assert isinstance(decision.answers[0].actions[0], NextState)
@@ -113,7 +113,7 @@ def test_model_reads_value_based_decision():
     assert len(decision.answers[1].conditions) == 1
     assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
     assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
-    assert decision.answers[1].conditions[0].right.value == "0"    
+    assert decision.answers[1].conditions[0].right.value == "0"
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 
@@ -129,14 +129,14 @@ def test_model_reads_expression_based_decision():
     assert isinstance(decision.condition, BinaryExpression)
     assert isinstance(decision.condition.left, VariableReference)
     assert decision.condition.left.variableName == "tmp"
-    assert decision.condition.operator == BinaryOperator.GREATER        
+    assert decision.condition.operator == BinaryOperator.GREATER
     assert isinstance(decision.condition.right, Constant)
     assert decision.condition.right.value == "0"
     assert len(decision.answers) == 2
 
     assert len(decision.answers[0].conditions) == 1
     assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
-    assert decision.answers[0].conditions[0].operator == BinaryOperator.EQUAL    
+    assert decision.answers[0].conditions[0].operator == BinaryOperator.EQUAL
     assert decision.answers[0].conditions[0].right.value == "true"
     assert len(decision.answers[0].actions) == 1
     assert isinstance(decision.answers[0].actions[0], NextState)
@@ -144,7 +144,20 @@ def test_model_reads_expression_based_decision():
     assert len(decision.answers[1].conditions) == 1
     assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
     assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
-    assert decision.answers[1].conditions[0].right.value == "false"  
+    assert decision.answers[1].conditions[0].right.value == "false"
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
-    
+
+def test_model_reads_joins():
+    path = os.path.join(RESOURCE_DIR, "join.pr")
+    process = read_main_process(path)
+
+    model = Model(process)
+
+    assert len(model.floating_labels) == 1
+    label = model.floating_labels["jump"]
+    assert label is not None
+    assert label.name == "jump"
+    assert len(label.actions) == 2
+    assert isinstance(label.actions[0], Output)
+    assert isinstance(label.actions[1], NextState)
