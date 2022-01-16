@@ -60,15 +60,19 @@ class VariableReference(Expression):
     """Variable name."""
 
 class BinaryOperator(Enum):
-    GREATER = 1
-    EQUAL = 2
+    EQUAL = 0
+    NEQUAL = 1
+    GREATER = 2
     LESS = 3
     LEQUAL = 4
     GEQUAL = 5
-    ADD = 6
-    SUB = 7
+    PLUS = 6
+    MINUS = 7
     MUL = 8
     DIV = 9
+    MOD = 10
+    REM = 11
+    ASSIGN = 12
 
 class BinaryExpression(Expression):
     """Expression involving a binary operator."""
@@ -198,15 +202,63 @@ def getBinaryOperatorEnum(op) -> BinaryOperator:
 
 @dispatch(str)
 def getBinaryOperatorEnum(op : str) -> BinaryOperator:
-    if op == ">":
+    if op == "+":
+        return BinaryOperator.PLUS
+    elif op == "*":
+        return BinaryOperator.MUL
+    elif op == "-":
+        return BinaryOperator.MINUS
+    elif op == "=":
+        return BinaryOperator.EQUAL
+    elif op == "/=":
+        return BinaryOperator.NEQUAL
+    elif op == ">":
         return BinaryOperator.GREATER
+    elif op == ">=":
+        return BinaryOperator.GEQUAL
+    elif op == "<":
+        return BinaryOperator.LESS
+    elif op == "<=":
+        return BinaryOperator.LEQUAL
+    elif op == "/":
+        return BinaryOperator.DIV
+    elif op.lower() == "mod":
+        return BinaryOperator.MOD
+    elif op.lower() == "rem":
+        return BinaryOperator.REM
+    elif op == ":=":
+        return BinaryOperator.ASSIGN
     else:
         raise ValueError("Unsupported operator: " + op)
 
 @dispatch(type)
 def getBinaryOperatorEnum(op : type) -> BinaryOperator:
-    if op == ogAST.ExprGt:
+    if op == ogAST.ExprPlus:
+        return BinaryOperator.PLUS
+    elif op == ogAST.ExprMul:
+        return BinaryOperator.MUL
+    elif op == ogAST.ExprMinus:
+        return BinaryOperator.MINUS
+    elif op == ogAST.ExprEq:
+        return BinaryOperator.EQUAL
+    elif op == ogAST.ExprNeq:
+        return BinaryOperator.NEQUAL
+    elif op == ogAST.ExprGt:
         return BinaryOperator.GREATER
+    elif op == ogAST.ExprGe:
+        return BinaryOperator.GEQUAL
+    elif op == ogAST.ExprLt:
+        return BinaryOperator.LESS
+    elif op == ogAST.ExprLe:
+        return BinaryOperator.LEQUAL
+    elif op == ogAST.ExprDiv:
+        return BinaryOperator.DIV
+    elif op == ogAST.ExprMod:
+        return BinaryOperator.MOD
+    elif op == ogAST.ExprRem:
+        return BinaryOperator.REM
+    elif op == ogAST.ExprAssign:
+        return BinaryOperator.ASSIGN
     else:
         raise ValueError("Unsupported operator: " + op.__name__)
 
