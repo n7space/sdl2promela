@@ -1,15 +1,27 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl.model import BinaryExpression, Constant, Decision, Model, NextState, Output, VariableReference, BinaryOperator
+from sdl2promela.sdl.model import (
+    AssignmentTask,
+    BinaryExpression,
+    Constant,
+    Decision,
+    Join,
+    Label,
+    Model,
+    NextState,
+    Output,
+    VariableReference,
+    BinaryOperator,
+)
 import os
 
 TEST_DIR: str = os.path.dirname(os.path.realpath(__file__))
 RESOURCE_DIR: str = os.path.join(TEST_DIR, "resources")
 
 
-def read_main_process(path: str) -> ogAST.Process:
+def read_main_process(path: str, expected_warning_count: int = 0) -> ogAST.Process:
     ast, warnings, errors = opengeode.parse([path])
-    assert len(warnings) == 0
+    assert len(warnings) == expected_warning_count
     assert len(errors) == 0
     assert len(ast.processes) == 1
     return ast.processes[0]
@@ -90,6 +102,7 @@ def test_model_reads_output():
     assert isinstance(action, Output)
     assert action.name == "signal_out"
 
+
 def test_model_reads_value_based_decision():
     path = os.path.join(RESOURCE_DIR, "value_based_decision.pr")
     process = read_main_process(path)
@@ -116,6 +129,7 @@ def test_model_reads_value_based_decision():
     assert decision.answers[1].conditions[0].right.value == "0"
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
+
 
 def test_model_reads_expression_based_decision():
     path = os.path.join(RESOURCE_DIR, "expression_based_decision.pr")
@@ -148,6 +162,7 @@ def test_model_reads_expression_based_decision():
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 
+
 def test_model_reads_joins():
     path = os.path.join(RESOURCE_DIR, "join.pr")
     process = read_main_process(path)
@@ -161,3 +176,35 @@ def test_model_reads_joins():
     assert len(label.actions) == 2
     assert isinstance(label.actions[0], Output)
     assert isinstance(label.actions[1], NextState)
+
+    assert len(model.transitions) == 2
+    actions = model.transitions[1].actions
+    assert len(actions) == 1
+    assert isinstance(actions[0], Join)
+    assert actions[0].label_name == "jump"
+
+
+def test_model_reads_join_based_loop():
+    path = os.path.join(RESOURCE_DIR, "loop.pr")
+    # There are 2 expected warning regarding the range
+    process = read_main_process(path, 2)
+
+    model = Model(process)
+
+    assert len(model.floating_labels) == 0
+    assert len(model.transitions) == 2
+    actions = model.transitions[1].actions
+    assert len(actions) == 7
+    assert isinstance(actions[0], AssignmentTask)
+    assert isinstance(actions[1], AssignmentTask)
+    assert isinstance(actions[2], Label)
+    assert actions[2].name == "loop_start"
+    assert isinstance(actions[3], Decision)
+    decision = actions[3]
+    assert len(decision.answers) == 2
+    assert len(decision.answers[0].actions) == 0
+    assert len(decision.answers[1].actions) == 3
+    assert isinstance(decision.answers[1].actions[0], AssignmentTask)
+    assert isinstance(decision.answers[1].actions[1], AssignmentTask)
+    assert isinstance(decision.answers[1].actions[2], Join)
+    assert decision.answers[1].actions[2].label_name == "loop_start"

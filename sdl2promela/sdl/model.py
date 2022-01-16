@@ -41,10 +41,12 @@ class Input:
         self.parameters = []
         self.transitions = {}
 
+
 class Expression:
     """Base class for expressions."""
 
     pass
+
 
 class Constant(Expression):
     """Constant value."""
@@ -58,6 +60,7 @@ class VariableReference(Expression):
 
     variableName: str
     """Variable name."""
+
 
 class BinaryOperator(Enum):
     EQUAL = 0
@@ -74,27 +77,37 @@ class BinaryOperator(Enum):
     REM = 11
     ASSIGN = 12
 
+
 class BinaryExpression(Expression):
     """Expression involving a binary operator."""
 
-    operator : BinaryOperator
+    operator: BinaryOperator
     """Binary operator."""
 
-    left : Expression
+    left: Expression
     """Left side of the expression, can be None if it is partial (e.g. used in Answer)."""
 
-    right : Expression
+    right: Expression
     """Right side of the expression, can be None if it is partial (e.g. used in Answer)."""
+
 
 class Action:
     """Base class for a transition action."""
 
     pass
 
+
 class Task(Action):
     """Task action."""
 
     pass
+
+
+class AssignmentTask(Task):
+    """Assignment action."""
+
+    assignment: BinaryExpression
+    """Assignment expression"""
 
 
 class Output(Action):
@@ -125,6 +138,7 @@ class NextState(Terminator):
     def __init__(self):
         self.state_name = None
 
+
 class Join(Terminator):
     """Join action."""
 
@@ -138,16 +152,17 @@ class Join(Terminator):
 class Label(Action):
     """Label action."""
 
-    pass
+    name: str
+    """Label name."""
 
 
 class Answer(Action):
     """Answer to a Decision."""
 
-    conditions : List[Expression]
+    conditions: List[Expression]
     """Guard condition."""
 
-    actions : List[Action]
+    actions: List[Action]
     """Sequence of actions to be performed if the answer is applicable"""
 
     def __init__(self):
@@ -158,7 +173,7 @@ class Answer(Action):
 class Decision(Action):
     """Decision action."""
 
-    condition : Expression
+    condition: Expression
     """Decision expression."""
 
     answers: List[Answer]
@@ -166,6 +181,7 @@ class Decision(Action):
 
     def __init__(self):
         self.answers = []
+
 
 class Transition:
     """SDL state machine transition."""
@@ -179,10 +195,11 @@ class Transition:
         self.id = 0
         self.actions = []
 
+
 class FloatingLabel:
     """SDL Floating (not attached directly to action sequence) Label"""
 
-    name : str
+    name: str
     """Label name"""
     actions: List[Action]
     """List of label transition actions."""
@@ -190,6 +207,25 @@ class FloatingLabel:
     def __init__(self):
         self.name = ""
         self.actions = []
+
+
+def appendAllActions(destination, source):
+    """
+    Append all actions (and terminators) from the source to the destination.
+    This function can be though of as a template, as the source and destination
+    types can vary.
+    """
+    if source.actions is not None:
+        for source_action in source.actions:
+            action = convert(source_action)
+            if action is not None:
+                destination.actions.append(action)
+    if source.terminators is not None:
+        for terminator in source.terminators:
+            action = convert(terminator)
+            if action is not None:
+                destination.actions.append(action)
+
 
 @dispatch
 def getBinaryOperatorEnum(op) -> BinaryOperator:
@@ -200,8 +236,9 @@ def getBinaryOperatorEnum(op) -> BinaryOperator:
     """
     raise NotImplementedError("getBinaryOperatorEnum not implemented for " + op)
 
+
 @dispatch(str)
-def getBinaryOperatorEnum(op : str) -> BinaryOperator:
+def getBinaryOperatorEnum(op: str) -> BinaryOperator:
     if op == "+":
         return BinaryOperator.PLUS
     elif op == "*":
@@ -231,8 +268,9 @@ def getBinaryOperatorEnum(op : str) -> BinaryOperator:
     else:
         raise ValueError("Unsupported operator: " + op)
 
+
 @dispatch(type)
-def getBinaryOperatorEnum(op : type) -> BinaryOperator:
+def getBinaryOperatorEnum(op: type) -> BinaryOperator:
     if op == ogAST.ExprPlus:
         return BinaryOperator.PLUS
     elif op == ogAST.ExprMul:
@@ -273,33 +311,60 @@ def convert(source) -> Action:
     raise NotImplementedError("convert not implemented for " + source)
 
 
+@dispatch(ogAST.Label)
+def convert(source: ogAST.Label):
+    label = Label()
+    label.name = source.inputString
+    return label
+
+
+@dispatch(ogAST.TaskAssign)
+def convert(source: ogAST.TaskAssign):
+    if len(source.elems) != 1:
+        raise ValueError(
+            "Assignment with an unsupported number of elements: " + len(source.elems)
+        )
+    task = AssignmentTask()
+    task.assignment = convert(source.elems[0])
+    return task
+
+
 @dispatch(ogAST.PrimVariable)
 def convert(source: ogAST.PrimVariable):
     variableReference = VariableReference()
     variableReference.variableName = source.inputString
     return variableReference
 
+
 @dispatch(ogAST.PrimInteger)
 def convert(source: ogAST.PrimInteger):
     constant = Constant()
     if isinstance(source.value, list):
         if len(source.value) != 1:
-            raise ValueError("Source value is an array with an unsupported number of elements: " + len(source.value))
+            raise ValueError(
+                "Source value is an array with an unsupported number of elements: "
+                + len(source.value)
+            )
         constant.value = source.value[0]
     else:
         constant.value = source.value
     return constant
+
 
 @dispatch(ogAST.PrimBoolean)
 def convert(source: ogAST.PrimBoolean):
     constant = Constant()
     if isinstance(source.value, list):
         if len(source.value) != 1:
-            raise ValueError("Source value is an array with an unsupported number of elements: " + len(source.value))
+            raise ValueError(
+                "Source value is an array with an unsupported number of elements: "
+                + len(source.value)
+            )
         constant.value = source.value[0]
     else:
         constant.value = source.value
     return constant
+
 
 @dispatch(ogAST.ExprPlus)
 def convert(source: ogAST.ExprPlus):
@@ -309,6 +374,7 @@ def convert(source: ogAST.ExprPlus):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprMul)
 def convert(source: ogAST.ExprMul):
     expression = BinaryExpression()
@@ -316,6 +382,7 @@ def convert(source: ogAST.ExprMul):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.ExprMinus)
 def convert(source: ogAST.ExprMinus):
@@ -325,6 +392,7 @@ def convert(source: ogAST.ExprMinus):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprEq)
 def convert(source: ogAST.ExprEq):
     expression = BinaryExpression()
@@ -332,6 +400,7 @@ def convert(source: ogAST.ExprEq):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.ExprNeq)
 def convert(source: ogAST.ExprNeq):
@@ -341,6 +410,7 @@ def convert(source: ogAST.ExprNeq):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprGt)
 def convert(source: ogAST.ExprGt):
     expression = BinaryExpression()
@@ -348,6 +418,7 @@ def convert(source: ogAST.ExprGt):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.ExprGe)
 def convert(source: ogAST.ExprGe):
@@ -357,6 +428,7 @@ def convert(source: ogAST.ExprGe):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprLt)
 def convert(source: ogAST.ExprLt):
     expression = BinaryExpression()
@@ -364,6 +436,7 @@ def convert(source: ogAST.ExprLt):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.ExprLe)
 def convert(source: ogAST.ExprLe):
@@ -373,6 +446,7 @@ def convert(source: ogAST.ExprLe):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprDiv)
 def convert(source: ogAST.ExprDiv):
     expression = BinaryExpression()
@@ -380,6 +454,7 @@ def convert(source: ogAST.ExprDiv):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.ExprMod)
 def convert(source: ogAST.ExprMod):
@@ -389,6 +464,7 @@ def convert(source: ogAST.ExprMod):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprRem)
 def convert(source: ogAST.ExprRem):
     expression = BinaryExpression()
@@ -397,6 +473,7 @@ def convert(source: ogAST.ExprRem):
     expression.right = convert(source.right)
     return expression
 
+
 @dispatch(ogAST.ExprAssign)
 def convert(source: ogAST.ExprAssign):
     expression = BinaryExpression()
@@ -404,6 +481,7 @@ def convert(source: ogAST.ExprAssign):
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
 
 @dispatch(ogAST.Output)
 def convert(source: ogAST.Output) -> Action:
@@ -432,6 +510,7 @@ def convert(source: ogAST.Terminator) -> Action:
         raise ValueError("Unsupported terminator type: " + source)
     return None
 
+
 @dispatch(ogAST.Answer)
 def convert(source: ogAST.Answer) -> Action:
     answer = Answer()
@@ -450,16 +529,11 @@ def convert(source: ogAST.Answer) -> Action:
             raise ValueError("Unsupported answer kind: " + item["kind"])
 
     transition = source.transition
-    for source_action in transition.actions:
-        action = convert(source_action)
-        if action is not None:
-            answer.actions.append(action)
-    for terminator in transition.terminators:
-        action = convert(terminator)
-        if action is not None:
-            answer.actions.append(action)
+    if transition is not None:
+        appendAllActions(answer, transition)
 
     return answer
+
 
 @dispatch(ogAST.Decision)
 def convert(source: ogAST.Decision) -> Action:
@@ -483,7 +557,7 @@ class Model:
 
     process_name: str
     """SDL process name."""
-    floating_labels : Dict[str, FloatingLabel]
+    floating_labels: Dict[str, FloatingLabel]
     """Map associating floating label names with the labels themselves"""
     states: Dict[str, State]
     """Map associating state names with the states themselves."""
@@ -561,14 +635,7 @@ class Model:
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
         transition.actions = []
-        for source_action in source.actions:
-            action = convert(source_action)
-            if action is not None:
-                transition.actions.append(action)
-        for terminator in source.terminators:
-            action = convert(terminator)
-            if action is not None:
-                transition.actions.append(action)
+        appendAllActions(transition, source)
         return transition
 
     def __gather_transitions(self):
@@ -581,13 +648,6 @@ class Model:
             dst_label = FloatingLabel()
             dst_label.name = src_label.inputString
             src_transition = src_label.transition
-            for src_action in src_transition.actions:
-                action = convert(src_action)
-                if action is not None:
-                    dst_label.actions.append(action)
-            for src_terminator in src_transition.terminators:
-                action = convert(src_terminator)
-                if action is not None:
-                    dst_label.actions.append(action)
+            if src_transition is not None:
+                appendAllActions(dst_label, src_transition)
             self.floating_labels[dst_label.name] = dst_label
-
