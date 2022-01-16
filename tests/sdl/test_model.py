@@ -1,6 +1,6 @@
 import opengeode
 from opengeode import ogAST
-from sdl2promela.sdl.model import BinaryExpression, Decision, Model, NextState, Output, VariableReference, BinaryOperator
+from sdl2promela.sdl.model import BinaryExpression, Constant, Decision, Model, NextState, Output, VariableReference, BinaryOperator
 import os
 
 TEST_DIR: str = os.path.dirname(os.path.realpath(__file__))
@@ -90,7 +90,7 @@ def test_model_reads_output():
     assert isinstance(action, Output)
     assert action.name == "signal_out"
 
-def test_model_reads_decision():
+def test_model_reads_value_based_decision():
     path = os.path.join(RESOURCE_DIR, "value_based_decision.pr")
     process = read_main_process(path)
 
@@ -117,4 +117,34 @@ def test_model_reads_decision():
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 
+def test_model_reads_expression_based_decision():
+    path = os.path.join(RESOURCE_DIR, "expression_based_decision.pr")
+    process = read_main_process(path)
+
+    model = Model(process)
+
+    assert len(model.transitions) == 2
+    decision = model.transitions[1].actions[0]
+    assert isinstance(decision, Decision)
+    assert isinstance(decision.condition, BinaryExpression)
+    assert isinstance(decision.condition.left, VariableReference)
+    assert decision.condition.left.variableName == "tmp"
+    assert decision.condition.operator == BinaryOperator.GREATER        
+    assert isinstance(decision.condition.right, Constant)
+    assert decision.condition.right.value == "0"
+    assert len(decision.answers) == 2
+
+    assert len(decision.answers[0].conditions) == 1
+    assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
+    assert decision.answers[0].conditions[0].operator == BinaryOperator.EQUAL    
+    assert decision.answers[0].conditions[0].right.value == "true"
+    assert len(decision.answers[0].actions) == 1
+    assert isinstance(decision.answers[0].actions[0], NextState)
+
+    assert len(decision.answers[1].conditions) == 1
+    assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
+    assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
+    assert decision.answers[1].conditions[0].right.value == "false"  
+    assert len(decision.answers[1].actions) == 1
+    assert isinstance(decision.answers[1].actions[0], NextState)
     

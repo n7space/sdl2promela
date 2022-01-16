@@ -282,7 +282,12 @@ def convert(source: ogAST.PrimInteger):
 @dispatch(ogAST.PrimBoolean)
 def convert(source: ogAST.PrimBoolean):
     constant = Constant()
-    constant.value = source.value
+    if isinstance(source.value, list):
+        if len(source.value) != 1:
+            raise ValueError("Source value is an array with an unsupported number of elements: " + len(source.value))
+        constant.value = source.value[0]
+    else:
+        constant.value = source.value
     return constant
 
 @dispatch(ogAST.ExprPlus)
