@@ -122,7 +122,40 @@ class AssignmentTask(Task):
     """Assignment action."""
 
     assignment: BinaryExpression
-    """Assignment expression"""
+    """Assignment expression."""
+
+class ForLoopRange:
+    """Base class for ranges that can be iterated over"""
+    pass
+
+class NumericForLoopRange(ForLoopRange):
+    """Numeric range that can be iterated over"""
+
+    start : int
+    """Start of the range, inclusive."""
+    
+    stop : int
+    """End of the range, exclusive."""
+
+    step : int
+    """Iteration step, defaults to 1."""
+
+    def __init__(self):
+        self.start = 0
+        self.stop = 0
+        self.step = 1
+
+class ForLoopTask(Task):
+    """Task with a for loop."""
+
+    iteratorName : str
+    """Name of the iterator variable."""
+
+    range : ForLoopRange
+    """Range to iterate over."""
+
+    actions : List[Action]
+    """List of actions to be executed within the loop"""
 
 
 class Output(Action):
@@ -334,6 +367,23 @@ def convert(source: ogAST.Label):
     label.name = source.inputString
     return label
 
+@dispatch(ogAST.TaskForLoop)
+def convert(source: ogAST.TaskForLoop):    
+    if len(source.elems) != 1:
+        raise ValueError(
+            "Assignment with an unsupported number of elements: " + len(source.elems)
+        )
+    for_loop = source.elems[0]
+    task = ForLoopTask()
+    task.iteratorName = for_loop["var"]
+    if (for_loop["range"]):
+        range = NumericForLoopRange()
+        range.start = convert(for_loop["range"]["start"])
+        range.stop = convert(for_loop["range"]["stop"])
+        range.step = convert(for_loop["range"]["step"])
+        task.range = range
+
+    return task
 
 @dispatch(ogAST.TaskAssign)
 def convert(source: ogAST.TaskAssign):
@@ -352,6 +402,12 @@ def convert(source: ogAST.PrimVariable):
     variableReference.variableName = source.inputString
     return variableReference
 
+
+@dispatch(int)
+def convert(source: int):
+    constant = Constant()    
+    constant.value = str(source)
+    return constant
 
 @dispatch(ogAST.PrimInteger)
 def convert(source: ogAST.PrimInteger):

@@ -208,3 +208,11 @@ def test_model_reads_join_based_loop():
     assert isinstance(decision.answers[1].actions[1], AssignmentTask)
     assert isinstance(decision.answers[1].actions[2], Join)
     assert decision.answers[1].actions[2].label_name == "loop_start"
+
+def test_model_reads_for_with_range():
+    path = os.path.join(RESOURCE_DIR, "for_with_range.pr")
+    # There are 2 expected warning regarding the range
+    process = read_main_process(path, 2)
+
+    model = Model(process)
+    
