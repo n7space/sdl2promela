@@ -1,6 +1,4 @@
-import typing
-from typing import List, Set, SupportsRound, Tuple, Type, Dict
-from enum import Enum
+from typing import List, Union
 
 from sdl2promela.promela.model import (
     InlineParameter,
@@ -8,8 +6,6 @@ from sdl2promela.promela.model import (
     Inline,
     Alternative,
     Block,
-    Break,
-    Skip,
     Switch,
     Do,
     Statement,
@@ -20,6 +16,11 @@ from sdl2promela.promela.model import (
     BinaryExpression,
     BinaryOperator,
     BlockType,
+    UnaryExpression,
+    UnaryOperator,
+    Expression,
+    ArrayAccess,
+    MtypeAccess,
 )
 
 
@@ -365,6 +366,105 @@ class BinaryExpressionBuilder:
         :returns: The buider itself (for call chaining).
         """
         self.expression.right = right
+        return self
+
+
+class UnaryExpressionBuilder:
+    """Unary expression builder."""
+
+    expression: UnaryExpression
+    """Build unary expression."""
+
+    def __init__(self, operator: UnaryOperator):
+        self.expression = UnaryExpression()
+        self.expression.operator = operator
+
+    def build(self) -> UnaryExpression:
+        """
+        Retrieve the built unary expression.
+        :returns: The built expression.
+        """
+        return self.expression
+
+    def withExpression(self, expr: Expression) -> "UnaryExpressionBuilder":
+        """
+        Set the expression.
+        :param expr: the expression to be set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.expression.expr = expr
+        return self
+
+
+class ArrayAccessBuilder:
+    """ArrayAccess builder."""
+
+    arrayAccess: ArrayAccess
+    """Built variable reference."""
+
+    def __init__(self):
+        self.arrayAccess = ArrayAccess()
+
+    def build(self) -> ArrayAccess:
+        """
+        Retrieve the built array access expression.
+        :returns: The built expression.
+        """
+        return self.arrayAccess
+
+    def withArray(
+        self, array: Union[VariableReference, MtypeAccess]
+    ) -> "ArrayAccessBuilder":
+        """
+        Set the reference to array.
+        :param array: the reference to array to be set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.arrayAccess.variable = array
+        return self
+
+    def withIndex(self, index: Expression) -> "ArrayAccessBuilder":
+        """
+        Set the index expression.
+        :param index: the index expression to be set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.arrayAccess.index = index
+        return self
+
+
+class MtypeAccessBuilder:
+    """Mtype access builder."""
+
+    mtypeAccess: MtypeAccess
+    """Build mtype access expression."""
+
+    def __init__(self):
+        self.mtypeAccess = MtypeAccess()
+
+    def build(self) -> MtypeAccess:
+        """
+        Retrieve the built mtype access expression.
+        :returns: The built expression.
+        """
+        return self.mtypeAccess
+
+    def withMtype(self, mtype: Union[MtypeAccess, ArrayAccess, VariableReference]):
+        """
+        Set the reference to mtype.
+        :param mtype: the reference to mtype;
+        :returns: The buider itself (for call chaining).
+        """
+        self.mtypeAccess.mtype = mtype
+        return self
+
+    def withField(self, field: VariableReference):
+        """
+        Set the field of mtype;
+        :param field: the field to set;
+        :returns: The buider itself (for call chaining).
+        """
+        self.mtypeAccess.field = field
         return self
 
 

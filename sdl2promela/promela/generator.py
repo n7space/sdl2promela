@@ -105,7 +105,22 @@ def generate(context: Context, expression: model.BinaryExpression):
         context.output(" <= ")
     elif expression.operator == model.BinaryOperator.GEQUAL:
         context.output(" >= ")
+    elif expression.operator == model.BinaryOperator.MODULO:
+        context.output(" % ")
+    elif expression.operator == model.BinaryOperator.NEQUAL:
+        context.output(" != ")
     generate(context, expression.right)
+    context.output(")")
+
+
+@dispatch(Context, model.UnaryExpression)
+def generate(context: Context, expression: model.UnaryExpression):
+    context.output("(")
+    if expression.operator == model.UnaryOperator.NOT:
+        context.output("! ")
+    if expression.operator == model.UnaryOperator.NEGATIVE:
+        context.output("- ")
+    generate(context, expression.expr)
     context.output(")")
 
 
@@ -119,6 +134,46 @@ def generate(context: Context, call: model.Call):
         if i != last_index:
             context.output(", ")
     context.output(")")
+
+
+@dispatch(Context, model.IntegerValue)
+def generate(context: Context, integerValue: model.IntegerValue):
+    context.output(str(integerValue.value))
+
+
+@dispatch(Context, model.FloatValue)
+def generate(context: Context, floatValue: model.FloatValue):
+    context.output(str(floatValue.value))
+
+
+@dispatch(Context, model.BooleanValue)
+def generate(context: Context, booleanValue: model.BooleanValue):
+    if booleanValue.value:
+        context.output("true")
+    else:
+        context.output("false")
+
+
+@dispatch(Context, model.Parentheses)
+def generate(context: Context, parentheses: model.Parentheses):
+    context.output("(")
+    generate(context, parentheses.expr)
+    context.output(")")
+
+
+@dispatch(Context, model.ArrayAccess)
+def generate(context: Context, arrayAccess: model.ArrayAccess):
+    generate(context, arrayAccess.variable)
+    context.output("[")
+    generate(context, arrayAccess.index)
+    context.output("]")
+
+
+@dispatch(Context, model.MtypeAccess)
+def generate(context: Context, mtypeAccess: model.MtypeAccess):
+    generate(context, mtypeAccess.mtype)
+    context.output(".")
+    generate(context, mtypeAccess.field)
 
 
 @dispatch(Context, model.VariableDeclaration)

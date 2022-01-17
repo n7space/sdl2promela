@@ -1,5 +1,4 @@
-import typing
-from typing import List, Set, SupportsRound, Tuple, Type, Dict
+from typing import List, Union
 from enum import Enum
 
 
@@ -9,53 +8,10 @@ class Statement:
     pass
 
 
-class VariableDeclaration(Statement):
-    """Variable declaration statement."""
+class Expression(Statement):
+    """Promela expression"""
 
-    name: str
-    """Variable name."""
-    type: str
-    """Variable type."""
-
-    def __init__(self):
-        self.name = None
-        self.type = None
-
-
-class VariableReference(Statement):
-    """Variable reference statement."""
-
-    name: str
-    """Variable name."""
-
-    def __init__(self):
-        self.name = None
-
-
-class Call(Statement):
-    """Invocation of an inline function statement."""
-
-    target: str
-    """Target inline name."""
-    parameters: List[Statement]
-    """List of parameter values."""
-
-    def __init__(self):
-        self.target = None
-        self.parameters = []
-
-
-class Assignment(Statement):
-    """Assignment statement."""
-
-    target: VariableReference
-    """Target variable"""
-    source: Statement
-    """Value to be assigned."""
-
-    def __init__(self):
-        self.target = None
-        self.source = None
+    pass
 
 
 class BinaryOperator(Enum):
@@ -79,22 +35,173 @@ class BinaryOperator(Enum):
     """Less or equal test operator."""
     GEQUAL = 9
     """Greater or equal test operator."""
+    MODULO = 10
+    """Modulo operator."""
+    NEQUAL = 11
+    """Not equal test operator."""
 
 
-class BinaryExpression(Statement):
+class BinaryExpression(Expression):
     """Binary expression statement."""
 
     operator: BinaryOperator
     """Binary operator."""
-    left: Statement
+    left: Expression
     """Left side of the expression."""
-    right: Statement
+    right: Expression
     """Right side of the expression."""
 
     def __init__(self):
         self.operator = None
         self.left = None
         self.right = None
+
+
+class UnaryOperator(Enum):
+    """Unary operator."""
+
+    NOT = 1
+    """Logical not operator"""
+
+    NEGATIVE = 2
+    """Arithmetic unary minus"""
+
+
+class UnaryExpression(Expression):
+    """Unary expression"""
+
+    operator: UnaryOperator
+    """Unary operator"""
+
+    expr: Expression
+    """Expression"""
+
+    def __init__(self):
+        self.operator = None
+        self.expr = None
+
+
+class PrimaryExpression(Expression):
+    """Base class for primary expressions"""
+
+    pass
+
+
+class IntegerValue(PrimaryExpression):
+    """Integer primary expression"""
+
+    value: int
+    """Integer value of primary expression"""
+
+    def __init__(self, value: int):
+        self.value = value
+
+
+class FloatValue(PrimaryExpression):
+    """Float primary expression"""
+
+    value: float
+    """Float value of primary expression"""
+
+    def __init__(self, value: float):
+        self.value = value
+
+
+class BooleanValue(PrimaryExpression):
+    """Boolean primary expression"""
+
+    value: bool
+    """Boolean value of primary expression"""
+
+    def __init__(self, value: bool):
+        self.value = value
+
+
+class Parentheses(PrimaryExpression):
+    """Parentheses for grouping expressions"""
+
+    expr: Expression
+    """Expression inside parentheses"""
+
+    def __init__(self):
+        self.expr = None
+
+
+class VariableDeclaration(Statement):
+    """Variable declaration statement."""
+
+    name: str
+    """Variable name."""
+    type: str
+    """Variable type."""
+
+    def __init__(self):
+        self.name = None
+        self.type = None
+
+
+class VariableReference(PrimaryExpression):
+    """Variable reference expression."""
+
+    name: str
+    """Variable name."""
+
+    def __init__(self):
+        self.name = None
+
+
+class ArrayAccess(Expression):
+    """Access to element of array"""
+
+    variable: Union[VariableReference, "MtypeAccess"]
+    """Reference to array variable"""
+
+    index: Expression
+    """Expression to calculate index in the array"""
+
+    def __init__(self):
+        self.variable = None
+        self.index = None
+
+
+class MtypeAccess(Expression):
+    """Access to the field of mtype"""
+
+    mtype: Union["MtypeAccess", ArrayAccess, VariableReference]
+    """Left side - reference to mtype"""
+
+    field: VariableReference
+    """Name of field"""
+
+    def __init__(self):
+        self.mtype = None
+        self.index = None
+
+
+class Call(Statement):
+    """Invocation of an inline function statement."""
+
+    target: str
+    """Target inline name."""
+    parameters: List[Expression]
+    """List of parameter values."""
+
+    def __init__(self):
+        self.target = None
+        self.parameters = []
+
+
+class Assignment(Statement):
+    """Assignment statement."""
+
+    target: VariableReference
+    """Target variable"""
+    source: Expression
+    """Value to be assigned."""
+
+    def __init__(self):
+        self.target = None
+        self.source = None
 
 
 class BlockType(Enum):

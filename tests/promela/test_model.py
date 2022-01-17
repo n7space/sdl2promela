@@ -1,4 +1,5 @@
 from sdl2promela.promela.model import Model
+from sdl2promela.promela.model import Skip, IntegerValue, FloatValue, BooleanValue
 from sdl2promela.promela.generator import generate_model
 from sdl2promela.promela.modelbuilder import *
 import os
@@ -176,6 +177,15 @@ def test_binary_operators():
                             .build()
                         )
                         .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("d").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.MODULO)
+                            .withLeft(VariableReferenceBuilder("c").build())
+                            .withRight(VariableReferenceBuilder("2").build())
+                            .build()
+                        )
+                        .build(),
                     ]
                 )
                 .build()
@@ -186,6 +196,326 @@ def test_binary_operators():
     )
 
     generate_and_verify(model, "binary_operators.pml")
+
+
+def test_comparision_operators():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.EQUAL)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.NEQUAL)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.LESS)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.LEQUAL)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.GREATER)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            BinaryExpressionBuilder(BinaryOperator.GEQUAL)
+                            .withLeft(VariableReferenceBuilder("b").build())
+                            .withRight(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "comparision_operators.pml")
+
+
+def test_unary_operators():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            UnaryExpressionBuilder(UnaryOperator.NOT)
+                            .withExpression(VariableReferenceBuilder("b").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("c").build())
+                        .withSource(
+                            UnaryExpressionBuilder(UnaryOperator.NEGATIVE)
+                            .withExpression(VariableReferenceBuilder("d").build())
+                            .build()
+                        )
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "unary_operators.pml")
+
+
+def test_values():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(IntegerValue(0))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(IntegerValue(-65536))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(IntegerValue(65536))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("x").build())
+                        .withSource(FloatValue(0.0))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("x").build())
+                        .withSource(FloatValue(-5.5))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("x").build())
+                        .withSource(FloatValue(5.5))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("b").build())
+                        .withSource(BooleanValue(True))
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("b").build())
+                        .withSource(BooleanValue(False))
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "values.pml")
+
+
+def test_simple_array_access():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            ArrayAccessBuilder()
+                            .withArray(VariableReferenceBuilder("b").build())
+                            .withIndex(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            ArrayAccessBuilder()
+                            .withArray(VariableReferenceBuilder("b").build())
+                            .withIndex(
+                                BinaryExpressionBuilder(BinaryOperator.ADD)
+                                .withLeft(IntegerValue(1))
+                                .withRight(IntegerValue(1))
+                                .build()
+                            )
+                            .build()
+                        )
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "simple_array_access.pml")
+
+
+def test_simple_mtype_access():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            MtypeAccessBuilder()
+                            .withMtype(VariableReferenceBuilder("b").build())
+                            .withField(VariableReferenceBuilder("c").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            MtypeAccessBuilder()
+                            .withMtype(
+                                MtypeAccessBuilder()
+                                .withMtype(VariableReferenceBuilder("b").build())
+                                .withField(VariableReferenceBuilder("c").build())
+                                .build()
+                            )
+                            .withField(VariableReferenceBuilder("d").build())
+                            .build()
+                        )
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "simple_mtype_access.pml")
+
+
+def test_complex_array_and_mtype_access():
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(
+                BlockBuilder(BlockType.BLOCK)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            MtypeAccessBuilder()
+                            .withMtype(
+                                ArrayAccessBuilder()
+                                .withArray(VariableReferenceBuilder("b").build())
+                                .withIndex(IntegerValue(0))
+                                .build()
+                            )
+                            .withField(VariableReferenceBuilder("d").build())
+                            .build()
+                        )
+                        .build(),
+                        AssignmentBuilder()
+                        .withTarget(VariableReferenceBuilder("a").build())
+                        .withSource(
+                            ArrayAccessBuilder()
+                            .withArray(
+                                MtypeAccessBuilder()
+                                .withMtype(
+                                    MtypeAccessBuilder()
+                                    .withMtype(
+                                        ArrayAccessBuilder()
+                                        .withArray(
+                                            VariableReferenceBuilder("b").build()
+                                        )
+                                        .withIndex(IntegerValue(0))
+                                        .build()
+                                    )
+                                    .withField(VariableReferenceBuilder("d").build())
+                                    .build()
+                                )
+                                .withField(VariableReferenceBuilder("e").build())
+                                .build()
+                            )
+                            .withIndex(IntegerValue(1))
+                            .build()
+                        )
+                        .build(),
+                    ]
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "complex_array_and_mtype_access.pml")
 
 
 def test_call():
