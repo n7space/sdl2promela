@@ -63,19 +63,34 @@ class VariableReference(Expression):
 
 
 class BinaryOperator(Enum):
+    """Binary operator for use in expressions."""
+
     EQUAL = 0
+    """=="""
     NEQUAL = 1
+    """!="""
     GREATER = 2
+    """>"""
     LESS = 3
+    """<"""
     LEQUAL = 4
+    """<="""
     GEQUAL = 5
+    """>="""
     PLUS = 6
+    """+"""
     MINUS = 7
+    """-"""
     MUL = 8
+    """*"""
     DIV = 9
+    """/"""
     MOD = 10
+    """mod - modulo"""
     REM = 11
+    """rem - modulo's remainder"""
     ASSIGN = 12
+    """:="""
 
 
 class BinaryExpression(Expression):
@@ -214,6 +229,8 @@ def appendAllActions(destination, source):
     Append all actions (and terminators) from the source to the destination.
     This function can be though of as a template, as the source and destination
     types can vary.
+    :param destination: Destination container with "actions" member of type List[Action].
+    :param source:  Source container with "actions" and "terminator" members.
     """
     if source.actions is not None:
         for source_action in source.actions:
