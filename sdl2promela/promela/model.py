@@ -73,7 +73,7 @@ class UnaryExpression(Expression):
     operator: UnaryOperator
     """Unary operator"""
 
-    expr: Expression
+    expression: Expression
     """Expression"""
 
     def __init__(self):
@@ -120,11 +120,11 @@ class BooleanValue(PrimaryExpression):
 class Parentheses(PrimaryExpression):
     """Parentheses for grouping expressions"""
 
-    expr: Expression
+    expression: Expression
     """Expression inside parentheses"""
 
     def __init__(self):
-        self.expr = None
+        self.expression = None
 
 
 class VariableDeclaration(Statement):
@@ -153,7 +153,7 @@ class VariableReference(PrimaryExpression):
 class ArrayAccess(Expression):
     """Access to element of array"""
 
-    variable: Union[VariableReference, "MtypeAccess"]
+    variable: Union[VariableReference, "MemberAccess"]
     """Reference to array variable"""
 
     index: Expression
@@ -164,18 +164,18 @@ class ArrayAccess(Expression):
         self.index = None
 
 
-class MtypeAccess(Expression):
-    """Access to the field of mtype"""
+class MemberAccess(Expression):
+    """Access to the member of utype"""
 
-    mtype: Union["MtypeAccess", ArrayAccess, VariableReference]
-    """Left side - reference to mtype"""
+    utype: Union["MemberAccess", ArrayAccess, VariableReference]
+    """Left side - reference to utype"""
 
-    field: VariableReference
-    """Name of field"""
+    member: VariableReference
+    """Name of member"""
 
     def __init__(self):
-        self.mtype = None
-        self.index = None
+        self.utype = None
+        self.member = None
 
 
 class Call(Statement):

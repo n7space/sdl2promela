@@ -198,7 +198,7 @@ def test_binary_operators():
     generate_and_verify(model, "binary_operators.pml")
 
 
-def test_comparision_operators():
+def test_comparison_operators():
     model = (
         ModelBuilder()
         .withInline(
@@ -271,7 +271,7 @@ def test_comparision_operators():
         .build()
     )
 
-    generate_and_verify(model, "comparision_operators.pml")
+    generate_and_verify(model, "comparison_operators.pml")
 
 
 def test_unary_operators():
@@ -424,23 +424,25 @@ def test_simple_mtype_access():
                         AssignmentBuilder()
                         .withTarget(VariableReferenceBuilder("a").build())
                         .withSource(
-                            MtypeAccessBuilder()
-                            .withMtype(VariableReferenceBuilder("b").build())
-                            .withField(VariableReferenceBuilder("c").build())
+                            MemberAccessBuilder()
+                            .withUtypeReference(VariableReferenceBuilder("b").build())
+                            .withMember(VariableReferenceBuilder("c").build())
                             .build()
                         )
                         .build(),
                         AssignmentBuilder()
                         .withTarget(VariableReferenceBuilder("a").build())
                         .withSource(
-                            MtypeAccessBuilder()
-                            .withMtype(
-                                MtypeAccessBuilder()
-                                .withMtype(VariableReferenceBuilder("b").build())
-                                .withField(VariableReferenceBuilder("c").build())
+                            MemberAccessBuilder()
+                            .withUtypeReference(
+                                MemberAccessBuilder()
+                                .withUtypeReference(
+                                    VariableReferenceBuilder("b").build()
+                                )
+                                .withMember(VariableReferenceBuilder("c").build())
                                 .build()
                             )
-                            .withField(VariableReferenceBuilder("d").build())
+                            .withMember(VariableReferenceBuilder("d").build())
                             .build()
                         )
                         .build(),
@@ -469,14 +471,14 @@ def test_complex_array_and_mtype_access():
                         AssignmentBuilder()
                         .withTarget(VariableReferenceBuilder("a").build())
                         .withSource(
-                            MtypeAccessBuilder()
-                            .withMtype(
+                            MemberAccessBuilder()
+                            .withUtypeReference(
                                 ArrayAccessBuilder()
                                 .withArray(VariableReferenceBuilder("b").build())
                                 .withIndex(IntegerValue(0))
                                 .build()
                             )
-                            .withField(VariableReferenceBuilder("d").build())
+                            .withMember(VariableReferenceBuilder("d").build())
                             .build()
                         )
                         .build(),
@@ -485,10 +487,10 @@ def test_complex_array_and_mtype_access():
                         .withSource(
                             ArrayAccessBuilder()
                             .withArray(
-                                MtypeAccessBuilder()
-                                .withMtype(
-                                    MtypeAccessBuilder()
-                                    .withMtype(
+                                MemberAccessBuilder()
+                                .withUtypeReference(
+                                    MemberAccessBuilder()
+                                    .withUtypeReference(
                                         ArrayAccessBuilder()
                                         .withArray(
                                             VariableReferenceBuilder("b").build()
@@ -496,10 +498,10 @@ def test_complex_array_and_mtype_access():
                                         .withIndex(IntegerValue(0))
                                         .build()
                                     )
-                                    .withField(VariableReferenceBuilder("d").build())
+                                    .withMember(VariableReferenceBuilder("d").build())
                                     .build()
                                 )
-                                .withField(VariableReferenceBuilder("e").build())
+                                .withMember(VariableReferenceBuilder("e").build())
                                 .build()
                             )
                             .withIndex(IntegerValue(1))

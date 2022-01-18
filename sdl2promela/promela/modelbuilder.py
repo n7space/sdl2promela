@@ -20,7 +20,7 @@ from sdl2promela.promela.model import (
     UnaryOperator,
     Expression,
     ArrayAccess,
-    MtypeAccess,
+    MemberAccess,
 )
 
 
@@ -386,13 +386,13 @@ class UnaryExpressionBuilder:
         """
         return self.expression
 
-    def withExpression(self, expr: Expression) -> "UnaryExpressionBuilder":
+    def withExpression(self, expression: Expression) -> "UnaryExpressionBuilder":
         """
         Set the expression.
-        :param expr: the expression to be set.
+        :param expression: the expression to be set.
         :returns: The buider itself (for call chaining).
         """
-        self.expression.expr = expr
+        self.expression.expression = expression
         return self
 
 
@@ -413,7 +413,7 @@ class ArrayAccessBuilder:
         return self.arrayAccess
 
     def withArray(
-        self, array: Union[VariableReference, MtypeAccess]
+        self, array: Union[VariableReference, MemberAccess]
     ) -> "ArrayAccessBuilder":
         """
         Set the reference to array.
@@ -433,38 +433,41 @@ class ArrayAccessBuilder:
         return self
 
 
-class MtypeAccessBuilder:
-    """Mtype access builder."""
+class MemberAccessBuilder:
+    """Member access builder."""
 
-    mtypeAccess: MtypeAccess
-    """Build mtype access expression."""
+    memberAccess: MemberAccess
+    """Build member access expression."""
 
     def __init__(self):
-        self.mtypeAccess = MtypeAccess()
+        self.memberAccess = MemberAccess()
 
-    def build(self) -> MtypeAccess:
+    def build(self) -> MemberAccess:
         """
-        Retrieve the built mtype access expression.
+        Retrieve the built member access expression.
         :returns: The built expression.
         """
-        return self.mtypeAccess
+        return self.memberAccess
 
-    def withMtype(self, mtype: Union[MtypeAccess, ArrayAccess, VariableReference]):
+    def withUtypeReference(
+        self, utypeReference: Union[MemberAccess, ArrayAccess, VariableReference]
+    ):
         """
-        Set the reference to mtype.
-        :param mtype: the reference to mtype;
+        Set the reference to utype.
+        :param utypeReference: the reference to utype, which might be:
+        reference to variable, element of array or member in another utype
         :returns: The buider itself (for call chaining).
         """
-        self.mtypeAccess.mtype = mtype
+        self.memberAccess.utype = utypeReference
         return self
 
-    def withField(self, field: VariableReference):
+    def withMember(self, member: VariableReference):
         """
-        Set the field of mtype;
+        Set the member of utype;
         :param field: the field to set;
         :returns: The buider itself (for call chaining).
         """
-        self.mtypeAccess.field = field
+        self.memberAccess.member = member
         return self
 
 

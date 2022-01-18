@@ -120,7 +120,7 @@ def generate(context: Context, expression: model.UnaryExpression):
         context.output("! ")
     if expression.operator == model.UnaryOperator.NEGATIVE:
         context.output("- ")
-    generate(context, expression.expr)
+    generate(context, expression.expression)
     context.output(")")
 
 
@@ -157,7 +157,7 @@ def generate(context: Context, booleanValue: model.BooleanValue):
 @dispatch(Context, model.Parentheses)
 def generate(context: Context, parentheses: model.Parentheses):
     context.output("(")
-    generate(context, parentheses.expr)
+    generate(context, parentheses.expression)
     context.output(")")
 
 
@@ -169,11 +169,11 @@ def generate(context: Context, arrayAccess: model.ArrayAccess):
     context.output("]")
 
 
-@dispatch(Context, model.MtypeAccess)
-def generate(context: Context, mtypeAccess: model.MtypeAccess):
-    generate(context, mtypeAccess.mtype)
+@dispatch(Context, model.MemberAccess)
+def generate(context: Context, memberAccess: model.MemberAccess):
+    generate(context, memberAccess.utype)
     context.output(".")
-    generate(context, mtypeAccess.field)
+    generate(context, memberAccess.member)
 
 
 @dispatch(Context, model.VariableDeclaration)
