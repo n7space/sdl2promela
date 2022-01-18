@@ -225,11 +225,14 @@ class Model:
             target = self.states[state_name]
             if not isinstance(input_list, List):
                 continue
-            # TODO - adjust for multiple inputs in inputString
-            for input in input_list:
-                id = input.transition_id
-                for singleInput in input.inputlist:
-                    trigger = self.inputs[singleInput]
+            for input_block in input_list:
+                id = input_block.transition_id
+                # One Input block may refer to multiple signals,
+                # Using '*' or ','
+                # Iterate over all possible input signals
+                # and add transitions
+                for single_input in input_block.inputlist:
+                    trigger = self.inputs[single_input]
                     trigger.transitions[id] = target
 
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
