@@ -411,7 +411,7 @@ def test_simple_array_access():
     generate_and_verify(model, "simple_array_access.pml")
 
 
-def test_simple_mtype_access():
+def test_simple_member_access():
     model = (
         ModelBuilder()
         .withInline(
@@ -455,10 +455,10 @@ def test_simple_mtype_access():
         .build()
     )
 
-    generate_and_verify(model, "simple_mtype_access.pml")
+    generate_and_verify(model, "simple_member_access.pml")
 
 
-def test_complex_array_and_mtype_access():
+def test_complex_array_and_member_access():
     model = (
         ModelBuilder()
         .withInline(
@@ -517,7 +517,7 @@ def test_complex_array_and_mtype_access():
         .build()
     )
 
-    generate_and_verify(model, "complex_array_and_mtype_access.pml")
+    generate_and_verify(model, "complex_array_and_member_access.pml")
 
 
 def test_call():
