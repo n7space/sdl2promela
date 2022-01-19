@@ -10,7 +10,9 @@ class Expression(ABC):
 
     @abstractmethod
     def visit(self, visitor: "AbstractVisitor"):
-        """Abstract method for expression visitor."""
+        """Abstract method for expression visitor.
+        :param visitor: AbstractVisitor instance.
+        """
         pass
 
 
@@ -32,7 +34,9 @@ class OrExpression(BinaryExpression):
     """Stop Condition or expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'or'."""
+        """Implementation of method for expression visitor for 'or'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_or(self)
 
 
@@ -40,7 +44,9 @@ class AndExpression(BinaryExpression):
     """Stop Condition and expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'and'."""
+        """Implementation of method for expression visitor for 'and'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_and(self)
 
 
@@ -48,7 +54,9 @@ class XorExpression(BinaryExpression):
     """Stop Condition xor expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'xor'."""
+        """Implementation of method for expression visitor for 'xor'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_xor(self)
 
 
@@ -56,7 +64,9 @@ class EqualExpression(BinaryExpression):
     """Stop Condition equal expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'equal'."""
+        """Implementation of method for expression visitor for 'equal'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit.equal(self)
 
 
@@ -64,7 +74,9 @@ class NotEqualExpression(BinaryExpression):
     """Stop Condition not equal expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'not equal'."""
+        """Implementation of method for expression visitor for 'not equal'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit.not_equal(self)
 
 
@@ -72,7 +84,9 @@ class LessExpression(BinaryExpression):
     """Stop Condition less expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'less'."""
+        """Implementation of method for expression visitor for 'less'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_less(self)
 
 
@@ -80,7 +94,9 @@ class LessEqualExpression(BinaryExpression):
     """Stop Condition less equal expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'less equal'."""
+        """Implementation of method for expression visitor for 'less equal'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_less_equal(self)
 
 
@@ -88,7 +104,9 @@ class GreaterExpression(BinaryExpression):
     """Stop Condition greater expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'greater'."""
+        """Implementation of method for expression visitor for 'greater'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_greater(self)
 
 
@@ -97,7 +115,9 @@ class GreaterEqualExpression(BinaryExpression):
 
     def visit(self, visitor: "AbstractVisitor"):
         """Implementation of method for expression visitor
-        for 'greater equal'."""
+        for 'greater equal'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_greater_equal(self)
 
 
@@ -111,7 +131,9 @@ class NotExpression(Expression):
         self.expression = expression
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'not'."""
+        """Implementation of method for expression visitor for 'not'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_not(self)
 
 
@@ -119,7 +141,9 @@ class PlusExpression(BinaryExpression):
     """Stop Condition greater plus expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'plus'."""
+        """Implementation of method for expression visitor for 'plus'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_plus(self)
 
 
@@ -127,7 +151,9 @@ class MinusExpression(BinaryExpression):
     """Stop Condition greater minus expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'minus'."""
+        """Implementation of method for expression visitor for 'minus'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_minus(self)
 
 
@@ -135,7 +161,9 @@ class MulExpression(BinaryExpression):
     """Stop Condition greater multiply  expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'multiply'."""
+        """Implementation of method for expression visitor for 'multiply'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_mul(self)
 
 
@@ -143,7 +171,9 @@ class DivExpression(BinaryExpression):
     """Stop Condition greater divide expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'divide'."""
+        """Implementation of method for expression visitor for 'divide'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_div(self)
 
 
@@ -151,7 +181,9 @@ class ModExpression(BinaryExpression):
     """Stop Condition greater modulo expression."""
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'modulo'."""
+        """Implementation of method for expression visitor for 'modulo'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_mod(self)
 
 
@@ -165,7 +197,9 @@ class NegationExpression(Expression):
         self.expression = expression
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for 'negation'."""
+        """Implementation of method for expression visitor for 'negation'.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_negation(self)
 
 
@@ -179,7 +213,9 @@ class IntegerValue(Expression):
         self.value = value
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for integer."""
+        """Implementation of method for expression visitor for integer.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_integer(self)
 
 
@@ -193,7 +229,9 @@ class FloatValue(Expression):
         self.value = value
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for float."""
+        """Implementation of method for expression visitor for float.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_float(self)
 
 
@@ -207,7 +245,9 @@ class BooleanValue(Expression):
         self.value = value
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for boolean."""
+        """Implementation of method for expression visitor for boolean.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_boolean(self)
 
 
@@ -221,7 +261,9 @@ class VariableReference(Expression):
         self.name = name
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for variable."""
+        """Implementation of method for expression visitor for variable.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_variable(self)
 
 
@@ -243,7 +285,9 @@ class Selector(Expression):
         self.elements = elements
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for selector."""
+        """Implementation of method for expression visitor for selector.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_selector(self)
 
 
@@ -263,7 +307,9 @@ class CallExpression(Expression):
         self.parameters = parameters
 
     def visit(self, visitor: "AbstractVisitor"):
-        """Implementation of method for expression visitor for call."""
+        """Implementation of method for expression visitor for call.
+        :param visitor: AbstractVisitor instance.
+        """
         visitor.visit_call(self)
 
 
@@ -272,112 +318,156 @@ class AbstractVisitor(ABC):
 
     @abstractmethod
     def visit_or(expr: OrExpression):
-        """Visit or expression."""
+        """Visit or expression.
+        :param expr: OrExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_and(expr: AndExpression):
-        """Visit and expression."""
+        """Visit and expression.
+        :param expr: AndExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_xor(expr: AndExpression):
-        """Visit xor expression."""
+        """Visit xor expression.
+        :param expr: XorExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_equal(expr: EqualExpression):
-        """Visit equal expression."""
+        """Visit equal expression.
+        :param expr: EqualExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_not_equal(expr: NotEqualExpression):
-        """Visit not equal expression."""
+        """Visit not equal expression.
+        :param expr: NotEqualExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_less(expr: LessExpression):
-        """Visit less expression."""
+        """Visit less expression.
+        :param expr: LessExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_less_equal(expr: LessEqualExpression):
-        """Visit less or equal expression."""
+        """Visit less or equal expression.
+        :param expr: LessEqualExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_greater(expr: GreaterExpression):
-        """Visit greater expression."""
+        """Visit greater expression.
+        :param expr: GreaterExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_greater_equal(expr: GreaterEqualExpression):
-        """Visit greater or equal expression."""
+        """Visit greater or equal expression.
+        :param expr: GreaterEqualExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_not(expr: NotExpression):
-        """Visit not expression."""
+        """Visit not expression.
+        :param expr: NotExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_plus(expr: PlusExpression):
-        """Visit plus expression."""
+        """Visit plus expression.
+        :param expr: PlusExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_minus(expr: MinusExpression):
-        """Visit minus expression."""
+        """Visit minus expression.
+        :param expr: MinusExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_mul(expr: MulExpression):
-        """Visit multiply expression."""
+        """Visit multiply expression.
+        :param expr: MulExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_div(expr: DivExpression):
-        """Visit divide expression."""
+        """Visit divide expression.
+        :param expr: DivExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_mod(expr: ModExpression):
-        """Visit modulo expression."""
+        """Visit modulo expression.
+        :param expr: ModExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_negation(expr: NegationExpression):
-        """Visit negation expression."""
+        """Visit negation expression.
+        :param expr: NefationExpression instance.
+        """
         pass
 
     @abstractmethod
     def visit_integer(expr: IntegerValue):
-        """Visit integer value."""
+        """Visit integer value.
+        :param expr: IntegerValue instance.
+        """
         pass
 
     @abstractmethod
     def visit_float(expr: FloatValue):
-        """Visit float value."""
+        """Visit float value.
+        :param expr: FloatValue instance.
+        """
         pass
 
     @abstractmethod
     def visit_boolean(expr: BooleanValue):
-        """Visit boolean value."""
+        """Visit boolean value.
+        :param expr: BooleanValue instance.
+        """
         pass
 
     @abstractmethod
     def visit_variable(expr: VariableReference):
-        """Visit variable reference."""
+        """Visit variable reference.
+        :param expr: VariableReference instance.
+        """
         pass
 
     @abstractmethod
     def visit_selector(expr: Selector):
-        """Visit selector expression."""
+        """Visit selector expression.
+        :param expr: Selector instance.
+        """
         pass
 
     @abstractmethod
     def visit_call(expr: CallExpression):
-        """Visit call expression."""
+        """Visit call expression.
+        :param expr: CallExpression instance.
+        """
         pass
 
 
@@ -442,13 +532,25 @@ class StopConditionModel:
         self.filter_out_statements = []
 
     def append_always(self, statement: AlwaysStatement):
+        """Append always statement to the model.
+        :param statement: AlwaysStatement instance.
+        """
         self.always_statements.append(statement)
 
     def append_never(self, statement: NeverStatement):
+        """Append never statement to the model.
+        :param statement: NeverStatement instance.
+        """
         self.never_statements.append(statement)
 
     def append_eventually(self, statement: EventuallyStatement):
+        """Append eventually statement to the model.
+        :param statement: EventuallyStatement instance.
+        """
         self.eventually_statements.append(statement)
 
     def append_filter_out(self, statement: FilterOutStatement):
+        """Append filter_out statement to the model.
+        :param statement: FilterOutStatement instance.
+        """
         self.filter_out_statements.append(statement)
