@@ -5,41 +5,43 @@ import antlr3
 import opengeode
 
 from opengeode import sdl92Lexer as lexer
-from StopConditionModel import StopConditionModel
-from StopConditionModel import Expression
-from StopConditionModel import Selector
-from StopConditionModel import IntegerValue
-from StopConditionModel import FloatValue
-from StopConditionModel import BooleanValue
-from StopConditionModel import VariableReference
-from StopConditionModel import CallExpression
-from StopConditionModel import OrExpression
-from StopConditionModel import AndExpression
-from StopConditionModel import XorExpression
-from StopConditionModel import EqualExpression
-from StopConditionModel import NotEqualExpression
-from StopConditionModel import LessExpression
-from StopConditionModel import LessEqualExpression
-from StopConditionModel import GreaterExpression
-from StopConditionModel import GreaterEqualExpression
-from StopConditionModel import NotExpression
-from StopConditionModel import PlusExpression
-from StopConditionModel import MinusExpression
-from StopConditionModel import MulExpression
-from StopConditionModel import DivExpression
-from StopConditionModel import ModExpression
-from StopConditionModel import NegationExpression
-from StopConditionModel import AlwaysStatement
-from StopConditionModel import NeverStatement
-from StopConditionModel import EventuallyStatement
-from StopConditionModel import FilterOutStatement
+from model import StopConditionModel
+from model import Expression
+from model import Selector
+from model import IntegerValue
+from model import FloatValue
+from model import BooleanValue
+from model import VariableReference
+from model import CallExpression
+from model import OrExpression
+from model import AndExpression
+from model import XorExpression
+from model import EqualExpression
+from model import NotEqualExpression
+from model import LessExpression
+from model import LessEqualExpression
+from model import GreaterExpression
+from model import GreaterEqualExpression
+from model import NotExpression
+from model import PlusExpression
+from model import MinusExpression
+from model import MulExpression
+from model import DivExpression
+from model import ModExpression
+from model import NegationExpression
+from model import AlwaysStatement
+from model import NeverStatement
+from model import EventuallyStatement
+from model import FilterOutStatement
 
 
 class TranslationException(Exception):
+    """Exception during parsing Stop Condition model"""
+
     pass
 
 
-def parse_primary_expression(expr: antlr3.tree.CommonTree) -> Expression:
+def _parse_primary_expression(expr: antlr3.tree.CommonTree) -> Expression:
     if expr.type == lexer.INT:
         return IntegerValue(int(expr.getText()))
     if expr.type == lexer.FLOAT:
@@ -55,7 +57,7 @@ def parse_primary_expression(expr: antlr3.tree.CommonTree) -> Expression:
     return Expression()
 
 
-def parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
+def _parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
     if len(selector.children) != 2:
         raise TranslationException(
             "Unexpected number of children in parse tree: expected 2 got {}".format(
@@ -74,7 +76,7 @@ def parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
     elements: Selector.SelectorElements = []
 
     if selector.children[0].type == lexer.SELECTOR:
-        nested = parse_selector(selector.children[0])
+        nested = _parse_selector(selector.children[0])
         elements = elements + nested.elements
     elif selector.children[0].type == lexer.PRIMARY:
         variable_reference = VariableReference(
@@ -82,14 +84,14 @@ def parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
         )
         elements.append(variable_reference)
     elif selector.children[0].type == lexer.CALL:
-        call_expression = parse_call_expression(selector.children[0])
+        call_expression = _parse_call_expression(selector.children[0])
         elements.append(call_expression)
 
     elements.append(selector.children[1].getText())
     return Selector(elements)
 
 
-def parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
+def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
     if len(expr.children) != 2:
         raise TranslationException(
             "Unexpected number of children in parse tree: expected 2 got {}".format(
@@ -100,7 +102,7 @@ def parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
     if expr.children[0].type == lexer.PRIMARY:
         function = VariableReference(expr.children[0].children[0].children[0].getText())
     elif expr.children[0].type == lexer.SELECTOR:
-        function = parse_selector(expr.children[0])
+        function = _parse_selector(expr.children[0])
     else:
         raise TranslationException(
             "Unexpected tree type {}".format(expr.children[0].type)
@@ -119,119 +121,132 @@ def parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
             "Unexpected tree type {}".format(expr.children[1].type)
         )
 
-    parameters = [parse_expression(e) for e in expr.children[1].children]
+    parameters = [_parse_expression(e) for e in expr.children[1].children]
 
     return CallExpression(function, parameters)
 
 
-def parse_expression(expr: antlr3.tree.CommonTree) -> Expression:
+def _parse_expression(expr: antlr3.tree.CommonTree) -> Expression:
     if expr.type == lexer.OR:
         return OrExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.AND:
         return AndExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.XOR:
         return XorExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.GT:
         return GreaterExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.GE:
         return GreaterEqualExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.LT:
         return LessExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.LE:
         return LessEqualExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.EQ:
         return EqualExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.NEQ:
         return NotEqualExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.NOT:
-        return NotExpression(parse_expression(expr.children[0]))
+        return NotExpression(_parse_expression(expr.children[0]))
     elif expr.type == lexer.PLUS:
         return PlusExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.DASH:
         return MinusExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.ASTERISK:
         return MulExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.DIV:
         return DivExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.MOD:
         return ModExpression(
-            parse_expression(expr.children[0]), parse_expression(expr.children[1])
+            _parse_expression(expr.children[0]), _parse_expression(expr.children[1])
         )
     elif expr.type == lexer.NEG:
-        return NegationExpression(parse_expression(expr.children[0]))
+        return NegationExpression(_parse_expression(expr.children[0]))
     elif expr.type == lexer.CALL:
-        return parse_call_expression(expr)
+        return _parse_call_expression(expr)
     elif expr.type == lexer.PRIMARY:
-        return parse_primary_expression(expr.children[0])
+        return _parse_primary_expression(expr.children[0])
     elif expr.type == lexer.STATE:
         raise TranslationException("Not implemented")
     elif expr.type == lexer.PAREN:
-        return parse_expression(expr.children[0])
+        return _parse_expression(expr.children[0])
     elif expr.type == lexer.SELECTOR:
-        return parse_selector(expr)
+        return _parse_selector(expr)
     else:
         raise TranslationException("Unexpected tree type {}".format(expr.type))
 
 
-def parse_always_statement(statement: antlr3.tree.CommonTree) -> AlwaysStatement:
-    return AlwaysStatement(parse_expression(statement.children[0]))
+def _parse_always_statement(statement: antlr3.tree.CommonTree) -> AlwaysStatement:
+    return AlwaysStatement(_parse_expression(statement.children[0]))
 
 
-def parse_never_statement(statement: antlr3.tree.CommonTree) -> NeverStatement:
-    return NeverStatement(parse_expression(statement.children[0]))
+def _parse_never_statement(statement: antlr3.tree.CommonTree) -> NeverStatement:
+    return NeverStatement(_parse_expression(statement.children[0]))
 
 
-def parse_eventually_statement(
+def _parse_eventually_statement(
     statement: antlr3.tree.CommonTree,
 ) -> EventuallyStatement:
-    return EventuallyStatement(parse_expression(statement.children[0]))
+    return EventuallyStatement(_parse_expression(statement.children[0]))
 
 
-def parse_filter_out_statement(statement: antlr3.tree.CommonTree) -> FilterOutStatement:
-    return FilterOutStatement(parse_expression(statement.children[0]))
+def _parse_filter_out_statement(
+    statement: antlr3.tree.CommonTreme,
+) -> FilterOutStatement:
+    return FilterOutStatement(_parse_expression(statement.children[0]))
 
 
-def parse_stop_condition_file(input: str) -> StopConditionModel:
+def parse_stop_condition(text: str) -> StopConditionModel:
+    """Parse Stop Condition from text.
+    :param text: text to parse.
+    :returns: StopConditionModel.
+    """
     model = StopConditionModel()
-    with open(input, "r") as pt:
-        result = opengeode.ogParser.parseSingleElement("n7s_scl", pt.read())
-        data, syntaxx_errors, semantic_errors, warnings, _ = result
-        for statement in data:
-            if statement.type == lexer.ALWAYS:
-                model.append_always(parse_always_statement(statement))
-            elif statement.type == lexer.NEVER:
-                model.append_never(parse_never_statement(statement))
-            elif statement.type == lexer.EVENTUALLY:
-                model.append_eventually(parse_eventually_statement(statement))
-            elif statement.type == lexer.FILTER_OUT:
-                model.append_filter_out(parse_filter_out_statement(statement))
-            else:
-                raise TranslationException()
+    result = opengeode.ogParser.parseSingleElement("n7s_scl", text)
+    data, syntaxx_errors, semantic_errors, warnings, _ = result
+    for statement in data:
+        if statement.type == lexer.ALWAYS:
+            model.append_always(_parse_always_statement(statement))
+        elif statement.type == lexer.NEVER:
+            model.append_never(_parse_never_statement(statement))
+        elif statement.type == lexer.EVENTUALLY:
+            model.append_eventually(_parse_eventually_statement(statement))
+        elif statement.type == lexer.FILTER_OUT:
+            model.append_filter_out(_parse_filter_out_statement(statement))
+        else:
+            raise TranslationException()
 
-    return model
+
+def parse_stop_condition_file(filepath: str) -> StopConditionModel:
+    """Parse Stop Condition from file.
+    :param filepath: path to the text file.
+    :returns: StopConditionModel.
+    """
+    with open(filepath, "r") as input_file:
+        text = input_file.read()
+        return parse_stop_condition(text)
