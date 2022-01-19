@@ -144,7 +144,16 @@ def __generate_statement(
     sdl_model: sdlmodel.Model, transition: sdlmodel.Transition, output: sdlmodel.Output
 ) -> promelamodel.Statement:
     name = __get_remote_function_name(sdl_model, output)
-    return CallBuilder().withTarget(name).build()
+    if len(output.parameters) == 0:
+        return CallBuilder().withTarget(name).build()
+    else:
+        parameter_name = __get_variable_name(sdl_model, output.parameters[0])
+        return (
+            CallBuilder()
+            .withTarget(name)
+            .withParameter(VariableReferenceBuilder(parameter_name).build())
+            .build()
+        )
 
 
 def __generate_transition(

@@ -1,5 +1,4 @@
 import argparse
-import typing
 from typing import List
 import logging
 import opengeode
@@ -8,7 +7,6 @@ import traceback
 
 from opengeode import ogAST
 from .sdl import model as sdlmodel
-from .promela import model as promelamodel
 from .promela import generator as promelagenerator
 from . import translator
 from . import __version__
