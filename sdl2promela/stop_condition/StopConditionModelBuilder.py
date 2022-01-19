@@ -71,7 +71,7 @@ def parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
             "Unexpected tree type {}".format(selector.children[1].type)
         )
 
-    elements = []
+    elements: Selector.SelectorElements = []
 
     if selector.children[0].type == lexer.SELECTOR:
         nested = parse_selector(selector.children[0])

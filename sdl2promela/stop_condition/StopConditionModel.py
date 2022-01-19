@@ -12,7 +12,12 @@ class Expression(ABC):
 
 
 class BinaryExpression(Expression):
+
+    lhs: Expression
+    rhs: Expression
+
     def __init__(self, lhs: Expression, rhs: Expression):
+        super().__init__()
         self.lhs = lhs
         self.rhs = rhs
 
@@ -63,8 +68,11 @@ class GreaterEqualExpression(BinaryExpression):
 
 
 class NotExpression(Expression):
-    def __init__(self, expr: Expression):
-        self.expr = expr
+
+    expression: Expression
+
+    def __init__(self, expression: Expression):
+        self.expression = expression
 
     def visit(self, visitor: "AbstractVisitor"):
         visitor.visit_not(self)
@@ -96,14 +104,20 @@ class ModExpression(BinaryExpression):
 
 
 class NegationExpression(Expression):
-    def __init__(self, expr: Expression):
-        self.expr = expr
+
+    expression: Expression
+
+    def __init__(self, expression: Expression):
+        self.expression = expression
 
     def visit(self, visitor: "AbstractVisitor"):
         visitor.visit_negation(self)
 
 
 class IntegerValue(Expression):
+
+    value: int
+
     def __init__(self, value: int):
         self.value = value
 
@@ -112,6 +126,9 @@ class IntegerValue(Expression):
 
 
 class FloatValue(Expression):
+
+    value: float
+
     def __init__(self, value: float):
         self.value = value
 
@@ -120,6 +137,9 @@ class FloatValue(Expression):
 
 
 class BooleanValue(Expression):
+
+    value: bool
+
     def __init__(self, value: bool):
         self.value = value
 
@@ -128,6 +148,9 @@ class BooleanValue(Expression):
 
 
 class VariableReference(Expression):
+
+    name: str
+
     def __init__(self, name: str):
         self.name = name
 
@@ -137,9 +160,11 @@ class VariableReference(Expression):
 
 class Selector(Expression):
 
-    SelectorElement = List[Union[VariableReference, "CallExpression"]]
+    SelectorElements = List[Union[VariableReference, "CallExpression"]]
 
-    def __init__(self, elements: List[SelectorElement]):
+    elements: SelectorElements
+
+    def __init__(self, elements: SelectorElements):
         self.elements = elements
 
     def visit(self, visitor: "AbstractVisitor"):
@@ -147,6 +172,10 @@ class Selector(Expression):
 
 
 class CallExpression(Expression):
+
+    function: Expression
+    parameters: List[Expression]
+
     def __init__(self, function: Expression, parameters: List[Expression]):
         self.function = function
         self.parameters = parameters
@@ -246,26 +275,44 @@ class AbstractVisitor(ABC):
 
 
 class AlwaysStatement:
+
+    expression: Expression
+
     def __init__(self, expression: Expression):
         self.expression = expression
 
 
 class NeverStatement:
+
+    expression: Expression
+
     def __init__(self, expression: Expression):
         self.expression = expression
 
 
 class EventuallyStatement:
+
+    expression: Expression
+
     def __init__(self, expression: Expression):
         self.expression = expression
 
 
 class FilterOutStatement:
+
+    expression: Expression
+
     def __init__(self, expression: Expression):
         self.expression = expression
 
 
 class StopConditionModel:
+
+    always_statements: List[AlwaysStatement]
+    never_statements: List[NeverStatement]
+    eventually_statements: List[EventuallyStatement]
+    filter_out_statements: List[FilterOutStatement]
+
     def __init__(self):
         self.always_statements = []
         self.never_statements = []
