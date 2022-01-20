@@ -278,19 +278,20 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
 
     do_loop_builder = promelaBuilder.DoBuilder()
 
+    # TODO separate functions for generation
     for always in input_model.always_statements:
         do_loop_builder.withAlternative(
             promelaBuilder.AlternativeBuilder()
-            .withCondition(_generate(always.expression))
+            .withCondition(
+                promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+                .withExpression(_generate(always.expression))
+                .build()
+            )
             .withStatements(
                 promelaBuilder.StatementsBuilder()
                 .withStatement(
                     promelaBuilder.AssertBuilder()
-                    .withExpression(
-                        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                        .withExpression(_generate(always.expression))
-                        .build()
-                    )
+                    .withExpression(_generate(always.expression))
                     .build()
                 )
                 .build()
@@ -301,17 +302,17 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
     for never in input_model.never_statements:
         do_loop_builder.withAlternative(
             promelaBuilder.AlternativeBuilder()
-            .withCondition(
-                promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                .withExpression(_generate(never.expression))
-                .build()
-            )
+            .withCondition(_generate(never.expression))
             .withStatements(
                 promelaBuilder.StatementsBuilder()
                 .withStatement(
-                    promelaBuilder.AssertBuilder().withExpression(
-                        _generate(never.expression)
+                    promelaBuilder.AssertBuilder()
+                    .withExpression(
+                        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+                        .withExpression(_generate(never.expression))
+                        .build()
                     )
+                    .build()
                 )
                 .build()
             )
