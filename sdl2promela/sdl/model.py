@@ -105,6 +105,11 @@ class BinaryExpression(Expression):
     right: Expression
     """Right side of the expression, can be None if it is partial (e.g. used in Answer)."""
 
+    def __init__(self):
+        self.operator = None
+        self.left = None
+        self.right = None
+
 
 class Action:
     """Base class for a transition action."""

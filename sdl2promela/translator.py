@@ -4,6 +4,9 @@ from multipledispatch import dispatch
 
 from opengeode import ogAST
 from opengeode.AdaGenerator import SEPARATOR
+from pytest import Instance
+
+import sdl2promela
 
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -32,6 +35,39 @@ __STATE_VARIABLE = "state"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
+
+
+def __get_promela_binary_operator(
+    op: sdlmodel.BinaryOperator,
+) -> promelamodel.BinaryOperator:
+    if op == sdlmodel.BinaryOperator.EQUAL:
+        return promelamodel.BinaryOperator.EQUAL
+    elif op == sdlmodel.BinaryOperator.NEQUAL:
+        return promelamodel.BinaryOperator.NEQUAL
+    elif op == sdlmodel.BinaryOperator.GREATER:
+        return promelamodel.BinaryOperator.GREATER
+    elif op == sdlmodel.BinaryOperator.LESS:
+        return promelamodel.BinaryOperator.LESS
+    elif op == sdlmodel.BinaryOperator.LEQUAL:
+        return promelamodel.BinaryOperator.LEQUAL
+    elif op == sdlmodel.BinaryOperator.GEQUAL:
+        return promelamodel.BinaryOperator.GEQUAL
+    elif op == sdlmodel.BinaryOperator.PLUS:
+        return promelamodel.BinaryOperator.ADD
+    elif op == sdlmodel.BinaryOperator.MINUS:
+        return promelamodel.BinaryOperator.SUBTRACT
+    elif op == sdlmodel.BinaryOperator.MUL:
+        return promelamodel.BinaryOperator.MULTIPLY
+    elif op == sdlmodel.BinaryOperator.DIV:
+        return promelamodel.BinaryOperator.DIVIDE
+    elif op == sdlmodel.BinaryOperator.MOD:
+        return promelamodel.BinaryOperator.MODULO
+    elif op == sdlmodel.BinaryOperator.REM:
+        raise NotImplementedError("Remainder operator is not available in this context")
+    elif op == sdlmodel.BinaryOperator.ASSIGN:
+        raise NotImplementedError(
+            "Assignment operator is not available in this context"
+        )
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
@@ -119,9 +155,83 @@ def __generate_input_function(
     return builder.build()
 
 
+def __translate_answer_condition(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    left: sdlmodel.Expression,
+    right: sdlmodel.Expression,
+) -> promelamodel.Statement:
+    if right.left is None:
+        expression = sdlmodel.BinaryExpression()
+        expression.left = left
+        expression.operator = right.operator
+        expression.right = right.right
+        return __generate_statement(sdl_model, transition, expression)
+    raise NotImplementedError(
+        "translate_answer_condition not implemented for " + left + " and " + right
+    )
+
+
 @dispatch
 def __generate_statement(sdl_model, transition, action) -> promelamodel.Statement:
     raise NotImplementedError("generate_statement not implemented for " + action)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.VariableReference)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    variable: sdlmodel.VariableReference,
+) -> promelamodel.Statement:
+    return VariableReferenceBuilder(variable.variableName).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Constant)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    constant: sdlmodel.Constant,
+) -> promelamodel.Statement:
+    return VariableReferenceBuilder(constant.value).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Decision)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    decision: sdlmodel.Decision,
+) -> promelamodel.Statement:
+    builder = SwitchBuilder()
+    for answer in decision.answers:
+        statements = []
+        for action in answer.actions:
+            statements.append(__generate_statement(sdl_model, transition, action))
+        for condition in answer.conditions:
+            builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    __translate_answer_condition(
+                        sdl_model, transition, decision.condition, condition
+                    )
+                )
+                .withStatements(statements)
+                .build()
+            )
+    return builder.build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.BinaryExpression)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    expression: sdlmodel.BinaryExpression,
+) -> promelamodel.Statement:
+    return (
+        BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
+        .withLeft(__generate_statement(sdl_model, transition, expression.left))
+        .withRight(__generate_statement(sdl_model, transition, expression.right))
+        .build()
+    )
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.NextState)

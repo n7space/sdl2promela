@@ -227,7 +227,7 @@ class Block(Statement):
 
 
 class Alternative:
-    """Alternative for a loop or swich statement."""
+    """Alternative for a loop or switch statement."""
 
     condition: Statement
     """Condition unblocking the alternative (may be None)."""

@@ -44,3 +44,13 @@ def test_translates_bare_inputs():
 
 def test_translates_bare_outputs():
     translate_and_verify("bare_outputs.pr", "bare_outputs.pml")
+
+
+def test_translates_value_based_decision():
+    translate_and_verify("value_based_decision.pr", "value_based_decision.pml")
+
+
+#def test_translates_expression_based_decision():
+#    translate_and_verify(
+#        "expression_based_decision.pr", "expression_based_decision.pml"
+#    )
