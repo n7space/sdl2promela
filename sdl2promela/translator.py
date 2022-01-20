@@ -52,13 +52,15 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
     )
 
 
-def __get_variable_name(sdl_model: sdlmodel.Model, variable_name: str) -> str:
+def __get_variable_name(
+    sdl_model: sdlmodel.Model, variable_reference: sdlmodel.VariableReference
+) -> str:
     return (
         __GLOBAL_STATE
         + "."
         + sdl_model.process_name.lower()
         + "."
-        + variable_name.lower()
+        + variable_reference.variableName.lower()
     )
 
 
