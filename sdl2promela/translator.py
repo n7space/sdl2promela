@@ -200,6 +200,66 @@ def __generate_statement(sdl_model, transition, action) -> promelamodel.Statemen
     raise NotImplementedError("generate_statement not implemented for " + action)
 
 
+def __generate_for_over_a_numeric_range(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    task: sdlmodel.ForLoopTask,
+    inner_statements: List[promelamodel.Statement],
+) -> promelamodel.Statement:
+    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    iteratorReference = VariableReferenceBuilder(
+        __get_variable_name(sdl_model, task.iteratorName)
+    ).build()
+    block_builder.withStatements(
+        [
+            AssignmentBuilder()
+            .withTarget(iteratorReference)
+            .withSource(__generate_statement(sdl_model, transition, task.range.start))
+            .build()
+        ]
+    )
+    block_builder.withStatements(
+        [
+            DoBuilder()
+            .withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
+                    .withLeft(iteratorReference)
+                    .withRight(
+                        __generate_statement(sdl_model, transition, task.range.stop)
+                    )
+                    .build()
+                )
+                .withStatements(inner_statements)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(iteratorReference)
+                        .withSource(
+                            BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                            .withLeft(iteratorReference)
+                            .withRight(
+                                __generate_statement(
+                                    sdl_model, transition, task.range.step
+                                )
+                            )
+                            .build()
+                        )
+                        .build()
+                    ]
+                )
+                .build()
+            )
+            .withAlternative(
+                AlternativeBuilder().withStatements([promelamodel.Break()]).build()
+            )
+            .build()
+        ]
+    )
+    return block_builder.build()
+
+
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.ForLoopTask)
 def __generate_statement(
     sdl_model: sdlmodel.Model,
@@ -211,66 +271,14 @@ def __generate_statement(
         statement = __generate_statement(sdl_model, transition, action)
         inner_statements.append(statement)
 
-    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    iteratorReference = VariableReferenceBuilder(
-        __get_variable_name(sdl_model, task.iteratorName)
-    ).build()
     if isinstance(task.range, sdlmodel.NumericForLoopRange):
-        block_builder.withStatements(
-            [
-                AssignmentBuilder()
-                .withTarget(iteratorReference)
-                .withSource(
-                    __generate_statement(sdl_model, transition, task.range.start)
-                )
-                .build()
-            ]
-        )
-        block_builder.withStatements(
-            [
-                DoBuilder()
-                .withAlternative(
-                    AlternativeBuilder()
-                    .withCondition(
-                        BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
-                        .withLeft(iteratorReference)
-                        .withRight(
-                            __generate_statement(sdl_model, transition, task.range.stop)
-                        )
-                        .build()
-                    )
-                    .withStatements(inner_statements)
-                    .withStatements(
-                        [
-                            AssignmentBuilder()
-                            .withTarget(iteratorReference)
-                            .withSource(
-                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
-                                .withLeft(iteratorReference)
-                                .withRight(
-                                    __generate_statement(
-                                        sdl_model, transition, task.range.step
-                                    )
-                                )
-                                .build()
-                            )
-                            .build()
-                        ]
-                    )
-                    .build()
-                )
-                .withAlternative(
-                    AlternativeBuilder().withStatements([promelamodel.Break()]).build()
-                )
-                .build()
-            ]
+        return __generate_for_over_a_numeric_range(
+            sdl_model, transition, task, inner_statements
         )
     else:
         raise NotImplementedError(
             "generate_statement not implemented for the used range specification"
         )
-
-    return block_builder.build()
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Label)
