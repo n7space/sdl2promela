@@ -15,7 +15,7 @@ use Datamodel;
 system Actuator;
 
    /* CIF Keep Specific Geode PARAMNAMES p1 */
-   signal work (TestParam);
+   signal work (TestInteger);
 
    signal error;
    /* CIF Keep Specific Geode PARAMNAMES p1 */
