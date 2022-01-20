@@ -12,6 +12,9 @@ from sdl2promela.sdl.model import (
     Output,
     VariableReference,
     BinaryOperator,
+    ForLoopTask,
+    ForLoopRange,
+    NumericForLoopRange,
 )
 import os
 
@@ -216,3 +219,15 @@ def test_model_reads_for_with_range():
     process = read_main_process(path, 2)
 
     model = Model(process)
+
+    assert len(model.transitions) == 2
+    actions = model.transitions[1].actions
+    assert len(actions) == 3
+    task = actions[1]
+    assert isinstance(task, ForLoopTask)
+    assert len(task.actions) > 0
+    assert task.iteratorName == "x"
+    assert isinstance(task.range, NumericForLoopRange)
+    assert task.range.start.value == "0"
+    assert task.range.stop.value == "10"
+    assert task.range.step.value == "2"

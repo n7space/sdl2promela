@@ -161,6 +161,11 @@ class ForLoopTask(Task):
     actions: List[Action]
     """List of actions to be executed within the loop"""
 
+    def __init__(self):
+        self.actions = []
+        self.range = None
+        self.iteratorName = None
+
 
 class Output(Action):
     """Signal output action."""
@@ -387,6 +392,7 @@ def convert(source: ogAST.TaskForLoop):
         range.stop = convert(for_loop["range"]["stop"])
         range.step = convert(for_loop["range"]["step"])
         task.range = range
+    appendAllActions(task, for_loop["transition"])
 
     return task
 
