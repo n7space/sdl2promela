@@ -2,6 +2,7 @@ from multipledispatch import dispatch
 from typing import List, Set, Text, Tuple, Type, TextIO
 
 from . import model
+from sdl2promela import promela
 
 INDENT = "  "
 """A unit of indent."""
@@ -16,8 +17,11 @@ class Context:
     """Stack of indents."""
     pending_indent: bool
     """Whether there is a pending indent."""
+    parents: List[model.Statement]
+    """Stack of parents."""
 
     def __init__(self, stream: TextIO):
+        self.parents = []
         self.stream = stream
         self.indents = []
         self.pending_indent = False
@@ -31,6 +35,26 @@ class Context:
 
     def __get_indent(self) -> str:
         return "".join((self.indents))
+
+    def push_parent(self, parent: model.Statement):
+        """
+        Push parent onto the parent stack.
+        :param parent: Parent to be pushed.
+        """
+        self.parents.append(parent)
+
+    def pop_parent(self):
+        """
+        Remove the current parent from the stack.
+        """
+        self.parents.pop()
+
+    def get_parent(self) -> model.Statement:
+        """
+        Return the current parent statement.
+        :returns: Current parent statement.
+        """
+        return self.parents[-1]
 
     def push_indent(self, indent: str):
         """
@@ -212,7 +236,9 @@ def generate(context: Context, block: model.Block):
     else:
         context.output("{\n")
     context.push_indent(INDENT)
+    context.push_parent(block)
     generate(context, StatementsWrapper(block.statements))
+    context.pop_parent()
     context.pop_indent()
     context.output("}\n")
 
@@ -227,27 +253,38 @@ def generate(context: Context, wrapper: StatementsWrapper):
 @dispatch(Context, model.Do)
 def generate(context: Context, do: model.Do):
     context.output("do\n")
+    context.push_parent(do)
     for alternative in do.alternatives:
         generate(context, alternative)
+    context.pop_parent()
     context.output("od")
 
 
 @dispatch(Context, model.Switch)
 def generate(context: Context, switch: model.Switch):
     context.output("if\n")
+    context.push_parent(switch)
     for alternative in switch.alternatives:
         generate(context, alternative)
+    context.pop_parent()
     context.output("fi")
 
 
 @dispatch(Context, model.Alternative)
 def generate(context: Context, alternative: model.Alternative):
     context.output("::")
-    if alternative.condition is None:
-        context.output("else")
-    else:
-        generate(context, alternative.condition)
-    context.output("->\n")
+    parent = context.get_parent()
+    pure_do = (
+        isinstance(parent, model.Do)
+        and len(parent.alternatives) == 1
+        and parent.alternatives[0].condition is None
+    )
+    if not pure_do:
+        if alternative.condition is None:
+            context.output("else")
+        else:
+            generate(context, alternative.condition)
+        context.output("->\n")
     context.push_indent(INDENT)
     generate(context, StatementsWrapper(alternative.definition))
     context.pop_indent()

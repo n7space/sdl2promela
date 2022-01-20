@@ -10,14 +10,19 @@ inline Complexsdl_0_transition(id)
       global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
     ::(transition_id == 1)->
-      if
-      ::((global_state.complexsdl.tmp > 0) == true)->
-        global_state.complexsdl.state = Complexsdl_States_wait;
-      ::((global_state.complexsdl.tmp > 0) == false)->
-        global_state.complexsdl.state = Complexsdl_States_wait;
-      fi;
+      goto jump;
+      ;
       transition_id = -1;
     fi;
+    goto next_transition;
+    ;
+    label jump: ;
+    Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
+    global_state.complexsdl.state = Complexsdl_States_wait;
+    transition_id = -1;
+    goto next_transition;
+    ;
+    label next_transition: ;
   od;
 }
 inline Complexsdl_0_init()

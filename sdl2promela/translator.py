@@ -36,6 +36,7 @@ __STATE_VARIABLE = "state"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
+__NEXT_TRANSITION_LABEL_NAME = "next_transition"
 
 
 def __get_promela_binary_operator(
@@ -424,8 +425,9 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
 
     do_builder = DoBuilder()
+    switch_builder = SwitchBuilder()
 
-    do_builder.withAlternative(
+    switch_builder.withAlternative(
         AlternativeBuilder()
         .withCondition(
             BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
@@ -438,7 +440,7 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
     )
 
     for id, transition in sdl_model.transitions.items():
-        do_builder.withAlternative(
+        switch_builder.withAlternative(
             AlternativeBuilder()
             .withCondition(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
@@ -449,6 +451,21 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
             .withStatements(__generate_transition(sdl_model, transition))
             .build()
         )
+
+    statements = []
+    statements.append(switch_builder.build())
+    if sdl_model.floating_labels:
+        statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
+        for name, label in sdl_model.floating_labels.items():
+            statements.append(promelamodel.Label(name))    
+            fake_transition = sdlmodel.Transition()
+            fake_transition.actions = label.actions
+            statements.extend(__generate_transition(sdl_model, fake_transition))
+            statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))    
+        statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
+    do_builder.withAlternative(
+        AlternativeBuilder().withStatements(statements).build()
+    )
 
     blockBuilder.withStatements(
         [

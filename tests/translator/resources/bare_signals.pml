@@ -3,17 +3,19 @@ inline bare_signals_0_transition(id)
   int transition_id;
   transition_id = id;
   do
-  ::(transition_id == -1)->
-    break;
-  ::(transition_id == 0)->
-    global_state.bare_signals.state = bare_signals_States_state_1;
-    transition_id = -1;
-  ::(transition_id == 1)->
-    global_state.bare_signals.state = bare_signals_States_state_2;
-    transition_id = -1;
-  ::(transition_id == 2)->
-    global_state.bare_signals.state = bare_signals_States_state_1;
-    transition_id = -1;
+  ::if
+    ::(transition_id == -1)->
+      break;
+    ::(transition_id == 0)->
+      global_state.bare_signals.state = bare_signals_States_state_1;
+      transition_id = -1;
+    ::(transition_id == 1)->
+      global_state.bare_signals.state = bare_signals_States_state_2;
+      transition_id = -1;
+    ::(transition_id == 2)->
+      global_state.bare_signals.state = bare_signals_States_state_1;
+      transition_id = -1;
+    fi;
   od;
 }
 inline bare_signals_0_init()

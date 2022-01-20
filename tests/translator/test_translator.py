@@ -62,3 +62,7 @@ def test_translates_for_with_range():
 
 def test_translates_loop():
     translate_and_verify("loop.pr", "loop.pml")
+
+
+def test_translates_join():
+    translate_and_verify("join.pr", "join.pml")
