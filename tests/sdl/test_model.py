@@ -226,7 +226,7 @@ def test_model_reads_for_with_range():
     task = actions[1]
     assert isinstance(task, ForLoopTask)
     assert len(task.actions) > 0
-    assert task.iteratorName == "x"
+    assert task.iteratorName.variableName == "x"
     assert isinstance(task.range, NumericForLoopRange)
     assert task.range.start.value == "0"
     assert task.range.stop.value == "10"

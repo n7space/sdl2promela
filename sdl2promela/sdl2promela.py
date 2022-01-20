@@ -48,12 +48,9 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
         sys.exit(1)
 
     if len(warnings) > 0:
-        __log.error(
-            f"Error: found {len(errors)} warnings (warnings indicate issues with the SDL model and are treated as errors):"
-        )
+        __log.error(f"Warning: found {len(errors)} warnings:")
         for warning in warnings:
             __log.error(warning)
-        sys.exit(1)
     if len(errors) > 0:
         __log.error(f"Error: found {len(errors)} errors:")
         for error in errors:

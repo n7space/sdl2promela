@@ -54,3 +54,7 @@ def test_translates_expression_based_decision():
     translate_and_verify(
         "expression_based_decision.pr", "expression_based_decision.pml"
     )
+
+
+def test_translates_for_with_range():
+    translate_and_verify("for_with_range.pr", "for_with_range.pml")

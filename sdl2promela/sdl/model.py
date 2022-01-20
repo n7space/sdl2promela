@@ -54,12 +54,18 @@ class Constant(Expression):
     value: str
     """Constant value ."""
 
+    def __init__(self, value):
+        self.value = value
+
 
 class VariableReference(Expression):
     """Variable reference."""
 
     variableName: str
     """Variable name."""
+
+    def __init__(self, name):
+        self.variableName = name
 
 
 class BinaryOperator(Enum):
@@ -139,25 +145,25 @@ class ForLoopRange:
 class NumericForLoopRange(ForLoopRange):
     """Numeric range that can be iterated over"""
 
-    start: int
+    start: Expression
     """Start of the range, inclusive."""
 
-    stop: int
+    stop: Expression
     """End of the range, exclusive."""
 
-    step: int
+    step: Expression
     """Iteration step, defaults to 1."""
 
     def __init__(self):
-        self.start = 0
-        self.stop = 0
-        self.step = 1
+        self.start = None
+        self.stop = None
+        self.step = Constant("1")
 
 
 class ForLoopTask(Task):
     """Task with a for loop."""
 
-    iteratorName: str
+    iteratorName: VariableReference
     """Name of the iterator variable."""
 
     range: ForLoopRange
@@ -389,7 +395,7 @@ def convert(source: ogAST.TaskForLoop):
         )
     for_loop = source.elems[0]
     task = ForLoopTask()
-    task.iteratorName = for_loop["var"]
+    task.iteratorName = VariableReference(for_loop["var"])
     if for_loop["range"]:
         range = NumericForLoopRange()
         range.start = convert(for_loop["range"]["start"])
@@ -414,46 +420,39 @@ def convert(source: ogAST.TaskAssign):
 
 @dispatch(ogAST.PrimVariable)
 def convert(source: ogAST.PrimVariable):
-    variableReference = VariableReference()
-    variableReference.variableName = source.inputString
+    variableReference = VariableReference(source.inputString)
     return variableReference
 
 
 @dispatch(int)
 def convert(source: int):
-    constant = Constant()
-    constant.value = str(source)
-    return constant
+    return Constant(str(source))
 
 
 @dispatch(ogAST.PrimInteger)
 def convert(source: ogAST.PrimInteger):
-    constant = Constant()
     if isinstance(source.value, list):
         if len(source.value) != 1:
             raise ValueError(
                 "Source value is an array with an unsupported number of elements: "
                 + len(source.value)
             )
-        constant.value = source.value[0]
+        return Constant(source.value[0])
     else:
-        constant.value = source.value
-    return constant
+        return Constant(source.value)
 
 
 @dispatch(ogAST.PrimBoolean)
 def convert(source: ogAST.PrimBoolean):
-    constant = Constant()
     if isinstance(source.value, list):
         if len(source.value) != 1:
             raise ValueError(
                 "Source value is an array with an unsupported number of elements: "
                 + len(source.value)
             )
-        constant.value = source.value[0]
+        return Constant(source.value[0])
     else:
-        constant.value = source.value
-    return constant
+        return Constant(source.value)
 
 
 @dispatch(ogAST.ExprPlus)
