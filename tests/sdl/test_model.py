@@ -197,7 +197,7 @@ def test_model_reads_join_based_loop():
     assert len(model.floating_labels) == 0
     assert len(model.transitions) == 2
     actions = model.transitions[1].actions
-    assert len(actions) == 7
+    assert len(actions) == 6
     assert isinstance(actions[0], AssignmentTask)
     assert isinstance(actions[1], AssignmentTask)
     assert isinstance(actions[2], Label)

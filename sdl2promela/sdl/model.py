@@ -284,11 +284,10 @@ def appendAllActions(destination, source):
             action = convert(source_action)
             if action is not None:
                 destination.actions.append(action)
-    if source.terminators is not None:
-        for terminator in source.terminators:
-            action = convert(terminator)
-            if action is not None:
-                destination.actions.append(action)
+    if source.terminator is not None:
+        action = convert(source.terminator)
+        if action is not None:
+            destination.actions.append(action)
 
 
 @dispatch

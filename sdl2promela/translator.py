@@ -183,7 +183,7 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     variable: sdlmodel.VariableReference,
 ) -> promelamodel.Statement:
-    return VariableReferenceBuilder(variable.variableName).build()
+    return VariableReferenceBuilder(__get_variable_name(sdl_model, variable)).build()
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Constant)
