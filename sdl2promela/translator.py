@@ -1,3 +1,4 @@
+from queue import Empty
 import typing
 from typing import List
 from multipledispatch import dispatch
@@ -250,6 +251,24 @@ def __generate_statement(
     return block_builder.build()
 
 
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Label)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    label: sdlmodel.Label,
+) -> promelamodel.Statement:
+    return promelamodel.Label(label.name)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Join)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    join: sdlmodel.Join,
+) -> promelamodel.Statement:
+    return promelamodel.GoTo(join.label_name)
+
+
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
 def __generate_statement(
     sdl_model: sdlmodel.Model,
@@ -299,6 +318,8 @@ def __generate_statement(
         statements = []
         for action in answer.actions:
             statements.append(__generate_statement(sdl_model, transition, action))
+        if len(statements) == 0:
+            statements.append(promelamodel.Skip())
         for condition in answer.conditions:
             builder.withAlternative(
                 AlternativeBuilder()

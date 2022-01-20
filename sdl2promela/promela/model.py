@@ -239,6 +239,26 @@ class Alternative:
         self.definition = []
 
 
+class Label(Statement):
+    """Label for use with goto."""
+
+    name: str
+    """Label name"""
+
+    def __init__(self, name: str):
+        self.name = name
+
+
+class GoTo(Statement):
+    """Goto statement."""
+
+    target: str
+    """Target label name."""
+
+    def __init__(self, target):
+        self.target = target
+
+
 class Do(Statement):
     """Do loop."""
 

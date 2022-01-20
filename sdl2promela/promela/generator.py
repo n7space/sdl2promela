@@ -113,6 +113,16 @@ def generate(context: Context, expression: model.BinaryExpression):
     context.output(")")
 
 
+@dispatch(Context, model.Label)
+def generate(context: Context, label: model.Label):
+    context.output(f"label {label.name}: ")
+
+
+@dispatch(Context, model.GoTo)
+def generate(context: Context, goto: model.GoTo):
+    context.output(f"goto {goto.target};\n")
+
+
 @dispatch(Context, model.UnaryExpression)
 def generate(context: Context, expression: model.UnaryExpression):
     context.output("(")
