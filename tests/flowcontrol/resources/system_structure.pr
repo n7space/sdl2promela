@@ -1,0 +1,26 @@
+/* CIF Keep Specific Geode ASNFilename 'dataview-uniq.asn' */
+use Datamodel;
+
+system FlowControl;
+
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal work (TestInteger);
+   
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal result (TestInteger);
+
+   channel c
+      from env to FlowControl with work;
+      from FlowControl to env with result;
+   endchannel;
+
+   block FlowControl;
+
+      signalroute r
+      from env to FlowControl with work;
+      from FlowControl to env with result;
+      connect c and r;
+
+      process FlowControl referenced;
+   endblock;
+endsystem;

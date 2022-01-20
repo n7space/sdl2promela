@@ -1,0 +1,42 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process FlowControl;
+    /* CIF TEXT (1597, 107), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl wparam testInteger;
+    dcl i testInteger;
+    dcl wresult testInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (892, 139), (70, 35) */
+    state Wait;
+        /* CIF input (873, 194), (107, 35) */
+        input work(wparam);
+            /* CIF task (449, 128), (70, 35) */
+            task wresult := 1;
+            /* CIF task (449, 183), (70, 40) */
+            task i := 1;
+            /* CIF label (442, 243), (83, 40) */
+            loop_start:
+            /* CIF decision (449, 303), (70, 50) */
+            decision i < wparam;
+                /* CIF ANSWER (404, 373), (70, 24) */
+                (false):
+                /* CIF ANSWER (494, 373), (70, 24) */
+                (true):
+                    /* CIF task (493, 417), (71, 35) */
+                    task wresult := wresult * i;
+                    /* CIF task (492, 472), (73, 35) */
+                    task i := i + 1;
+                    /* CIF join (512, 527), (35, 35) */
+                    join loop_start;
+            enddecision;
+            /* CIF output (871, 249), (110, 35) */
+            output result(wresult);
+            /* CIF NEXTSTATE (892, 304), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

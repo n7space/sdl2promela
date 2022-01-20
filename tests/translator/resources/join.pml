@@ -16,21 +16,22 @@ inline Complexsdl_0_transition(id)
     fi;
     goto next_transition;
     ;
-    label jump: ;
+    jump: ;
     Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
     global_state.complexsdl.state = Complexsdl_States_wait;
     transition_id = -1;
     goto next_transition;
     ;
-    label next_transition: ;
+    next_transition: ;
   od;
 }
 inline Complexsdl_0_init()
 {
   Complexsdl_0_transition(0);
 }
-inline Complexsdl_0_PI_0_impulse(tmp)
+inline Complexsdl_0_PI_0_impulse(tmp_param_in)
 {
+  global_state.complexsdl.tmp = tmp_param_in;
   if
   ::(global_state.complexsdl.state == Complexsdl_States_wait)->
     Complexsdl_0_transition(1);

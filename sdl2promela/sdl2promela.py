@@ -48,7 +48,7 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
         sys.exit(1)
 
     if len(warnings) > 0:
-        __log.error(f"Warning: found {len(errors)} warnings:")
+        __log.error(f"Warning: found {len(warnings)} warnings:")
         for warning in warnings:
             __log.error(warning)
     if len(errors) > 0:

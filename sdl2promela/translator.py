@@ -37,6 +37,7 @@ __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
+__PARAMETER_POSTFIX = "_param_in"
 
 
 def __get_promela_binary_operator(
@@ -102,6 +103,10 @@ def __get_variable_name(
     )
 
 
+def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
+    return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
+
+
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
     return sdl_model.process_name + __STATES_SEPARATOR + state.name
 
@@ -117,9 +122,25 @@ def __generate_input_function(
 ) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(__get_input_function_name(sdl_model, input))
-    for parameter in input.parameters:
-        builder.withParameter(parameter.name)
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for parameter in input.parameters:
+        builder.withParameter(__get_parameter_name(parameter.target_variable))
+        blockBuilder.withStatements(
+            [
+                AssignmentBuilder()
+                .withSource(
+                    VariableReferenceBuilder(
+                        __get_parameter_name(parameter.target_variable)
+                    ).build()
+                )
+                .withTarget(
+                    VariableReferenceBuilder(
+                        __get_variable_name(sdl_model, parameter.target_variable)
+                    ).build()
+                )
+                .build()
+            ]
+        )
 
     switch_builder = SwitchBuilder()
 
@@ -457,15 +478,13 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
     if sdl_model.floating_labels:
         statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         for name, label in sdl_model.floating_labels.items():
-            statements.append(promelamodel.Label(name))    
+            statements.append(promelamodel.Label(name))
             fake_transition = sdlmodel.Transition()
             fake_transition.actions = label.actions
             statements.extend(__generate_transition(sdl_model, fake_transition))
-            statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))    
+            statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
-    do_builder.withAlternative(
-        AlternativeBuilder().withStatements(statements).build()
-    )
+    do_builder.withAlternative(AlternativeBuilder().withStatements(statements).build())
 
     blockBuilder.withStatements(
         [

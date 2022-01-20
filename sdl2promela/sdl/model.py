@@ -16,32 +16,6 @@ class State:
         self.name = None
 
 
-class Parameter:
-    """Parameter for a signal or procedure."""
-
-    name: str
-    """Parameter name."""
-
-    def __init__(self):
-        self.name = None
-
-
-class Input:
-    """Input signal for an SDL state machine."""
-
-    name: str
-    """Signal name."""
-    parameters: List[Parameter]
-    """List of signal parameters."""
-    transitions: Dict[int, State]
-    """Map associating transition IDs with states."""
-
-    def __init__(self):
-        self.name = None
-        self.parameters = []
-        self.transitions = {}
-
-
 class Expression:
     """Base class for expressions."""
 
@@ -66,6 +40,32 @@ class VariableReference(Expression):
 
     def __init__(self, name):
         self.variableName = name
+
+
+class Parameter:
+    """Parameter for a signal or procedure."""
+
+    target_variable: VariableReference
+    """Target variable reference."""
+
+    def __init__(self, name: str):
+        self.target_variable = VariableReference(name)
+
+
+class Input:
+    """Input signal for an SDL state machine."""
+
+    name: str
+    """Signal name."""
+    parameters: List[Parameter]
+    """List of signal parameters."""
+    transitions: Dict[int, State]
+    """Map associating transition IDs with states."""
+
+    def __init__(self):
+        self.name = None
+        self.parameters = []
+        self.transitions = {}
 
 
 class BinaryOperator(Enum):
@@ -696,8 +696,7 @@ class Model:
         # so the first one should be good enough
         input = inputs[0]
         for parameterName in input.parameters:
-            parameter = Parameter()
-            parameter.name = parameterName
+            parameter = Parameter(parameterName)
             result.append(parameter)
         return result
 

@@ -12,7 +12,7 @@ inline Complexsdl_0_transition(id)
     ::(transition_id == 1)->
       global_state.complexsdl.x = 0;
       global_state.complexsdl.y = 1;
-      label loop_start: ;
+      loop_start: ;
       if
       ::((global_state.complexsdl.x < global_state.complexsdl.tmp) == false)->
         skip;
@@ -32,8 +32,9 @@ inline Complexsdl_0_init()
 {
   Complexsdl_0_transition(0);
 }
-inline Complexsdl_0_PI_0_impulse(tmp)
+inline Complexsdl_0_PI_0_impulse(tmp_param_in)
 {
+  global_state.complexsdl.tmp = tmp_param_in;
   if
   ::(global_state.complexsdl.state == Complexsdl_States_wait)->
     Complexsdl_0_transition(1);

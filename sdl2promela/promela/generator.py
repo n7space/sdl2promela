@@ -139,7 +139,7 @@ def generate(context: Context, expression: model.BinaryExpression):
 
 @dispatch(Context, model.Label)
 def generate(context: Context, label: model.Label):
-    context.output(f"label {label.name}: ")
+    context.output(f"{label.name}: ")
 
 
 @dispatch(Context, model.GoTo)
