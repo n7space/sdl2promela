@@ -9,7 +9,8 @@ TESTS = \
 	check \
 	unit \
 	integration \
-	parameterless
+	parameterless \
+	simpleparameters
 
 unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv
@@ -20,4 +21,7 @@ integration:
 parameterless:
 	${MAKE} -C parameterless check
 
-check: unit integration parameterless
+simpleparameters:
+	${MAKE} -C simpleparameters check
+
+check: unit integration parameterless simpleparameters
