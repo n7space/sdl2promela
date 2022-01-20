@@ -21,6 +21,7 @@ from sdl2promela.promela.model import (
     Expression,
     ArrayAccess,
     MemberAccess,
+    Assert,
 )
 
 
@@ -296,6 +297,21 @@ class CallBuilder:
         """
         self.call.parameters.append(parameter)
         return self
+
+
+class AssertBuilder:
+
+    assertStatement: Assert
+
+    def __init__(self):
+        self.assertStatement = Assert()
+
+    def withExpression(self, expression: Expression) -> "AssertBuilder":
+        self.assertStatement.expression = expression
+        return self
+
+    def build(self) -> Assert:
+        return self.assertStatement
 
 
 class AssignmentBuilder:

@@ -5,34 +5,34 @@ import antlr3
 import opengeode
 
 from opengeode import sdl92Lexer as lexer
-from model import StopConditionModel
-from model import Expression
-from model import Selector
-from model import IntegerValue
-from model import FloatValue
-from model import BooleanValue
-from model import VariableReference
-from model import CallExpression
-from model import OrExpression
-from model import AndExpression
-from model import XorExpression
-from model import EqualExpression
-from model import NotEqualExpression
-from model import LessExpression
-from model import LessEqualExpression
-from model import GreaterExpression
-from model import GreaterEqualExpression
-from model import NotExpression
-from model import PlusExpression
-from model import MinusExpression
-from model import MulExpression
-from model import DivExpression
-from model import ModExpression
-from model import NegationExpression
-from model import AlwaysStatement
-from model import NeverStatement
-from model import EventuallyStatement
-from model import FilterOutStatement
+from .model import StopConditionModel
+from .model import Expression
+from .model import Selector
+from .model import IntegerValue
+from .model import FloatValue
+from .model import BooleanValue
+from .model import VariableReference
+from .model import CallExpression
+from .model import OrExpression
+from .model import AndExpression
+from .model import XorExpression
+from .model import EqualExpression
+from .model import NotEqualExpression
+from .model import LessExpression
+from .model import LessEqualExpression
+from .model import GreaterExpression
+from .model import GreaterEqualExpression
+from .model import NotExpression
+from .model import PlusExpression
+from .model import MinusExpression
+from .model import MulExpression
+from .model import DivExpression
+from .model import ModExpression
+from .model import NegationExpression
+from .model import AlwaysStatement
+from .model import NeverStatement
+from .model import EventuallyStatement
+from .model import FilterOutStatement
 
 
 class TranslationException(Exception):
@@ -87,7 +87,7 @@ def _parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
         call_expression = _parse_call_expression(selector.children[0])
         elements.append(call_expression)
 
-    elements.append(selector.children[1].getText())
+    elements.append(VariableReference(selector.children[1].getText()))
     return Selector(elements)
 
 
@@ -216,7 +216,7 @@ def _parse_eventually_statement(
 
 
 def _parse_filter_out_statement(
-    statement: antlr3.tree.CommonTreme,
+    statement: antlr3.tree.CommonTree,
 ) -> FilterOutStatement:
     return FilterOutStatement(_parse_expression(statement.children[0]))
 
@@ -240,6 +240,7 @@ def parse_stop_condition(text: str) -> StopConditionModel:
             model.append_filter_out(_parse_filter_out_statement(statement))
         else:
             raise TranslationException()
+    return model
 
 
 def parse_stop_condition_file(filepath: str) -> StopConditionModel:

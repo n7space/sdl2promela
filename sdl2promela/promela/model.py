@@ -39,6 +39,10 @@ class BinaryOperator(Enum):
     """Modulo operator."""
     NEQUAL = 11
     """Not equal test operator."""
+    AND = 12
+    """Boolean and operator."""
+    OR = 13
+    """Boolean or operator."""
 
 
 class BinaryExpression(Expression):
@@ -191,6 +195,16 @@ class Call(Statement):
         self.parameters = []
 
 
+class Assert(Statement):
+    """Assert statement."""
+
+    expression: Expression
+    """Expression to check."""
+
+    def __init__(self):
+        self.expression = None
+
+
 class Assignment(Statement):
     """Assignment statement."""
 
@@ -297,6 +311,16 @@ class Inline:
         self.definition = None
 
 
+class NeverClaim:
+    """Never claim."""
+
+    definition: Block
+    """Never claim definition."""
+
+    def __init__(self):
+        self.definition = None
+
+
 class Model:
     """Promela model."""
 
@@ -306,8 +330,11 @@ class Model:
     """Free text to be included after the modelled statements."""
     inlines: List[Inline]
     """List of inline functions."""
+    never: NeverClaim
+    """Optional never claim."""
 
     def __init__(self):
         self.prologue = ""
         self.epilogue = ""
         self.inlines = []
+        self.never = None

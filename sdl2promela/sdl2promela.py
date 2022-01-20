@@ -10,6 +10,9 @@ from .sdl import model as sdlmodel
 from .promela import generator as promelagenerator
 from . import translator
 from . import __version__
+from .stop_condition import parser as scl_parser
+from .stop_condition import translator as scl_translator
+from .stop_condition import model as scl_model
 
 __log = logging.getLogger("sdl2promela")
 
@@ -27,6 +30,9 @@ def __parse_arguments():
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
     parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument(
+        "--scl", action="store_true", help="Read input files as Stop Conditions"
+    )
     return parser.parse_args()
 
 
@@ -109,6 +115,26 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     return True
 
 
+def translate_scl(scl_files: List[str], output_file_name: str) -> bool:
+    """
+    Translate a list of Stop Condition files into a Promela model and save it to file.
+    :param scl_files: List of files with stop conditions
+    :param output_file_name: Name of file to save Promela model.
+    """
+    input_model = scl_model.StopConditionModel()
+    for input_file in scl_files:
+        __log.info("Parsing file {}".format(input_file))
+        input_model.join(scl_parser.parse_stop_condition_file(input_file))
+
+    __log.info("Translating Stop Condition Model into Promela Model")
+    output_model = scl_translator.translate_model(input_model)
+
+    __log.info(f"Opening {output_file_name} for writing and generating output")
+    with open(output_file_name, "w") as file:
+        promelagenerator.generate_model(output_model, file)
+    __log.info("Generation done")
+
+
 def main():
     """
     The main entry point of sdl2promela translator.
@@ -117,8 +143,12 @@ def main():
     arguments = __parse_arguments()
     if arguments.verbose:
         __log.setLevel(level=logging.INFO)
-    if not translate(arguments.files, arguments.output_filename):
-        sys.exit(1)
+    if arguments.scl:
+        if not translate_scl(arguments.files, arguments.output_filename):
+            sys.exit(1)
+    else:
+        if not translate(arguments.files, arguments.output_filename):
+            sys.exit(1)
 
 
 if __name__ == "__main__":
