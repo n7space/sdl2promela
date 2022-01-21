@@ -330,11 +330,8 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
     :param input_model: input Stop Condition model
     :returns: Promela Model
     """
-    output_model = promela.Model()
 
-    never_claim = promela.NeverClaim()
-
-    main_block = promela.Block()
+    main_block_builder = promelaBuilder.BlockBuilder()
 
     do_loop_builder = promelaBuilder.DoBuilder()
 
@@ -352,11 +349,11 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
 
     do_loop_builder.withAlternative(_generate_true_alternative())
 
-    main_block.statements.append(_generate_entry_loop())
-    main_block.statements.append(do_loop_builder.build())
+    main_block_builder.withStatements(_generate_entry_loop())
+    main_block_builder.withStatements(do_loop_builder.build())
 
-    never_claim.definition = main_block
+    never_claim = (
+        promelaBuilder.NeverBuilder().withDefinition(main_block_builder.build()).build()
+    )
 
-    output_model.never = never_claim
-
-    return output_model
+    return promelaBuilder.ModelBuilder().withNever(never_claim).build()

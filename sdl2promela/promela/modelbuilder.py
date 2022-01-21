@@ -22,6 +22,7 @@ from sdl2promela.promela.model import (
     ArrayAccess,
     MemberAccess,
     Assert,
+    NeverClaim,
 )
 
 
@@ -68,6 +69,15 @@ class ModelBuilder:
         self.model.inlines.append(inline)
         return self
 
+    def withNever(self, never: NeverClaim) -> "ModelBuilder":
+        """
+        Set an never claim in the model.
+        :param never: Never Claim to be added.
+        :returns: The buider itself (for call chaining).
+        """
+        self.model.never = never
+        return self
+
 
 class InlineBuilder:
     """Inline function builder."""
@@ -112,6 +122,32 @@ class InlineBuilder:
         parameter = InlineParameter()
         parameter.name = parameterName
         self.inline.parameters.append(parameter)
+        return self
+
+
+class NeverBuilder:
+    """Never claim builder."""
+
+    never: NeverClaim
+    """Build never claim."""
+
+    def __init__(self):
+        self.never = NeverClaim()
+
+    def build(self) -> NeverClaim:
+        """
+        Retrieve the built never claim..
+        :returns: The built never claim.
+        """
+        return self.inline
+
+    def withDefinition(self, definition: Block) -> "NeverBuilder":
+        """
+        Set definition.
+        :param definition: Definition to be set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.never.definition = definition
         return self
 
 
