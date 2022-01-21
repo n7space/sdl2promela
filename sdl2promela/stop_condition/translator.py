@@ -254,13 +254,73 @@ def _generate(expr: model.CallExpression):
     raise TranslateException("Not implemented.")
 
 
-def _generate_true_alternative():
+def _generate_true_alternative() -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder()
         .withCondition(promela.BooleanValue(True))
         .withStatements(
             promelaBuilder.StatementsBuilder().withStatement(promela.Skip()).build()
         )
+        .build()
+    )
+
+
+def _generate_always_alternative(always: model.AlwaysStatement) -> promela.Alternative:
+    return (
+        promelaBuilder.AlternativeBuilder()
+        .withCondition(
+            promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+            .withExpression(_generate(always.expression))
+            .build()
+        )
+        .withStatements(
+            promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.AssertBuilder()
+                .withExpression(_generate(always.expression))
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+
+def _generate_never_alternative(never: model.NeverStatement) -> promela.Alternative:
+    return (
+        promelaBuilder.AlternativeBuilder()
+        .withCondition(_generate(never.expression))
+        .withStatements(
+            promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.AssertBuilder()
+                .withExpression(
+                    promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+                    .withExpression(_generate(never.expression))
+                    .build()
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+
+def _generate_entry_loop() -> promela.Do:
+    return (
+        promelaBuilder.DoBuilder()
+        .withAlternative(
+            promelaBuilder.AlternativeBuilder()
+            .withCondition(promelaBuilder.VariableReferenceBuilder("inited").build())
+            .withStatements(
+                promelaBuilder.StatementsBuilder()
+                .withStatement(promela.Break())
+                .build()
+            )
+            .build()
+        )
+        .withAlternative(_generate_true_alternative())
         .build()
     )
 
@@ -278,46 +338,11 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
 
     do_loop_builder = promelaBuilder.DoBuilder()
 
-    # TODO separate functions for generation
     for always in input_model.always_statements:
-        do_loop_builder.withAlternative(
-            promelaBuilder.AlternativeBuilder()
-            .withCondition(
-                promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                .withExpression(_generate(always.expression))
-                .build()
-            )
-            .withStatements(
-                promelaBuilder.StatementsBuilder()
-                .withStatement(
-                    promelaBuilder.AssertBuilder()
-                    .withExpression(_generate(always.expression))
-                    .build()
-                )
-                .build()
-            )
-            .build()
-        )
+        do_loop_builder.withAlternative(_generate_always_alternative(always))
 
     for never in input_model.never_statements:
-        do_loop_builder.withAlternative(
-            promelaBuilder.AlternativeBuilder()
-            .withCondition(_generate(never.expression))
-            .withStatements(
-                promelaBuilder.StatementsBuilder()
-                .withStatement(
-                    promelaBuilder.AssertBuilder()
-                    .withExpression(
-                        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                        .withExpression(_generate(never.expression))
-                        .build()
-                    )
-                    .build()
-                )
-                .build()
-            )
-            .build()
-        )
+        do_loop_builder.withAlternative(_generate_never_alternative(never))
 
     for eventually in input_model.eventually_statements:
         raise TranslateException("Not implemented.")
@@ -327,6 +352,7 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
 
     do_loop_builder.withAlternative(_generate_true_alternative())
 
+    main_block.statements.append(_generate_entry_loop())
     main_block.statements.append(do_loop_builder.build())
 
     never_claim.definition = main_block
