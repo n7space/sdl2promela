@@ -39,38 +39,29 @@ __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
 __PARAMETER_POSTFIX = "_param_in"
 
+__BINARY_OPERATOR_DICTIONARY = {
+    sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
+    sdlmodel.BinaryOperator.NEQUAL: promelamodel.BinaryOperator.NEQUAL,
+    sdlmodel.BinaryOperator.GREATER: promelamodel.BinaryOperator.GREATER,
+    sdlmodel.BinaryOperator.LESS: promelamodel.BinaryOperator.LESS,
+    sdlmodel.BinaryOperator.LEQUAL: promelamodel.BinaryOperator.LEQUAL,
+    sdlmodel.BinaryOperator.GEQUAL: promelamodel.BinaryOperator.GEQUAL,
+    sdlmodel.BinaryOperator.ADD: promelamodel.BinaryOperator.ADD,
+    sdlmodel.BinaryOperator.SUB: promelamodel.BinaryOperator.SUBTRACT,
+    sdlmodel.BinaryOperator.MUL: promelamodel.BinaryOperator.MULTIPLY,
+    sdlmodel.BinaryOperator.DIV: promelamodel.BinaryOperator.DIVIDE,
+    sdlmodel.BinaryOperator.MOD: promelamodel.BinaryOperator.MODULO,
+}
+
 
 def __get_promela_binary_operator(
     op: sdlmodel.BinaryOperator,
 ) -> promelamodel.BinaryOperator:
-    if op == sdlmodel.BinaryOperator.EQUAL:
-        return promelamodel.BinaryOperator.EQUAL
-    elif op == sdlmodel.BinaryOperator.NEQUAL:
-        return promelamodel.BinaryOperator.NEQUAL
-    elif op == sdlmodel.BinaryOperator.GREATER:
-        return promelamodel.BinaryOperator.GREATER
-    elif op == sdlmodel.BinaryOperator.LESS:
-        return promelamodel.BinaryOperator.LESS
-    elif op == sdlmodel.BinaryOperator.LEQUAL:
-        return promelamodel.BinaryOperator.LEQUAL
-    elif op == sdlmodel.BinaryOperator.GEQUAL:
-        return promelamodel.BinaryOperator.GEQUAL
-    elif op == sdlmodel.BinaryOperator.PLUS:
-        return promelamodel.BinaryOperator.ADD
-    elif op == sdlmodel.BinaryOperator.MINUS:
-        return promelamodel.BinaryOperator.SUBTRACT
-    elif op == sdlmodel.BinaryOperator.MUL:
-        return promelamodel.BinaryOperator.MULTIPLY
-    elif op == sdlmodel.BinaryOperator.DIV:
-        return promelamodel.BinaryOperator.DIVIDE
-    elif op == sdlmodel.BinaryOperator.MOD:
-        return promelamodel.BinaryOperator.MODULO
-    elif op == sdlmodel.BinaryOperator.REM:
-        raise NotImplementedError("Remainder operator is not available in this context")
-    elif op == sdlmodel.BinaryOperator.ASSIGN:
+    if not op in __BINARY_OPERATOR_DICTIONARY.keys():
         raise NotImplementedError(
-            "Assignment operator is not available in this context"
+            f"{str(op)} operator is not available in this context"
         )
+    return __BINARY_OPERATOR_DICTIONARY[op]
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:

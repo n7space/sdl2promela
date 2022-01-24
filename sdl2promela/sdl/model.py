@@ -83,9 +83,9 @@ class BinaryOperator(Enum):
     """<="""
     GEQUAL = 5
     """>="""
-    PLUS = 6
+    ADD = 6
     """+"""
-    MINUS = 7
+    SUB = 7
     """-"""
     MUL = 8
     """*"""
@@ -306,68 +306,52 @@ def getBinaryOperatorEnum(op) -> BinaryOperator:
     raise NotImplementedError("getBinaryOperatorEnum not implemented for " + op)
 
 
+__STR_BINARY_OPERATOR_DICTIONARY = {
+    "+": BinaryOperator.ADD,
+    "*": BinaryOperator.MUL,
+    "-": BinaryOperator.SUB,
+    "=": BinaryOperator.EQUAL,
+    "/=": BinaryOperator.NEQUAL,
+    ">": BinaryOperator.GREATER,
+    ">=": BinaryOperator.GEQUAL,
+    "<": BinaryOperator.LESS,
+    "<=": BinaryOperator.LEQUAL,
+    "/": BinaryOperator.DIV,
+    "mod": BinaryOperator.MOD,
+    "rem": BinaryOperator.REM,
+    ":=": BinaryOperator.ASSIGN,
+}
+
+
 @dispatch(str)
 def getBinaryOperatorEnum(op: str) -> BinaryOperator:
-    if op == "+":
-        return BinaryOperator.PLUS
-    elif op == "*":
-        return BinaryOperator.MUL
-    elif op == "-":
-        return BinaryOperator.MINUS
-    elif op == "=":
-        return BinaryOperator.EQUAL
-    elif op == "/=":
-        return BinaryOperator.NEQUAL
-    elif op == ">":
-        return BinaryOperator.GREATER
-    elif op == ">=":
-        return BinaryOperator.GEQUAL
-    elif op == "<":
-        return BinaryOperator.LESS
-    elif op == "<=":
-        return BinaryOperator.LEQUAL
-    elif op == "/":
-        return BinaryOperator.DIV
-    elif op.lower() == "mod":
-        return BinaryOperator.MOD
-    elif op.lower() == "rem":
-        return BinaryOperator.REM
-    elif op == ":=":
-        return BinaryOperator.ASSIGN
-    else:
+    if not op in __STR_BINARY_OPERATOR_DICTIONARY.keys():
         raise ValueError("Unsupported operator: " + op)
+    return __STR_BINARY_OPERATOR_DICTIONARY[op]
+
+
+__AST_BINARY_OPERATOR_DICTIONARY = {
+    ogAST.ExprPlus: BinaryOperator.ADD,
+    ogAST.ExprMul: BinaryOperator.MUL,
+    ogAST.ExprMinus: BinaryOperator.SUB,
+    ogAST.ExprEq: BinaryOperator.EQUAL,
+    ogAST.ExprNeq: BinaryOperator.NEQUAL,
+    ogAST.ExprGt: BinaryOperator.GREATER,
+    ogAST.ExprGe: BinaryOperator.GEQUAL,
+    ogAST.ExprLt: BinaryOperator.LESS,
+    ogAST.ExprLe: BinaryOperator.LEQUAL,
+    ogAST.ExprDiv: BinaryOperator.DIV,
+    ogAST.ExprMod: BinaryOperator.MOD,
+    ogAST.ExprRem: BinaryOperator.REM,
+    ogAST.ExprAssign: BinaryOperator.ASSIGN,
+}
 
 
 @dispatch(type)
 def getBinaryOperatorEnum(op: type) -> BinaryOperator:
-    if op == ogAST.ExprPlus:
-        return BinaryOperator.PLUS
-    elif op == ogAST.ExprMul:
-        return BinaryOperator.MUL
-    elif op == ogAST.ExprMinus:
-        return BinaryOperator.MINUS
-    elif op == ogAST.ExprEq:
-        return BinaryOperator.EQUAL
-    elif op == ogAST.ExprNeq:
-        return BinaryOperator.NEQUAL
-    elif op == ogAST.ExprGt:
-        return BinaryOperator.GREATER
-    elif op == ogAST.ExprGe:
-        return BinaryOperator.GEQUAL
-    elif op == ogAST.ExprLt:
-        return BinaryOperator.LESS
-    elif op == ogAST.ExprLe:
-        return BinaryOperator.LEQUAL
-    elif op == ogAST.ExprDiv:
-        return BinaryOperator.DIV
-    elif op == ogAST.ExprMod:
-        return BinaryOperator.MOD
-    elif op == ogAST.ExprRem:
-        return BinaryOperator.REM
-    elif op == ogAST.ExprAssign:
-        return BinaryOperator.ASSIGN
-    else:
+    if not op in __AST_BINARY_OPERATOR_DICTIONARY.keys():
         raise ValueError("Unsupported operator: " + op.__name__)
+    return __AST_BINARY_OPERATOR_DICTIONARY[op]
 
 
 @dispatch
@@ -455,121 +439,77 @@ def convert(source: ogAST.PrimBoolean):
         return Constant(source.value)
 
 
-@dispatch(ogAST.ExprPlus)
-def convert(source: ogAST.ExprPlus):
+def __make_binary_expression(source: ogAST.Expression):
     expression = BinaryExpression()
     expression.left = convert(source.left)
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
     return expression
+
+
+@dispatch(ogAST.ExprPlus)
+def convert(source: ogAST.ExprPlus):
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprMul)
 def convert(source: ogAST.ExprMul):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprMinus)
 def convert(source: ogAST.ExprMinus):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprEq)
 def convert(source: ogAST.ExprEq):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprNeq)
 def convert(source: ogAST.ExprNeq):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprGt)
 def convert(source: ogAST.ExprGt):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprGe)
 def convert(source: ogAST.ExprGe):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprLt)
 def convert(source: ogAST.ExprLt):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprLe)
 def convert(source: ogAST.ExprLe):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprDiv)
 def convert(source: ogAST.ExprDiv):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprMod)
 def convert(source: ogAST.ExprMod):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprRem)
 def convert(source: ogAST.ExprRem):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.ExprAssign)
 def convert(source: ogAST.ExprAssign):
-    expression = BinaryExpression()
-    expression.left = convert(source.left)
-    expression.operator = getBinaryOperatorEnum(source.operand)
-    expression.right = convert(source.right)
-    return expression
+    return __make_binary_expression(source)
 
 
 @dispatch(ogAST.Output)
