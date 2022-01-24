@@ -222,6 +222,8 @@ def _generate(expr: model.Selector):
             "Call Expression is not allowed as first element of selector."
         )
 
+    # TODO add support for access to ASN.1 SEQUENCE OF
+    # TODO after adding tests, refactor this - there should be only one pop
     result: promela.MemberAccess = (
         promelaBuilder.MemberAccessBuilder()
         .withUtypeReference(

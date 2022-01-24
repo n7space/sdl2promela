@@ -195,7 +195,7 @@ class CallExpression(Expression):
     function: Union[VariableReference, Selector]
     """Funcion or the selector to the array."""
     parameters: List[Expression]
-    """List of parameters, or array index."""
+    """List of parameters, or an array index."""
 
     def __init__(self, function: Expression, parameters: List[Expression]):
         self.function = function

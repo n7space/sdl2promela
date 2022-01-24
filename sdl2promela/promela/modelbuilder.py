@@ -71,8 +71,8 @@ class ModelBuilder:
 
     def withNever(self, never: NeverClaim) -> "ModelBuilder":
         """
-        Set an never claim in the model.
-        :param never: Never Claim to be added.
+        Set a never claim in the model.
+        :param never: Never claim to be added.
         :returns: The buider itself (for call chaining).
         """
         self.model.never = never

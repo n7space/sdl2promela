@@ -79,6 +79,7 @@ def _parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
         nested = _parse_selector(selector.children[0])
         elements = elements + nested.elements
     elif selector.children[0].type == lexer.PRIMARY:
+        # TODO - refactor this using parse_primary after adding test suite
         variable_reference = VariableReference(
             selector.children[0].children[0].children[0].getText()
         )
