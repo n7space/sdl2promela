@@ -1,9 +1,13 @@
+from queue import Empty
 import typing
 from typing import List
 from multipledispatch import dispatch
 
 from opengeode import ogAST
 from opengeode.AdaGenerator import SEPARATOR
+from pytest import Instance
+
+import sdl2promela
 
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -32,6 +36,32 @@ __STATE_VARIABLE = "state"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
+__NEXT_TRANSITION_LABEL_NAME = "next_transition"
+__PARAMETER_POSTFIX = "_param_in"
+
+__BINARY_OPERATOR_DICTIONARY = {
+    sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
+    sdlmodel.BinaryOperator.NEQUAL: promelamodel.BinaryOperator.NEQUAL,
+    sdlmodel.BinaryOperator.GREATER: promelamodel.BinaryOperator.GREATER,
+    sdlmodel.BinaryOperator.LESS: promelamodel.BinaryOperator.LESS,
+    sdlmodel.BinaryOperator.LEQUAL: promelamodel.BinaryOperator.LEQUAL,
+    sdlmodel.BinaryOperator.GEQUAL: promelamodel.BinaryOperator.GEQUAL,
+    sdlmodel.BinaryOperator.ADD: promelamodel.BinaryOperator.ADD,
+    sdlmodel.BinaryOperator.SUB: promelamodel.BinaryOperator.SUBTRACT,
+    sdlmodel.BinaryOperator.MUL: promelamodel.BinaryOperator.MULTIPLY,
+    sdlmodel.BinaryOperator.DIV: promelamodel.BinaryOperator.DIVIDE,
+    sdlmodel.BinaryOperator.MOD: promelamodel.BinaryOperator.MODULO,
+}
+
+
+def __get_promela_binary_operator(
+    op: sdlmodel.BinaryOperator,
+) -> promelamodel.BinaryOperator:
+    if not op in __BINARY_OPERATOR_DICTIONARY.keys():
+        raise NotImplementedError(
+            f"{str(op)} operator is not available in this context"
+        )
+    return __BINARY_OPERATOR_DICTIONARY[op]
 
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
@@ -52,14 +82,20 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
     )
 
 
-def __get_variable_name(sdl_model: sdlmodel.Model, variable_name: str) -> str:
+def __get_variable_name(
+    sdl_model: sdlmodel.Model, variable_reference: sdlmodel.VariableReference
+) -> str:
     return (
         __GLOBAL_STATE
         + "."
         + sdl_model.process_name.lower()
         + "."
-        + variable_name.lower()
+        + variable_reference.variableName.lower()
     )
+
+
+def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
+    return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
@@ -77,9 +113,25 @@ def __generate_input_function(
 ) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(__get_input_function_name(sdl_model, input))
-    for parameter in input.parameters:
-        builder.withParameter(parameter.name)
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for parameter in input.parameters:
+        builder.withParameter(__get_parameter_name(parameter.target_variable))
+        blockBuilder.withStatements(
+            [
+                AssignmentBuilder()
+                .withSource(
+                    VariableReferenceBuilder(
+                        __get_parameter_name(parameter.target_variable)
+                    ).build()
+                )
+                .withTarget(
+                    VariableReferenceBuilder(
+                        __get_variable_name(sdl_model, parameter.target_variable)
+                    ).build()
+                )
+                .build()
+            ]
+        )
 
     switch_builder = SwitchBuilder()
 
@@ -117,9 +169,204 @@ def __generate_input_function(
     return builder.build()
 
 
+def __translate_answer_condition(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    left: sdlmodel.Expression,
+    right: sdlmodel.Expression,
+) -> promelamodel.Statement:
+    if right.left is None:
+        expression = sdlmodel.BinaryExpression()
+        expression.left = left
+        expression.operator = right.operator
+        expression.right = right.right
+        return __generate_statement(sdl_model, transition, expression)
+    raise NotImplementedError(
+        "translate_answer_condition not implemented for " + left + " and " + right
+    )
+
+
 @dispatch
 def __generate_statement(sdl_model, transition, action) -> promelamodel.Statement:
     raise NotImplementedError("generate_statement not implemented for " + action)
+
+
+def __generate_for_over_a_numeric_range(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    task: sdlmodel.ForLoopTask,
+    inner_statements: List[promelamodel.Statement],
+) -> promelamodel.Statement:
+    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    iteratorReference = VariableReferenceBuilder(
+        __get_variable_name(sdl_model, task.iteratorName)
+    ).build()
+    block_builder.withStatements(
+        [
+            AssignmentBuilder()
+            .withTarget(iteratorReference)
+            .withSource(__generate_statement(sdl_model, transition, task.range.start))
+            .build()
+        ]
+    )
+    block_builder.withStatements(
+        [
+            DoBuilder()
+            .withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
+                    .withLeft(iteratorReference)
+                    .withRight(
+                        __generate_statement(sdl_model, transition, task.range.stop)
+                    )
+                    .build()
+                )
+                .withStatements(inner_statements)
+                .withStatements(
+                    [
+                        AssignmentBuilder()
+                        .withTarget(iteratorReference)
+                        .withSource(
+                            BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                            .withLeft(iteratorReference)
+                            .withRight(
+                                __generate_statement(
+                                    sdl_model, transition, task.range.step
+                                )
+                            )
+                            .build()
+                        )
+                        .build()
+                    ]
+                )
+                .build()
+            )
+            .withAlternative(
+                AlternativeBuilder().withStatements([promelamodel.Break()]).build()
+            )
+            .build()
+        ]
+    )
+    return block_builder.build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.ForLoopTask)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    task: sdlmodel.ForLoopTask,
+) -> promelamodel.Statement:
+    inner_statements = []
+    for action in task.actions:
+        statement = __generate_statement(sdl_model, transition, action)
+        inner_statements.append(statement)
+
+    if isinstance(task.range, sdlmodel.NumericForLoopRange):
+        return __generate_for_over_a_numeric_range(
+            sdl_model, transition, task, inner_statements
+        )
+    else:
+        raise NotImplementedError(
+            "generate_statement not implemented for the used range specification"
+        )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Label)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    label: sdlmodel.Label,
+) -> promelamodel.Statement:
+    return promelamodel.Label(label.name)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Join)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    join: sdlmodel.Join,
+) -> promelamodel.Statement:
+    return promelamodel.GoTo(join.label_name)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    assignment: sdlmodel.AssignmentTask,
+) -> promelamodel.Statement:
+    return (
+        AssignmentBuilder()
+        .withTarget(
+            VariableReferenceBuilder(
+                __get_variable_name(sdl_model, assignment.assignment.left)
+            ).build()
+        )
+        .withSource(
+            __generate_statement(sdl_model, transition, assignment.assignment.right)
+        )
+        .build()
+    )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.VariableReference)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    variable: sdlmodel.VariableReference,
+) -> promelamodel.Statement:
+    return VariableReferenceBuilder(__get_variable_name(sdl_model, variable)).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Constant)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    constant: sdlmodel.Constant,
+) -> promelamodel.Statement:
+    return VariableReferenceBuilder(constant.value).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Decision)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    decision: sdlmodel.Decision,
+) -> promelamodel.Statement:
+    builder = SwitchBuilder()
+    for answer in decision.answers:
+        statements = []
+        for action in answer.actions:
+            statements.append(__generate_statement(sdl_model, transition, action))
+        if len(statements) == 0:
+            statements.append(promelamodel.Skip())
+        for condition in answer.conditions:
+            builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    __translate_answer_condition(
+                        sdl_model, transition, decision.condition, condition
+                    )
+                )
+                .withStatements(statements)
+                .build()
+            )
+    return builder.build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.BinaryExpression)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    expression: sdlmodel.BinaryExpression,
+) -> promelamodel.Statement:
+    return (
+        BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
+        .withLeft(__generate_statement(sdl_model, transition, expression.left))
+        .withRight(__generate_statement(sdl_model, transition, expression.right))
+        .build()
+    )
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.NextState)
@@ -198,8 +445,9 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
 
     do_builder = DoBuilder()
+    switch_builder = SwitchBuilder()
 
-    do_builder.withAlternative(
+    switch_builder.withAlternative(
         AlternativeBuilder()
         .withCondition(
             BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
@@ -212,7 +460,7 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
     )
 
     for id, transition in sdl_model.transitions.items():
-        do_builder.withAlternative(
+        switch_builder.withAlternative(
             AlternativeBuilder()
             .withCondition(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
@@ -223,6 +471,19 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
             .withStatements(__generate_transition(sdl_model, transition))
             .build()
         )
+
+    statements = []
+    statements.append(switch_builder.build())
+    if sdl_model.floating_labels:
+        statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
+        for name, label in sdl_model.floating_labels.items():
+            statements.append(promelamodel.Label(name))
+            fake_transition = sdlmodel.Transition()
+            fake_transition.actions = label.actions
+            statements.extend(__generate_transition(sdl_model, fake_transition))
+            statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
+        statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
+    do_builder.withAlternative(AlternativeBuilder().withStatements(statements).build())
 
     blockBuilder.withStatements(
         [
