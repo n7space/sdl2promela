@@ -109,6 +109,10 @@ def generate(context: Context, expression: model.BinaryExpression):
         context.output(" % ")
     elif expression.operator == model.BinaryOperator.NEQUAL:
         context.output(" != ")
+    elif expression.operator == model.BinaryOperator.ADD:
+        context.output(" && ")
+    elif expression.operator == model.BinaryOperator.OR:
+        context.output(" || ")
     generate(context, expression.right)
     context.output(")")
 
@@ -133,6 +137,14 @@ def generate(context: Context, call: model.Call):
         generate(context, call.parameters[i])
         if i != last_index:
             context.output(", ")
+    context.output(")")
+
+
+@dispatch(Context, model.Assert)
+def generate(context: Context, assertStatement: model.Assert):
+    context.output("assert")
+    context.output("(")
+    generate(context, assertStatement.expression)
     context.output(")")
 
 
@@ -272,11 +284,19 @@ def generate(context: Context, inline: model.Inline):
     generate(context, inline.definition)
 
 
+@dispatch(Context, model.NeverClaim)
+def generate(context: Context, never: model.NeverClaim):
+    context.output("never")
+    generate(context, never.definition)
+
+
 @dispatch(Context, model.Model)
 def generate(context: Context, model: model.Model):
     context.output(model.prologue)
     for inline in model.inlines:
         generate(context, inline)
+    if model.never:
+        generate(context, model.never)
     context.output(model.epilogue)
 
 

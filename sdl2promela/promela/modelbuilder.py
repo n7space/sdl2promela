@@ -21,6 +21,8 @@ from sdl2promela.promela.model import (
     Expression,
     ArrayAccess,
     MemberAccess,
+    Assert,
+    NeverClaim,
 )
 
 
@@ -67,6 +69,15 @@ class ModelBuilder:
         self.model.inlines.append(inline)
         return self
 
+    def withNever(self, never: NeverClaim) -> "ModelBuilder":
+        """
+        Set a never claim in the model.
+        :param never: Never claim to be added.
+        :returns: The buider itself (for call chaining).
+        """
+        self.model.never = never
+        return self
+
 
 class InlineBuilder:
     """Inline function builder."""
@@ -111,6 +122,32 @@ class InlineBuilder:
         parameter = InlineParameter()
         parameter.name = parameterName
         self.inline.parameters.append(parameter)
+        return self
+
+
+class NeverBuilder:
+    """Never claim builder."""
+
+    never: NeverClaim
+    """Build never claim."""
+
+    def __init__(self):
+        self.never = NeverClaim()
+
+    def build(self) -> NeverClaim:
+        """
+        Retrieve the built never claim..
+        :returns: The built never claim.
+        """
+        return self.inline
+
+    def withDefinition(self, definition: Block) -> "NeverBuilder":
+        """
+        Set definition.
+        :param definition: Definition to be set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.never.definition = definition
         return self
 
 
@@ -296,6 +333,21 @@ class CallBuilder:
         """
         self.call.parameters.append(parameter)
         return self
+
+
+class AssertBuilder:
+
+    assertStatement: Assert
+
+    def __init__(self):
+        self.assertStatement = Assert()
+
+    def withExpression(self, expression: Expression) -> "AssertBuilder":
+        self.assertStatement.expression = expression
+        return self
+
+    def build(self) -> Assert:
+        return self.assertStatement
 
 
 class AssignmentBuilder:
