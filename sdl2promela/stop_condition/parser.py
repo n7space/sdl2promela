@@ -79,10 +79,7 @@ def _parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
         nested = _parse_selector(selector.children[0])
         elements = elements + nested.elements
     elif selector.children[0].type == lexer.PRIMARY:
-        # TODO - refactor this using parse_primary after adding test suite
-        variable_reference = VariableReference(
-            selector.children[0].children[0].children[0].getText()
-        )
+        variable_reference = _parse_primary_expression(selector.children[0].children[0])
         elements.append(variable_reference)
     elif selector.children[0].type == lexer.CALL:
         call_expression = _parse_call_expression(selector.children[0])
@@ -101,7 +98,7 @@ def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
         )
 
     if expr.children[0].type == lexer.PRIMARY:
-        function = VariableReference(expr.children[0].children[0].children[0].getText())
+        function = _parse_primary_expression(expr.children[0].children[0])
     elif expr.children[0].type == lexer.SELECTOR:
         function = _parse_selector(expr.children[0])
     else:
