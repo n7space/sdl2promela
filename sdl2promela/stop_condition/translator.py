@@ -223,21 +223,14 @@ def _generate(expr: model.Selector):
         )
 
     # TODO add support for access to ASN.1 SEQUENCE OF
-    # TODO after adding tests, refactor this - there should be only one pop
     result: promela.MemberAccess = (
         promelaBuilder.MemberAccessBuilder()
         .withUtypeReference(
-            promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(
-                promelaBuilder.VariableReferenceBuilder("global_state").build()
-            )
-            .withMember(promelaObjects[0])
-            .build()
+            promelaBuilder.VariableReferenceBuilder("global_state").build()
         )
-        .withMember(promelaObjects[1])
+        .withMember(promelaObjects[0])
         .build()
     )
-    promelaObjects.pop(0)
     promelaObjects.pop(0)
 
     for element in promelaObjects:
@@ -333,7 +326,7 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
     :returns: Promela Model
     """
 
-    main_block_builder = promelaBuilder.BlockBuilder()
+    main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
 
     do_loop_builder = promelaBuilder.DoBuilder()
 
@@ -351,8 +344,8 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
 
     do_loop_builder.withAlternative(_generate_true_alternative())
 
-    main_block_builder.withStatements(_generate_entry_loop())
-    main_block_builder.withStatements(do_loop_builder.build())
+    main_block_builder.withStatement(_generate_entry_loop())
+    main_block_builder.withStatement(do_loop_builder.build())
 
     never_claim = (
         promelaBuilder.NeverBuilder().withDefinition(main_block_builder.build()).build()
