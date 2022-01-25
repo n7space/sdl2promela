@@ -1,13 +1,13 @@
 #define Actuator_States int
 #define Actuator_Context_state Actuator_States
 #define Actuator_Context_init_done bool
-#define Actuator_Context_wparam TestParam
+#define Actuator_Context_wparam TestInteger
 #define Actuator_Context_wresult TestInteger
 #define Controller_States int
 #define Controller_Context_state Controller_States
 #define Controller_Context_init_done bool
 #define Controller_Context_pint TestInteger
-#define Controller_Context_pparam TestParam
+#define Controller_Context_pparam TestInteger
 #define TestInteger int
 #define TestParam_valueA TestInteger
 #define TestParam_valueB TestInteger

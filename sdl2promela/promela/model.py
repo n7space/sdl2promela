@@ -241,7 +241,7 @@ class Block(Statement):
 
 
 class Alternative:
-    """Alternative for a loop or swich statement."""
+    """Alternative for a loop or switch statement."""
 
     condition: Statement
     """Condition unblocking the alternative (may be None)."""
@@ -251,6 +251,26 @@ class Alternative:
     def __init__(self):
         self.condition = None
         self.definition = []
+
+
+class Label(Statement):
+    """Label for use with goto."""
+
+    name: str
+    """Label name"""
+
+    def __init__(self, name: str):
+        self.name = name
+
+
+class GoTo(Statement):
+    """Goto statement."""
+
+    target: str
+    """Target label name."""
+
+    def __init__(self, target):
+        self.target = target
 
 
 class Do(Statement):

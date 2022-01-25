@@ -3,7 +3,7 @@ process Actuator;
     /* CIF TEXT (1597, 107), (267, 140) */
     -- Text area for declarations and comments
     
-    dcl wparam testParam;
+    dcl wparam testInteger;
     dcl wresult testInteger;
     /* CIF ENDTEXT */
     /* CIF START (320, 10), (70, 35) */
