@@ -174,8 +174,33 @@ def test_simple_selector():
     assert element2.name == "somevar"
 
 
+def test_long_selector():
+    model = scl_parser.parse_stop_condition("always object.somevar.params.data")
+    assert len(model.always_statements) == 1
+    assert len(model.never_statements) == 0
+    assert len(model.eventually_statements) == 0
+    assert len(model.filter_out_statements) == 0
+
+    assert isinstance(model.always_statements[0].expression, scl_model.Selector)
+
+    selector: scl_model.Selector = model.always_statements[0].expression
+    assert len(selector.elements) == 4
+    assert isinstance(selector.elements[0], scl_model.VariableReference)
+    assert isinstance(selector.elements[1], scl_model.VariableReference)
+    assert isinstance(selector.elements[2], scl_model.VariableReference)
+    assert isinstance(selector.elements[3], scl_model.VariableReference)
+    element1: scl_model.VariableReference = selector.elements[0]
+    element2: scl_model.VariableReference = selector.elements[1]
+    element3: scl_model.VariableReference = selector.elements[2]
+    element4: scl_model.VariableReference = selector.elements[3]
+    assert element1.name == "object"
+    assert element2.name == "somevar"
+    assert element3.name == "params"
+    assert element4.name == "data"
+
+
 def test_simple_call():
-    model = scl_parser.parse_stop_condition("always state(egse)")
+    model = scl_parser.parse_stop_condition("always length(egse)")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -189,4 +214,34 @@ def test_simple_call():
     assert isinstance(call.parameters[0], scl_model.VariableReference)
     assert isinstance(call.function, scl_model.VariableReference)
     function: scl_model.VariableReference = call.function
-    assert function.name == "state"
+    assert function.name == "length"
+
+
+def test_call_and_selector():
+    model = scl_parser.parse_stop_condition("always egse.params(0).data")
+    assert len(model.always_statements) == 1
+    assert len(model.never_statements) == 0
+    assert len(model.eventually_statements) == 0
+    assert len(model.filter_out_statements) == 0
+
+    assert isinstance(model.always_statements[0].expression, scl_model.Selector)
+
+    selector: scl_model.SelectorExpression = model.always_statements[0].expression
+
+    assert len(selector.elements) == 2
+    assert isinstance(selector.elements[0], scl_model.CallExpression)
+    assert isinstance(selector.elements[1], scl_model.VariableReference)
+
+    element1: scl_model.CallExpression = selector.elements[0]
+    element2: scl_model.VariableReference = selector.elements[1]
+
+    assert element2.name == "data"
+    assert isinstance(element1.function, scl_model.Selector)
+    assert len(element1.parameters) == 1
+    assert isinstance(element1.parameters[0], scl_model.IntegerValue)
+    assert element1.parameters[0].value == 0
+    assert len(element1.function.elements) == 2
+    assert isinstance(element1.function.elements[0], scl_model.VariableReference)
+    assert isinstance(element1.function.elements[1], scl_model.VariableReference)
+    assert element1.function.elements[0].name == "egse"
+    assert element1.function.elements[1].name == "params"
