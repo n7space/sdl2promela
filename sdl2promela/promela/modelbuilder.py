@@ -139,7 +139,7 @@ class NeverBuilder:
         Retrieve the built never claim..
         :returns: The built never claim.
         """
-        return self.inline
+        return self.never
 
     def withDefinition(self, definition: Block) -> "NeverBuilder":
         """
@@ -202,6 +202,15 @@ class BlockBuilder:
         :returns: The built block.
         """
         return self.block
+
+    def withStatement(self, statement: Statement) -> "BlockBuilder":
+        """
+        Add one statement.
+        :param statement: One statement to be added.
+        :returns: The buider itself (for call chaining).
+        """
+        self.block.statements.append(statement)
+        return self
 
     def withStatements(self, statements: List[Statement]) -> "BlockBuilder":
         """
