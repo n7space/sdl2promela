@@ -133,7 +133,7 @@ def generate(context: Context, expression: model.BinaryExpression):
         context.output(" % ")
     elif expression.operator == model.BinaryOperator.NEQUAL:
         context.output(" != ")
-    elif expression.operator == model.BinaryOperator.ADD:
+    elif expression.operator == model.BinaryOperator.AND:
         context.output(" && ")
     elif expression.operator == model.BinaryOperator.OR:
         context.output(" || ")
