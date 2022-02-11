@@ -130,6 +130,7 @@ def translate_scl(scl_files: List[str], output_file_name: str) -> bool:
     with open(output_file_name, "w") as file:
         promelagenerator.generate_model(output_model, file)
     __log.info("Generation done")
+    return True
 
 
 def main():
