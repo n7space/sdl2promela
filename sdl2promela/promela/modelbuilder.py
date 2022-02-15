@@ -228,8 +228,9 @@ class AlternativeBuilder:
     alternative: Alternative
     """Built alternative."""
 
-    def __init__(self):
+    def __init__(self, type: BlockType = BlockType.BLOCK):
         self.alternative = Alternative()
+        self.alternative.type = type
 
     def build(self) -> Alternative:
         """
