@@ -406,9 +406,12 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
         for never in input_model.never_statements:
             state_0_loop_builder.withAlternative(_generate_never_alternative(never))
 
-        state_0_loop_builder.withAlternative(
-            _generate_eventually_alternative(input_model.eventually_statements[0])
-        )
+        if input_model.filter_out_statements:
+            state_0_loop_builder.withAlternative(
+                _generate_filter_out_alternative(input_model.filter_out_statements)
+            )
+        else:
+            state_0_loop_builder.withAlternative(_generate_true_alternative())
 
         main_block_builder.withStatement(_generate_entry_loop())
         main_block_builder.withStatement(promela.Label("accept_all"))
