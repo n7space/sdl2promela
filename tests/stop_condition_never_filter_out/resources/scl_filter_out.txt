@@ -1,0 +1,2 @@
+never controller.my > 20;
+filter_out controller.myflag = true;
