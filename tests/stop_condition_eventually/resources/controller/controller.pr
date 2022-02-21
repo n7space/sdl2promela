@@ -1,0 +1,56 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (1543, 80), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl calculate_param Level;
+    dcl finished_param ResponseStatus;
+    /* CIF ENDTEXT */
+    /* CIF START (534, 49), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (534, 99), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1128, 441), (88, 35) */
+    state Calculating;
+        /* CIF input (1088, 496), (169, 35) */
+        input finished(finished_param);
+            /* CIF decision (1115, 551), (114, 50) */
+            decision finished_param;
+                /* CIF ANSWER (1093, 621), (70, 24) */
+                (true):
+                    /* CIF NEXTSTATE (1093, 665), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (1183, 621), (70, 24) */
+                (false):
+                    /* CIF output (1183, 665), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (1173, 720), (88, 35) */
+                    NEXTSTATE Calculating;
+            enddecision;
+    endstate;
+    /* CIF state (746, 448), (88, 35) */
+    state Calculating;
+        /* CIF input (701, 503), (179, 35) */
+        input calculate(calculate_param);
+            /* CIF output (707, 558), (167, 35) */
+            output restart(calculate_param);
+            /* CIF NEXTSTATE (746, 613), (88, 35) */
+            NEXTSTATE Calculating;
+    endstate;
+    /* CIF state (1134, 152), (70, 35) */
+    state Wait;
+        /* CIF input (1082, 207), (172, 35) */
+        input finished(finished_param);
+            /* CIF NEXTSTATE (1134, 262), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (756, 151), (70, 35) */
+    state Wait;
+        /* CIF input (701, 206), (179, 35) */
+        input calculate(calculate_param);
+            /* CIF output (707, 261), (167, 35) */
+            output restart(calculate_param);
+            /* CIF NEXTSTATE (746, 316), (88, 35) */
+            NEXTSTATE Calculating;
+    endstate;
+endprocess Controller;
