@@ -5,6 +5,8 @@ import sdl2promela.promela.model as promela
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
+from typing import List
+import functools
 
 
 class TranslateException(Exception):
@@ -249,20 +251,52 @@ def _generate(expr: model.CallExpression):
     raise TranslateException("Not implemented.")
 
 
-def _generate_true_alternative() -> promela.Alternative:
+def _generate_true_alternative(label: str) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder()
-        .withCondition(promela.BooleanValue(True))
+        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withStatements(
-            promelaBuilder.StatementsBuilder().withStatement(promela.Skip()).build()
+            promelaBuilder.StatementsBuilder()
+            .withStatement(promela.GoTo(label))
+            .build()
         )
         .build()
     )
 
 
+def _generate_filter_out_alternative(
+    statements: List[model.FilterOutStatement],
+) -> promela.Alternative:
+    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+
+    expressions = [_generate(s.expression) for s in statements]
+
+    negate_expressions = [
+        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+        .withExpression(e)
+        .build()
+        for e in expressions
+    ]
+
+    def joiner(lhs: promela.Expression, rhs: promela.Expression) -> promela.Expression:
+        return (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(lhs)
+            .withRight(rhs)
+            .build()
+        )
+
+    condition = functools.reduce(joiner, negate_expressions[1:], negate_expressions[0])
+
+    builder.withCondition(condition)
+    builder.withStatements(
+        promelaBuilder.StatementsBuilder().withStatement(promela.Skip()).build()
+    )
+    return builder.build()
+
+
 def _generate_always_alternative(always: model.AlwaysStatement) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder()
+        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(
             promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
             .withExpression(_generate(always.expression))
@@ -283,7 +317,7 @@ def _generate_always_alternative(always: model.AlwaysStatement) -> promela.Alter
 
 def _generate_never_alternative(never: model.NeverStatement) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder()
+        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(_generate(never.expression))
         .withStatements(
             promelaBuilder.StatementsBuilder()
@@ -302,11 +336,26 @@ def _generate_never_alternative(never: model.NeverStatement) -> promela.Alternat
     )
 
 
+def _generate_eventually_alternative(
+    eventually: model.EventuallyStatement,
+) -> promela.Alternative:
+    return (
+        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        .withCondition(_generate(eventually.expression))
+        .withStatements(
+            promelaBuilder.StatementsBuilder()
+            .withStatement(promela.GoTo("state_0"))
+            .build()
+        )
+        .build()
+    )
+
+
 def _generate_entry_loop() -> promela.Do:
     return (
         promelaBuilder.DoBuilder()
         .withAlternative(
-            promelaBuilder.AlternativeBuilder()
+            promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
             .withCondition(promelaBuilder.VariableReferenceBuilder("inited").build())
             .withStatements(
                 promelaBuilder.StatementsBuilder()
@@ -315,8 +364,87 @@ def _generate_entry_loop() -> promela.Do:
             )
             .build()
         )
-        .withAlternative(_generate_true_alternative())
+        .withAlternative(_generate_true_alternative("start"))
         .build()
+    )
+
+
+def _translate_basic_statements(
+    input_model: model.StopConditionModel, builder: promelaBuilder.BlockBuilder
+):
+    for always in input_model.always_statements:
+        builder.withAlternative(_generate_always_alternative(always))
+
+    for never in input_model.never_statements:
+        builder.withAlternative(_generate_never_alternative(never))
+
+
+def _build_simple_never_claim(
+    input_model: model.StopConditionModel,
+) -> promela.NeverClaim:
+    do_loop_builder = promelaBuilder.DoBuilder()
+
+    _translate_basic_statements(input_model, do_loop_builder)
+
+    if input_model.filter_out_statements:
+        do_loop_builder.withAlternative(
+            _generate_filter_out_alternative(input_model.filter_out_statements)
+        )
+    else:
+        do_loop_builder.withAlternative(_generate_true_alternative("start"))
+
+    main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
+
+    main_block_builder.withStatement(promela.Label("start"))
+    main_block_builder.withStatement(_generate_entry_loop())
+    main_block_builder.withStatement(do_loop_builder.build())
+
+    return (
+        promelaBuilder.NeverBuilder().withDefinition(main_block_builder.build()).build()
+    )
+
+
+def _build_never_claim_for_acceptance_cycles(
+    input_model: model.StopConditionModel,
+) -> promela.NeverClaim:
+
+    accept_loop_builder = promelaBuilder.DoBuilder()
+
+    _translate_basic_statements(input_model, accept_loop_builder)
+
+    accept_loop_builder.withAlternative(
+        _generate_eventually_alternative(input_model.eventually_statements[0])
+    )
+
+    if input_model.filter_out_statements:
+        accept_loop_builder.withAlternative(
+            _generate_filter_out_alternative(input_model.filter_out_statements)
+        )
+    else:
+        accept_loop_builder.withAlternative(_generate_true_alternative("accept_all"))
+
+    state_0_loop_builder = promelaBuilder.DoBuilder()
+
+    _translate_basic_statements(input_model, state_0_loop_builder)
+
+    if input_model.filter_out_statements:
+        state_0_loop_builder.withAlternative(
+            _generate_filter_out_alternative(input_model.filter_out_statements)
+        )
+    else:
+        state_0_loop_builder.withAlternative(_generate_true_alternative("state_0"))
+
+    main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
+
+    main_block_builder.withStatement(promela.Label("start"))
+    main_block_builder.withStatement(_generate_entry_loop())
+    main_block_builder.withStatement(promela.Label("accept_all"))
+    main_block_builder.withStatement(accept_loop_builder.build())
+    main_block_builder.withStatement(promela.Label("state_0"))
+    main_block_builder.withStatement(state_0_loop_builder.build())
+
+    return (
+        promelaBuilder.NeverBuilder().withDefinition(main_block_builder.build()).build()
     )
 
 
@@ -326,29 +454,12 @@ def translate_model(input_model: model.StopConditionModel) -> promela.Model:
     :returns: Promela Model
     """
 
-    main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
+    if input_model.eventually_statements:
+        if len(input_model.eventually_statements) != 1:
+            raise TranslateException("Only one eventually statement is allowed.")
 
-    do_loop_builder = promelaBuilder.DoBuilder()
-
-    for always in input_model.always_statements:
-        do_loop_builder.withAlternative(_generate_always_alternative(always))
-
-    for never in input_model.never_statements:
-        do_loop_builder.withAlternative(_generate_never_alternative(never))
-
-    for eventually in input_model.eventually_statements:
-        raise TranslateException("Not implemented.")
-
-    for filter_out in input_model.filter_out_statements:
-        raise TranslateException("Not implemented.")
-
-    do_loop_builder.withAlternative(_generate_true_alternative())
-
-    main_block_builder.withStatement(_generate_entry_loop())
-    main_block_builder.withStatement(do_loop_builder.build())
-
-    never_claim = (
-        promelaBuilder.NeverBuilder().withDefinition(main_block_builder.build()).build()
-    )
-
-    return promelaBuilder.ModelBuilder().withNever(never_claim).build()
+        never_claim = _build_never_claim_for_acceptance_cycles(input_model)
+        return promelaBuilder.ModelBuilder().withNever(never_claim).build()
+    else:
+        never_claim = _build_simple_never_claim(input_model)
+        return promelaBuilder.ModelBuilder().withNever(never_claim).build()

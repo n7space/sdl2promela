@@ -12,7 +12,9 @@ TESTS = \
 	integration \
 	parameterless \
 	simpleparameters \
-	flowcontrol
+	flowcontrol \
+	stop_condition_eventually \
+	stop_condition_never_filter_out
 
 unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv
@@ -27,6 +29,12 @@ simpleparameters:
 	${MAKE} -C simpleparameters check
 
 flowcontrol:
-	${MAKE} -C flowcontrol check	
+	${MAKE} -C flowcontrol check
 
-check: unit integration parameterless simpleparameters flowcontrol
+stop_condition_eventually:
+	${MAKE} -C stop_condition_eventually check
+
+stop_condition_never_filter_out:
+	${MAKE} -C stop_condition_never_filter_out check
+
+check: unit integration parameterless simpleparameters flowcontrol stop_condition_eventually stop_condition_never_filter_out

@@ -1,0 +1,38 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (1465, 169), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    dcl my InternalInteger;
+    dcl myFlag InternalFlag;
+    /* CIF ENDTEXT */
+    /* CIF START (366, 35), (70, 35) */
+    START;
+        /* CIF task (344, 90), (112, 35) */
+        task myFlag := false;
+        /* CIF NEXTSTATE (366, 140), (70, 35) */
+        NEXTSTATE First;
+    /* CIF state (673, 206), (70, 35) */
+    state First;
+        /* CIF input (664, 261), (86, 35) */
+        input tc(param);
+            /* CIF decision (672, 316), (70, 50) */
+            decision myFlag;
+                /* CIF ANSWER (616, 386), (70, 24) */
+                (true):
+                    /* CIF task (595, 430), (112, 35) */
+                    task myFlag := false;
+                    /* CIF task (594, 485), (113, 35) */
+                    task my := param * 2;
+                /* CIF ANSWER (738, 386), (70, 24) */
+                (false):
+                    /* CIF task (719, 430), (108, 35) */
+                    task myFlag := true;
+                    /* CIF task (715, 485), (115, 35) */
+                    task my := param + 2;
+            enddecision;
+            /* CIF NEXTSTATE (672, 536), (70, 35) */
+            NEXTSTATE First;
+    endstate;
+endprocess Controller;

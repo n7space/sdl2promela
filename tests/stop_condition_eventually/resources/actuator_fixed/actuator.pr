@@ -1,0 +1,83 @@
+/* CIF PROCESS (250, 148), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1617, 105), (267, 184) */
+    -- Text area for declarations and comments
+    
+    dcl target Level;
+    dcl iteration Level;
+    
+    dcl a InternalValue;
+    dcl b InternalValue;
+    
+    dcl c internalValue;
+    
+    dcl response ResponseStatus;
+    /* CIF ENDTEXT */
+    /* CIF START (608, 170), (70, 35) */
+    START;
+        /* CIF task (601, 225), (83, 35) */
+        task target := 0;
+        /* CIF task (594, 275), (97, 35) */
+        task iteration := 0;
+        /* CIF task (608, 330), (70, 35) */
+        task a := 0;
+        /* CIF task (608, 385), (70, 35) */
+        task b := 1;
+        /* CIF task (608, 440), (70, 35) */
+        task c := 1;
+        /* CIF task (581, 495), (123, 35) */
+        task response := false;
+        /* CIF NEXTSTATE (608, 545), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1447, 407), (70, 35) */
+    state Wait;
+        /* CIF input (1447, 462), (70, 35) */
+        input tick;
+            /* CIF decision (1419, 517), (124, 50) */
+            decision iteration = target;
+                /* CIF ANSWER (1349, 587), (70, 24) */
+                (true):
+                    /* CIF task (1324, 631), (119, 35) */
+                    task response := true;
+                    /* CIF output (1317, 686), (132, 35) */
+                    output finished(response);
+                    /* CIF NEXTSTATE (1349, 741), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (1507, 587), (70, 24) */
+                (false):
+                    /* CIF task (1507, 631), (70, 35) */
+                    task a := b;
+                    /* CIF task (1507, 686), (70, 35) */
+                    task b := c;
+                    /* CIF task (1505, 741), (73, 35) */
+                    task c := a + b;
+                    /* CIF task (1460, 795), (162, 35) */
+                    task iteration := iteration + 1;
+                    /* CIF task (1479, 850), (125, 35) */
+                    task response := false;
+                    /* CIF output (1475, 900), (132, 35) */
+                    output finished(response);
+                    /* CIF NEXTSTATE (1507, 955), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (816, 163), (70, 35) */
+    state Wait;
+        /* CIF input (791, 218), (108, 35) */
+        input restart(target);
+            /* CIF task (797, 273), (97, 35) */
+            task iteration := 0;
+            /* CIF task (811, 323), (70, 35) */
+            task a := 0;
+            /* CIF task (811, 378), (70, 35) */
+            task b := 1;
+            /* CIF task (811, 432), (70, 35) */
+            task c := 1;
+            /* CIF task (784, 487), (123, 35) */
+            task response := false;
+            /* CIF output (779, 537), (132, 35) */
+            output finished(response);
+            /* CIF NEXTSTATE (811, 587), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

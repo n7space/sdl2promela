@@ -98,6 +98,47 @@ def test_do():
     generate_and_verify(model, "do.pml")
 
 
+def test_atomic_alternative():
+    do = (
+        DoBuilder()
+        .withAlternative(
+            AlternativeBuilder(BlockType.ATOMIC)
+            .withCondition(
+                BinaryExpressionBuilder(BinaryOperator.EQUAL)
+                .withLeft(VariableReferenceBuilder("state").build())
+                .withRight(VariableReferenceBuilder("idle").build())
+                .build()
+            )
+            .withStatements([Skip()])
+            .build()
+        )
+        .withAlternative(
+            AlternativeBuilder(BlockType.ATOMIC)
+            .withCondition(
+                BinaryExpressionBuilder(BinaryOperator.EQUAL)
+                .withLeft(VariableReferenceBuilder("state").build())
+                .withRight(VariableReferenceBuilder("running").build())
+                .build()
+            )
+            .withStatements([Skip()])
+            .build()
+        )
+        .build()
+    )
+    model = (
+        ModelBuilder()
+        .withInline(
+            InlineBuilder()
+            .withName("test")
+            .withDefinition(BlockBuilder(BlockType.BLOCK).withStatements([do]).build())
+            .build()
+        )
+        .build()
+    )
+
+    generate_and_verify(model, "do_atomic.pml")
+
+
 def test_switch():
     switch = (
         SwitchBuilder()

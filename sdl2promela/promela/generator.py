@@ -285,6 +285,9 @@ def generate(context: Context, switch: model.Switch):
 @dispatch(Context, model.Alternative)
 def generate(context: Context, alternative: model.Alternative):
     context.output("::")
+    if alternative.type == model.BlockType.ATOMIC:
+        context.output(" atomic {\n")
+        context.push_indent(INDENT)
     parent = context.get_parent()
     pure_do = (
         isinstance(parent, model.Do)
@@ -299,6 +302,10 @@ def generate(context: Context, alternative: model.Alternative):
         context.output("->\n")
     context.push_indent(INDENT)
     generate(context, StatementsWrapper(alternative.definition))
+    if alternative.type == model.BlockType.ATOMIC:
+        context.pop_indent()
+        context.output("}\n")
+
     context.pop_indent()
 
 

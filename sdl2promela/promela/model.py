@@ -247,10 +247,13 @@ class Alternative:
     """Condition unblocking the alternative (may be None)."""
     definition: List[Statement]
     """List of statements to be executed for the alternative."""
+    type: BlockType
+    """Block type."""
 
     def __init__(self):
         self.condition = None
         self.definition = []
+        self.type = BlockType.BLOCK
 
 
 class Label(Statement):
