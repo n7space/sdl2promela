@@ -211,20 +211,14 @@ def _generate(expr: model.BooleanValue):
 
 @dispatch(model.VariableReference)
 def _generate(expr: model.VariableReference):
+    # TODO case sensitive
     return promelaBuilder.VariableReferenceBuilder(expr.name).build()
 
 
 @dispatch(model.Selector)
 def _generate(expr: model.Selector):
-
     promelaObjects = [_generate(elem) for elem in expr.elements]
 
-    if not isinstance(promelaObjects[0], promela.VariableReference):
-        raise TranslateException(
-            "Call Expression is not allowed as first element of selector."
-        )
-
-    # TODO add support for access to ASN.1 SEQUENCE OF
     result: promela.MemberAccess = (
         promelaBuilder.MemberAccessBuilder()
         .withUtypeReference(
