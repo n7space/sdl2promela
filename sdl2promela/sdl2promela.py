@@ -121,7 +121,10 @@ def translate_scl(scl_files: List[str], output_file_name: str) -> bool:
     input_model = scl_model.StopConditionModel()
     for input_file in scl_files:
         __log.info("Parsing file {}".format(input_file))
-        input_model.join(scl_parser.parse_stop_condition_file(input_file))
+        model = scl_parser.parse_stop_condition_file(input_file)
+        if model is None:
+            return False
+        input_model.join(model)
 
     __log.info("Translating Stop Condition Model into Promela Model")
     output_model = scl_translator.translate_model(input_model)

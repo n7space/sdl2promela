@@ -4,12 +4,12 @@ import sdl2promela.stop_condition.model as scl_model
 import pytest
 
 test_always_comparison_params = [
-    ("always 0 = 1", scl_model.EqualExpression),
-    ("always 0 /= 1", scl_model.NotEqualExpression),
-    ("always 0 < 1", scl_model.LessExpression),
-    ("always 0 <= 1", scl_model.LessEqualExpression),
-    ("always 0 > 1", scl_model.GreaterExpression),
-    ("always 0 >= 1", scl_model.GreaterEqualExpression),
+    ("always 0 = 1;", scl_model.EqualExpression),
+    ("always 0 /= 1;", scl_model.NotEqualExpression),
+    ("always 0 < 1;", scl_model.LessExpression),
+    ("always 0 <= 1;", scl_model.LessEqualExpression),
+    ("always 0 > 1;", scl_model.GreaterExpression),
+    ("always 0 >= 1;", scl_model.GreaterEqualExpression),
 ]
 
 
@@ -34,9 +34,9 @@ def test_always_comparison(test_input, expected_expression_type):
 
 
 test_always_logical_params = [
-    ("always true and false", scl_model.AndExpression),
-    ("always true or false", scl_model.OrExpression),
-    ("always true xor false", scl_model.XorExpression),
+    ("always true and false;", scl_model.AndExpression),
+    ("always true or false;", scl_model.OrExpression),
+    ("always true xor false;", scl_model.XorExpression),
 ]
 
 
@@ -61,11 +61,11 @@ def test_always_logical(test_input, expected_expression_type):
 
 
 test_always_arithmetic_params = [
-    ("always 0 = 1 + 2", scl_model.PlusExpression),
-    ("always 0 = 1 - 2", scl_model.MinusExpression),
-    ("always 0 = 1 * 2", scl_model.MulExpression),
-    ("always 0 = 1 / 2", scl_model.DivExpression),
-    ("always 0 = 1 mod 2", scl_model.ModExpression),
+    ("always 0 = 1 + 2;", scl_model.PlusExpression),
+    ("always 0 = 1 - 2;", scl_model.MinusExpression),
+    ("always 0 = 1 * 2;", scl_model.MulExpression),
+    ("always 0 = 1 / 2;", scl_model.DivExpression),
+    ("always 0 = 1 mod 2;", scl_model.ModExpression),
 ]
 
 
@@ -115,7 +115,7 @@ def test_always_not():
 
 
 def test_always_negative():
-    model = scl_parser.parse_stop_condition("always 0 > - 1")
+    model = scl_parser.parse_stop_condition("always 0 > - 1;")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -141,7 +141,7 @@ def test_always_negative():
 
 
 def test_variable_reference():
-    model = scl_parser.parse_stop_condition("always somevar")
+    model = scl_parser.parse_stop_condition("always somevar;")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -156,7 +156,7 @@ def test_variable_reference():
 
 
 def test_simple_selector():
-    model = scl_parser.parse_stop_condition("always object.somevar")
+    model = scl_parser.parse_stop_condition("always object.somevar;")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -175,7 +175,7 @@ def test_simple_selector():
 
 
 def test_long_selector():
-    model = scl_parser.parse_stop_condition("always object.somevar.params.data")
+    model = scl_parser.parse_stop_condition("always object.somevar.params.data;")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -200,7 +200,7 @@ def test_long_selector():
 
 
 def test_simple_call():
-    model = scl_parser.parse_stop_condition("always length(egse)")
+    model = scl_parser.parse_stop_condition("always length(egse);")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0
@@ -218,7 +218,7 @@ def test_simple_call():
 
 
 def test_call_and_selector():
-    model = scl_parser.parse_stop_condition("always egse.params(0).data")
+    model = scl_parser.parse_stop_condition("always egse.params(0).data;")
     assert len(model.always_statements) == 1
     assert len(model.never_statements) == 0
     assert len(model.eventually_statements) == 0

@@ -242,7 +242,51 @@ def _generate(expr: model.Selector):
 
 @dispatch(model.CallExpression)
 def _generate(expr: model.CallExpression):
-    raise TranslateException("Not implemented.")
+    if isinstance(expr.function, model.Selector):
+        if len(expr.parameters) != 1:
+            raise TranslateException("Invalid array access")
+
+        result = _generate(expr.function)
+        result = (
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(result)
+            .withMember(promelaBuilder.VariableReferenceBuilder("data").build())
+            .build()
+        )
+
+        return (
+            promelaBuilder.ArrayAccessBuilder()
+            .withArray(result)
+            .withIndex(_generate(expr.parameters[0]))
+            .build()
+        )
+
+    elif isinstance(expr.function, model.VariableReference):
+        if expr.function.name == "get_state":
+            # special
+            pass
+        elif expr.function.name == "length":
+            if len(expr.parameters) != 1:
+                raise TranslateException("Invalid array access")
+
+            result = _generate(expr.parameters[0])
+            return (
+                promelaBuilder.MemberAccessBuilder()
+                .withUtypeReference(result)
+                .withMember(promelaBuilder.VariableReferenceBuilder("length").build())
+                .build()
+            )
+
+        elif expr.function.name == "present":
+            pass
+        elif expr.function.name == "empty":
+            pass
+        elif expr.function.name == "queue_length":
+            pass
+
+        raise TranslateException("Not implemented.")
+    else:
+        raise TranslateException("Not implemented.")
 
 
 def _generate_true_alternative(label: str) -> promela.Alternative:
