@@ -276,9 +276,33 @@ def _generate(expr: model.CallExpression):
                 .withMember(promelaBuilder.VariableReferenceBuilder("length").build())
                 .build()
             )
-
         elif expr.function.name == "present":
             pass
+        elif expr.function.name == "exist":
+            if len(expr.parameters) != 1:
+                raise TranslateException("Invalid array access")
+            result = _generate(expr.parameters[0])
+
+            if not isinstance(result, promela.MemberAccess):
+                raise TranslateException(
+                    "Internal error, expected MemberAccess, got {}".format(type(result))
+                )
+
+            member = result.member
+
+            return (
+                promelaBuilder.MemberAccessBuilder()
+                .withMember(member)
+                .withUtypeReference(
+                    promelaBuilder.MemberAccessBuilder()
+                    .withUtypeReference(result.utype)
+                    .withMember(
+                        promelaBuilder.VariableReferenceBuilder("exist").build()
+                    )
+                    .build()
+                )
+                .build()
+            )
         elif expr.function.name == "empty":
             pass
         elif expr.function.name == "queue_length":
