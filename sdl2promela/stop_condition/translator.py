@@ -5,8 +5,9 @@ import sdl2promela.promela.model as promela
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
-from typing import List
+from typing import List, Dict
 import functools
+from opengeode import ogAST
 
 
 class TranslateException(Exception):
@@ -15,30 +16,49 @@ class TranslateException(Exception):
     pass
 
 
-@dispatch(model.OrExpression)
-def _generate(expr: model.OrExpression):
-    return (
+class GenerateContext:
+
+    processes: Dict[str, ogAST.Process]
+    choice_selection: str
+
+    def __init__(self, processes: Dict[str, ogAST.Process]):
+        self.processes = processes
+        self.choice_selection = None
+
+    def clear(self):
+        self.choice_selection = None
+
+
+@dispatch(GenerateContext, model.OrExpression)
+def _generate(context: GenerateContext, expr: model.OrExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.OR)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.AndExpression)
-def _generate(expr: model.AndExpression):
-    return (
+@dispatch(GenerateContext, model.AndExpression)
+def _generate(context: GenerateContext, expr: model.AndExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.XorExpression)
-def _generate(expr: model.XorExpression):
-    left = _generate(expr.lhs)
-    right = _generate(expr.rhs)
+@dispatch(GenerateContext, model.XorExpression)
+def _generate(context: GenerateContext, expr: model.XorExpression):
+    left = _generate(context, expr.lhs)
+    right = _generate(context, expr.rhs)
+
+    context.clear()
 
     return (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.OR)
@@ -66,158 +86,189 @@ def _generate(expr: model.XorExpression):
     )
 
 
-@dispatch(model.EqualExpression)
-def _generate(expr: model.EqualExpression):
-    return (
+@dispatch(GenerateContext, model.EqualExpression)
+def _generate(context: GenerateContext, expr: model.EqualExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.NotEqualExpression)
-def _generate(expr: model.NotEqualExpression):
-    return (
+@dispatch(GenerateContext, model.NotEqualExpression)
+def _generate(context: GenerateContext, expr: model.NotEqualExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.LessExpression)
-def _generate(expr: model.LessExpression):
-    return (
+@dispatch(GenerateContext, model.LessExpression)
+def _generate(context: GenerateContext, expr: model.LessExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.LESS)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.LessEqualExpression)
-def _generate(expr: model.LessEqualExpression):
-    return (
+@dispatch(GenerateContext, model.LessEqualExpression)
+def _generate(context: GenerateContext, expr: model.LessEqualExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.LEQUAL)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.GreaterExpression)
-def _generate(expr: model.GreaterExpression):
-    return (
+@dispatch(GenerateContext, model.GreaterExpression)
+def _generate(context: GenerateContext, expr: model.GreaterExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.GREATER)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.GreaterEqualExpression)
-def _generate(expr: model.GreaterEqualExpression):
-    return (
+@dispatch(GenerateContext, model.GreaterEqualExpression)
+def _generate(context: GenerateContext, expr: model.GreaterEqualExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.GEQUAL)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.NotExpression)
-def _generate(expr: model.NotExpression):
-    return (
+@dispatch(GenerateContext, model.NotExpression)
+def _generate(context: GenerateContext, expr: model.NotExpression):
+    result = (
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-        .withExpression(expr.expression)
+        .withExpression(_generate(context, expr.expression))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.PlusExpression)
-def _generate(expr: model.PlusExpression):
-    return (
+@dispatch(GenerateContext, model.PlusExpression)
+def _generate(context: GenerateContext, expr: model.PlusExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.ADD)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.MinusExpression)
-def _generate(expr: model.MinusExpression):
-    return (
+@dispatch(GenerateContext, model.MinusExpression)
+def _generate(context: GenerateContext, expr: model.MinusExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.SUBTRACT)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.MulExpression)
-def _generate(expr: model.MulExpression):
-    return (
+@dispatch(GenerateContext, model.MulExpression)
+def _generate(context: GenerateContext, expr: model.MulExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.MULTIPLY)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.DivExpression)
-def _generate(expr: model.DivExpression):
-    return (
+@dispatch(GenerateContext, model.DivExpression)
+def _generate(context: GenerateContext, expr: model.DivExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.DIVIDE)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.ModExpression)
-def _generate(expr: model.ModExpression):
-    return (
+@dispatch(GenerateContext, model.ModExpression)
+def _generate(context: GenerateContext, expr: model.ModExpression):
+    result = (
         promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.MODULO)
-        .withLeft(_generate(expr.lhs))
-        .withRight(_generate(expr.rhs))
+        .withLeft(_generate(context, expr.lhs))
+        .withRight(_generate(context, expr.rhs))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.NegationExpression)
-def _generate(expr: model.NegationExpression):
-    return (
+@dispatch(GenerateContext, model.NegationExpression)
+def _generate(context: GenerateContext, expr: model.NegationExpression):
+    result = (
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NEGATIVE)
-        .withExpression(expr.expression)
+        .withExpression(_generate(context, expr.expression))
         .build()
     )
+    context.clear()
+    return result
 
 
-@dispatch(model.IntegerValue)
-def _generate(expr: model.IntegerValue):
+@dispatch(GenerateContext, model.IntegerValue)
+def _generate(context: GenerateContext, expr: model.IntegerValue):
     return promela.IntegerValue(expr.value)
 
 
-@dispatch(model.FloatValue)
-def _generate(expr: model.FloatValue):
+@dispatch(GenerateContext, model.FloatValue)
+def _generate(context: GenerateContext, expr: model.FloatValue):
     return promela.FloatValue(expr.value)
 
 
-@dispatch(model.BooleanValue)
-def _generate(expr: model.BooleanValue):
+@dispatch(GenerateContext, model.BooleanValue)
+def _generate(context: GenerateContext, expr: model.BooleanValue):
     return promela.BooleanValue(expr.value)
 
 
-@dispatch(model.VariableReference)
-def _generate(expr: model.VariableReference):
-    # TODO case sensitive
-    return promelaBuilder.VariableReferenceBuilder(expr.name).build()
+@dispatch(GenerateContext, model.VariableReference)
+def _generate(context: GenerateContext, expr: model.VariableReference):
+    if context.choice_selection is not None:
+        return promelaBuilder.VariableReferenceBuilder(
+            context.choice_selection + "_" + expr.name + "_PRESENT"
+        ).build()
+    else:
+        return promelaBuilder.VariableReferenceBuilder(expr.name).build()
 
 
-@dispatch(model.Selector)
-def _generate(expr: model.Selector):
-    promelaObjects = [_generate(elem) for elem in expr.elements]
+@dispatch(GenerateContext, model.Selector)
+def _generate(context: GenerateContext, expr: model.Selector):
+    promelaObjects = [_generate(context, elem) for elem in expr.elements]
+    context.clear()
 
     result: promela.MemberAccess = (
         promelaBuilder.MemberAccessBuilder()
@@ -240,13 +291,54 @@ def _generate(expr: model.Selector):
     return result
 
 
-@dispatch(model.CallExpression)
-def _generate(expr: model.CallExpression):
+def _set_choice_selection(context: GenerateContext, selector: promela.MemberAccess):
+    # flat structure
+
+    path = []
+    path.append(selector.member)
+
+    elem = selector.utype
+
+    while isinstance(elem, promela.MemberAccess):
+        path.insert(0, elem.member)
+        elem = elem.utype
+
+    path.insert(0, elem)
+
+    if not isinstance(path[1], promela.VariableReference):
+        raise TranslateException("Unable to find process in context")
+
+    process_name = path[1].name
+
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process {} in context".format(process_name)
+        )
+
+    process = context.processes[process_name]
+
+    if not isinstance(path[2], promela.VariableReference):
+        raise TranslateException("Unable to find variable")
+
+    variable_name = path[2].name
+
+    if variable_name not in process.variables:
+        raise TranslateException(
+            "Cannot find variable {} in process {}".format(variable_name, process_name)
+        )
+
+    variable = process.variables[variable_name]
+
+    context.choice_selection = str(variable[0].ReferencedTypeName)
+
+
+@dispatch(GenerateContext, model.CallExpression)
+def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
         if len(expr.parameters) != 1:
             raise TranslateException("Invalid array access")
 
-        result = _generate(expr.function)
+        result = _generate(context, expr.function)
         result = (
             promelaBuilder.MemberAccessBuilder()
             .withUtypeReference(result)
@@ -257,7 +349,7 @@ def _generate(expr: model.CallExpression):
         return (
             promelaBuilder.ArrayAccessBuilder()
             .withArray(result)
-            .withIndex(_generate(expr.parameters[0]))
+            .withIndex(_generate(context, expr.parameters[0]))
             .build()
         )
 
@@ -269,7 +361,7 @@ def _generate(expr: model.CallExpression):
             if len(expr.parameters) != 1:
                 raise TranslateException("Invalid array access")
 
-            result = _generate(expr.parameters[0])
+            result = _generate(context, expr.parameters[0])
             return (
                 promelaBuilder.MemberAccessBuilder()
                 .withUtypeReference(result)
@@ -277,11 +369,27 @@ def _generate(expr: model.CallExpression):
                 .build()
             )
         elif expr.function.name == "present":
-            pass
+            if len(expr.parameters) != 1:
+                raise TranslateException("Invalid array access")
+            result = _generate(context, expr.parameters[0])
+
+            if not isinstance(result, promela.MemberAccess):
+                raise TranslateException("Invalid parameter for present function")
+
+            _set_choice_selection(context, result)
+
+            return (
+                promelaBuilder.MemberAccessBuilder()
+                .withUtypeReference(result)
+                .withMember(
+                    promelaBuilder.VariableReferenceBuilder("selection").build()
+                )
+                .build()
+            )
         elif expr.function.name == "exist":
             if len(expr.parameters) != 1:
                 raise TranslateException("Invalid array access")
-            result = _generate(expr.parameters[0])
+            result = _generate(context, expr.parameters[0])
 
             if not isinstance(result, promela.MemberAccess):
                 raise TranslateException(
@@ -326,11 +434,11 @@ def _generate_true_alternative(label: str) -> promela.Alternative:
 
 
 def _generate_filter_out_alternative(
-    statements: List[model.FilterOutStatement],
+    statements: List[model.FilterOutStatement], context: GenerateContext
 ) -> promela.Alternative:
     builder = promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
 
-    expressions = [_generate(s.expression) for s in statements]
+    expressions = [_generate(context, s.expression) for s in statements]
 
     negate_expressions = [
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
@@ -356,19 +464,21 @@ def _generate_filter_out_alternative(
     return builder.build()
 
 
-def _generate_always_alternative(always: model.AlwaysStatement) -> promela.Alternative:
+def _generate_always_alternative(
+    always: model.AlwaysStatement, context: GenerateContext
+) -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(
             promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-            .withExpression(_generate(always.expression))
+            .withExpression(_generate(context, always.expression))
             .build()
         )
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
                 promelaBuilder.AssertBuilder()
-                .withExpression(_generate(always.expression))
+                .withExpression(_generate(context, always.expression))
                 .build()
             )
             .build()
@@ -377,17 +487,19 @@ def _generate_always_alternative(always: model.AlwaysStatement) -> promela.Alter
     )
 
 
-def _generate_never_alternative(never: model.NeverStatement) -> promela.Alternative:
+def _generate_never_alternative(
+    never: model.NeverStatement, context: GenerateContext
+) -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(_generate(never.expression))
+        .withCondition(_generate(context, never.expression))
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
                 promelaBuilder.AssertBuilder()
                 .withExpression(
                     promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                    .withExpression(_generate(never.expression))
+                    .withExpression(_generate(context, never.expression))
                     .build()
                 )
                 .build()
@@ -399,11 +511,11 @@ def _generate_never_alternative(never: model.NeverStatement) -> promela.Alternat
 
 
 def _generate_eventually_alternative(
-    eventually: model.EventuallyStatement,
+    eventually: model.EventuallyStatement, context: GenerateContext
 ) -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(_generate(eventually.expression))
+        .withCondition(_generate(context, eventually.expression))
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(promela.GoTo("state_0"))
@@ -432,25 +544,27 @@ def _generate_entry_loop() -> promela.Do:
 
 
 def _translate_basic_statements(
-    input_model: model.StopConditionModel, builder: promelaBuilder.BlockBuilder
+    input_model: model.StopConditionModel,
+    builder: promelaBuilder.BlockBuilder,
+    context: GenerateContext,
 ):
     for always in input_model.always_statements:
-        builder.withAlternative(_generate_always_alternative(always))
+        builder.withAlternative(_generate_always_alternative(always, context))
 
     for never in input_model.never_statements:
-        builder.withAlternative(_generate_never_alternative(never))
+        builder.withAlternative(_generate_never_alternative(never, context))
 
 
 def _build_simple_never_claim(
-    input_model: model.StopConditionModel,
+    input_model: model.StopConditionModel, context: GenerateContext
 ) -> promela.NeverClaim:
     do_loop_builder = promelaBuilder.DoBuilder()
 
-    _translate_basic_statements(input_model, do_loop_builder)
+    _translate_basic_statements(input_model, do_loop_builder, context)
 
     if input_model.filter_out_statements:
         do_loop_builder.withAlternative(
-            _generate_filter_out_alternative(input_model.filter_out_statements)
+            _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
         do_loop_builder.withAlternative(_generate_true_alternative("start"))
@@ -467,31 +581,31 @@ def _build_simple_never_claim(
 
 
 def _build_never_claim_for_acceptance_cycles(
-    input_model: model.StopConditionModel,
+    input_model: model.StopConditionModel, context: GenerateContext
 ) -> promela.NeverClaim:
 
     accept_loop_builder = promelaBuilder.DoBuilder()
 
-    _translate_basic_statements(input_model, accept_loop_builder)
+    _translate_basic_statements(input_model, accept_loop_builder, context)
 
     accept_loop_builder.withAlternative(
-        _generate_eventually_alternative(input_model.eventually_statements[0])
+        _generate_eventually_alternative(input_model.eventually_statements[0], context)
     )
 
     if input_model.filter_out_statements:
         accept_loop_builder.withAlternative(
-            _generate_filter_out_alternative(input_model.filter_out_statements)
+            _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
         accept_loop_builder.withAlternative(_generate_true_alternative("accept_all"))
 
     state_0_loop_builder = promelaBuilder.DoBuilder()
 
-    _translate_basic_statements(input_model, state_0_loop_builder)
+    _translate_basic_statements(input_model, state_0_loop_builder, context)
 
     if input_model.filter_out_statements:
         state_0_loop_builder.withAlternative(
-            _generate_filter_out_alternative(input_model.filter_out_statements)
+            _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
         state_0_loop_builder.withAlternative(_generate_true_alternative("state_0"))
@@ -510,18 +624,22 @@ def _build_never_claim_for_acceptance_cycles(
     )
 
 
-def translate_model(input_model: model.StopConditionModel) -> promela.Model:
+def translate_model(
+    input_model: model.StopConditionModel, processes: Dict[str, ogAST.Process]
+) -> promela.Model:
     """Translate Stop Condition model into Promela model.
     :param input_model: input Stop Condition model
     :returns: Promela Model
     """
 
+    context = GenerateContext(processes)
+
     if input_model.eventually_statements:
         if len(input_model.eventually_statements) != 1:
             raise TranslateException("Only one eventually statement is allowed.")
 
-        never_claim = _build_never_claim_for_acceptance_cycles(input_model)
+        never_claim = _build_never_claim_for_acceptance_cycles(input_model, context)
         return promelaBuilder.ModelBuilder().withNever(never_claim).build()
     else:
-        never_claim = _build_simple_never_claim(input_model)
+        never_claim = _build_simple_never_claim(input_model, context)
         return promelaBuilder.ModelBuilder().withNever(never_claim).build()

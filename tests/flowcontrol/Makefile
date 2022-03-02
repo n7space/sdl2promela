@@ -36,7 +36,7 @@ check: ${TESTS}
 test_flowcontrol:
 	echo "Test flowcontrol"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -o ${TEST_DIR}/flowcontrol.pml ${RES_DIR}/system_structure.pr ${RES_DIR}/flowcontrol.pr	
+	${SDL2PROMELA} -o ${TEST_DIR}/flowcontrol.pml --sdl ${RES_DIR}/system_structure.pr ${RES_DIR}/flowcontrol.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cd ${TEST_DIR} && \

@@ -3,6 +3,7 @@ from typing import List
 import logging
 import opengeode
 import sys
+import os
 import traceback
 
 from opengeode import ogAST
@@ -20,10 +21,12 @@ __log = logging.getLogger("sdl2promela")
 def __parse_arguments():
     parser = argparse.ArgumentParser(description="SDL to Promela converter")
     parser.add_argument(
+        "--sdl",
         dest="files",
         type=str,
         nargs="+",
         help="SDL system description; can contain only a single process",
+        default=[],
     )
     parser.add_argument(
         "-o", "--output", dest="output_filename", type=str, help="output file name"
@@ -31,7 +34,11 @@ def __parse_arguments():
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument(
-        "--scl", action="store_true", help="Read input files as Stop Conditions"
+        "--scl",
+        help="Read input files as Stop Conditions",
+        nargs="+",
+        type=str,
+        dest="scl_files",
     )
     return parser.parse_args()
 
@@ -112,13 +119,44 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     return True
 
 
-def translate_scl(scl_files: List[str], output_file_name: str) -> bool:
+def show_object(o):
+    for f in dir(o):
+        if not f.startswith("_"):
+            __log.info("    {}: {}".format(f, getattr(o, f)))
+
+
+def translate_scl(
+    scl_files: List[str], sdl_files: List[List[str]], output_file_name: str
+) -> bool:
     """
     Translate a list of Stop Condition files into a Promela model and save it to file.
     :param scl_files: List of files with stop conditions
     :param output_file_name: Name of file to save Promela model.
     """
     input_model = scl_model.StopConditionModel()
+    context = {}
+    for group in sdl_files:
+        __log.info(f"Reading process from {group}")
+        process = read_process(group)
+        __log.info(f"Reading done")
+        context[process.processName.lower()] = process
+    # if sdl_files:
+    #     process = read_process(sdl_files[0])
+    #     for variable, type in process.variables.items():
+    #         __log.info(
+    #             "Variable: {} of type {} {}".format(
+    #                 variable, type[0].ReferencedTypeName, type[0].kind
+    #             )
+    #         )
+    #     for name, datatype in getattr(process.DV, "types", {}).items():
+    #         __log.info("Kind: {}".format(datatype.type.kind))
+    #         __log.info("  Datatype")
+    #         show_object(datatype)
+    #         __log.info("  Type")
+    #         show_object(datatype.type)
+    #         if datatype.type.kind == "ChoiceType":
+    #             for field, t in datatype.type.Children.items():
+    #                 __log.info("      {}".format(field))
     for input_file in scl_files:
         __log.info("Parsing file {}".format(input_file))
         model = scl_parser.parse_stop_condition_file(input_file)
@@ -127,13 +165,26 @@ def translate_scl(scl_files: List[str], output_file_name: str) -> bool:
         input_model.join(model)
 
     __log.info("Translating Stop Condition Model into Promela Model")
-    output_model = scl_translator.translate_model(input_model)
+    output_model = scl_translator.translate_model(input_model, context)
 
     __log.info(f"Opening {output_file_name} for writing and generating output")
     with open(output_file_name, "w") as file:
         promelagenerator.generate_model(output_model, file)
     __log.info("Generation done")
     return True
+
+
+def group_sdl_files(sdl_files: List[str]) -> List[List[str]]:
+    dirs = [(os.path.dirname(e), e) for e in sdl_files]
+
+    result = dict()
+    for d, _ in dirs:
+        result[d] = []
+
+    for d, file in dirs:
+        result[d].append(file)
+
+    return [files for _, files in result.items()]
 
 
 def main():
@@ -144,12 +195,19 @@ def main():
     arguments = __parse_arguments()
     if arguments.verbose:
         __log.setLevel(level=logging.INFO)
-    if arguments.scl:
-        if not translate_scl(arguments.files, arguments.output_filename):
+
+    sdl_files = group_sdl_files(arguments.files)
+
+    for group in sdl_files:
+        __log.info("Group: {}".format(group))
+
+    if arguments.scl_files:
+        if not translate_scl(arguments.scl_files, sdl_files, arguments.output_filename):
             sys.exit(1)
     else:
-        if not translate(arguments.files, arguments.output_filename):
-            sys.exit(1)
+        for group in sdl_files:
+            if not translate(group, arguments.output_filename):
+                sys.exit(1)
 
 
 if __name__ == "__main__":
