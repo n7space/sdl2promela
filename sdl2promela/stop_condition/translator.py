@@ -291,9 +291,16 @@ def _generate(context: GenerateContext, expr: model.Selector):
     return result
 
 
-def _set_choice_selection(context: GenerateContext, selector: promela.MemberAccess):
-    # flat structure
+def resolve_type(allTypes, t):
+    while t.kind == "ReferenceType":
+        if t.ReferencedTypeName not in allTypes:
+            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
+        t = allTypes[t.ReferencedTypeName].type
 
+    return t
+
+
+def _set_choice_selection(context: GenerateContext, selector: promela.MemberAccess):
     path = []
     path.append(selector.member)
 
@@ -303,12 +310,14 @@ def _set_choice_selection(context: GenerateContext, selector: promela.MemberAcce
         path.insert(0, elem.member)
         elem = elem.utype
 
-    path.insert(0, elem)
+    # Theres the last element to insert to the list,
+    # But it is "global_state", so it is safe to drop it
+    # path.insert(0, elem)
 
-    if not isinstance(path[1], promela.VariableReference):
+    if not isinstance(path[0], promela.VariableReference):
         raise TranslateException("Unable to find process in context")
 
-    process_name = path[1].name
+    process_name = path[0].name
 
     if process_name not in context.processes:
         raise TranslateException(
@@ -317,10 +326,12 @@ def _set_choice_selection(context: GenerateContext, selector: promela.MemberAcce
 
     process = context.processes[process_name]
 
-    if not isinstance(path[2], promela.VariableReference):
+    path.pop(0)
+
+    if not isinstance(path[0], promela.VariableReference):
         raise TranslateException("Unable to find variable")
 
-    variable_name = path[2].name
+    variable_name = path[0].name
 
     if variable_name not in process.variables:
         raise TranslateException(
@@ -329,7 +340,27 @@ def _set_choice_selection(context: GenerateContext, selector: promela.MemberAcce
 
     variable = process.variables[variable_name]
 
-    context.choice_selection = str(variable[0].ReferencedTypeName)
+    finalType = variable[0]
+
+    path.pop(0)
+
+    allTypes = getattr(process.DV, "types", {})
+
+    finalType = resolve_type(allTypes, finalType)
+
+    while path:
+        if finalType.kind == "SequenceType":
+            if not isinstance(path[0], promela.VariableReference):
+                raise TranslateException("Unable to find variable")
+            if path[0].name not in finalType.Children:
+                raise TranslateException("Unable to find variable")
+            finalType = finalType.Children[path[0].name].type
+            path.pop(0)
+            finalType.kind = resolve_type(allTypes, finalType)
+        else:
+            raise TranslateException("Unexpected type: {}".format(finalType.kind))
+
+    context.choice_selection = str(finalType.ReferencedTypeName)
 
 
 @dispatch(GenerateContext, model.CallExpression)
