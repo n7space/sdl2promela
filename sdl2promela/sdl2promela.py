@@ -140,23 +140,6 @@ def translate_scl(
         process = read_process(group)
         __log.info(f"Reading done")
         context[process.processName.lower()] = process
-    # if sdl_files:
-    #     process = read_process(sdl_files[0])
-    #     for variable, type in process.variables.items():
-    #         __log.info(
-    #             "Variable: {} of type {} {}".format(
-    #                 variable, type[0].ReferencedTypeName, type[0].kind
-    #             )
-    #         )
-    #     for name, datatype in getattr(process.DV, "types", {}).items():
-    #         __log.info("Kind: {}".format(datatype.type.kind))
-    #         __log.info("  Datatype")
-    #         show_object(datatype)
-    #         __log.info("  Type")
-    #         show_object(datatype.type)
-    #         if datatype.type.kind == "ChoiceType":
-    #             for field, t in datatype.type.Children.items():
-    #                 __log.info("      {}".format(field))
     for input_file in scl_files:
         __log.info("Parsing file {}".format(input_file))
         model = scl_parser.parse_stop_condition_file(input_file)
@@ -197,9 +180,6 @@ def main():
         __log.setLevel(level=logging.INFO)
 
     sdl_files = group_sdl_files(arguments.files)
-
-    for group in sdl_files:
-        __log.info("Group: {}".format(group))
 
     if arguments.scl_files:
         if not translate_scl(arguments.scl_files, sdl_files, arguments.output_filename):

@@ -354,27 +354,6 @@ def _find_type(context: GenerateContext, selector: model.Selector):
 
     return finalType, allTypes
 
-    if _is_entry(selector):
-        return _find_entry_type(context, selector)
-
-    utype, allTypes = _find_type(context, selector.utype)
-
-    if utype.kind != "SequenceType":
-        raise TranslateException(
-            "Invalid access to SEQUENCE member {}".format(utype.kind)
-        )
-
-    member_name = selector.member.name
-
-    if member_name not in utype.Children:
-        raise TranslateException(
-            "Unable to find member '{}' in '{}".format(member_name, utype.CName)
-        )
-
-    member = utype.Children[member_name]
-    finalType = _resolve_type(allTypes, member)
-    return (finalType, allTypes)
-
 
 @dispatch(GenerateContext, model.CallExpression)
 def _find_type(context: GenerateContext, selector: model.CallExpression):
@@ -395,95 +374,108 @@ def _set_choice_selection(context: GenerateContext, selector: model.Expression):
     context.choice_selection = _escape_asn1_typename(type.CName)
 
 
+def _generate_array_access(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Invalid array access")
+
+    result = _generate(context, expr.function)
+    result = (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(result)
+        .withMember(promelaBuilder.VariableReferenceBuilder("data").build())
+        .build()
+    )
+
+    return (
+        promelaBuilder.ArrayAccessBuilder()
+        .withArray(result)
+        .withIndex(_generate(context, expr.parameters[0]))
+        .build()
+    )
+
+
+def _generate_length(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Function 'length' requires one parameter")
+
+    result = _generate(context, expr.parameters[0])
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(result)
+        .withMember(promelaBuilder.VariableReferenceBuilder("length").build())
+        .build()
+    )
+
+
+def _generate_present(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Function 'present' requires one parameter")
+    result = _generate(context, expr.parameters[0])
+
+    if not isinstance(result, promela.MemberAccess) and not isinstance(
+        result, promela.ArrayAccess
+    ):
+        raise TranslateException(
+            "Invalid parameter for present function: {}".format(result)
+        )
+
+    _set_choice_selection(context, expr.parameters[0])
+
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(result)
+        .withMember(promelaBuilder.VariableReferenceBuilder("selection").build())
+        .build()
+    )
+
+
+def _generate_exist(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Function 'exist' requires one parameter")
+    result = _generate(context, expr.parameters[0])
+
+    if not isinstance(result, promela.MemberAccess):
+        raise TranslateException(
+            "Internal error, expected MemberAccess, got {}".format(type(result))
+        )
+
+    member = result.member
+
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withMember(member)
+        .withUtypeReference(
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(result.utype)
+            .withMember(promelaBuilder.VariableReferenceBuilder("exist").build())
+            .build()
+        )
+        .build()
+    )
+
+
 @dispatch(GenerateContext, model.CallExpression)
 def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
-        if len(expr.parameters) != 1:
-            raise TranslateException("Invalid array access")
-
-        result = _generate(context, expr.function)
-        result = (
-            promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(result)
-            .withMember(promelaBuilder.VariableReferenceBuilder("data").build())
-            .build()
-        )
-
-        return (
-            promelaBuilder.ArrayAccessBuilder()
-            .withArray(result)
-            .withIndex(_generate(context, expr.parameters[0]))
-            .build()
-        )
-
+        return _generate_array_access(context, expr)
     elif isinstance(expr.function, model.VariableReference):
         if expr.function.name == "get_state":
             # special
             pass
         elif expr.function.name == "length":
-            if len(expr.parameters) != 1:
-                raise TranslateException("Invalid array access")
-
-            result = _generate(context, expr.parameters[0])
-            return (
-                promelaBuilder.MemberAccessBuilder()
-                .withUtypeReference(result)
-                .withMember(promelaBuilder.VariableReferenceBuilder("length").build())
-                .build()
-            )
+            return _generate_length(context, expr)
         elif expr.function.name == "present":
-            if len(expr.parameters) != 1:
-                raise TranslateException("Invalid array access")
-            result = _generate(context, expr.parameters[0])
-
-            if not isinstance(result, promela.MemberAccess) and not isinstance(
-                result, promela.ArrayAccess
-            ):
-                raise TranslateException(
-                    "Invalid parameter for present function: {}".format(result)
-                )
-
-            _set_choice_selection(context, expr.parameters[0])
-
-            return (
-                promelaBuilder.MemberAccessBuilder()
-                .withUtypeReference(result)
-                .withMember(
-                    promelaBuilder.VariableReferenceBuilder("selection").build()
-                )
-                .build()
-            )
+            return _generate_present(context, expr)
         elif expr.function.name == "exist":
-            if len(expr.parameters) != 1:
-                raise TranslateException("Invalid array access")
-            result = _generate(context, expr.parameters[0])
-
-            if not isinstance(result, promela.MemberAccess):
-                raise TranslateException(
-                    "Internal error, expected MemberAccess, got {}".format(type(result))
-                )
-
-            member = result.member
-
-            return (
-                promelaBuilder.MemberAccessBuilder()
-                .withMember(member)
-                .withUtypeReference(
-                    promelaBuilder.MemberAccessBuilder()
-                    .withUtypeReference(result.utype)
-                    .withMember(
-                        promelaBuilder.VariableReferenceBuilder("exist").build()
-                    )
-                    .build()
-                )
-                .build()
-            )
+            return _generate_exist(context, expr)
         elif expr.function.name == "empty":
             pass
         elif expr.function.name == "queue_length":
             pass
 
-        raise TranslateException("Not implemented.")
+        raise TranslateException(
+            "Function '{}' is not supported.".format(expr.function.name)
+        )
     else:
         raise TranslateException("Not implemented.")
 
