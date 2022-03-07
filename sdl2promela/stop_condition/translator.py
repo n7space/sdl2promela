@@ -274,14 +274,18 @@ def _generate(context: GenerateContext, expr: model.Selector):
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
 
-    result: promela.MemberAccess = (
-        promelaBuilder.MemberAccessBuilder()
-        .withUtypeReference(
-            promelaBuilder.VariableReferenceBuilder("global_state").build()
+    if isinstance(promelaObjects[0], promela.ArrayAccess):
+        result = promelaObjects[0]
+    else:
+        result: promela.MemberAccess = (
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(
+                promelaBuilder.VariableReferenceBuilder("global_state").build()
+            )
+            .withMember(promelaObjects[0])
+            .build()
         )
-        .withMember(promelaObjects[0])
-        .build()
-    )
+
     promelaObjects.pop(0)
 
     for element in promelaObjects:
@@ -295,7 +299,7 @@ def _generate(context: GenerateContext, expr: model.Selector):
     return result
 
 
-def resolve_type(allTypes, t):
+def _resolve_type(allTypes, t):
     while t.kind == "ReferenceType":
         if t.ReferencedTypeName not in allTypes:
             raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
@@ -304,53 +308,61 @@ def resolve_type(allTypes, t):
     return t
 
 
-def _is_entry(selector: promela.MemberAccess) -> bool:
-    return (
-        isinstance(selector.utype, promela.MemberAccess)
-        and isinstance(selector.utype.utype, promela.VariableReference)
-        and selector.utype.utype.name == "global_state"
-    )
-
-
-def _find_entry_type(
-    context: GenerateContext, selector: promela.MemberAccess
-) -> Tuple[object, object]:
-    process_name = selector.utype.member.name
-    variable_name = selector.member.name
-
-    if process_name not in context.processes:
-        raise TranslateException(
-            "Cannot find process with name '{}'".format(process_name)
-        )
-
-    process = context.processes[process_name]
-
-    if variable_name not in process.variables:
-        raise TranslateException(
-            "Cannot find variable '{}' in process '{}'".format(
-                variable_name, process_name
+@dispatch(GenerateContext, model.Selector)
+def _find_type(context: GenerateContext, selector: model.Selector):
+    index = 0
+    if isinstance(selector.elements[index], model.CallExpression):
+        finalType, allTypes = _find_type(context, selector.elements[index])
+        index = index + 1
+    else:
+        process_name = selector.elements[index].name
+        if process_name not in context.processes:
+            raise TranslateException(
+                "Cannot find process with name '{}'".format(process_name)
             )
-        )
 
-    variable = process.variables[variable_name]
-    # variable shall be a tuple with two elements:
-    # first is the type
-    # second is a default value
+        process = context.processes[process_name]
+        allTypes = getattr(process.DV, "types", {})
 
-    allTypes = getattr(process.DV, "types", {})
-    finalType = resolve_type(allTypes, variable[0])
-    return (finalType, allTypes)
+        index = index + 1
+        variable_name = selector.elements[index].name
 
+        if variable_name not in process.variables:
+            raise TranslateException(
+                "Cannot find variable '{}' in process '{}'".format(
+                    variable_name, process_name
+                )
+            )
+        variable = process.variables[variable_name]
 
-@dispatch(GenerateContext, promela.MemberAccess)
-def _find_type(context: GenerateContext, selector: promela.MemberAccess):
+        finalType = _resolve_type(allTypes, variable[0])
+        index = index + 1
+
+    while index < len(selector.elements):
+        member_name = selector.elements[index].name
+
+        if finalType.kind != "SequenceType":
+            raise TranslateException("Doom")
+
+        if member_name not in finalType.Children:
+            raise TranslateException(
+                "Unable to find member '{}' in '{}".format(member_name, finalType.CName)
+            )
+        member = finalType.Children[member_name]
+        finalType = _resolve_type(allTypes, member.type)
+        index = index + 1
+
+    return finalType, allTypes
+
     if _is_entry(selector):
         return _find_entry_type(context, selector)
 
     utype, allTypes = _find_type(context, selector.utype)
 
     if utype.kind != "SequenceType":
-        raise TranslateException("Invalid access to SEQUENCE member")
+        raise TranslateException(
+            "Invalid access to SEQUENCE member {}".format(utype.kind)
+        )
 
     member_name = selector.member.name
 
@@ -360,104 +372,27 @@ def _find_type(context: GenerateContext, selector: promela.MemberAccess):
         )
 
     member = utype.Children[member_name]
-    finalType = resolve_type(member)
+    finalType = _resolve_type(allTypes, member)
     return (finalType, allTypes)
 
 
-@dispatch(GenerateContext, promela.ArrayAccess)
-def _find_type(context: GenerateContext, selector: promela.ArrayAccess):
-    type, allTypes = _find_type(context, selector.variable)
-    return (type, allTypes)
+@dispatch(GenerateContext, model.CallExpression)
+def _find_type(context: GenerateContext, selector: model.CallExpression):
+    finalType, allTypes = _find_type(context, selector.function)
+
+    finalType = _resolve_type(allTypes, finalType)
+
+    if finalType.kind != "SequenceOfType":
+        raise TranslateException("Invalid access to SEQUENCE OF")
+
+    finalType = _resolve_type(allTypes, finalType.type)
+
+    return (finalType, allTypes)
 
 
-def _set_choice_selection(context: GenerateContext, selector: promela.MemberAccess):
+def _set_choice_selection(context: GenerateContext, selector: model.Expression):
     type, _ = _find_type(context, selector)
-    context.choice_selection = _escape_asn1_typename(type)
-    return
-
-    path = []
-    if isinstance(selector, promela.MemberAccess):
-        path.append(selector.member)
-        elem = selector.utype
-    else:
-        elem = selector
-
-    while isinstance(elem, promela.MemberAccess) or isinstance(
-        elem, promela.ArrayAccess
-    ):
-        if isinstance(elem, promela.MemberAccess):
-            elem = elem.utype
-        elif isinstance(elem, promela.ArrayAccess):
-            elem = elem.variable
-        else:
-            path.insert(0, elem)
-
-    # if isinstance(path[0], promela.ArrayAccess):
-    #     path[0] = path[0].variable
-
-    # Theres the last element to insert to the list,
-    # But it is "global_state", so it is safe to drop it
-    # path.insert(0, elem)
-
-    # Array Access here
-    # Member Access here
-    if not isinstance(path[0], promela.VariableReference):
-        raise TranslateException(
-            "Unable to find process '{}' in context".format(path[0])
-        )
-
-    process_name = path[0].name
-
-    if process_name not in context.processes:
-        raise TranslateException(
-            "Cannot find process {} in context".format(process_name)
-        )
-
-    process = context.processes[process_name]
-
-    path.pop(0)
-
-    if not isinstance(path[0], promela.VariableReference):
-        raise TranslateException("Unable to find variable")
-
-    variable_name = path[0].name
-
-    if variable_name not in process.variables:
-        raise TranslateException(
-            "Cannot find variable {} in process {}".format(variable_name, process_name)
-        )
-
-    variable = process.variables[variable_name]
-
-    finalType = variable[0]
-
-    path.pop(0)
-
-    allTypes = getattr(process.DV, "types", {})
-
-    finalType = resolve_type(allTypes, finalType)
-
-    while path:
-        if finalType.kind == "SequenceType":
-            if not isinstance(path[0], promela.VariableReference):
-                raise TranslateException("Unable to find variable")
-            if path[0].name not in finalType.Children:
-                raise TranslateException("Unable to find variable")
-            finalType = finalType.Children[path[0].name].type
-            path.pop(0)
-            finalType = resolve_type(allTypes, finalType)
-        elif finalType.kind == "SequenceOfType":
-            finalType = finalType.type
-            finalType = resolve_type(allTypes, finalType)
-            path.pop(0)
-        else:
-            raise TranslateException("Unexpected type: {}".format(finalType.kind))
-
-    print("FINAL")
-    print(finalType.kind)
-    print(dir(finalType))
-
-    context.choice_selection = _escape_asn1_typename(finalType.CName)
+    context.choice_selection = _escape_asn1_typename(type.CName)
 
 
 @dispatch(GenerateContext, model.CallExpression)
@@ -504,9 +439,11 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
             if not isinstance(result, promela.MemberAccess) and not isinstance(
                 result, promela.ArrayAccess
             ):
-                raise TranslateException("Invalid parameter for present function")
+                raise TranslateException(
+                    "Invalid parameter for present function: {}".format(result)
+                )
 
-            _set_choice_selection(context, result)
+            _set_choice_selection(context, expr.parameters[0])
 
             return (
                 promelaBuilder.MemberAccessBuilder()

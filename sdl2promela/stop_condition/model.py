@@ -27,55 +27,64 @@ class BinaryExpression(Expression):
 class OrExpression(BinaryExpression):
     """Stop Condition or expression."""
 
-    pass
+    def __str__(self):
+        return f"OrExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class AndExpression(BinaryExpression):
     """Stop Condition and expression."""
 
-    pass
+    def __str__(self):
+        return f"AndExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class XorExpression(BinaryExpression):
     """Stop Condition xor expression."""
 
-    pass
+    def __str__(self):
+        return f"XorExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class EqualExpression(BinaryExpression):
     """Stop Condition equal expression."""
 
-    pass
+    def __str__(self):
+        return f"EqualExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class NotEqualExpression(BinaryExpression):
     """Stop Condition not equal expression."""
 
-    pass
+    def __str__(self):
+        return f"NotEqualExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class LessExpression(BinaryExpression):
     """Stop Condition less expression."""
 
-    pass
+    def __str__(self):
+        return f"LessExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class LessEqualExpression(BinaryExpression):
     """Stop Condition less equal expression."""
 
-    pass
+    def __str__(self):
+        return f"LessEqualExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class GreaterExpression(BinaryExpression):
     """Stop Condition greater expression."""
 
-    pass
+    def __str__(self):
+        return f"GreaterExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class GreaterEqualExpression(BinaryExpression):
     """Stop Condition greater equal expression."""
 
-    pass
+    def __str__(self):
+        return f"GreaterEqualExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class NotExpression(Expression):
@@ -87,35 +96,43 @@ class NotExpression(Expression):
     def __init__(self, expression: Expression):
         self.expression = expression
 
+    def __str__(self):
+        return f"NotExpression(expression={self.expression})"
+
 
 class PlusExpression(BinaryExpression):
     """Stop Condition greater plus expression."""
 
-    pass
+    def __str__(self):
+        return f"PlusExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class MinusExpression(BinaryExpression):
     """Stop Condition greater minus expression."""
 
-    pass
+    def __str__(self):
+        return f"MinusExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class MulExpression(BinaryExpression):
     """Stop Condition greater multiply  expression."""
 
-    pass
+    def __str__(self):
+        return f"MulExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class DivExpression(BinaryExpression):
     """Stop Condition greater divide expression."""
 
-    pass
+    def __str__(self):
+        return f"DivExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class ModExpression(BinaryExpression):
     """Stop Condition greater modulo expression."""
 
-    pass
+    def __str__(self):
+        return f"ModExpression(lhs={self.lhs}, rhs={self.rhs})"
 
 
 class NegationExpression(Expression):
@@ -127,6 +144,9 @@ class NegationExpression(Expression):
     def __init__(self, expression: Expression):
         self.expression = expression
 
+    def __str__(self):
+        return f"Negation(expression={self.expression})"
+
 
 class IntegerValue(Expression):
     """Stop Condition integer value expression."""
@@ -136,6 +156,9 @@ class IntegerValue(Expression):
 
     def __init__(self, value: int):
         self.value = value
+
+    def __str__(self):
+        return f"IntegerValue(value={self.value})"
 
 
 class FloatValue(Expression):
@@ -147,6 +170,9 @@ class FloatValue(Expression):
     def __init__(self, value: float):
         self.value = value
 
+    def __str__(self):
+        return f"FloatValue(value={self.value})"
+
 
 class BooleanValue(Expression):
     """Stop Condition boolean value expression."""
@@ -157,6 +183,9 @@ class BooleanValue(Expression):
     def __init__(self, value: bool):
         self.value = value
 
+    def __str__(self):
+        return f"BooleanValue(value={self.value})"
+
 
 class VariableReference(Expression):
     """Stop Condition reference to single variable."""
@@ -166,6 +195,9 @@ class VariableReference(Expression):
 
     def __init__(self, name: str):
         self.name = name
+
+    def __str__(self):
+        return f"VariableReference(name={self.name})"
 
 
 class Selector(Expression):
@@ -185,6 +217,10 @@ class Selector(Expression):
     def __init__(self, elements: SelectorElements):
         self.elements = elements
 
+    def __str__(self):
+        elems = ", ".join([str(e) for e in self.elements])
+        return f"Selector(elements=[{elems}])"
+
 
 class CallExpression(Expression):
     """Stop Condition call expression.
@@ -201,6 +237,10 @@ class CallExpression(Expression):
         self.function = function
         self.parameters = parameters
 
+    def __str__(self):
+        params = ",".join([str(p) for p in self.parameters])
+        return f"CallExpression(function={self.function}, parameters=[{params}])"
+
 
 class AlwaysStatement:
     """Stop Condition always statement."""
@@ -210,6 +250,9 @@ class AlwaysStatement:
 
     def __init__(self, expression: Expression):
         self.expression = expression
+
+    def __str__(self):
+        return f"AlwaysStatement(expression={self.expression}"
 
 
 class NeverStatement:
@@ -221,6 +264,9 @@ class NeverStatement:
     def __init__(self, expression: Expression):
         self.expression = expression
 
+    def __str__(self):
+        return f"NeverStatement(expression={self.expression}"
+
 
 class EventuallyStatement:
     """Stop Condition eventually statement."""
@@ -231,6 +277,9 @@ class EventuallyStatement:
     def __init__(self, expression: Expression):
         self.expression = expression
 
+    def __str__(self):
+        return f"EventuallyStatement(expression={self.expression}"
+
 
 class FilterOutStatement:
     """Stop Condition filter_out statement."""
@@ -240,6 +289,9 @@ class FilterOutStatement:
 
     def __init__(self, expression: Expression):
         self.expression = expression
+
+    def __str__(self):
+        return f"FilterOutStatement(expression={self.expression}"
 
 
 class StopConditionModel:
