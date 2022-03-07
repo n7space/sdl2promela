@@ -110,6 +110,7 @@ def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
         lexer.VARIABLE,
         lexer.SELECTOR,
         lexer.PRIMARY,
+        lexer.CALL,
     ]:
         raise TranslationException(
             "Unexpected tree type {}".format(expr.children[0].children[0].type)

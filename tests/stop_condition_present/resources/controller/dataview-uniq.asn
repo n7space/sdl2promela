@@ -1,0 +1,74 @@
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
+TMC-COMPLEX-DATATYPES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyState ::= SEQUENCE {
+       demo SEQUENCE (SIZE(0..16)) OF INTEGER (0..255),
+       dim INTEGER(0..255) OPTIONAL
+   }
+
+   MyMusic ::= CHOICE {
+       snare INTEGER(0..127),
+       kick INTEGER(0..127),
+       ride INTEGER(0..127)
+   }
+
+   MyData ::= SEQUENCE {
+       raw MyMusic,
+       n INTEGER(0..127)
+   }
+
+   MyNested ::= SEQUENCE {
+    direction CHOICE {
+        x INTEGER(-128..127),
+        y INTEGER(-128..127)
+    },
+    force INTEGER(0..255)
+   }
+
+   MyTable ::= SEQUENCE (SIZE(2)) OF CHOICE {
+       store INTEGER(0..31),
+       restore INTEGER(0..31)
+   }
+
+  MyList ::= SEQUENCE (SIZE(1..12)) OF MyMusic
+
+  MyExtra ::= SEQUENCE (SIZE(1..12)) OF MyNested
+
+  MyDouble ::= SEQUENCE (SIZE(1..12)) OF SEQUENCE {
+      dummy INTEGER(0..100),
+      nested SEQUENCE (SIZE(1..12)) OF SEQUENCE {
+          param CHOICE {
+              a INTEGER(0..10),
+              b INTEGER(0..10)
+          },
+          nothing INTEGER (0..100)
+      }
+  }
+
+
+
+END
+
+

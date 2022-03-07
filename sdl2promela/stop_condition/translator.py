@@ -5,7 +5,7 @@ import sdl2promela.promela.model as promela
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
-from typing import List, Dict, Tuple
+from typing import List, Dict
 import functools
 from opengeode import ogAST
 
