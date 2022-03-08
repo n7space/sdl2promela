@@ -119,12 +119,6 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     return True
 
 
-def show_object(o):
-    for f in dir(o):
-        if not f.startswith("_"):
-            __log.info("    {}: {}".format(f, getattr(o, f)))
-
-
 def translate_scl(
     scl_files: List[str], sdl_files: List[List[str]], output_file_name: str
 ) -> bool:
