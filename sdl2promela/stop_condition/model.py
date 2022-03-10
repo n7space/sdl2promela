@@ -145,7 +145,7 @@ class NegationExpression(Expression):
         self.expression = expression
 
     def __str__(self):
-        return f"Negation(expression={self.expression})"
+        return f"NegationExpression(expression={self.expression})"
 
 
 class IntegerValue(Expression):

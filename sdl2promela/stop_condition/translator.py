@@ -17,15 +17,25 @@ class TranslateException(Exception):
 
 
 class GenerateContext:
+    """Context for translator."""
 
     processes: Dict[str, ogAST.Process]
+    """Dict of all processes"""
+
     choice_selection: str
+    """The name of the choice type, set when 'present' is used
+    on left hand side of expression.
+    It changes translation of right hand side of expression.
+    """
 
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
         self.choice_selection = None
 
     def clear(self):
+        """Clear context.
+        Shall be called after translation of children nodes.
+        """
         self.choice_selection = None
 
 
@@ -261,6 +271,11 @@ def _generate(context: GenerateContext, expr: model.BooleanValue):
 
 @dispatch(GenerateContext, model.VariableReference)
 def _generate(context: GenerateContext, expr: model.VariableReference):
+    """Translate StopCondition VariableReference
+    to Promela VariableReference.
+    If choice_selection is set in context, it is a special case.
+    It means that variable is a selector of CHOICE.
+    """
     if context.choice_selection is not None:
         return promelaBuilder.VariableReferenceBuilder(
             context.choice_selection + "_" + expr.name + "_PRESENT"
@@ -312,9 +327,13 @@ def _resolve_type(allTypes, t):
 def _find_type(context: GenerateContext, selector: model.Selector):
     index = 0
     if isinstance(selector.elements[index], model.CallExpression):
-        finalType, allTypes = _find_type(context, selector.elements[index])
-        index = index + 1
+        # Selector represents access to nested SEQUENCE OF
+        # Find refered type and all available datatypes
+        currentType, allTypes = _find_type(context, selector.elements[index])
     else:
+        # Selector refers to a process
+        # Find the process, all available datatypes in the process
+        # Find type of first element in selector
         process_name = selector.elements[index].name
         if process_name not in context.processes:
             raise TranslateException(
@@ -335,38 +354,46 @@ def _find_type(context: GenerateContext, selector: model.Selector):
             )
         variable = process.variables[variable_name]
 
-        finalType = _resolve_type(allTypes, variable[0])
-        index = index + 1
+        currentType = _resolve_type(allTypes, variable[0])
 
+    index = index + 1
+
+    # Resolve type for remaining elements in selector
     while index < len(selector.elements):
         member_name = selector.elements[index].name
 
-        if finalType.kind != "SequenceType":
-            raise TranslateException("Doom")
-
-        if member_name not in finalType.Children:
+        if currentType.kind != "SequenceType":
             raise TranslateException(
-                "Unable to find member '{}' in '{}".format(member_name, finalType.CName)
+                "Invalid datatype, expected 'SequenceType', got {}".format(
+                    currentType.kind
+                )
             )
-        member = finalType.Children[member_name]
-        finalType = _resolve_type(allTypes, member.type)
+
+        if member_name not in currentType.Children:
+            raise TranslateException(
+                "Unable to find member '{}' in '{}".format(
+                    member_name, currentType.CName
+                )
+            )
+        member = currentType.Children[member_name]
+        currentType = _resolve_type(allTypes, member.type)
         index = index + 1
 
-    return finalType, allTypes
+    return currentType, allTypes
 
 
 @dispatch(GenerateContext, model.CallExpression)
 def _find_type(context: GenerateContext, selector: model.CallExpression):
-    finalType, allTypes = _find_type(context, selector.function)
+    sequenceOfType, allTypes = _find_type(context, selector.function)
 
-    finalType = _resolve_type(allTypes, finalType)
+    sequenceOfType = _resolve_type(allTypes, sequenceOfType)
 
-    if finalType.kind != "SequenceOfType":
+    if sequenceOfType.kind != "SequenceOfType":
         raise TranslateException("Invalid access to SEQUENCE OF")
 
-    finalType = _resolve_type(allTypes, finalType.type)
+    sequenceOfElementType = _resolve_type(allTypes, sequenceOfType.type)
 
-    return (finalType, allTypes)
+    return (sequenceOfElementType, allTypes)
 
 
 def _set_choice_selection(context: GenerateContext, selector: model.Expression):
@@ -460,8 +487,7 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
         return _generate_array_access(context, expr)
     elif isinstance(expr.function, model.VariableReference):
         if expr.function.name == "get_state":
-            # special
-            pass
+            raise TranslateException("Not implemented.")
         elif expr.function.name == "length":
             return _generate_length(context, expr)
         elif expr.function.name == "present":
@@ -469,9 +495,9 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
         elif expr.function.name == "exist":
             return _generate_exist(context, expr)
         elif expr.function.name == "empty":
-            pass
+            raise TranslateException("Not implemented.")
         elif expr.function.name == "queue_length":
-            pass
+            raise TranslateException("Not implemented.")
 
         raise TranslateException(
             "Function '{}' is not supported.".format(expr.function.name)
