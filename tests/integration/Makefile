@@ -36,7 +36,7 @@ check: ${TESTS}
 test_bare_outputs:
 	echo "Test bare outputs"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -o ${TEST_DIR}/bare_outputs.pml ${RES_DIR}/bare_outputs.pr
+	${SDL2PROMELA} -o ${TEST_DIR}/bare_outputs.pml --sdl ${RES_DIR}/bare_outputs.pr
 	cp ${RES_DIR}/bare_outputs_host.pml ${TEST_DIR}/bare_outputs_host.pml
 	cd ${TEST_DIR} && \
 	${SPIN} bare_outputs_host.pml > bare_outputs.output

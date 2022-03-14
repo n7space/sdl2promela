@@ -1,0 +1,6 @@
+never present(controller.second) = kick;
+never present(controller.fourth.direction) = y;
+never present(controller.fifth(0)) = restore;
+never present(controller.sixth(0)) = kick;
+never present(controller.seventh(0).direction) = x;
+never present(controller.eight(0).nested(0).param) = b;

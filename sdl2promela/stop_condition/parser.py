@@ -110,6 +110,7 @@ def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
         lexer.VARIABLE,
         lexer.SELECTOR,
         lexer.PRIMARY,
+        lexer.CALL,
     ]:
         raise TranslationException(
             "Unexpected tree type {}".format(expr.children[0].children[0].type)
@@ -226,7 +227,12 @@ def parse_stop_condition(text: str) -> StopConditionModel:
     """
     model = StopConditionModel()
     result = opengeode.ogParser.parseSingleElement("n7s_scl", text)
-    data, syntaxx_errors, semantic_errors, warnings, _ = result
+    data, syntax_errors, semantic_errors, warnings, _ = result
+    if syntax_errors:
+        for error in syntax_errors:
+            print(error)
+        return None
+
     for statement in data:
         if statement.type == lexer.ALWAYS:
             model.append_always(_parse_always_statement(statement))

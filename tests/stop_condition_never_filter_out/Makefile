@@ -40,7 +40,7 @@ check: ${TESTS}
 test_stop_condition_never:
 	echo "Test stop_condition_never"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
+	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_never.txt
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
@@ -60,7 +60,7 @@ test_stop_condition_never:
 test_stop_condition_filter_out:
 	echo "Test stop_condition_filter_out"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
+	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_filter_out.txt
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml

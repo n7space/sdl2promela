@@ -14,7 +14,10 @@ TESTS = \
 	simpleparameters \
 	flowcontrol \
 	stop_condition_eventually \
-	stop_condition_never_filter_out
+	stop_condition_never_filter_out \
+	stop_condition_present \
+	stop_condition_length \
+	stop_condition_exist
 
 unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv
@@ -37,4 +40,22 @@ stop_condition_eventually:
 stop_condition_never_filter_out:
 	${MAKE} -C stop_condition_never_filter_out check
 
-check: unit integration parameterless simpleparameters flowcontrol stop_condition_eventually stop_condition_never_filter_out
+stop_condition_present:
+	${MAKE} -C stop_condition_present check
+
+stop_condition_length:
+	${MAKE} -C stop_condition_length check
+
+stop_condition_exist:
+	${MAKE} -C stop_condition_exist check
+
+check: unit \
+	integration \
+	parameterless \
+	simpleparameters \
+	flowcontrol \
+	stop_condition_eventually \
+	stop_condition_never_filter_out \
+	stop_condition_present \
+	stop_condition_length \
+	stop_condition_exist

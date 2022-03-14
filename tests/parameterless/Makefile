@@ -36,8 +36,8 @@ check: ${TESTS}
 test_parameterless:
 	echo "Test parameterless"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
-	${SDL2PROMELA} -o ${TEST_DIR}/actuator.pml ${RES_DIR}/actuator/system_structure.pr ${RES_DIR}/actuator/actuator.pr
+	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
+	${SDL2PROMELA} -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/actuator/system_structure.pr ${RES_DIR}/actuator/actuator.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cd ${TEST_DIR} && \
