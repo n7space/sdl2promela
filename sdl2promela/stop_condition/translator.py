@@ -323,18 +323,53 @@ def _resolve_type(allTypes, t):
     return t
 
 
+def _resolve_remaining_element_of_selector(
+    allTypes: Dict[str, object],
+    currentType: object,
+    selector: model.Selector,
+    index: int,
+):
+    if currentType.kind != "SequenceType":
+        raise TranslateException(
+            "Invalid datatype, expected 'SequenceType', got {}".format(currentType.kind)
+        )
+
+    member_name = selector.elements[index].name
+
+    if member_name not in currentType.Children:
+        raise TranslateException(
+            "Unable to find member '{}' in '{}".format(member_name, currentType.CName)
+        )
+    member = currentType.Children[member_name]
+    memberType = _resolve_type(allTypes, member.type)
+
+    if index + 1 < len(selector.elements):
+        return _resolve_remaining_element_of_selector(
+            allTypes, memberType, selector, index + 1
+        )
+    else:
+        return memberType
+
+
 @dispatch(GenerateContext, model.Selector)
 def _find_type(context: GenerateContext, selector: model.Selector):
-    index = 0
-    if isinstance(selector.elements[index], model.CallExpression):
+    if isinstance(selector.elements[0], model.CallExpression):
         # Selector represents access to nested SEQUENCE OF
+        # Example: controller.eight(0).nested(0).param
+        #  selector.elements[0] = "controller.eight(0).nested(0)"
+        #  selector. elements[1] = "param"
         # Find refered type and all available datatypes
-        currentType, allTypes = _find_type(context, selector.elements[index])
+        currentType, allTypes = _find_type(context, selector.elements[0])
+        selectorType = _resolve_remaining_element_of_selector(
+            allTypes, currentType, selector, 1
+        )
+        return selectorType, allTypes
     else:
-        # Selector refers to a process
+        # Selector is in simple form, where first element refers to a process
+        # and second element is variable
         # Find the process, all available datatypes in the process
         # Find type of first element in selector
-        process_name = selector.elements[index].name
+        process_name = selector.elements[0].name
         if process_name not in context.processes:
             raise TranslateException(
                 "Cannot find process with name '{}'".format(process_name)
@@ -343,8 +378,7 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         process = context.processes[process_name]
         allTypes = getattr(process.DV, "types", {})
 
-        index = index + 1
-        variable_name = selector.elements[index].name
+        variable_name = selector.elements[1].name
 
         if variable_name not in process.variables:
             raise TranslateException(
@@ -356,30 +390,13 @@ def _find_type(context: GenerateContext, selector: model.Selector):
 
         currentType = _resolve_type(allTypes, variable[0])
 
-    index = index + 1
-
-    # Resolve type for remaining elements in selector
-    while index < len(selector.elements):
-        member_name = selector.elements[index].name
-
-        if currentType.kind != "SequenceType":
-            raise TranslateException(
-                "Invalid datatype, expected 'SequenceType', got {}".format(
-                    currentType.kind
-                )
+        if len(selector.elements) > 2:
+            selectorType = _resolve_remaining_element_of_selector(
+                allTypes, currentType, selector, 2
             )
-
-        if member_name not in currentType.Children:
-            raise TranslateException(
-                "Unable to find member '{}' in '{}".format(
-                    member_name, currentType.CName
-                )
-            )
-        member = currentType.Children[member_name]
-        currentType = _resolve_type(allTypes, member.type)
-        index = index + 1
-
-    return currentType, allTypes
+            return selectorType, allTypes
+        else:
+            return currentType, allTypes
 
 
 @dispatch(GenerateContext, model.CallExpression)
