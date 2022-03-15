@@ -22,3 +22,20 @@ typedef FlowControl_Context {
     FlowControl_Context_i i;
     FlowControl_Context_wresult wresult;
 }
+
+inline TestInteger_assign_value(dst, src)
+{
+    dst = src;
+}
+inline FlowControl_Context_wparam_assign_value(dst, src)
+{
+    TestInteger_assign_value(dst, src);
+}
+inline FlowControl_Context_i_assign_value(dst, src)
+{
+    TestInteger_assign_value(dst, src);
+}
+inline FlowControl_Context_wresult_assign_value(dst, src)
+{
+    TestInteger_assign_value(dst, src);
+}

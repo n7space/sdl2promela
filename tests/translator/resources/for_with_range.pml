@@ -10,13 +10,13 @@ inline Taskwithloop_0_transition(id)
       global_state.taskwithloop.state = Taskwithloop_States_wait;
       transition_id = -1;
     ::(transition_id == 1)->
-      global_state.taskwithloop.y = 0;
+      MyInteger_assign_value(global_state.taskwithloop.y, 0);
       {
         global_state.taskwithloop.x = 0;
         do
         ::(global_state.taskwithloop.x < 10)->
-          global_state.taskwithloop.y = (global_state.taskwithloop.y + global_state.taskwithloop.x);
-          global_state.taskwithloop.y = (global_state.taskwithloop.y * 2);
+          MyInteger_assign_value(global_state.taskwithloop.y, (global_state.taskwithloop.y + global_state.taskwithloop.x));
+          MyInteger_assign_value(global_state.taskwithloop.y, (global_state.taskwithloop.y * 2));
           global_state.taskwithloop.x = (global_state.taskwithloop.x + 2);
         ::else->
           break;

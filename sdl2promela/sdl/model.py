@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Union, Tuple
 from multipledispatch import dispatch
 from opengeode import ogAST
 from opengeode import Helper
@@ -14,6 +14,9 @@ class State:
 
     def __init__(self):
         self.name = None
+
+    def __str__(self):
+        return f"State(name={self.name})"
 
 
 class Expression:
@@ -31,6 +34,9 @@ class Constant(Expression):
     def __init__(self, value):
         self.value = value
 
+    def __str__(self):
+        return f"Constant(value={self.value})"
+
 
 class VariableReference(Expression):
     """Variable reference."""
@@ -41,6 +47,43 @@ class VariableReference(Expression):
     def __init__(self, name):
         self.variableName = name
 
+    def __str__(self):
+        return f"VariableReference(name={self.variableName})"
+
+
+class ArrayAccess(Expression):
+    "Access to element of SEQUENCE OF"
+
+    array: Union[VariableReference, "MemberAccess"]
+    element: Expression
+
+    def __init__(
+        self, array: Union[VariableReference, "MemberAccess"], element: Expression
+    ):
+        self.array = array
+        self.element = element
+
+    def __str__(self):
+        return f"ArrayAccess(array={self.array}, element={self.element})"
+
+
+class MemberAccess(Expression):
+    "Access to Member of SEQUENCE"
+
+    sequence: Union[VariableReference, "MemberAccess", ArrayAccess]
+    member: VariableReference
+
+    def __init__(
+        self,
+        sequence: Union[VariableReference, "MemberAccess", ArrayAccess],
+        member: VariableReference,
+    ):
+        self.sequence = sequence
+        self.member = member
+
+    def __str__(self):
+        return f"MemberAccess(sequence={self.sequence}, member={self.member})"
+
 
 class Parameter:
     """Parameter for a signal or procedure."""
@@ -50,6 +93,9 @@ class Parameter:
 
     def __init__(self, name: str):
         self.target_variable = VariableReference(name)
+
+    def __str__(self):
+        return f"Parameter(target_variable={self.target_variable})"
 
 
 class Input:
@@ -116,6 +162,9 @@ class BinaryExpression(Expression):
         self.left = None
         self.right = None
 
+    def __str__(self):
+        return f"BinaryExpression(operator={self.operator}, left={self.left}, right={self.right})"
+
 
 class Action:
     """Base class for a transition action."""
@@ -134,6 +183,9 @@ class AssignmentTask(Task):
 
     assignment: BinaryExpression
     """Assignment expression."""
+
+    type: object
+    """Type of assignment destination."""
 
 
 class ForLoopRange:
@@ -325,7 +377,7 @@ __STR_BINARY_OPERATOR_DICTIONARY = {
 
 @dispatch(str)
 def getBinaryOperatorEnum(op: str) -> BinaryOperator:
-    if not op in __STR_BINARY_OPERATOR_DICTIONARY.keys():
+    if op not in __STR_BINARY_OPERATOR_DICTIONARY.keys():
         raise ValueError("Unsupported operator: " + op)
     return __STR_BINARY_OPERATOR_DICTIONARY[op]
 
@@ -349,7 +401,7 @@ __AST_BINARY_OPERATOR_DICTIONARY = {
 
 @dispatch(type)
 def getBinaryOperatorEnum(op: type) -> BinaryOperator:
-    if not op in __AST_BINARY_OPERATOR_DICTIONARY.keys():
+    if op not in __AST_BINARY_OPERATOR_DICTIONARY.keys():
         raise ValueError("Unsupported operator: " + op.__name__)
     return __AST_BINARY_OPERATOR_DICTIONARY[op]
 
@@ -399,12 +451,14 @@ def convert(source: ogAST.TaskAssign):
         )
     task = AssignmentTask()
     task.assignment = convert(source.elems[0])
+    task.type = source.elems[0].left.exprType
     return task
 
 
 @dispatch(ogAST.PrimVariable)
 def convert(source: ogAST.PrimVariable):
-    variableReference = VariableReference(source.inputString)
+    variableReference = VariableReference(source.value[0])
+
     return variableReference
 
 
@@ -428,6 +482,19 @@ def convert(source: ogAST.PrimInteger):
 
 @dispatch(ogAST.PrimBoolean)
 def convert(source: ogAST.PrimBoolean):
+    if isinstance(source.value, list):
+        if len(source.value) != 1:
+            raise ValueError(
+                "Source value is an array with an unsupported number of elements: "
+                + len(source.value)
+            )
+        return Constant(source.value[0])
+    else:
+        return Constant(source.value)
+
+
+@dispatch(ogAST.PrimEnumeratedValue)
+def convert(source: ogAST.PrimEnumeratedValue):
     if isinstance(source.value, list):
         if len(source.value) != 1:
             raise ValueError(
@@ -523,6 +590,34 @@ def convert(source: ogAST.Output) -> Action:
     return output
 
 
+@dispatch(ogAST.PrimSelector)
+def convert(source: ogAST.Output):
+    result = convert(source.value[0])
+
+    print("Utype: ", result)
+
+    for elem in source.value[1:]:
+        result = MemberAccess(result, VariableReference(elem))
+
+    print("Result: ", result)
+    return result
+
+
+@dispatch(ogAST.PrimIndex)
+def convert(source: ogAST.PrimIndex):
+    variable = convert(source.value[0])
+
+    print("Array: ", variable)
+
+    index = convert(source.value[1]["index"][0])
+
+    result = ArrayAccess(variable, index)
+
+    print("Result: ", result)
+
+    return result
+
+
 @dispatch(ogAST.Terminator)
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
@@ -567,7 +662,7 @@ def convert(source: ogAST.Answer) -> Action:
 @dispatch(ogAST.Decision)
 def convert(source: ogAST.Decision) -> Action:
     if source.kind == "question":
-        if source.question != None:
+        if source.question is not None:
             decision = Decision()
             decision.condition = convert(source.question)
             for sourceAnswer in source.answers:
@@ -596,6 +691,9 @@ class Model:
     """Map associating transition IDs with the transitions themselves."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
+    types: Dict[str, object]
+    """All ASN.1 types available in process."""
+    variables: Dict[str, Tuple[object, object]]
 
     def __init__(self, process: ogAST.Process):
         self.source = process
@@ -605,6 +703,9 @@ class Model:
         self.states = {}
         self.inputs = {}
         self.transitions = {}
+        self.types = getattr(process.DV, "types", {})
+        self.variables = process.variables
+
         self.__gather_states()
         self.__gather_inputs()
         self.__gather_transitions()

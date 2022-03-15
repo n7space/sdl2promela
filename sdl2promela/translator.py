@@ -1,13 +1,7 @@
-from queue import Empty
-import typing
 from typing import List
 from multipledispatch import dispatch
 
-from opengeode import ogAST
 from opengeode.AdaGenerator import SEPARATOR
-from pytest import Instance
-
-import sdl2promela
 
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -24,9 +18,9 @@ from .promela.modelbuilder import DoBuilder
 from .promela.modelbuilder import BinaryExpressionBuilder
 from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
+from .promela.modelbuilder import MemberAccessBuilder
+from .promela.modelbuilder import ArrayAccessBuilder
 
-
-from sdl2promela import promela
 
 __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
@@ -54,10 +48,14 @@ __BINARY_OPERATOR_DICTIONARY = {
 }
 
 
+def __get_assign_value_inline_name(type: object) -> str:
+    return "{}_assign_value".format(type.CName)
+
+
 def __get_promela_binary_operator(
     op: sdlmodel.BinaryOperator,
 ) -> promelamodel.BinaryOperator:
-    if not op in __BINARY_OPERATOR_DICTIONARY.keys():
+    if op not in __BINARY_OPERATOR_DICTIONARY.keys():
         raise NotImplementedError(
             f"{str(op)} operator is not available in this context"
         )
@@ -82,16 +80,103 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
     )
 
 
-def __get_variable_name(
-    sdl_model: sdlmodel.Model, variable_reference: sdlmodel.VariableReference
-) -> str:
+def __get_variable_name(sdl_model: sdlmodel.Model, variable: str):
     return (
-        __GLOBAL_STATE
-        + "."
-        + sdl_model.process_name.lower()
-        + "."
-        + variable_reference.variableName.lower()
+        MemberAccessBuilder()
+        .withUtypeReference(
+            MemberAccessBuilder()
+            .withUtypeReference(VariableReferenceBuilder(__GLOBAL_STATE).build())
+            .withMember(
+                VariableReferenceBuilder(sdl_model.process_name.lower()).build()
+            )
+            .build()
+        )
+        .withMember(VariableReferenceBuilder(variable.lower()).build())
+        .build()
     )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.VariableReference, bool)
+def __generate_variable_name(
+    sdl_model: sdlmodel.Model,
+    variable_reference: sdlmodel.VariableReference,
+    toplevel: bool,
+):
+    if toplevel:
+        return __get_variable_name(sdl_model, variable_reference.variableName)
+    else:
+        return VariableReferenceBuilder(variable_reference.variableName.lower()).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.MemberAccess, bool)
+def __generate_variable_name(
+    sdl_model: sdlmodel.Model,
+    member_access: sdlmodel.MemberAccess,
+    toplevel: bool,
+):
+    return (
+        MemberAccessBuilder()
+        .withUtypeReference(
+            __generate_variable_name(sdl_model, member_access.sequence, toplevel)
+        )
+        .withMember(__generate_variable_name(sdl_model, member_access.member, False))
+        .build()
+    )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.ArrayAccess, bool)
+def __generate_variable_name(
+    sdl_model: sdlmodel.Model,
+    array_access: sdlmodel.ArrayAccess,
+    toplevel: bool,
+):
+    return (
+        ArrayAccessBuilder()
+        .withArray(__generate_variable_name(sdl_model, array_access.array, toplevel))
+        .withIndex(__generate_expression(sdl_model, array_access.element))
+        .build()
+    )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.Constant)
+def __generate_expression(sdl_model: sdlmodel.Model, constant: sdlmodel.Constant):
+    return VariableReferenceBuilder(constant.value).build()
+
+
+@dispatch(sdlmodel.Model, sdlmodel.VariableReference)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, variable: sdlmodel.VariableReference
+):
+    return __generate_variable_name(sdl_model, variable, True)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.ArrayAccess)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, array_access: sdlmodel.ArrayAccess
+):
+    return __generate_variable_name(sdl_model, array_access, True)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.MemberAccess)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, member_access: sdlmodel.MemberAccess
+):
+    return __generate_variable_name(sdl_model, member_access, True)
+
+
+@dispatch(sdlmodel.Model, sdlmodel.BinaryExpression)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, expression: sdlmodel.BinaryExpression
+):
+    if expression.operator == sdlmodel.BinaryOperator.ASSIGN:
+        pass
+    else:
+        return (
+            BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
+            .withLeft(__generate_expression(sdl_model, expression.left))
+            .withRight(__generate_expression(sdl_model, expression.right))
+            .build()
+        )
 
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
@@ -108,6 +193,15 @@ def __get_remote_function_name(
     return sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
 
 
+def _resolve_type(allTypes, t):
+    while t.kind == "ReferenceType":
+        if t.ReferencedTypeName not in allTypes:
+            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
+        t = allTypes[t.ReferencedTypeName].type
+
+    return t
+
+
 def __generate_input_function(
     sdl_model: sdlmodel.Model, input: sdlmodel.Input
 ) -> promelamodel.Inline:
@@ -116,17 +210,21 @@ def __generate_input_function(
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
     for parameter in input.parameters:
         builder.withParameter(__get_parameter_name(parameter.target_variable))
+
+        variable = sdl_model.variables[parameter.target_variable.variableName]
+        variableType = _resolve_type(sdl_model.types, variable[0])
+        assignInlineName = __get_assign_value_inline_name(variableType)
+
         blockBuilder.withStatements(
             [
-                AssignmentBuilder()
-                .withSource(
+                CallBuilder()
+                .withTarget(assignInlineName)
+                .withParameter(
+                    __generate_variable_name(sdl_model, parameter.target_variable, True)
+                )
+                .withParameter(
                     VariableReferenceBuilder(
                         __get_parameter_name(parameter.target_variable)
-                    ).build()
-                )
-                .withTarget(
-                    VariableReferenceBuilder(
-                        __get_variable_name(sdl_model, parameter.target_variable)
                     ).build()
                 )
                 .build()
@@ -180,7 +278,7 @@ def __translate_answer_condition(
         expression.left = left
         expression.operator = right.operator
         expression.right = right.right
-        return __generate_statement(sdl_model, transition, expression)
+        return __generate_expression(sdl_model, expression)
     raise NotImplementedError(
         "translate_answer_condition not implemented for " + left + " and " + right
     )
@@ -198,14 +296,12 @@ def __generate_for_over_a_numeric_range(
     inner_statements: List[promelamodel.Statement],
 ) -> promelamodel.Statement:
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    iteratorReference = VariableReferenceBuilder(
-        __get_variable_name(sdl_model, task.iteratorName)
-    ).build()
+    iteratorReference = __generate_variable_name(sdl_model, task.iteratorName, True)
     block_builder.withStatements(
         [
             AssignmentBuilder()
             .withTarget(iteratorReference)
-            .withSource(__generate_statement(sdl_model, transition, task.range.start))
+            .withSource(__generate_expression(sdl_model, task.range.start))
             .build()
         ]
     )
@@ -217,9 +313,7 @@ def __generate_for_over_a_numeric_range(
                 .withCondition(
                     BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
                     .withLeft(iteratorReference)
-                    .withRight(
-                        __generate_statement(sdl_model, transition, task.range.stop)
-                    )
+                    .withRight(__generate_expression(sdl_model, task.range.stop))
                     .build()
                 )
                 .withStatements(inner_statements)
@@ -231,9 +325,7 @@ def __generate_for_over_a_numeric_range(
                             BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
                             .withLeft(iteratorReference)
                             .withRight(
-                                __generate_statement(
-                                    sdl_model, transition, task.range.step
-                                )
+                                __generate_expression(sdl_model, task.range.step)
                             )
                             .build()
                         )
@@ -290,42 +382,35 @@ def __generate_statement(
     return promelamodel.GoTo(join.label_name)
 
 
+def _resolve_type(allTypes, t):
+    while t.kind == "ReferenceType":
+        if t.ReferencedTypeName not in allTypes:
+            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
+        t = allTypes[t.ReferencedTypeName].type
+
+    return t
+
+
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
 def __generate_statement(
     sdl_model: sdlmodel.Model,
     transition: sdlmodel.Transition,
     assignment: sdlmodel.AssignmentTask,
 ) -> promelamodel.Statement:
+
+    finalType = _resolve_type(sdl_model.types, assignment.type)
+
+    assignInlineName = __get_assign_value_inline_name(finalType)
+
     return (
-        AssignmentBuilder()
-        .withTarget(
-            VariableReferenceBuilder(
-                __get_variable_name(sdl_model, assignment.assignment.left)
-            ).build()
+        CallBuilder()
+        .withTarget(assignInlineName)
+        .withParameter(
+            __generate_variable_name(sdl_model, assignment.assignment.left, True)
         )
-        .withSource(
-            __generate_statement(sdl_model, transition, assignment.assignment.right)
-        )
+        .withParameter(__generate_expression(sdl_model, assignment.assignment.right))
         .build()
     )
-
-
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.VariableReference)
-def __generate_statement(
-    sdl_model: sdlmodel.Model,
-    transition: sdlmodel.Transition,
-    variable: sdlmodel.VariableReference,
-) -> promelamodel.Statement:
-    return VariableReferenceBuilder(__get_variable_name(sdl_model, variable)).build()
-
-
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Constant)
-def __generate_statement(
-    sdl_model: sdlmodel.Model,
-    transition: sdlmodel.Transition,
-    constant: sdlmodel.Constant,
-) -> promelamodel.Statement:
-    return VariableReferenceBuilder(constant.value).build()
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Decision)
@@ -355,20 +440,6 @@ def __generate_statement(
     return builder.build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.BinaryExpression)
-def __generate_statement(
-    sdl_model: sdlmodel.Model,
-    transition: sdlmodel.Transition,
-    expression: sdlmodel.BinaryExpression,
-) -> promelamodel.Statement:
-    return (
-        BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
-        .withLeft(__generate_statement(sdl_model, transition, expression.left))
-        .withRight(__generate_statement(sdl_model, transition, expression.right))
-        .build()
-    )
-
-
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.NextState)
 def __generate_statement(
     sdl_model: sdlmodel.Model,
@@ -394,13 +465,8 @@ def __generate_statement(
     if len(output.parameters) == 0:
         return CallBuilder().withTarget(name).build()
     else:
-        parameter_name = __get_variable_name(sdl_model, output.parameters[0])
-        return (
-            CallBuilder()
-            .withTarget(name)
-            .withParameter(VariableReferenceBuilder(parameter_name).build())
-            .build()
-        )
+        parameter_name = __generate_variable_name(sdl_model, output.parameters[0], True)
+        return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
 def __generate_transition(
