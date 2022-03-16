@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -397,20 +397,491 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     assignment: sdlmodel.AssignmentTask,
 ) -> promelamodel.Statement:
+    return __generate_assignment(
+        sdl_model,
+        assignment.assignment.left,
+        assignment.assignment.right,
+        assignment.type,
+    )
 
-    finalType = _resolve_type(sdl_model.types, assignment.type)
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.Expression,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.Expression,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
 
     assignInlineName = __get_assign_value_inline_name(finalType)
 
     return (
         CallBuilder()
         .withTarget(assignInlineName)
-        .withParameter(
-            __generate_variable_name(sdl_model, assignment.assignment.left, True)
-        )
-        .withParameter(__generate_expression(sdl_model, assignment.assignment.right))
+        .withParameter(__generate_variable_name(sdl_model, left, True))
+        .withParameter(__generate_expression(sdl_model, right))
         .build()
     )
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.EmptyStringValue,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.EmptyStringValue,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment EmptyStringValue ", finalType.kind)
+    print("Min: ", finalType.Min)
+    print("Max: ", finalType.Max)
+    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+        if finalType.Min != 0:
+            raise Exception(f"Invalid assignment to type{finalType.CName}")
+        length_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("data").build())
+            .build()
+        )
+
+        statements: List[promelamodel.Statement] = []
+
+        if finalType.Min != finalType.Max:
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(length_field)
+                .withSource(promelamodel.Constant("0"))
+                .build()
+            )
+        for index in range(finalType.Max):
+            element = (
+                ArrayAccessBuilder()
+                .withArray(data_field)
+                .withIndex(promelamodel.Constant(str(index)))
+                .build()
+            )
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(element)
+                .withSource(promelamodel.Constant("0"))
+                .build()
+            )
+
+        return statements
+
+    elif finalType.kind == "BitStringType":
+        raise NotImplementedError("Assignment to BIT STRING is not supported")
+    else:
+        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.StringValue,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.StringValue,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment StringValue ", finalType.kind)
+    print("Min: ", finalType.Min)
+    print("Max: ", finalType.Max)
+    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+        length = len(right.value)
+        if length < finalType.Min or length > finalType.Max:
+            raise Exception(
+                f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
+            )
+        length_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("data").build())
+            .build()
+        )
+
+        statements: List[promelamodel.Statement] = []
+
+        if finalType.Min != finalType.Max:
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(length_field)
+                .withSource(promelamodel.Constant(str(length)))
+                .build()
+            )
+        for index in range(finalType.Max):
+            if index < length:
+                value = promelamodel.Constant(str(ord(right.value[index])))
+            else:
+                value = promelamodel.Constant("0")
+            element = (
+                ArrayAccessBuilder()
+                .withArray(data_field)
+                .withIndex(promelamodel.Constant(str(index)))
+                .build()
+            )
+            statements.append(
+                AssignmentBuilder().withTarget(element).withSource(value).build()
+            )
+
+        return statements
+    elif finalType.kind == "BitStringType":
+        raise NotImplementedError("Assignment to BIT STRING is not supported")
+    else:
+        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.OctetStringValue,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.OctetStringValue,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment OctetStringValue ", finalType.kind)
+    print("Min: ", finalType.Min)
+    print("Max: ", finalType.Max)
+    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+        length = len(right.elements)
+        if length < finalType.Min or length > finalType.Max:
+            raise Exception(
+                f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
+            )
+        length_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("data").build())
+            .build()
+        )
+
+        statements: List[promelamodel.Statement] = []
+
+        if finalType.Min != finalType.Max:
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(length_field)
+                .withSource(promelamodel.Constant(str(length)))
+                .build()
+            )
+        for index in range(finalType.Max):
+            if index < length:
+                value = promelamodel.Constant(right.elements[index])
+            else:
+                value = promelamodel.Constant("0")
+            element = (
+                ArrayAccessBuilder()
+                .withArray(data_field)
+                .withIndex(promelamodel.Constant(str(index)))
+                .build()
+            )
+            statements.append(
+                AssignmentBuilder().withTarget(element).withSource(value).build()
+            )
+
+        return statements
+    elif finalType.kind == "BitStringType":
+        raise NotImplementedError("Assignment to BIT STRING is not supported")
+    else:
+        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.BitStringValue,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.BitStringValue,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment BitStringValue ", finalType.kind)
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment OctetStringValue ", finalType.kind)
+    print("Min: ", finalType.Min)
+    print("Max: ", finalType.Max)
+    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+        length = len(right.elements)
+        if length < finalType.Min or length > finalType.Max:
+            raise Exception(
+                f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
+            )
+        length_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+            .withMember(VariableReferenceBuilder("data").build())
+            .build()
+        )
+
+        statements: List[promelamodel.Statement] = []
+
+        if finalType.Min != finalType.Max:
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(length_field)
+                .withSource(promelamodel.Constant(str(length)))
+                .build()
+            )
+        for index in range(finalType.Max):
+            if index < length:
+                value = promelamodel.Constant(right.elements[index])
+            else:
+                value = promelamodel.Constant("0")
+            element = (
+                ArrayAccessBuilder()
+                .withArray(data_field)
+                .withIndex(promelamodel.Constant(str(index)))
+                .build()
+            )
+            statements.append(
+                AssignmentBuilder().withTarget(element).withSource(value).build()
+            )
+
+        return statements
+    elif finalType.kind == "BitStringType":
+        raise NotImplementedError("Assignment to BIT STRING is not supported")
+    else:
+        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.Sequence,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.Sequence,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment Sequence ", finalType.kind)
+    if finalType.kind != "SequenceType":
+        raise Exception(
+            f"Invalid assignment: {finalType.CName} does not accept SEQUENCE value"
+        )
+
+    statements: List[promelamodel.Statement] = []
+
+    for name, dataType in finalType.Children.items():
+        is_optional = dataType.Optional == "True"
+        if not is_optional and name not in right.elements:
+            raise Exception(
+                f"Invalid assignment to {finalType.CName}: missing required member {name}"
+            )
+
+        if name in right.elements:
+            statements.extend(
+                __generate_assignment(
+                    sdl_model,
+                    sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name)),
+                    right.elements[name],
+                    dataType,
+                )
+            )
+
+        if is_optional:
+            if name in right.elements:
+                value = promelamodel.Constant("1")
+            else:
+                value = promelamodel.Constant("0")
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(
+                    MemberAccessBuilder()
+                    .withUtypeReference(
+                        MemberAccessBuilder()
+                        .withUtypeReference(
+                            __generate_variable_name(sdl_model, left, True)
+                        )
+                        .withMember(VariableReferenceBuilder("exist").build())
+                        .build()
+                    )
+                    .withMember(VariableReferenceBuilder(name).build())
+                    .build()
+                )
+                .withSource(value)
+                .build()
+            )
+
+    return statements
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.SequenceOf,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.SequenceOf,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment SequenceOf ", finalType.kind)
+    if finalType.kind != "SequenceOfType":
+        raise Exception(
+            f"Invalid assignment: {finalType.CName} does not accept SEQUENCE OF value"
+        )
+
+    statements: List[promelamodel.Statement] = []
+
+    length = len(right.elements)
+
+    if length < finalType.Min or length > finalType.Max:
+        raise Exception(
+            f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
+        )
+
+    length_field = (
+        MemberAccessBuilder()
+        .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+        .withMember(VariableReferenceBuilder("length").build())
+        .build()
+    )
+    data_field = (
+        MemberAccessBuilder()
+        .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+        .withMember(VariableReferenceBuilder("data").build())
+        .build()
+    )
+
+    if finalType.Min != finalType.Max:
+        statements.append(
+            AssignmentBuilder()
+            .withTarget(length_field)
+            .withSource(promelamodel.Constant(str(length)))
+            .build()
+        )
+
+    for index in range(length):
+        statements.extend(
+            __generate_assignment(
+                sdl_model,
+                sdlmodel.ArrayAccess(data_field, sdlmodel.Constant(str(index))),
+                right.elements[index],
+                finalType.type,
+            )
+        )
+
+    return statements
+
+
+@dispatch(
+    sdlmodel.Model,
+    (
+        sdlmodel.VariableReference,
+        sdlmodel.ArrayAccess,
+        sdlmodel.MemberAccess,
+    ),
+    sdlmodel.Choice,
+    type,
+)
+def __generate_assignment(
+    sdl_model: sdlmodel.Model,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    right: sdlmodel.Choice,
+    left_type: type,
+) -> List[promelamodel.Statement]:
+    finalType = _resolve_type(sdl_model.types, left_type)
+    print("Assignment Choice ", finalType.kind)
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Decision)

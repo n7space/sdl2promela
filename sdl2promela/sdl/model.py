@@ -32,10 +32,50 @@ class Constant(Expression):
     """Constant value ."""
 
     def __init__(self, value):
+        super().__init__()
         self.value = value
 
     def __str__(self):
         return f"Constant(value={self.value})"
+
+
+class EmptyStringValue(Expression):
+    def __str__(self):
+        return "EmptyStringValue()"
+
+
+class StringValue(Expression):
+    value: str
+
+    def __init__(self, value: str):
+        self.value = value
+
+    def __str__(self):
+        return f"StringValue(value={self.value})"
+
+
+class OctetStringValue(Expression):
+    numeric_value: int
+    elements: List[int]
+
+    def __init__(self, numeric_value: int, elements: List[int]):
+        self.numeric_value = numeric_value
+        self.elements = elements
+
+    def __str__(self):
+        return f"OctetStringValue(numeric_value={self.numeric_value}, elements={self.elements})"
+
+
+class BitStringValue(Expression):
+    numeric_value: int
+    elements: List[int]
+
+    def __init__(self, numeric_value: int, elements: List[int]):
+        self.numeric_value = numeric_value
+        self.elements = elements
+
+    def __str__(self):
+        return f"OctetStringValue(numeric_value={self.numeric_value}, elements={self.elements})"
 
 
 class VariableReference(Expression):
@@ -52,10 +92,12 @@ class VariableReference(Expression):
 
 
 class ArrayAccess(Expression):
-    "Access to element of SEQUENCE OF"
+    """Access to element of SEQUENCE OF"""
 
     array: Union[VariableReference, "MemberAccess"]
+    """Reference to array."""
     element: Expression
+    """Index to the element of array."""
 
     def __init__(
         self, array: Union[VariableReference, "MemberAccess"], element: Expression
@@ -68,10 +110,12 @@ class ArrayAccess(Expression):
 
 
 class MemberAccess(Expression):
-    "Access to Member of SEQUENCE"
+    """Access to Member of SEQUENCE"""
 
     sequence: Union[VariableReference, "MemberAccess", ArrayAccess]
+    """Reference to te SEQUENCE variable."""
     member: VariableReference
+    """Name of the member."""
 
     def __init__(
         self,
@@ -83,6 +127,52 @@ class MemberAccess(Expression):
 
     def __str__(self):
         return f"MemberAccess(sequence={self.sequence}, member={self.member})"
+
+
+class Sequence(Expression):
+    """Value of SEQUENCE datatype"""
+
+    elements: Dict[str, Expression]
+    """Elements of SEQUENCE value."""
+    type: object
+    """Type of value."""
+
+    def __init__(self, elements: Dict[str, Expression], type: object):
+        self.elements = elements
+        self.type = type
+
+    def __str__(self):
+        return f"Sequence(elements={self.elements}, type={self.type})"
+
+
+class SequenceOf(Expression):
+    """Value of SEQUENCE OF datatype"""
+
+    elements: List[Expression]
+    """Elements of SEQUENCE OF value."""
+    type: object
+    """Type of value."""
+
+    def __init__(self, elements: List[Expression], type: object):
+        self.elements = elements
+        self.type = type
+
+    def __str__(self):
+        return f"SequenceOf(elements={self.elements}, type={self.type})"
+
+
+class Choice(Expression):
+    """Value of CHOICE datatype"""
+
+    choice: str
+    value: Expression
+
+    def __init__(self, choice: str, value: Expression):
+        self.choice = choice
+        self.value = value
+
+    def __str__(self):
+        return f"Choice(choice={self.choice}, value={self.value})"
 
 
 class Parameter:
@@ -460,6 +550,52 @@ def convert(source: ogAST.PrimVariable):
     variableReference = VariableReference(source.value[0])
 
     return variableReference
+
+
+@dispatch(ogAST.PrimSequence)
+def convert(source: ogAST.PrimSequence):
+    elements: Dict[str, Expression] = {}
+    for elem, value in source.value.items():
+        elements[elem] = convert(value)
+
+    return Sequence(elements, source.exprType)
+
+
+@dispatch(ogAST.PrimSequenceOf)
+def convert(source: ogAST.PrimSequenceOf):
+    elements: List[Expression] = []
+    for elem in source.value:
+        elements.append(convert(elem))
+
+    return SequenceOf(elements, source.exprType)
+
+
+@dispatch(ogAST.PrimEmptyString)
+def convert(source: ogAST.PrimEmptyString):
+    return EmptyStringValue()
+
+
+@dispatch(ogAST.PrimStringLiteral)
+def convert(source: ogAST.PrimStringLiteral):
+    return StringValue(source.value[1:-1])
+
+
+@dispatch(ogAST.PrimOctetStringLiteral)
+def convert(source: ogAST.PrimOctetStringLiteral):
+    elements = [str(ord(val)) for val in source.value[1:-1]]
+    return OctetStringValue(source.numeric_value, elements)
+
+
+@dispatch(ogAST.PrimBitStringLiteral)
+def convert(source: ogAST.PrimBitStringLiteral):
+    elements = [str(ord(val)) for val in source.value[1:-1]]
+    return OctetStringValue(source.numeric_value, elements)
+
+
+@dispatch(ogAST.PrimChoiceItem)
+def convert(source: ogAST.PrimChoiceItem):
+    value = convert(source.value["value"])
+    return Choice(source.value["choice"], value)
 
 
 @dispatch(int)
