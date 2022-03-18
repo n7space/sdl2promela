@@ -582,13 +582,27 @@ def convert(source: ogAST.PrimStringLiteral):
 
 @dispatch(ogAST.PrimOctetStringLiteral)
 def convert(source: ogAST.PrimOctetStringLiteral):
-    elements = [str(ord(val)) for val in source.value[1:-1]]
+    characters = list(source.value[1:-1])
+    print("Converting OctetString ", characters)
+    length = len(characters)
+    elements = []
+    for index in range(0, length, 2):
+        byte_value = int("".join(characters[index : index + 2]), 16)
+        elements.append(byte_value)
+
     return OctetStringValue(source.numeric_value, elements)
 
 
 @dispatch(ogAST.PrimBitStringLiteral)
 def convert(source: ogAST.PrimBitStringLiteral):
-    elements = [str(ord(val)) for val in source.value[1:-1]]
+    characters = list(source.value[1:-1])
+    print("Converting BitString ", characters)
+    length = len(characters)
+    elements = []
+    for index in range(0, length, 2):
+        byte_value = int("".join(characters[index : index + 2]), 16)
+        elements.append(byte_value)
+
     return OctetStringValue(source.numeric_value, elements)
 
 
