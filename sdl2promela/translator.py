@@ -876,6 +876,42 @@ def __generate_assignment(
     print("Assignment Choice ", finalType.kind)
     statements: List[promelamodel.Statement] = []
 
+    if right.choice not in finalType.Children:
+        raise Exception(
+            "Invalid assignment to CHOICE: variant {} does not exist".format(
+                right.choice
+            )
+        )
+
+    valueType = finalType.Children[right.choice].type
+
+    selection = finalType.CName + "_" + right.choice + "_PRESENT"
+
+    selection_field = (
+        MemberAccessBuilder()
+        .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+        .withMember(VariableReferenceBuilder("selection").build())
+        .build()
+    )
+
+    data_field = sdlmodel.MemberAccess(
+        sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data")),
+        sdlmodel.VariableReference(right.choice),
+    )
+
+    statements.append(
+        AssignmentBuilder()
+        .withTarget(selection_field)
+        .withSource(VariableReferenceBuilder(selection).build())
+        .build()
+    )
+
+    print(dir(valueType))
+
+    statements.extend(
+        __generate_assignment(sdl_model, data_field, right.value, valueType)
+    )
+
     return statements
 
 
