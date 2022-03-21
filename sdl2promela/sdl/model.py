@@ -40,12 +40,17 @@ class Constant(Expression):
 
 
 class EmptyStringValue(Expression):
+    """Empty string literal from OpenGEODE."""
+
     def __str__(self):
         return "EmptyStringValue()"
 
 
 class StringValue(Expression):
+    """String literal from OpenGEODE."""
+
     value: str
+    """String value."""
 
     def __init__(self, value: str):
         self.value = value
@@ -55,27 +60,29 @@ class StringValue(Expression):
 
 
 class OctetStringValue(Expression):
-    numeric_value: int
-    elements: List[int]
+    """Octet String literal from OpenGEODE."""
 
-    def __init__(self, numeric_value: int, elements: List[int]):
-        self.numeric_value = numeric_value
+    elements: List[int]
+    """List of values, every element is a number from 0 to 255."""
+
+    def __init__(self, elements: List[int]):
         self.elements = elements
 
     def __str__(self):
-        return f"OctetStringValue(numeric_value={self.numeric_value}, elements={self.elements})"
+        return f"OctetStringValue(elements={self.elements})"
 
 
 class BitStringValue(Expression):
-    numeric_value: int
-    elements: List[int]
+    """Bit String literal from OpenGEODE."""
 
-    def __init__(self, numeric_value: int, elements: List[int]):
-        self.numeric_value = numeric_value
+    elements: List[int]
+    """List of values, every element is a number from 0 to 255."""
+
+    def __init__(self, elements: List[int]):
         self.elements = elements
 
     def __str__(self):
-        return f"OctetStringValue(numeric_value={self.numeric_value}, elements={self.elements})"
+        return f"OctetStringValue(elements={self.elements})"
 
 
 class VariableReference(Expression):
@@ -92,7 +99,7 @@ class VariableReference(Expression):
 
 
 class ArrayAccess(Expression):
-    """Access to element of SEQUENCE OF"""
+    """Access to element of SEQUENCE OF."""
 
     array: Union[VariableReference, "MemberAccess"]
     """Reference to array."""
@@ -110,7 +117,7 @@ class ArrayAccess(Expression):
 
 
 class MemberAccess(Expression):
-    """Access to Member of SEQUENCE"""
+    """Access to Member of SEQUENCE."""
 
     sequence: Union[VariableReference, "MemberAccess", ArrayAccess]
     """Reference to te SEQUENCE variable."""
@@ -130,7 +137,7 @@ class MemberAccess(Expression):
 
 
 class Sequence(Expression):
-    """Value of SEQUENCE datatype"""
+    """Value of SEQUENCE datatype."""
 
     elements: Dict[str, Expression]
     """Elements of SEQUENCE value."""
@@ -146,7 +153,7 @@ class Sequence(Expression):
 
 
 class SequenceOf(Expression):
-    """Value of SEQUENCE OF datatype"""
+    """Value of SEQUENCE OF datatype."""
 
     elements: List[Expression]
     """Elements of SEQUENCE OF value."""
@@ -162,10 +169,12 @@ class SequenceOf(Expression):
 
 
 class Choice(Expression):
-    """Value of CHOICE datatype"""
+    """Value of CHOICE datatype."""
 
     choice: str
+    """Name of the selected alternative."""
     value: Expression
+    """Value of the selected alternative."""
 
     def __init__(self, choice: str, value: Expression):
         self.choice = choice
@@ -590,7 +599,7 @@ def convert(source: ogAST.PrimOctetStringLiteral):
         byte_value = int("".join(characters[index : index + 2]), 16)
         elements.append(byte_value)
 
-    return OctetStringValue(source.numeric_value, elements)
+    return OctetStringValue(elements)
 
 
 @dispatch(ogAST.PrimBitStringLiteral)
@@ -603,7 +612,7 @@ def convert(source: ogAST.PrimBitStringLiteral):
         byte_value = int("".join(characters[index : index + 2]), 16)
         elements.append(byte_value)
 
-    return OctetStringValue(source.numeric_value, elements)
+    return OctetStringValue(elements)
 
 
 @dispatch(ogAST.PrimChoiceItem)
