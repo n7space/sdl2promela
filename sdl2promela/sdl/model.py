@@ -583,9 +583,9 @@ def convert(source: ogAST.PrimStringLiteral):
 @dispatch(ogAST.PrimOctetStringLiteral)
 def convert(source: ogAST.PrimOctetStringLiteral):
     characters = list(source.value[1:-1])
-    print("Converting OctetString ", characters)
     length = len(characters)
     elements = []
+
     for index in range(0, length, 2):
         byte_value = int("".join(characters[index : index + 2]), 16)
         elements.append(byte_value)
@@ -596,9 +596,9 @@ def convert(source: ogAST.PrimOctetStringLiteral):
 @dispatch(ogAST.PrimBitStringLiteral)
 def convert(source: ogAST.PrimBitStringLiteral):
     characters = list(source.value[1:-1])
-    print("Converting BitString ", characters)
     length = len(characters)
     elements = []
+
     for index in range(0, length, 2):
         byte_value = int("".join(characters[index : index + 2]), 16)
         elements.append(byte_value)
@@ -744,12 +744,9 @@ def convert(source: ogAST.Output) -> Action:
 def convert(source: ogAST.Output):
     result = convert(source.value[0])
 
-    print("Utype: ", result)
-
     for elem in source.value[1:]:
         result = MemberAccess(result, VariableReference(elem))
 
-    print("Result: ", result)
     return result
 
 
@@ -757,13 +754,9 @@ def convert(source: ogAST.Output):
 def convert(source: ogAST.PrimIndex):
     variable = convert(source.value[0])
 
-    print("Array: ", variable)
-
     index = convert(source.value[1]["index"][0])
 
     result = ArrayAccess(variable, index)
-
-    print("Result: ", result)
 
     return result
 

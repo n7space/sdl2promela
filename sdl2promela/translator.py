@@ -443,7 +443,6 @@ def __generate_assignment(
     assignInlineName = __get_assign_value_inline_name(finalType)
 
     statements: List[promelamodel.Statement] = []
-    print("Generate assignment, left={}, right={}".format(str(left), str(right)))
     statements.append(
         CallBuilder()
         .withTarget(assignInlineName)
@@ -474,9 +473,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment EmptyStringValue ", finalType.kind)
-    print("Min: ", int(finalType.Min))
-    print("Max: ", int(finalType.Max))
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         if int(finalType.Min) != 0:
             raise Exception(f"Invalid assignment to type{finalType.CName}")
@@ -538,9 +534,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment StringValue ", finalType.kind)
-    print("Min: ", int(finalType.Min))
-    print("Max: ", int(finalType.Max))
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.value)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -605,9 +598,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment OctetStringValue ", finalType.kind)
-    print("Min: ", int(finalType.Min))
-    print("Max: ", int(finalType.Max))
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.elements)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -675,11 +665,7 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment BitStringValue ", finalType.kind)
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment OctetStringValue ", finalType.kind)
-    print("Min: ", int(finalType.Min))
-    print("Max: ", int(finalType.Max))
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.elements)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -744,7 +730,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment Sequence ", finalType.kind)
     if finalType.kind != "SequenceType":
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE value"
@@ -815,7 +800,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment SequenceOf ", finalType.kind)
     if finalType.kind != "SequenceOfType":
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE OF value"
@@ -836,7 +820,6 @@ def __generate_assignment(
         .withMember(VariableReferenceBuilder("length").build())
         .build()
     )
-    # data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
     if int(finalType.Min) != int(finalType.Max):
         statements.append(
@@ -878,7 +861,6 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = _resolve_type(sdl_model.types, left_type)
-    print("Assignment Choice ", finalType.kind)
     statements: List[promelamodel.Statement] = []
 
     if right.choice not in finalType.Children:
@@ -910,8 +892,6 @@ def __generate_assignment(
         .withSource(VariableReferenceBuilder(selection).build())
         .build()
     )
-
-    print(dir(valueType))
 
     statements.extend(
         __generate_assignment(sdl_model, data_field, right.value, valueType)
