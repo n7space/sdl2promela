@@ -13,6 +13,8 @@ taste/work/controller/SDL/*
 !taste/work/controller/SDL/src
 taste/work/controller/SDL/src/*
 !taste/work/controller/SDL/src/controller.pr
+!taste/work/controller/SDL/src/system_structure.pr
+!taste/work/controller/SDL/src/dataview-uniq.asn
 
 # Except actuator source
 !taste/work/actuator/
@@ -22,6 +24,8 @@ taste/work/actuator/SDL/*
 !taste/work/actuator/SDL/src
 taste/work/actuator/SDL/src/*
 !taste/work/actuator/SDL/src/actuator.pr
+!taste/work/actuator/SDL/src/system_structure.pr
+!taste/work/actuator/SDL/src/dataview-uniq.asn
 
 # Ignore whole tmc directory
 tmc/*
