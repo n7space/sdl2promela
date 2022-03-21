@@ -1,0 +1,16 @@
+ASN1-SEQUENCE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyTestInteger ::= INTEGER (0 .. 4)
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyParameter ::= SEQUENCE {
+       x MyInteger,
+       y MyInteger,
+       z MyInteger OPTIONAL
+   }
+
+
+END
+

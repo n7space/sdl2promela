@@ -132,7 +132,14 @@ def __generate_variable_name(
 ):
     return (
         ArrayAccessBuilder()
-        .withArray(__generate_variable_name(sdl_model, array_access.array, toplevel))
+        .withArray(
+            MemberAccessBuilder()
+            .withUtypeReference(
+                __generate_variable_name(sdl_model, array_access.array, toplevel)
+            )
+            .withMember(VariableReferenceBuilder("data").build())
+            .build()
+        )
         .withIndex(__generate_expression(sdl_model, array_access.element))
         .build()
     )
@@ -603,8 +610,6 @@ def __generate_assignment(
     print("Max: ", int(finalType.Max))
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.elements)
-        if length % 2 != 0:
-            raise Exception("Invalid bitstring literal")
         if length < int(finalType.Min) or length > int(finalType.Max):
             raise Exception(
                 "Invalid assignment: {} does not accept string with length {}".format(
@@ -687,7 +692,7 @@ def __generate_assignment(
             .withMember(VariableReferenceBuilder("length").build())
             .build()
         )
-        data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
+        # data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
         statements: List[promelamodel.Statement] = []
 
@@ -705,7 +710,7 @@ def __generate_assignment(
                 value = promelamodel.IntegerValue(0)
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(sdl_model, data_field, True))
+                .withArray(__generate_variable_name(sdl_model, left, True))
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -831,7 +836,7 @@ def __generate_assignment(
         .withMember(VariableReferenceBuilder("length").build())
         .build()
     )
-    data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
+    # data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
     if int(finalType.Min) != int(finalType.Max):
         statements.append(
@@ -845,7 +850,7 @@ def __generate_assignment(
         statements.extend(
             __generate_assignment(
                 sdl_model,
-                sdlmodel.ArrayAccess(data_field, sdlmodel.Constant(str(index))),
+                sdlmodel.ArrayAccess(left, sdlmodel.Constant(str(index))),
                 right.elements[index],
                 finalType.type,
             )

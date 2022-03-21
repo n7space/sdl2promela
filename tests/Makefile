@@ -17,7 +17,8 @@ TESTS = \
 	stop_condition_never_filter_out \
 	stop_condition_present \
 	stop_condition_length \
-	stop_condition_exist
+	stop_condition_exist \
+    integration_tests
 
 unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv
@@ -49,6 +50,9 @@ stop_condition_length:
 stop_condition_exist:
 	${MAKE} -C stop_condition_exist check
 
+integration_tests:
+	${MAKE} -C integration_tests check
+
 check: unit \
 	integration \
 	parameterless \
@@ -58,4 +62,5 @@ check: unit \
 	stop_condition_never_filter_out \
 	stop_condition_present \
 	stop_condition_length \
-	stop_condition_exist
+	stop_condition_exist \
+	integration_tests
