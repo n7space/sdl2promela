@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sdl2promela.promela.model as promela
+from sdl2promela.utils import resolve_asn1_type
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
@@ -314,15 +315,6 @@ def _generate(context: GenerateContext, expr: model.Selector):
     return result
 
 
-def _resolve_type(allTypes, t):
-    while t.kind == "ReferenceType":
-        if t.ReferencedTypeName not in allTypes:
-            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
-        t = allTypes[t.ReferencedTypeName].type
-
-    return t
-
-
 def _resolve_remaining_element_of_selector(
     allTypes: Dict[str, object],
     currentType: object,
@@ -341,7 +333,7 @@ def _resolve_remaining_element_of_selector(
             "Unable to find member '{}' in '{}".format(member_name, currentType.CName)
         )
     member = currentType.Children[member_name]
-    memberType = _resolve_type(allTypes, member.type)
+    memberType = resolve_asn1_type(allTypes, member.type)
 
     if index + 1 < len(selector.elements):
         return _resolve_remaining_element_of_selector(
@@ -388,7 +380,7 @@ def _find_type(context: GenerateContext, selector: model.Selector):
             )
         variable = process.variables[variable_name]
 
-        currentType = _resolve_type(allTypes, variable[0])
+        currentType = resolve_asn1_type(allTypes, variable[0])
 
         if len(selector.elements) > 2:
             selectorType = _resolve_remaining_element_of_selector(
@@ -403,12 +395,12 @@ def _find_type(context: GenerateContext, selector: model.Selector):
 def _find_type(context: GenerateContext, selector: model.CallExpression):
     sequenceOfType, allTypes = _find_type(context, selector.function)
 
-    sequenceOfType = _resolve_type(allTypes, sequenceOfType)
+    sequenceOfType = resolve_asn1_type(allTypes, sequenceOfType)
 
     if sequenceOfType.kind != "SequenceOfType":
         raise TranslateException("Invalid access to SEQUENCE OF")
 
-    sequenceOfElementType = _resolve_type(allTypes, sequenceOfType.type)
+    sequenceOfElementType = resolve_asn1_type(allTypes, sequenceOfType.type)
 
     return (sequenceOfElementType, allTypes)
 

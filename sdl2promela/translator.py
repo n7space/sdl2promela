@@ -20,7 +20,7 @@ from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
 from .promela.modelbuilder import MemberAccessBuilder
 from .promela.modelbuilder import ArrayAccessBuilder
-
+from .utils import resolve_asn1_type
 
 __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
@@ -200,15 +200,6 @@ def __get_remote_function_name(
     return sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
 
 
-def _resolve_type(allTypes, t):
-    while t.kind == "ReferenceType":
-        if t.ReferencedTypeName not in allTypes:
-            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
-        t = allTypes[t.ReferencedTypeName].type
-
-    return t
-
-
 def __generate_input_function(
     sdl_model: sdlmodel.Model, input: sdlmodel.Input
 ) -> promelamodel.Inline:
@@ -219,7 +210,7 @@ def __generate_input_function(
         builder.withParameter(__get_parameter_name(parameter.target_variable))
 
         variable = sdl_model.variables[parameter.target_variable.variableName]
-        variableType = _resolve_type(sdl_model.types, variable[0])
+        variableType = resolve_asn1_type(sdl_model.types, variable[0])
         assignInlineName = __get_assign_value_inline_name(variableType)
 
         blockBuilder.withStatements(
@@ -389,15 +380,6 @@ def __generate_statement(
     return promelamodel.GoTo(join.label_name)
 
 
-def _resolve_type(allTypes, t):
-    while t.kind == "ReferenceType":
-        if t.ReferencedTypeName not in allTypes:
-            raise ("Cannot resolve type {}".format(t.ReferencedTypeNam))
-        t = allTypes[t.ReferencedTypeName].type
-
-    return t
-
-
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
 def __generate_statement(
     sdl_model: sdlmodel.Model,
@@ -438,7 +420,7 @@ def __generate_assignment(
     right: sdlmodel.Expression,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
 
     assignInlineName = __get_assign_value_inline_name(finalType)
 
@@ -472,7 +454,7 @@ def __generate_assignment(
     right: sdlmodel.EmptyStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         if int(finalType.Min) != 0:
             raise Exception(f"Invalid assignment to type{finalType.CName}")
@@ -533,7 +515,7 @@ def __generate_assignment(
     right: sdlmodel.StringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.value)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -597,7 +579,7 @@ def __generate_assignment(
     right: sdlmodel.OctetStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.elements)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -664,8 +646,7 @@ def __generate_assignment(
     right: sdlmodel.BitStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
         length = len(right.elements)
         if length < int(finalType.Min) or length > int(finalType.Max):
@@ -678,7 +659,6 @@ def __generate_assignment(
             .withMember(VariableReferenceBuilder("length").build())
             .build()
         )
-        # data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
         statements: List[promelamodel.Statement] = []
 
@@ -729,7 +709,7 @@ def __generate_assignment(
     right: sdlmodel.Sequence,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind != "SequenceType":
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE value"
@@ -799,7 +779,7 @@ def __generate_assignment(
     right: sdlmodel.SequenceOf,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     if finalType.kind != "SequenceOfType":
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE OF value"
@@ -860,7 +840,7 @@ def __generate_assignment(
     right: sdlmodel.Choice,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = _resolve_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
 
     if right.choice not in finalType.Children:
