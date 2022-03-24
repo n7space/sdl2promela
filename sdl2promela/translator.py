@@ -1,4 +1,4 @@
-from typing import List, Union, Annotated
+from typing import List, Union
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR

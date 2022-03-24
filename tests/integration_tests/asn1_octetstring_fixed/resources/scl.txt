@@ -1,0 +1,2 @@
+never controller.error > 0;
+eventually actuator.work_param(0) > 0;

@@ -1,0 +1,11 @@
+ASN1-OCTETSTRING-FIXED-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (0 .. 3)
+
+   MyTestParam ::= OCTET STRING (SIZE(4))
+
+END
+

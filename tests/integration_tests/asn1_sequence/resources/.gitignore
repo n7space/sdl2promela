@@ -1,6 +1,7 @@
 default_attributes.xml
 
 taste/.cache/
+taste/*.pro.user
 
 # Ignore whole work directory
 taste/work/*
