@@ -18,7 +18,7 @@ TESTS = \
 	stop_condition_present \
 	stop_condition_length \
 	stop_condition_exist \
-    integration_tests
+	integration_tests
 
 unit: ${TESTS}
 	PYTHONPATH=${SRC_DIR} python3 -m pytest ${TESTS} -vv

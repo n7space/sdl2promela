@@ -589,30 +589,30 @@ def convert(source: ogAST.PrimStringLiteral):
     return StringValue(source.value[1:-1])
 
 
-@dispatch(ogAST.PrimOctetStringLiteral)
-def convert(source: ogAST.PrimOctetStringLiteral):
-    characters = list(source.value[1:-1])
-    length = len(characters)
-    elements = []
+def decode_hex_bytes(characters) -> List[int]:
+    """Decode string with hex digits into list of byte values."""
+    length: int = len(characters)
+    elements: List[int] = []
 
     for index in range(0, length, 2):
         byte_value = int("".join(characters[index : index + 2]), 16)
         elements.append(byte_value)
 
-    return OctetStringValue(elements)
+    return elements
+
+
+@dispatch(ogAST.PrimOctetStringLiteral)
+def convert(source: ogAST.PrimOctetStringLiteral):
+    characters = list(source.value[1:-1])
+
+    return OctetStringValue(decode_hex_bytes(characters))
 
 
 @dispatch(ogAST.PrimBitStringLiteral)
 def convert(source: ogAST.PrimBitStringLiteral):
     characters = list(source.value[1:-1])
-    length = len(characters)
-    elements = []
 
-    for index in range(0, length, 2):
-        byte_value = int("".join(characters[index : index + 2]), 16)
-        elements.append(byte_value)
-
-    return OctetStringValue(elements)
+    return OctetStringValue(decode_hex_bytes(characters))
 
 
 @dispatch(ogAST.PrimChoiceItem)
@@ -846,6 +846,11 @@ class Model:
     types: Dict[str, object]
     """All ASN.1 types available in process."""
     variables: Dict[str, Tuple[object, object]]
+    """
+    All variables defined in the process, the key is a variable name,
+    The value is a tuple where first element is type and the second
+    is initial variable value.
+    """
 
     def __init__(self, process: ogAST.Process):
         self.source = process

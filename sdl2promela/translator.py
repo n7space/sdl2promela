@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Annotated
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -46,6 +46,20 @@ __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.DIV: promelamodel.BinaryOperator.DIVIDE,
     sdlmodel.BinaryOperator.MOD: promelamodel.BinaryOperator.MODULO,
 }
+
+CHOICE_DATA_MEMBER_NAME = "data"
+CHOICE_SELECTION_MEMBER_NAME = "selection"
+SEQUENCE_EXIST_MEMBER_NAME = "exist"
+SEQUENCEOF_DATA_MEMBER_NAME = "data"
+SEQUENCEOF_LENGTH_MEMBER_NAME = "length"
+STRING_DATA_MEMBER_NAME = "data"
+STRING_LENGTH_MEMBER_NAME = "length"
+
+SEQUENCE_TYPE_NAME = "SequenceType"
+SEQUENCEOF_TYPE_NAME = "SequenceOfType"
+IA5_STRING_TYPE_NAME = "IA5StringType"
+OCTET_STRING_TYPE_NAME = "OctetStringType"
+BIT_STRING_TYPE_NAME = "BitStringType"
 
 
 def __get_assign_value_inline_name(type: object) -> str:
@@ -137,7 +151,7 @@ def __generate_variable_name(
             .withUtypeReference(
                 __generate_variable_name(sdl_model, array_access.array, toplevel)
             )
-            .withMember(VariableReferenceBuilder("data").build())
+            .withMember(VariableReferenceBuilder(SEQUENCEOF_DATA_MEMBER_NAME).build())
             .build()
         )
         .withIndex(__generate_expression(sdl_model, array_access.element))
@@ -436,6 +450,32 @@ def __generate_assignment(
     return statements
 
 
+def append_length_assignment_for_string_type(
+    sdl_model: sdlmodel.Model,
+    statements: List[promelamodel.Statement],
+    target: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    target_type: object,
+    length: int,
+):
+    length_field = (
+        MemberAccessBuilder()
+        .withUtypeReference(__generate_variable_name(sdl_model, target, True))
+        .withMember(VariableReferenceBuilder(STRING_LENGTH_MEMBER_NAME).build())
+        .build()
+    )
+    if int(target_type.Min) != int(target_type.Max):
+        # Add assignment to the length member, it exists when
+        # string is variable length
+        statements.append(
+            AssignmentBuilder()
+            .withTarget(length_field)
+            .withSource(promelamodel.IntegerValue(length))
+            .build()
+        )
+
+
 @dispatch(
     sdlmodel.Model,
     (
@@ -455,26 +495,23 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+    if (
+        finalType.kind == OCTET_STRING_TYPE_NAME
+        or finalType.kind == IA5_STRING_TYPE_NAME
+    ):
         if int(finalType.Min) != 0:
             raise Exception(f"Invalid assignment to type{finalType.CName}")
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-            .withMember(VariableReferenceBuilder("length").build())
-            .build()
+
+        data_field = sdlmodel.MemberAccess(
+            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
         )
-        data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
         statements: List[promelamodel.Statement] = []
 
-        if int(finalType.Min) != int(finalType.Max):
-            statements.append(
-                AssignmentBuilder()
-                .withTarget(length_field)
-                .withSource(promelamodel.IntegerValue(0))
-                .build()
-            )
+        append_length_assignment_for_string_type(
+            sdl_model, statements, left, finalType, 0
+        )
+
         for index in range(int(finalType.Max)):
             element = (
                 ArrayAccessBuilder()
@@ -491,10 +528,17 @@ def __generate_assignment(
 
         return statements
 
-    elif finalType.kind == "BitStringType":
+    elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
     else:
         raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+
+
+def check_length_constraint(target_type: object, length: int):
+    if length < int(target_type.Min) or length > int(target_type.Max):
+        raise Exception(
+            f"Invalid assignment: {target_type.CName} does not accept value with length {length}"
+        )
 
 
 @dispatch(
@@ -516,34 +560,26 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+    if (
+        finalType.kind == OCTET_STRING_TYPE_NAME
+        or finalType.kind == IA5_STRING_TYPE_NAME
+    ):
         length = len(right.value)
-        if length < int(finalType.Min) or length > int(finalType.Max):
-            raise Exception(
-                f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
-            )
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-            .withMember(VariableReferenceBuilder("length").build())
-            .build()
+        check_length_constraint(finalType, length)
+        data_field = sdlmodel.MemberAccess(
+            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
         )
-        data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
         statements: List[promelamodel.Statement] = []
 
-        if int(finalType.Min) != int(finalType.Max):
-            statements.append(
-                AssignmentBuilder()
-                .withTarget(length_field)
-                .withSource(promelamodel.IntegerValue(length))
-                .build()
-            )
+        append_length_assignment_for_string_type(
+            sdl_model, statements, left, finalType, length
+        )
+
         for index in range(int(finalType.Max)):
-            if index < length:
-                value = promelamodel.IntegerValue(ord(right.value[index]))
-            else:
-                value = promelamodel.IntegerValue(0)
+            value = promelamodel.IntegerValue(
+                ord(right.value[index]) if index < length else 0
+            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(__generate_variable_name(sdl_model, data_field, True))
@@ -555,10 +591,10 @@ def __generate_assignment(
             )
 
         return statements
-    elif finalType.kind == "BitStringType":
+    elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
     else:
-        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+        raise Exception(f"Unsupported assignment: {finalType.kind} String Value")
 
 
 @dispatch(
@@ -580,37 +616,27 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+    if (
+        finalType.kind == OCTET_STRING_TYPE_NAME
+        or finalType.kind == IA5_STRING_TYPE_NAME
+    ):
         length = len(right.elements)
-        if length < int(finalType.Min) or length > int(finalType.Max):
-            raise Exception(
-                "Invalid assignment: {} does not accept string with length {}".format(
-                    finalType.CName, length
-                )
-            )
+        check_length_constraint(finalType, length)
 
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-            .withMember(VariableReferenceBuilder("length").build())
-            .build()
+        data_field = sdlmodel.MemberAccess(
+            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
         )
-        data_field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data"))
 
         statements: List[promelamodel.Statement] = []
 
-        if int(finalType.Min) != int(finalType.Max):
-            statements.append(
-                AssignmentBuilder()
-                .withTarget(length_field)
-                .withSource(promelamodel.IntegerValue(length))
-                .build()
-            )
+        append_length_assignment_for_string_type(
+            sdl_model, statements, left, finalType, length
+        )
+
         for index in range(int(finalType.Max)):
-            if index < length:
-                value = promelamodel.IntegerValue(right.elements[index])
-            else:
-                value = promelamodel.IntegerValue(0)
+            value = promelamodel.IntegerValue(
+                right.elements[index] if index < length else 0
+            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(__generate_variable_name(sdl_model, data_field, True))
@@ -622,10 +648,10 @@ def __generate_assignment(
             )
 
         return statements
-    elif finalType.kind == "BitStringType":
+    elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
     else:
-        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+        raise Exception(f"Unsupported assignment: {finalType.kind} Octet String Value")
 
 
 @dispatch(
@@ -647,33 +673,23 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind == "OctetStringType" or finalType.kind == "IA5StringType":
+    if (
+        finalType.kind == OCTET_STRING_TYPE_NAME
+        or finalType.kind == IA5_STRING_TYPE_NAME
+    ):
         length = len(right.elements)
-        if length < int(finalType.Min) or length > int(finalType.Max):
-            raise Exception(
-                f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
-            )
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-            .withMember(VariableReferenceBuilder("length").build())
-            .build()
-        )
+        check_length_constraint(finalType, length)
 
         statements: List[promelamodel.Statement] = []
 
-        if int(finalType.Min) != int(finalType.Max):
-            statements.append(
-                AssignmentBuilder()
-                .withTarget(length_field)
-                .withSource(promelamodel.IntegerValue(length))
-                .build()
-            )
+        append_length_assignment_for_string_type(
+            sdl_model, statements, left, finalType, length
+        )
+
         for index in range(int(finalType.Max)):
-            if index < length:
-                value = promelamodel.IntegerValue(right.elements[index])
-            else:
-                value = promelamodel.IntegerValue(0)
+            value = promelamodel.IntegerValue(
+                right.elements[index] if index < length else 0
+            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(__generate_variable_name(sdl_model, left, True))
@@ -685,10 +701,10 @@ def __generate_assignment(
             )
 
         return statements
-    elif finalType.kind == "BitStringType":
+    elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
     else:
-        raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
+        raise Exception(f"Unsupported assignment: {finalType.kind} Bit String Value")
 
 
 @dispatch(
@@ -710,7 +726,7 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind != "SequenceType":
+    if finalType.kind != SEQUENCE_TYPE_NAME:
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE value"
         )
@@ -735,10 +751,7 @@ def __generate_assignment(
             )
 
         if is_optional:
-            if name in right.elements:
-                value = promelamodel.IntegerValue(1)
-            else:
-                value = promelamodel.IntegerValue(0)
+            value = promelamodel.IntegerValue(1 if name in right.elements else 0)
             statements.append(
                 AssignmentBuilder()
                 .withTarget(
@@ -748,7 +761,9 @@ def __generate_assignment(
                         .withUtypeReference(
                             __generate_variable_name(sdl_model, left, True)
                         )
-                        .withMember(VariableReferenceBuilder("exist").build())
+                        .withMember(
+                            VariableReferenceBuilder(SEQUENCE_EXIST_MEMBER_NAME).build()
+                        )
                         .build()
                     )
                     .withMember(VariableReferenceBuilder(name).build())
@@ -780,7 +795,7 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-    if finalType.kind != "SequenceOfType":
+    if finalType.kind != SEQUENCEOF_TYPE_NAME:
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE OF value"
         )
@@ -789,19 +804,18 @@ def __generate_assignment(
 
     length = len(right.elements)
 
-    if length < int(finalType.Min) or length > int(finalType.Max):
-        raise Exception(
-            f"Invalid assignment: {finalType.CName} does not accept string with length {length}"
-        )
+    check_length_constraint(finalType, length)
 
     length_field = (
         MemberAccessBuilder()
         .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-        .withMember(VariableReferenceBuilder("length").build())
+        .withMember(VariableReferenceBuilder(SEQUENCEOF_LENGTH_MEMBER_NAME).build())
         .build()
     )
 
     if int(finalType.Min) != int(finalType.Max):
+        # Add assignment to the length member, it exists when
+        # SEQUENCE OF is variable length
         statements.append(
             AssignmentBuilder()
             .withTarget(length_field)
@@ -857,12 +871,14 @@ def __generate_assignment(
     selection_field = (
         MemberAccessBuilder()
         .withUtypeReference(__generate_variable_name(sdl_model, left, True))
-        .withMember(VariableReferenceBuilder("selection").build())
+        .withMember(VariableReferenceBuilder(CHOICE_SELECTION_MEMBER_NAME).build())
         .build()
     )
 
     data_field = sdlmodel.MemberAccess(
-        sdlmodel.MemberAccess(left, sdlmodel.VariableReference("data")),
+        sdlmodel.MemberAccess(
+            left, sdlmodel.VariableReference(CHOICE_DATA_MEMBER_NAME)
+        ),
         sdlmodel.VariableReference(right.choice),
     )
 
