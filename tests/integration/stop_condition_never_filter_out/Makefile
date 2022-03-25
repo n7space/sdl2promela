@@ -3,7 +3,7 @@ CC=gcc
 CFLAGS=-O2
 
 # We are testing the sources, not the installed application
-SDL2PROMELA=PYTHONPATH=../../ python3 -m sdl2promela.sdl2promela
+SDL2PROMELA=PYTHONPATH=../../../ python3 -m sdl2promela.sdl2promela
 
 RES_DIR=resources
 
