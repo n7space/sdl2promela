@@ -1,0 +1,11 @@
+ASN1-SEQUENCEOF-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (0 .. 3)
+
+   MyTestParameter ::= SEQUENCE (SIZE(1..5)) OF MyInteger
+
+END
+

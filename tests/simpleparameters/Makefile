@@ -40,6 +40,7 @@ test_simpleparameters:
 	${SDL2PROMELA} -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/actuator/system_structure.pr ${RES_DIR}/actuator/actuator.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} system.pml > system.output
 	grep -q "Initializing the system" ${TEST_DIR}/system.output

@@ -9,7 +9,7 @@ typedef system_state {
 int inited;
 chan controller_result_channel = [2] of {TestInteger};
 chan controller_error_channel = [1] of {int};
-chan actuator_work_channel = [2] of {TestInteger};
+chan actuator_work_channel = [2] of {TestParam};
 system_state global_state;
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
@@ -46,7 +46,7 @@ active proctype controller_error() priority 10
 active proctype actuator_work() priority 4
 {
     inited;
-    TestInteger var0;
+    TestParam var0;
     do
     ::  actuator_work_channel?var0;
         printf("Received signal work\n");

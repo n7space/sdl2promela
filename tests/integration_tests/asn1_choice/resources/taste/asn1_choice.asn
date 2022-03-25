@@ -1,0 +1,15 @@
+ASN1-CHOICE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (0 .. 3)
+
+   MyTestParam ::= CHOICE {
+       snare INTEGER(0..127),
+       kick INTEGER(0..127),
+       ride INTEGER(0..127)
+   }
+
+END
+

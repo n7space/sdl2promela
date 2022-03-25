@@ -10,15 +10,15 @@ inline Complexsdl_0_transition(id)
       global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
     ::(transition_id == 1)->
-      global_state.complexsdl.x = 0;
-      global_state.complexsdl.y = 1;
+      MyInteger_assign_value(global_state.complexsdl.x, 0);
+      MyInteger_assign_value(global_state.complexsdl.y, 1);
       loop_start: ;
       if
       ::((global_state.complexsdl.x < global_state.complexsdl.tmp) == false)->
         skip;
       ::((global_state.complexsdl.x < global_state.complexsdl.tmp) == true)->
-        global_state.complexsdl.y = (global_state.complexsdl.y * global_state.complexsdl.x);
-        global_state.complexsdl.x = (global_state.complexsdl.x + 1);
+        MyInteger_assign_value(global_state.complexsdl.y, (global_state.complexsdl.y * global_state.complexsdl.x));
+        MyInteger_assign_value(global_state.complexsdl.x, (global_state.complexsdl.x + 1));
         goto loop_start;
         ;
       fi;
@@ -34,7 +34,7 @@ inline Complexsdl_0_init()
 }
 inline Complexsdl_0_PI_0_impulse(tmp_param_in)
 {
-  global_state.complexsdl.tmp = tmp_param_in;
+  MyInteger_assign_value(global_state.complexsdl.tmp, tmp_param_in);
   if
   ::(global_state.complexsdl.state == Complexsdl_States_wait)->
     Complexsdl_0_transition(1);

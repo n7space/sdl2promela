@@ -1,0 +1,3 @@
+never controller.error > 0;
+never exist(actuator.work_param.z);
+eventually actuator.work_param.y > 0;
