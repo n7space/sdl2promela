@@ -1,0 +1,421 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (650, 225), (290, 184) */
+    -- Text area for declarations and comments
+    
+    dcl boolean_result MyBooleanResult;
+    
+    dcl binary_boolean BinaryBooleanTestParam;
+    dcl error MyInteger;
+    dcl finished MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (731, 438), (70, 35) */
+    START;
+        /* CIF task (727, 493), (76, 35) */
+        task error := 0;
+        /* CIF task (718, 548), (94, 35) */
+        task finished := 0;
+        /* CIF task (697, 598), (136, 88) */
+        task binary_boolean := {
+    oper o_and,
+    left false,
+    right false
+};
+        /* CIF output (639, 706), (253, 35) */
+        output check_binary(binary_boolean);
+        /* CIF NEXTSTATE (721, 756), (89, 35) */
+        NEXTSTATE CheckAnd1;
+    /* CIF label (1076, 238), (87, 35) */
+    connection goto_error:
+        /* CIF task (1082, 293), (76, 35) */
+        task error := 1;
+        /* CIF NEXTSTATE (1085, 348), (70, 35) */
+        NEXTSTATE Error;
+    /* CIF End Label */
+    endconnection;
+    /* CIF state (2280, 425), (89, 35) */
+    state CheckAnd4;
+        /* CIF input (2223, 480), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (2271, 535), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (2169, 605), (70, 24) */
+                (false):
+                    /* CIF join (2186, 649), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2343, 605), (70, 24) */
+                (true):
+                    /* CIF task (2309, 649), (136, 88) */
+                    task binary_boolean := {
+    oper o_or,
+    left false,
+    right false
+};
+                    /* CIF output (2251, 757), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (2333, 812), (89, 35) */
+                    NEXTSTATE CheckOr1;
+            enddecision;
+    endstate;
+    /* CIF state (2413, 1478), (86, 35) */
+    state CheckXor4;
+        /* CIF input (2355, 1533), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (2403, 1588), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (2299, 1658), (70, 24) */
+                (true):
+                    /* CIF join (2316, 1702), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2473, 1658), (70, 24) */
+                (false):
+                    /* CIF task (2439, 1702), (136, 88) */
+                    task binary_boolean := {
+    oper o_implies,
+    left false,
+    right false
+};
+                    /* CIF output (2381, 1810), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (2453, 1865), (108, 35) */
+                    NEXTSTATE CheckImplies1;
+            enddecision;
+    endstate;
+    /* CIF state (1424, 1478), (86, 35) */
+    state CheckXor2;
+        /* CIF input (1366, 1533), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1414, 1588), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1310, 1658), (70, 24) */
+                (false):
+                    /* CIF join (1327, 1702), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1484, 1658), (70, 24) */
+                (true):
+                    /* CIF task (1450, 1702), (136, 88) */
+                    task binary_boolean := {
+    oper o_xor,
+    left true,
+    right false
+};
+                    /* CIF output (1392, 1810), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1474, 1865), (89, 35) */
+                    NEXTSTATE CheckXor3;
+            enddecision;
+    endstate;
+    /* CIF state (1915, 1475), (86, 35) */
+    state CheckXor3;
+        /* CIF input (1857, 1530), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1905, 1585), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1801, 1655), (70, 24) */
+                (false):
+                    /* CIF join (1818, 1699), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1975, 1655), (70, 24) */
+                (true):
+                    /* CIF task (1941, 1699), (136, 88) */
+                    task binary_boolean := {
+    oper o_xor,
+    left true,
+    right true
+};
+                    /* CIF output (1883, 1807), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1965, 1862), (89, 35) */
+                    NEXTSTATE CheckXor4;
+            enddecision;
+    endstate;
+    /* CIF state (1036, 1475), (86, 35) */
+    state CheckXor1;
+        /* CIF input (979, 1530), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1027, 1585), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (923, 1655), (70, 24) */
+                (true):
+                    /* CIF join (940, 1699), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1097, 1655), (70, 24) */
+                (false):
+                    /* CIF task (1063, 1699), (136, 88) */
+                    task binary_boolean := {
+    oper o_xor,
+    left false,
+    right true
+};
+                    /* CIF output (1005, 1807), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1060, 1862), (144, 35) */
+                    NEXTSTATE CheckXor2;
+            enddecision;
+    endstate;
+    /* CIF state (1066, 434), (89, 35) */
+    state CheckAnd1;
+        /* CIF input (1009, 489), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1057, 544), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (953, 614), (70, 24) */
+                (true):
+                    /* CIF join (970, 658), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1127, 614), (70, 24) */
+                (false):
+                    /* CIF task (1093, 658), (136, 88) */
+                    task binary_boolean := {
+    oper o_and,
+    left false,
+    right true
+};
+                    /* CIF output (1035, 766), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1117, 821), (89, 35) */
+                    NEXTSTATE CheckAnd2;
+            enddecision;
+    endstate;
+    /* CIF state (1458, 429), (89, 35) */
+    state CheckAnd2;
+        /* CIF input (1401, 484), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1449, 539), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1346, 609), (70, 24) */
+                (true):
+                    /* CIF join (1363, 653), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1520, 609), (70, 24) */
+                (false):
+                    /* CIF task (1486, 653), (136, 88) */
+                    task binary_boolean := {
+    oper o_and,
+    left true,
+    right false
+};
+                    /* CIF output (1428, 761), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1510, 816), (89, 35) */
+                    NEXTSTATE CheckAnd3;
+            enddecision;
+    endstate;
+    /* CIF state (1328, 241), (70, 35) */
+    state Error;
+        /* CIF input (1328, 296), (70, 35) */
+        input *;
+            /* CIF NEXTSTATE (1328, 351), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1852, 426), (89, 35) */
+    state CheckAnd3;
+        /* CIF input (1795, 481), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1843, 536), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1741, 606), (70, 24) */
+                (true):
+                    /* CIF join (1758, 650), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1915, 606), (70, 24) */
+                (false):
+                    /* CIF task (1881, 650), (136, 88) */
+                    task binary_boolean := {
+    oper o_and,
+    left true,
+    right true
+};
+                    /* CIF output (1823, 758), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1905, 813), (89, 35) */
+                    NEXTSTATE CheckAnd4;
+            enddecision;
+    endstate;
+    /* CIF state (1057, 945), (81, 35) */
+    state CheckOr1;
+        /* CIF input (994, 1000), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1042, 1055), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (938, 1125), (70, 24) */
+                (true):
+                    /* CIF join (955, 1169), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1112, 1125), (70, 24) */
+                (false):
+                    /* CIF task (1078, 1169), (136, 88) */
+                    task binary_boolean := {
+    oper o_or,
+    left false,
+    right true
+};
+                    /* CIF output (1020, 1277), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1102, 1332), (89, 35) */
+                    NEXTSTATE CheckOr2;
+            enddecision;
+    endstate;
+    /* CIF state (2433, 974), (81, 35) */
+    state CheckOr4;
+        /* CIF input (2370, 1029), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (2418, 1084), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (2316, 1154), (70, 24) */
+                (false):
+                    /* CIF join (2333, 1198), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2490, 1154), (70, 24) */
+                (true):
+                    /* CIF task (2456, 1198), (136, 88) */
+                    task binary_boolean := {
+    oper o_xor,
+    left false,
+    right false
+};
+                    /* CIF output (2398, 1306), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (2480, 1361), (89, 35) */
+                    NEXTSTATE CheckXor1;
+            enddecision;
+    endstate;
+    /* CIF state (1513, 957), (81, 35) */
+    state CheckOr2;
+        /* CIF input (1450, 1012), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1498, 1067), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1395, 1137), (70, 24) */
+                (false):
+                    /* CIF join (1412, 1181), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1569, 1137), (70, 24) */
+                (true):
+                    /* CIF task (1535, 1181), (136, 88) */
+                    task binary_boolean := {
+    oper o_or,
+    left true,
+    right false
+};
+                    /* CIF output (1477, 1289), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1559, 1344), (89, 35) */
+                    NEXTSTATE CheckOr3;
+            enddecision;
+    endstate;
+    /* CIF state (1961, 954), (81, 35) */
+    state CheckOr3;
+        /* CIF input (1898, 1009), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1946, 1064), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1844, 1134), (70, 24) */
+                (false):
+                    /* CIF join (1861, 1178), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2018, 1134), (70, 24) */
+                (true):
+                    /* CIF task (1984, 1178), (136, 88) */
+                    task binary_boolean := {
+    oper o_or,
+    left true,
+    right true
+};
+                    /* CIF output (1926, 1286), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (2008, 1341), (89, 35) */
+                    NEXTSTATE CheckOr4;
+            enddecision;
+    endstate;
+    /* CIF state (995, 1975), (108, 35) */
+    state CheckImplies1;
+        /* CIF input (948, 2030), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (996, 2085), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (892, 2155), (70, 24) */
+                (false):
+                    /* CIF join (909, 2199), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1066, 2155), (70, 24) */
+                (true):
+                    /* CIF task (1032, 2199), (136, 88) */
+                    task binary_boolean := {
+    oper o_implies,
+    left false,
+    right true
+};
+                    /* CIF output (974, 2307), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1029, 2362), (144, 35) */
+                    NEXTSTATE CheckImplies2;
+            enddecision;
+    endstate;
+    /* CIF state (1471, 1976), (108, 35) */
+    state CheckImplies2;
+        /* CIF input (1423, 2031), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1471, 2086), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1367, 2156), (70, 24) */
+                (false):
+                    /* CIF join (1384, 2200), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1541, 2156), (70, 24) */
+                (true):
+                    /* CIF task (1507, 2200), (136, 88) */
+                    task binary_boolean := {
+    oper o_implies,
+    left true,
+    right false
+};
+                    /* CIF output (1449, 2308), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1504, 2363), (144, 35) */
+                    NEXTSTATE CheckImplies3;
+            enddecision;
+    endstate;
+    /* CIF state (1915, 1982), (108, 35) */
+    state CheckImplies3;
+        /* CIF input (1867, 2037), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1915, 2092), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1811, 2162), (70, 24) */
+                (true):
+                    /* CIF join (1828, 2206), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1985, 2162), (70, 24) */
+                (false):
+                    /* CIF task (1951, 2206), (136, 88) */
+                    task binary_boolean := {
+    oper o_implies,
+    left true,
+    right true
+};
+                    /* CIF output (1893, 2314), (253, 35) */
+                    output check_binary(binary_boolean);
+                    /* CIF NEXTSTATE (1948, 2369), (144, 35) */
+                    NEXTSTATE CheckImplies4;
+            enddecision;
+    endstate;
+    /* CIF state (2387, 1978), (108, 35) */
+    state CheckImplies4;
+        /* CIF input (2339, 2033), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (2387, 2088), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (2283, 2158), (70, 24) */
+                (false):
+                    /* CIF join (2300, 2202), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2457, 2158), (70, 24) */
+                (true):
+                    /* CIF task (2444, 2202), (96, 35) */
+                    task finished := 1;
+                    /* CIF NEXTSTATE (2420, 2252), (144, 35) */
+                    NEXTSTATE CheckAnd1;
+            enddecision;
+    endstate;
+endprocess Controller;

@@ -16,6 +16,7 @@ from .promela.modelbuilder import BlockBuilder
 from .promela.modelbuilder import ModelBuilder
 from .promela.modelbuilder import DoBuilder
 from .promela.modelbuilder import BinaryExpressionBuilder
+from .promela.modelbuilder import UnaryExpressionBuilder
 from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
 from .promela.modelbuilder import MemberAccessBuilder
@@ -45,6 +46,9 @@ __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.MUL: promelamodel.BinaryOperator.MULTIPLY,
     sdlmodel.BinaryOperator.DIV: promelamodel.BinaryOperator.DIVIDE,
     sdlmodel.BinaryOperator.MOD: promelamodel.BinaryOperator.MODULO,
+    sdlmodel.BinaryOperator.REM: promelamodel.BinaryOperator.MODULO,
+    sdlmodel.BinaryOperator.OR: promelamodel.BinaryOperator.OR,
+    sdlmodel.BinaryOperator.AND: promelamodel.BinaryOperator.AND,
 }
 
 CHOICE_DATA_MEMBER_NAME = "data"
@@ -171,6 +175,13 @@ def __generate_expression(
     return __generate_variable_name(sdl_model, variable, True)
 
 
+@dispatch(sdlmodel.Model, sdlmodel.EnumValue)
+def __generate_expression(sdl_model: sdlmodel.Model, enumValue: sdlmodel.EnumValue):
+    finalType = resolve_asn1_type(sdl_model.types, enumValue.type)
+    value = "{}_{}".format(finalType.CName, enumValue.value)
+    return VariableReferenceBuilder(value).build()
+
+
 @dispatch(sdlmodel.Model, sdlmodel.ArrayAccess)
 def __generate_expression(
     sdl_model: sdlmodel.Model, array_access: sdlmodel.ArrayAccess
@@ -191,6 +202,47 @@ def __generate_expression(
 ):
     if expression.operator == sdlmodel.BinaryOperator.ASSIGN:
         pass
+    elif expression.operator == sdlmodel.BinaryOperator.XOR:
+        return (
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
+            .withLeft(
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+                .withLeft(
+                    UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
+                    .withExpression(__generate_expression(sdl_model, expression.left))
+                    .build()
+                )
+                .withRight(__generate_expression(sdl_model, expression.right))
+                .build()
+            )
+            .withRight(
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+                .withLeft(__generate_expression(sdl_model, expression.left))
+                .withRight(
+                    UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
+                    .withExpression(__generate_expression(sdl_model, expression.right))
+                    .build()
+                )
+                .build()
+            )
+            .build()
+        )
+    elif expression.operator == sdlmodel.BinaryOperator.IMPLIES:
+        return (
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
+            .withLeft(
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+                .withLeft(__generate_expression(sdl_model, expression.left))
+                .withRight(__generate_expression(sdl_model, expression.right))
+                .build()
+            )
+            .withRight(
+                UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
+                .withExpression(__generate_expression(sdl_model, expression.left))
+                .build()
+            )
+            .build()
+        )
     else:
         return (
             BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
@@ -198,6 +250,27 @@ def __generate_expression(
             .withRight(__generate_expression(sdl_model, expression.right))
             .build()
         )
+
+
+@dispatch(sdlmodel.Model, sdlmodel.UnaryExpression)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, expression: sdlmodel.UnaryExpression
+):
+    if expression.operator == sdlmodel.UnaryOperator.NEG:
+        operator = promelamodel.UnaryOperator.NEGATIVE
+    elif expression.operator == sdlmodel.UnaryOperator.NOT:
+        operator = promelamodel.UnaryOperator.NOT
+    else:
+        raise NotImplementedError(
+            "__generate_expression is not implemented for unary operator: {}".format(
+                expression.operator
+            )
+        )
+    return (
+        UnaryExpressionBuilder(operator)
+        .withExpression(__generate_expression(sdl_model, expression.expression))
+        .build()
+    )
 
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:

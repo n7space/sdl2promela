@@ -1,0 +1,55 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1512, 90), (290, 184) */
+    -- Text area for declarations and comments
+    
+    dcl boolean_result MyBooleanResult;
+    
+    dcl boolean_binary BinaryBooleanTestParam;
+    dcl boolean_unary UnaryBooleanTestParam;
+    
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1075, 39), (70, 35) */
+    state Wait;
+        /* CIF input (979, 94), (246, 35) */
+        input check_unary(boolean_unary);
+            /* CIF task (967, 149), (269, 35) */
+            task boolean_result := not boolean_unary.expr;
+            /* CIF output (998, 204), (208, 35) */
+            output result(boolean_result);
+            /* CIF NEXTSTATE (1067, 254), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1358, 252), (70, 35) */
+    state Wait;
+        /* CIF input (1259, 307), (253, 35) */
+        input check_binary(boolean_binary);
+            /* CIF decision (1312, 362), (146, 50) */
+            decision boolean_binary.oper;
+                /* CIF ANSWER (919, 432), (70, 24) */
+                (o_or):
+                    /* CIF task (757, 476), (394, 35) */
+                    task boolean_result := boolean_binary.left or boolean_binary.right;
+                /* CIF ANSWER (1325, 432), (70, 24) */
+                (o_xor):
+                    /* CIF task (1163, 476), (394, 35) */
+                    task boolean_result := boolean_binary.left xor boolean_binary.right;
+                /* CIF ANSWER (1721, 432), (79, 24) */
+                (o_implies):
+                    /* CIF task (1564, 476), (394, 35) */
+                    task boolean_result := boolean_binary.left => boolean_binary.right;
+                /* CIF ANSWER (513, 432), (70, 24) */
+                (o_and):
+                    /* CIF task (350, 476), (394, 35) */
+                    task boolean_result := boolean_binary.left and boolean_binary.right;
+            enddecision;
+            /* CIF output (1281, 527), (208, 35) */
+            output result(boolean_result);
+            /* CIF NEXTSTATE (1350, 577), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

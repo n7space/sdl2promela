@@ -1,0 +1,62 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1512, 90), (290, 184) */
+    -- Text area for declarations and comments
+    
+    dcl integer_result MyIntegerResult;
+    
+    dcl integer_binary BinaryIntegerTestParam;
+    dcl integer_unary UnaryIntegerTestParam;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1559, 356), (70, 35) */
+    state Wait;
+        /* CIF input (1465, 411), (243, 35) */
+        input check_binary(integer_binary);
+            /* CIF decision (1517, 466), (139, 50) */
+            decision integer_binary.oper;
+                /* CIF ANSWER (337, 536), (70, 24) */
+                (o_plus):
+                    /* CIF task (188, 580), (367, 35) */
+                    task integer_result := integer_binary.left + integer_binary.right;
+                /* CIF ANSWER (1084, 536), (72, 24) */
+                (o_minus):
+                    /* CIF task (939, 580), (364, 35) */
+                    task integer_result := integer_binary.left - integer_binary.right;
+                /* CIF ANSWER (1460, 536), (72, 24) */
+                (o_divide):
+                    /* CIF task (1315, 580), (364, 35) */
+                    task integer_result := integer_binary.left / integer_binary.right;
+                /* CIF ANSWER (1840, 536), (82, 24) */
+                (o_modulo):
+                    /* CIF task (1689, 580), (384, 35) */
+                    task integer_result := integer_binary.left mod integer_binary.right;
+                /* CIF ANSWER (2226, 536), (97, 24) */
+                (o_remainder):
+                    /* CIF task (2085, 580), (380, 35) */
+                    task integer_result := integer_binary.left rem integer_binary.right;
+                /* CIF ANSWER (702, 536), (86, 24) */
+                (o_multiply):
+                    /* CIF task (564, 580), (364, 35) */
+                    task integer_result := integer_binary.left * integer_binary.right;
+            enddecision;
+            /* CIF output (1488, 631), (198, 35) */
+            output result(integer_result);
+            /* CIF NEXTSTATE (1552, 681), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (2157, 76), (70, 35) */
+    state Wait;
+        /* CIF input (2066, 131), (236, 35) */
+        input check_unary(integer_unary);
+            /* CIF task (2063, 186), (242, 35) */
+            task integer_result := - integer_unary.expr;
+            /* CIF output (2085, 241), (198, 35) */
+            output result(integer_result);
+            /* CIF NEXTSTATE (2150, 291), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

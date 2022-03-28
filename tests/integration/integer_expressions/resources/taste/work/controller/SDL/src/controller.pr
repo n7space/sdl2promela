@@ -1,0 +1,276 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (650, 225), (290, 184) */
+    -- Text area for declarations and comments
+    
+    dcl integer_result MyIntegerResult;
+    
+    dcl binary_integer BinaryIntegerTestParam;
+    dcl unary_integer UnaryIntegerTestParam;
+    dcl error MyInteger;
+    dcl finished MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (731, 438), (70, 35) */
+    START;
+        /* CIF task (727, 493), (76, 35) */
+        task error := 0;
+        /* CIF task (698, 548), (136, 88) */
+        task binary_integer := {
+    oper o_plus,
+    left 10,
+    right 21
+};
+        /* CIF output (639, 656), (253, 35) */
+        output check_binary(binary_integer);
+        /* CIF NEXTSTATE (720, 706), (90, 35) */
+        NEXTSTATE CheckPlus1;
+    /* CIF label (1075, 238), (87, 35) */
+    connection goto_error:
+        /* CIF task (1081, 291), (76, 35) */
+        task error := 1;
+        /* CIF NEXTSTATE (1084, 353), (70, 35) */
+        NEXTSTATE Error;
+    /* CIF End Label */
+    endconnection;
+    /* CIF state (1669, 2412), (122, 35) */
+    state CheckRemainder;
+        /* CIF input (1627, 2467), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1658, 2522), (145, 50) */
+            decision integer_result = 2;
+                /* CIF ANSWER (1546, 2592), (70, 24) */
+                (false):
+                    /* CIF join (1563, 2636), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1720, 2592), (70, 24) */
+                (true):
+                    /* CIF task (1686, 2636), (137, 37) */
+                    task finished := 1;
+                    /* CIF NEXTSTATE (1693, 2693), (122, 35) */
+                    NEXTSTATE CheckRemainder;
+            enddecision;
+    endstate;
+    /* CIF state (1072, 2424), (103, 35) */
+    state CheckModulo;
+        /* CIF input (1021, 2479), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1052, 2534), (145, 50) */
+            decision integer_result = 1;
+                /* CIF ANSWER (866, 2604), (70, 24) */
+                (false):
+                    /* CIF join (884, 2648), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1134, 2604), (70, 24) */
+                (true):
+                    /* CIF task (1097, 2648), (143, 88) */
+                    task binary_integer := {
+    oper o_remainder,
+    left 22,
+    right 10
+};
+                    /* CIF output (1042, 2756), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1108, 2811), (122, 35) */
+                    NEXTSTATE CheckRemainder;
+            enddecision;
+    endstate;
+    /* CIF state (1683, 1928), (103, 35) */
+    state CheckDivide2;
+        /* CIF input (1632, 1983), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1663, 2038), (145, 50) */
+            decision integer_result = -2;
+                /* CIF ANSWER (1567, 2108), (70, 24) */
+                (false):
+                    /* CIF join (1584, 2152), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1741, 2108), (70, 24) */
+                (true):
+                    /* CIF task (1708, 2152), (136, 88) */
+                    task binary_integer := {
+    oper o_modulo,
+    left 21,
+    right 10
+};
+                    /* CIF output (1649, 2260), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1718, 2315), (114, 35) */
+                    NEXTSTATE CheckModulo;
+            enddecision;
+    endstate;
+    /* CIF state (1169, 466), (90, 35) */
+    state CheckPlus1;
+        /* CIF input (1114, 521), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1149, 576), (137, 50) */
+            decision integer_result = 31;
+                /* CIF ANSWER (1057, 646), (70, 24) */
+                (false):
+                    /* CIF join (1074, 690), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1231, 646), (70, 24) */
+                (true):
+                    /* CIF task (1198, 690), (136, 88) */
+                    task binary_integer := {
+    oper o_plus,
+    left 10,
+    right -21
+};
+                    /* CIF output (1139, 798), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1220, 853), (90, 35) */
+                    NEXTSTATE CheckPlus2;
+            enddecision;
+    endstate;
+    /* CIF state (1144, 1418), (114, 35) */
+    state CheckMultiply1;
+        /* CIF input (1101, 1473), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1134, 1528), (141, 50) */
+            decision integer_result = 210;
+                /* CIF ANSWER (1038, 1598), (70, 24) */
+                (false):
+                    /* CIF join (1055, 1642), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1212, 1598), (70, 24) */
+                (true):
+                    /* CIF task (1179, 1642), (136, 88) */
+                    task binary_integer := {
+    oper o_multiply,
+    left 21,
+    right -10
+};
+                    /* CIF output (1120, 1750), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1189, 1805), (114, 35) */
+                    NEXTSTATE CheckMultiply2;
+            enddecision;
+    endstate;
+    /* CIF state (1702, 471), (90, 35) */
+    state CheckPlus2;
+        /* CIF input (1648, 526), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1682, 581), (138, 50) */
+            decision integer_result = -11;
+                /* CIF ANSWER (1589, 651), (70, 24) */
+                (false):
+                    /* CIF join (1606, 695), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1763, 651), (70, 24) */
+                (true):
+                    /* CIF task (1730, 695), (136, 88) */
+                    task binary_integer := {
+    oper o_minus,
+    left 21,
+    right 10
+};
+                    /* CIF output (1671, 803), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1747, 858), (101, 35) */
+                    NEXTSTATE CheckMinus1;
+            enddecision;
+    endstate;
+    /* CIF state (1109, 938), (101, 35) */
+    state CheckMinus1;
+        /* CIF input (1060, 993), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1095, 1048), (138, 50) */
+            decision integer_result = 11;
+                /* CIF ANSWER (1001, 1118), (70, 24) */
+                (false):
+                    /* CIF join (1018, 1162), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1175, 1118), (70, 24) */
+                (true):
+                    /* CIF task (1142, 1162), (136, 88) */
+                    task binary_integer := {
+    oper o_minus,
+    left 21,
+    right -10
+};
+                    /* CIF output (1083, 1270), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1159, 1325), (101, 35) */
+                    NEXTSTATE CheckMinus2;
+            enddecision;
+    endstate;
+    /* CIF state (1524, 243), (70, 35) */
+    state Error;
+        /* CIF input (1524, 298), (70, 35) */
+        input *;
+            /* CIF NEXTSTATE (1524, 353), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1717, 931), (101, 35) */
+    state CheckMinus2;
+        /* CIF input (1667, 986), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1702, 1041), (138, 50) */
+            decision integer_result = 31;
+                /* CIF ANSWER (1606, 1111), (70, 24) */
+                (false):
+                    /* CIF join (1623, 1155), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1780, 1111), (70, 24) */
+                (true):
+                    /* CIF task (1747, 1155), (136, 88) */
+                    task binary_integer := {
+    oper o_multiply,
+    left 21,
+    right 10
+};
+                    /* CIF output (1688, 1263), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1757, 1318), (114, 35) */
+                    NEXTSTATE CheckMultiply1;
+            enddecision;
+    endstate;
+    /* CIF state (1705, 1418), (114, 35) */
+    state CheckMultiply2;
+        /* CIF input (1661, 1473), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1692, 1528), (145, 50) */
+            decision integer_result = -210;
+                /* CIF ANSWER (1596, 1598), (70, 24) */
+                (false):
+                    /* CIF join (1613, 1642), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1770, 1598), (70, 24) */
+                (true):
+                    /* CIF task (1737, 1642), (136, 88) */
+                    task binary_integer := {
+    oper o_divide,
+    left 21,
+    right 10
+};
+                    /* CIF output (1678, 1750), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1748, 1805), (114, 35) */
+                    NEXTSTATE CheckDivide1;
+            enddecision;
+    endstate;
+    /* CIF state (1113, 1912), (103, 35) */
+    state CheckDivide1;
+        /* CIF input (1063, 1967), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1094, 2022), (145, 50) */
+            decision integer_result = 2;
+                /* CIF ANSWER (998, 2092), (70, 24) */
+                (false):
+                    /* CIF join (1015, 2136), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1172, 2092), (70, 24) */
+                (true):
+                    /* CIF task (1139, 2136), (136, 88) */
+                    task binary_integer := {
+    oper o_divide,
+    left 21,
+    right -10
+};
+                    /* CIF output (1080, 2244), (253, 35) */
+                    output check_binary(binary_integer);
+                    /* CIF NEXTSTATE (1150, 2299), (114, 35) */
+                    NEXTSTATE CheckDivide2;
+            enddecision;
+    endstate;
+endprocess Controller;

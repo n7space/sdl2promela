@@ -1,0 +1,19 @@
+RELATION-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+    MyInteger ::= INTEGER (-1024..1024)    MyBooleanResult ::= BOOLEAN
+
+    RelationTestParam ::= SEQUENCE {
+        oper ENUMERATED {
+            o-equal,
+            o-nequal,
+            o-less,
+            o-lessequal,
+            o-greater,
+            o-greaterequal
+        },
+        left MyInteger,
+        right MyInteger
+    }
+
+END

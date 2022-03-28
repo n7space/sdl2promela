@@ -39,6 +39,23 @@ class Constant(Expression):
         return f"Constant(value={self.value})"
 
 
+class EnumValue(Expression):
+    """Enum value."""
+
+    value: str
+    """Name of enum value."""
+
+    type: object
+    """Type of enumerated."""
+
+    def __init__(self, value, type):
+        self.value = value
+        self.type = type
+
+    def __str__(self):
+        return f"EnumValue(value={self.value})"
+
+
 class EmptyStringValue(Expression):
     """Empty string literal from OpenGEODE."""
 
@@ -242,6 +259,24 @@ class BinaryOperator(Enum):
     """rem - modulo's remainder"""
     ASSIGN = 12
     """:="""
+    XOR = 13
+    """xor"""
+    OR = 14
+    """or"""
+    AND = 15
+    """and"""
+    IMPLIES = 16
+    "=>"
+
+
+class UnaryOperator(Enum):
+    """Unary operator for use in expressions."""
+
+    NEG = 0
+    """unary -"""
+
+    NOT = 1
+    """not"""
 
 
 class BinaryExpression(Expression):
@@ -263,6 +298,25 @@ class BinaryExpression(Expression):
 
     def __str__(self):
         return f"BinaryExpression(operator={self.operator}, left={self.left}, right={self.right})"
+
+
+class UnaryExpression(Expression):
+    """Expression involving unary operator."""
+
+    operator: UnaryOperator
+    """Unary operator."""
+
+    expression: Expression
+    """Expression."""
+
+    def __init__(self):
+        self.operator = None
+        self.expression = None
+
+    def __str__(self):
+        return (
+            f"UnaryExpression(operator={self.operator}, expression={self.expression})"
+        )
 
 
 class Action:
@@ -471,6 +525,10 @@ __STR_BINARY_OPERATOR_DICTIONARY = {
     "mod": BinaryOperator.MOD,
     "rem": BinaryOperator.REM,
     ":=": BinaryOperator.ASSIGN,
+    "xor": BinaryOperator.XOR,
+    "or": BinaryOperator.OR,
+    "and": BinaryOperator.AND,
+    "=>": BinaryOperator.IMPLIES,
 }
 
 
@@ -495,6 +553,10 @@ __AST_BINARY_OPERATOR_DICTIONARY = {
     ogAST.ExprMod: BinaryOperator.MOD,
     ogAST.ExprRem: BinaryOperator.REM,
     ogAST.ExprAssign: BinaryOperator.ASSIGN,
+    ogAST.ExprXor: BinaryOperator.XOR,
+    ogAST.ExprOr: BinaryOperator.OR,
+    ogAST.ExprAnd: BinaryOperator.AND,
+    ogAST.ExprImplies: BinaryOperator.IMPLIES,
 }
 
 
@@ -654,15 +716,7 @@ def convert(source: ogAST.PrimBoolean):
 
 @dispatch(ogAST.PrimEnumeratedValue)
 def convert(source: ogAST.PrimEnumeratedValue):
-    if isinstance(source.value, list):
-        if len(source.value) != 1:
-            raise ValueError(
-                "Source value is an array with an unsupported number of elements: "
-                + len(source.value)
-            )
-        return Constant(source.value[0])
-    else:
-        return Constant(source.value)
+    return EnumValue(source.value[0], source.exprType)
 
 
 def __make_binary_expression(source: ogAST.Expression):
@@ -736,6 +790,46 @@ def convert(source: ogAST.ExprRem):
 @dispatch(ogAST.ExprAssign)
 def convert(source: ogAST.ExprAssign):
     return __make_binary_expression(source)
+
+
+@dispatch(ogAST.ExprXor)
+def convert(source: ogAST.ExprXor):
+    return __make_binary_expression(source)
+
+
+@dispatch(ogAST.ExprOr)
+def convert(source: ogAST.ExprOr):
+    return __make_binary_expression(source)
+
+
+@dispatch(ogAST.ExprAnd)
+def convert(source: ogAST.ExprAnd):
+    return __make_binary_expression(source)
+
+
+@dispatch(ogAST.ExprImplies)
+def convert(source: ogAST.ExprImplies):
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = BinaryOperator.IMPLIES
+    expression.right = convert(source.right)
+    return expression
+
+
+@dispatch(ogAST.ExprNeg)
+def convert(source: ogAST.ExprNeg):
+    expression = UnaryExpression()
+    expression.operator = UnaryOperator.NEG
+    expression.expression = convert(source.expr)
+    return expression
+
+
+@dispatch(ogAST.ExprNot)
+def convert(source: ogAST.ExprNot):
+    expression = UnaryExpression()
+    expression.operator = UnaryOperator.NOT
+    expression.expression = convert(source.expr)
+    return expression
 
 
 @dispatch(ogAST.Output)

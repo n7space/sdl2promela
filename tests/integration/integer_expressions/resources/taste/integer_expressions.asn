@@ -1,0 +1,25 @@
+INTEGER-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+    MyInteger ::= INTEGER (-1024..1024)
+
+    MyIntegerResult ::= INTEGER (-1048576..1048576)
+
+    BinaryIntegerTestParam ::= SEQUENCE {
+        oper ENUMERATED {
+            o-plus,
+            o-minus,
+            o-multiply,
+            o-divide,
+            o-modulo,
+            o-remainder
+        },
+        left INTEGER (-1024..1024),
+        right INTEGER (-1024..1024)
+    }
+
+    UnaryIntegerTestParam ::= SEQUENCE {
+        expr MyInteger
+    }
+
+END

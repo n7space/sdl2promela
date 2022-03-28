@@ -1,0 +1,46 @@
+INTEGER-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+    MyInteger ::= INTEGER (-1024..1024)
+
+    MyIntegerResult ::= INTEGER (-1048576..1048576)
+
+    BinaryIntegerTestParam ::= SEQUENCE {
+        oper ENUMERATED {
+            o-plus,
+            o-minus,
+            o-multiply,
+            o-divide,
+            o-modulo,
+            o-remainder
+        },
+        left INTEGER (-1024..1024),
+        right INTEGER (-1024..1024)
+    }
+
+    UnaryIntegerTestParam ::= SEQUENCE {
+        expr MyInteger
+    }
+
+END
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
