@@ -1,0 +1,23 @@
+BOOLEAN-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+    MyInteger ::= INTEGER (-1024..1024)
+
+    MyBooleanResult ::= BOOLEAN
+
+    BinaryBooleanTestParam ::= SEQUENCE {
+        oper ENUMERATED {
+            o-and,
+            o-or,
+            o-xor,
+            o-implies
+        },
+        left MyBooleanResult,
+        right MyBooleanResult
+    }
+
+    UnaryBooleanTestParam ::= SEQUENCE {
+        expr MyBooleanResult
+    }
+
+END

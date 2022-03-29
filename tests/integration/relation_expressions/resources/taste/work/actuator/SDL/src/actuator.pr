@@ -1,0 +1,50 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1512, 90), (290, 184) */
+    -- Text area for declarations and comments
+    
+    dcl boolean_result MyBooleanResult;
+    
+    dcl relation RelationTestParam;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1401, 300), (70, 35) */
+    state Wait;
+        /* CIF input (1347, 355), (163, 35) */
+        input check(relation);
+            /* CIF decision (1379, 410), (100, 50) */
+            decision relation.oper;
+                /* CIF ANSWER (417, 480), (77, 24) */
+                (o_equal):
+                    /* CIF task (309, 524), (293, 35) */
+                    task boolean_result := relation.left = relation.right;
+                /* CIF ANSWER (723, 480), (77, 24) */
+                (o_nequal):
+                    /* CIF task (614, 524), (297, 35) */
+                    task boolean_result := relation.left /= relation.right;
+                /* CIF ANSWER (1651, 480), (70, 24) */
+                (o_less):
+                    /* CIF task (1539, 524), (294, 35) */
+                    task boolean_result := relation.left < relation.right;
+                /* CIF ANSWER (1023, 480), (92, 24) */
+                (o_lessequal):
+                    /* CIF task (921, 524), (297, 35) */
+                    task boolean_result := relation.left <= relation.right;
+                /* CIF ANSWER (1337, 480), (80, 24) */
+                (o_greater):
+                    /* CIF task (1229, 524), (297, 35) */
+                    task boolean_result := relation.left > relation.right;
+                /* CIF ANSWER (1935, 480), (113, 24) */
+                (o_greaterequal):
+                    /* CIF task (1843, 524), (297, 35) */
+                    task boolean_result := relation.left >= relation.right;
+            enddecision;
+            /* CIF output (1325, 575), (208, 35) */
+            output result(boolean_result);
+            /* CIF NEXTSTATE (1394, 625), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

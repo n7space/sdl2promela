@@ -1,0 +1,74 @@
+<InterfaceView asn1file="integer_expressions.acn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="8300 27400 68200 83100"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="MyIntegerResult" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="68200 69700"/>
+</Provided_Interface>
+
+<Required_Interface name="check_binary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="BinaryIntegerTestParam" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="68200 46800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="check_unary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="UnaryIntegerTestParam" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="68200 51900"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="false"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="107300 27000 155500 81400"/>
+<Provided_Interface name="check_binary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="BinaryIntegerTestParam" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="107300 46900"/>
+</Provided_Interface>
+
+<Provided_Interface name="check_unary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="UnaryIntegerTestParam" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="107300 51900"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+    <Input_Parameter name="p1" type="MyIntegerResult" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="107300 69500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="controller" ri_name="check_unary"/>
+    <Target func_name="actuator" pi_name="check_unary"/>
+    <Property name="Taste::coordinates" value="68800 51900 107000 51900"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="check_binary"/>
+    <Target func_name="actuator" pi_name="check_binary"/>
+    <Property name="Taste::coordinates" value="68800 46800 87900 46800 107000 46900"/>
+</Connection>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result"/>
+    <Target func_name="controller" pi_name="result"/>
+    <Property name="Taste::coordinates" value="106700 69500 87600 69500 68500 69700"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>

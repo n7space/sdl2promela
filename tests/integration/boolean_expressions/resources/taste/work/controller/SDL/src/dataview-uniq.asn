@@ -1,0 +1,44 @@
+BOOLEAN-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+    MyInteger ::= INTEGER (-1024..1024)
+
+    MyBooleanResult ::= BOOLEAN
+
+    BinaryBooleanTestParam ::= SEQUENCE {
+        oper ENUMERATED {
+            o-and,
+            o-or,
+            o-xor,
+            o-implies
+        },
+        left MyBooleanResult,
+        right MyBooleanResult
+    }
+
+    UnaryBooleanTestParam ::= SEQUENCE {
+        expr MyBooleanResult
+    }
+
+END
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+

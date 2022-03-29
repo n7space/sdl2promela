@@ -13,7 +13,10 @@
 	asn1_sequenceof_fixed \
 	asn1_octetstring \
 	asn1_octetstring_fixed \
-	asn1_choice
+	asn1_choice \
+	integer_expressions \
+	relation_expressions \
+	boolean_expressions
 
 check: \
 	simplesignals \
@@ -30,7 +33,10 @@ check: \
 	asn1_sequenceof_fixed \
 	asn1_octetstring \
 	asn1_octetstring_fixed \
-	asn1_choice
+	asn1_choice \
+	integer_expressions \
+	relation_expressions \
+	boolean_expressions
 
 simplesignals:
 	${MAKE} -C $@ check
@@ -75,4 +81,13 @@ asn1_octetstring_fixed:
 	${MAKE} -C $@ check
 
 asn1_choice:
+	${MAKE} -C $@ check
+
+integer_expressions:
+	${MAKE} -C $@ check
+
+relation_expressions:
+	${MAKE} -C $@ check
+
+boolean_expressions:
 	${MAKE} -C $@ check
