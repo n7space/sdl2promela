@@ -809,6 +809,8 @@ def convert(source: ogAST.ExprAnd):
 
 @dispatch(ogAST.ExprImplies)
 def convert(source: ogAST.ExprImplies):
+    # __make_binary_expression does not work here
+    # The required property 'operand' isn't present in source
     expression = BinaryExpression()
     expression.left = convert(source.left)
     expression.operator = BinaryOperator.IMPLIES
