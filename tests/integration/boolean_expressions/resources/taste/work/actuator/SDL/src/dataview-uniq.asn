@@ -17,7 +17,7 @@ BEGIN
     }
 
     UnaryBooleanTestParam ::= SEQUENCE {
-        expr BOOLEAN
+        expr MyBooleanResult
     }
 
 END

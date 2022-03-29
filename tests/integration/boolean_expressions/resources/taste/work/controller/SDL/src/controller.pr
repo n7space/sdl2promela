@@ -6,6 +6,7 @@ process Controller;
     dcl boolean_result MyBooleanResult;
     
     dcl binary_boolean BinaryBooleanTestParam;
+    dcl unary_boolean UnaryBooleanTestParam;
     dcl error MyInteger;
     dcl finished MyInteger;
     /* CIF ENDTEXT */
@@ -25,15 +26,55 @@ process Controller;
         output check_binary(binary_boolean);
         /* CIF NEXTSTATE (721, 756), (89, 35) */
         NEXTSTATE CheckAnd1;
-    /* CIF label (1076, 238), (87, 35) */
+    /* CIF label (1074, 238), (87, 35) */
     connection goto_error:
-        /* CIF task (1082, 293), (76, 35) */
+        /* CIF task (1080, 293), (76, 35) */
         task error := 1;
-        /* CIF NEXTSTATE (1085, 348), (70, 35) */
+        /* CIF NEXTSTATE (1083, 348), (70, 35) */
         NEXTSTATE Error;
     /* CIF End Label */
     endconnection;
-    /* CIF state (2280, 425), (89, 35) */
+    /* CIF state (1531, 2466), (88, 35) */
+    state CheckNot2;
+        /* CIF input (1472, 2521), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1520, 2576), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1416, 2646), (70, 24) */
+                (true):
+                    /* CIF join (1433, 2690), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1590, 2646), (70, 24) */
+                (false):
+                    /* CIF task (1559, 2690), (132, 37) */
+                    task finished := 1;
+                    /* CIF NEXTSTATE (1553, 2747), (144, 35) */
+                    NEXTSTATE CheckNot2;
+            enddecision;
+    endstate;
+    /* CIF state (1022, 2456), (88, 35) */
+    state CheckNot1;
+        /* CIF input (964, 2511), (208, 35) */
+        input result(boolean_result);
+            /* CIF decision (1012, 2566), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (908, 2636), (70, 24) */
+                (false):
+                    /* CIF join (925, 2680), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1082, 2636), (70, 24) */
+                (true):
+                    /* CIF task (1050, 2680), (132, 56) */
+                    task unary_boolean := {
+    expr true
+};
+                    /* CIF output (1020, 2756), (192, 35) */
+                    output check_unary(unary_boolean);
+                    /* CIF NEXTSTATE (1045, 2806), (144, 35) */
+                    NEXTSTATE CheckNot2;
+            enddecision;
+    endstate;
+    /* CIF state (2278, 425), (89, 35) */
     state CheckAnd4;
         /* CIF input (2223, 480), (208, 35) */
         input result(boolean_result);
@@ -57,7 +98,7 @@ process Controller;
                     NEXTSTATE CheckOr1;
             enddecision;
     endstate;
-    /* CIF state (2413, 1478), (86, 35) */
+    /* CIF state (2411, 1478), (86, 35) */
     state CheckXor4;
         /* CIF input (2355, 1533), (208, 35) */
         input result(boolean_result);
@@ -81,7 +122,7 @@ process Controller;
                     NEXTSTATE CheckImplies1;
             enddecision;
     endstate;
-    /* CIF state (1424, 1478), (86, 35) */
+    /* CIF state (1422, 1478), (86, 35) */
     state CheckXor2;
         /* CIF input (1366, 1533), (208, 35) */
         input result(boolean_result);
@@ -105,7 +146,7 @@ process Controller;
                     NEXTSTATE CheckXor3;
             enddecision;
     endstate;
-    /* CIF state (1915, 1475), (86, 35) */
+    /* CIF state (1913, 1475), (86, 35) */
     state CheckXor3;
         /* CIF input (1857, 1530), (208, 35) */
         input result(boolean_result);
@@ -129,7 +170,7 @@ process Controller;
                     NEXTSTATE CheckXor4;
             enddecision;
     endstate;
-    /* CIF state (1036, 1475), (86, 35) */
+    /* CIF state (1034, 1475), (86, 35) */
     state CheckXor1;
         /* CIF input (979, 1530), (208, 35) */
         input result(boolean_result);
@@ -153,7 +194,7 @@ process Controller;
                     NEXTSTATE CheckXor2;
             enddecision;
     endstate;
-    /* CIF state (1066, 434), (89, 35) */
+    /* CIF state (1064, 434), (89, 35) */
     state CheckAnd1;
         /* CIF input (1009, 489), (208, 35) */
         input result(boolean_result);
@@ -177,7 +218,7 @@ process Controller;
                     NEXTSTATE CheckAnd2;
             enddecision;
     endstate;
-    /* CIF state (1458, 429), (89, 35) */
+    /* CIF state (1456, 429), (89, 35) */
     state CheckAnd2;
         /* CIF input (1401, 484), (208, 35) */
         input result(boolean_result);
@@ -208,7 +249,7 @@ process Controller;
             /* CIF NEXTSTATE (1328, 351), (70, 35) */
             NEXTSTATE Error;
     endstate;
-    /* CIF state (1852, 426), (89, 35) */
+    /* CIF state (1850, 426), (89, 35) */
     state CheckAnd3;
         /* CIF input (1795, 481), (208, 35) */
         input result(boolean_result);
@@ -328,7 +369,7 @@ process Controller;
                     NEXTSTATE CheckOr4;
             enddecision;
     endstate;
-    /* CIF state (995, 1975), (108, 35) */
+    /* CIF state (993, 1975), (108, 35) */
     state CheckImplies1;
         /* CIF input (948, 2030), (208, 35) */
         input result(boolean_result);
@@ -352,7 +393,7 @@ process Controller;
                     NEXTSTATE CheckImplies2;
             enddecision;
     endstate;
-    /* CIF state (1471, 1976), (108, 35) */
+    /* CIF state (1469, 1976), (108, 35) */
     state CheckImplies2;
         /* CIF input (1423, 2031), (208, 35) */
         input result(boolean_result);
@@ -376,7 +417,7 @@ process Controller;
                     NEXTSTATE CheckImplies3;
             enddecision;
     endstate;
-    /* CIF state (1915, 1982), (108, 35) */
+    /* CIF state (1913, 1982), (108, 35) */
     state CheckImplies3;
         /* CIF input (1867, 2037), (208, 35) */
         input result(boolean_result);
@@ -400,7 +441,7 @@ process Controller;
                     NEXTSTATE CheckImplies4;
             enddecision;
     endstate;
-    /* CIF state (2387, 1978), (108, 35) */
+    /* CIF state (2385, 1978), (108, 35) */
     state CheckImplies4;
         /* CIF input (2339, 2033), (208, 35) */
         input result(boolean_result);
@@ -412,10 +453,14 @@ process Controller;
                     join goto_error;
                 /* CIF ANSWER (2457, 2158), (70, 24) */
                 (true):
-                    /* CIF task (2444, 2202), (96, 35) */
-                    task finished := 1;
-                    /* CIF NEXTSTATE (2420, 2252), (144, 35) */
-                    NEXTSTATE CheckAnd1;
+                    /* CIF task (2425, 2202), (132, 56) */
+                    task unary_boolean := {
+    expr false
+};
+                    /* CIF output (2395, 2278), (192, 35) */
+                    output check_unary(unary_boolean);
+                    /* CIF NEXTSTATE (2420, 2328), (144, 35) */
+                    NEXTSTATE CheckNot1;
             enddecision;
     endstate;
 endprocess Controller;

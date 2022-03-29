@@ -24,33 +24,33 @@ process Controller;
         output check_binary(binary_integer);
         /* CIF NEXTSTATE (720, 706), (90, 35) */
         NEXTSTATE CheckPlus1;
-    /* CIF label (1075, 238), (87, 35) */
+    /* CIF label (1073, 238), (87, 35) */
     connection goto_error:
-        /* CIF task (1081, 291), (76, 35) */
+        /* CIF task (1079, 291), (76, 35) */
         task error := 1;
-        /* CIF NEXTSTATE (1084, 353), (70, 35) */
+        /* CIF NEXTSTATE (1082, 353), (70, 35) */
         NEXTSTATE Error;
     /* CIF End Label */
     endconnection;
-    /* CIF state (1669, 2412), (122, 35) */
-    state CheckRemainder;
-        /* CIF input (1627, 2467), (208, 35) */
+    /* CIF state (1623, 2887), (120, 35) */
+    state CheckNegation2;
+        /* CIF input (1580, 2942), (208, 35) */
         input result(integer_result);
-            /* CIF decision (1658, 2522), (145, 50) */
-            decision integer_result = 2;
-                /* CIF ANSWER (1546, 2592), (70, 24) */
+            /* CIF decision (1611, 2997), (145, 50) */
+            decision integer_result = 21;
+                /* CIF ANSWER (1484, 3067), (70, 24) */
                 (false):
-                    /* CIF join (1563, 2636), (35, 35) */
+                    /* CIF join (1502, 3111), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1720, 2592), (70, 24) */
+                /* CIF ANSWER (1658, 3067), (70, 24) */
                 (true):
-                    /* CIF task (1686, 2636), (137, 37) */
+                    /* CIF task (1625, 3111), (137, 37) */
                     task finished := 1;
-                    /* CIF NEXTSTATE (1693, 2693), (122, 35) */
-                    NEXTSTATE CheckRemainder;
+                    /* CIF NEXTSTATE (1632, 3168), (122, 35) */
+                    NEXTSTATE CheckNegation2;
             enddecision;
     endstate;
-    /* CIF state (1072, 2424), (103, 35) */
+    /* CIF state (1070, 2424), (103, 35) */
     state CheckModulo;
         /* CIF input (1021, 2479), (208, 35) */
         input result(integer_result);
@@ -58,7 +58,7 @@ process Controller;
             decision integer_result = 1;
                 /* CIF ANSWER (866, 2604), (70, 24) */
                 (false):
-                    /* CIF join (884, 2648), (35, 35) */
+                    /* CIF join (883, 2648), (35, 35) */
                     join goto_error;
                 /* CIF ANSWER (1134, 2604), (70, 24) */
                 (true):
@@ -70,11 +70,11 @@ process Controller;
 };
                     /* CIF output (1042, 2756), (253, 35) */
                     output check_binary(binary_integer);
-                    /* CIF NEXTSTATE (1108, 2811), (122, 35) */
+                    /* CIF NEXTSTATE (1107, 2811), (122, 35) */
                     NEXTSTATE CheckRemainder;
             enddecision;
     endstate;
-    /* CIF state (1683, 1928), (103, 35) */
+    /* CIF state (1681, 1928), (103, 35) */
     state CheckDivide2;
         /* CIF input (1632, 1983), (208, 35) */
         input result(integer_result);
@@ -94,11 +94,11 @@ process Controller;
 };
                     /* CIF output (1649, 2260), (253, 35) */
                     output check_binary(binary_integer);
-                    /* CIF NEXTSTATE (1718, 2315), (114, 35) */
+                    /* CIF NEXTSTATE (1719, 2315), (114, 35) */
                     NEXTSTATE CheckModulo;
             enddecision;
     endstate;
-    /* CIF state (1169, 466), (90, 35) */
+    /* CIF state (1167, 466), (90, 35) */
     state CheckPlus1;
         /* CIF input (1114, 521), (208, 35) */
         input result(integer_result);
@@ -122,7 +122,7 @@ process Controller;
                     NEXTSTATE CheckPlus2;
             enddecision;
     endstate;
-    /* CIF state (1144, 1418), (114, 35) */
+    /* CIF state (1142, 1418), (114, 35) */
     state CheckMultiply1;
         /* CIF input (1101, 1473), (208, 35) */
         input result(integer_result);
@@ -146,7 +146,7 @@ process Controller;
                     NEXTSTATE CheckMultiply2;
             enddecision;
     endstate;
-    /* CIF state (1702, 471), (90, 35) */
+    /* CIF state (1700, 471), (90, 35) */
     state CheckPlus2;
         /* CIF input (1648, 526), (208, 35) */
         input result(integer_result);
@@ -170,7 +170,7 @@ process Controller;
                     NEXTSTATE CheckMinus1;
             enddecision;
     endstate;
-    /* CIF state (1109, 938), (101, 35) */
+    /* CIF state (1107, 938), (101, 35) */
     state CheckMinus1;
         /* CIF input (1060, 993), (208, 35) */
         input result(integer_result);
@@ -201,7 +201,7 @@ process Controller;
             /* CIF NEXTSTATE (1524, 353), (70, 35) */
             NEXTSTATE Error;
     endstate;
-    /* CIF state (1717, 931), (101, 35) */
+    /* CIF state (1715, 931), (101, 35) */
     state CheckMinus2;
         /* CIF input (1667, 986), (208, 35) */
         input result(integer_result);
@@ -225,7 +225,7 @@ process Controller;
                     NEXTSTATE CheckMultiply1;
             enddecision;
     endstate;
-    /* CIF state (1705, 1418), (114, 35) */
+    /* CIF state (1703, 1418), (114, 35) */
     state CheckMultiply2;
         /* CIF input (1661, 1473), (208, 35) */
         input result(integer_result);
@@ -249,7 +249,7 @@ process Controller;
                     NEXTSTATE CheckDivide1;
             enddecision;
     endstate;
-    /* CIF state (1113, 1912), (103, 35) */
+    /* CIF state (1111, 1912), (103, 35) */
     state CheckDivide1;
         /* CIF input (1063, 1967), (208, 35) */
         input result(integer_result);
@@ -271,6 +271,50 @@ process Controller;
                     output check_binary(binary_integer);
                     /* CIF NEXTSTATE (1150, 2299), (114, 35) */
                     NEXTSTATE CheckDivide2;
+            enddecision;
+    endstate;
+    /* CIF state (1053, 2893), (120, 35) */
+    state CheckNegation1;
+        /* CIF input (1011, 2948), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1042, 3003), (145, 50) */
+            decision integer_result = -10;
+                /* CIF ANSWER (921, 3073), (70, 24) */
+                (false):
+                    /* CIF join (938, 3117), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1095, 3073), (70, 24) */
+                (true):
+                    /* CIF task (1061, 3117), (137, 56) */
+                    task unary_integer := {
+    expr -21
+};
+                    /* CIF output (1036, 3193), (187, 35) */
+                    output check_unary(unary_integer);
+                    /* CIF NEXTSTATE (1069, 3243), (122, 35) */
+                    NEXTSTATE CheckNegation2;
+            enddecision;
+    endstate;
+    /* CIF state (1667, 2412), (122, 35) */
+    state CheckRemainder;
+        /* CIF input (1627, 2467), (208, 35) */
+        input result(integer_result);
+            /* CIF decision (1658, 2522), (145, 50) */
+            decision integer_result = 2;
+                /* CIF ANSWER (1546, 2592), (70, 24) */
+                (false):
+                    /* CIF join (1563, 2636), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1720, 2592), (70, 24) */
+                (true):
+                    /* CIF task (1686, 2636), (137, 56) */
+                    task unary_integer := {
+    expr 10
+};
+                    /* CIF output (1661, 2712), (187, 35) */
+                    output check_unary(unary_integer);
+                    /* CIF NEXTSTATE (1694, 2762), (122, 35) */
+                    NEXTSTATE CheckNegation1;
             enddecision;
     endstate;
 endprocess Controller;
