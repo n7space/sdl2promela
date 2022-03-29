@@ -15,7 +15,7 @@
 	asn1_octetstring_fixed \
 	asn1_choice \
 	integer_expressions \
-	relation_expressions
+	relation_expressions \
 	boolean_expressions
 
 check: \
@@ -35,7 +35,7 @@ check: \
 	asn1_octetstring_fixed \
 	asn1_choice \
 	integer_expressions \
-	relation_expressions
+	relation_expressions \
 	boolean_expressions
 
 simplesignals:
