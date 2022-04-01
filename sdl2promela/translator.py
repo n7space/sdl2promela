@@ -1060,6 +1060,72 @@ def __generate_init_function(sdl_model: sdlmodel.Model) -> promelamodel.Inline:
     return builder.build()
 
 
+def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Statement:
+    inner_switch_builder = SwitchBuilder()
+    state_variable_name = __get_state_variable_name(sdl_model)
+    for name, signals in sdl_model.continuous_signals.items():
+        if len(signals) > 0:
+            statements = []
+            for signal in signals:
+                statements.append(
+                    SwitchBuilder()
+                    .withAlternative(
+                        AlternativeBuilder()
+                        .withCondition(__generate_expression(sdl_model, signal.trigger))
+                        .withStatements(
+                            [
+                                AssignmentBuilder()
+                                .withTarget(
+                                    VariableReferenceBuilder(__TRANSITION_ID).build()
+                                )
+                                .withSource(
+                                    promelamodel.IntegerValue(signal.transition)
+                                )
+                                .build()
+                            ]
+                        )
+                        .build()
+                    )
+                    .withAlternative(
+                        AlternativeBuilder()
+                        .withStatements([promelamodel.Skip()])
+                        .build()
+                    )
+                    .build()
+                )
+            state = sdl_model.states[name]
+            state_name = __get_state_name(sdl_model, state)
+            inner_switch_builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                    .withLeft(VariableReferenceBuilder(state_variable_name).build())
+                    .withRight(VariableReferenceBuilder(state_name).build())
+                    .build()
+                )
+                .withStatements(statements)
+                .build()
+            )
+
+    inner_switch_builder.withAlternative(
+        AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
+    )
+
+    check_queue_inline = "{}_check_queue".format(sdl_model.process_name)
+    switch_builder = SwitchBuilder()
+    switch_builder.withAlternative(
+        AlternativeBuilder()
+        .withCondition(CallBuilder().withTarget(check_queue_inline).build())
+        .withStatements([inner_switch_builder.build()])
+        .build()
+    )
+    switch_builder.withAlternative(
+        AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
+    )
+
+    return switch_builder.build()
+
+
 def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(__get_transition_function_name(sdl_model))
@@ -1096,6 +1162,12 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
 
     statements = []
     statements.append(switch_builder.build())
+    continuous_signals_present = False
+    for _, signals in sdl_model.continuous_signals.items():
+        if len(signals) > 0:
+            continuous_signals_present = True
+    if continuous_signals_present:
+        statements.append(__generate_continuous_signals(sdl_model))
     if sdl_model.floating_labels:
         statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         for name, label in sdl_model.floating_labels.items():
@@ -1105,6 +1177,7 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
             statements.extend(__generate_transition(sdl_model, fake_transition))
             statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
+
     do_builder.withAlternative(AlternativeBuilder().withStatements(statements).build())
 
     blockBuilder.withStatements(

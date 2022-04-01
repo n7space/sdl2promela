@@ -230,6 +230,16 @@ class Input:
         self.transitions = {}
 
 
+class ContinuousSignal:
+
+    trigger: Expression
+    transition: int
+
+    def __init__(self):
+        self.trigger = None
+        self.transitions = {}
+
+
 class BinaryOperator(Enum):
     """Binary operator for use in expressions."""
 
@@ -937,6 +947,8 @@ class Model:
     """Map associating input signal names with the signals themselves."""
     transitions: Dict[int, Transition]
     """Map associating transition IDs with the transitions themselves."""
+    continuous_signals: Dict[str, List[ContinuousSignal]]
+    """Map acociatting state with continuous signals."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
     types: Dict[str, object]
@@ -955,12 +967,14 @@ class Model:
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}
+        self.continuous_signals = {}
         self.transitions = {}
         self.types = getattr(process.DV, "types", {})
         self.variables = process.variables
 
         self.__gather_states()
         self.__gather_inputs()
+        self.__gather_continuous_signals()
         self.__gather_transitions()
         self.__gather_floating_labels()
 
@@ -971,6 +985,16 @@ class Model:
             state = State()
             state.name = stateName
             self.states[stateName] = state
+
+    def __gather_continuous_signals(self):
+        for state in self.states:
+            self.continuous_signals[state] = []
+        for state, signals in self.source.cs_mapping.items():
+            for signal in signals:
+                cs = ContinuousSignal()
+                cs.trigger = convert(signal.trigger.question)
+                cs.transition = signal.transition_id
+                self.continuous_signals[state].append(cs)
 
     def __get_inputs_of_name(self, name: str) -> List[ogAST.Input]:
         result = set()

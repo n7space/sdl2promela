@@ -490,6 +490,61 @@ def _generate_exist(context: GenerateContext, expr: model.CallExpression):
     )
 
 
+def _get_queue_name(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Function 'empty' requires one parameter")
+    if not isinstance(expr.parameters[0], model.Selector):
+        raise TranslateException("Invalid parameter for function 'empty'")
+    selector: model.Selector = expr.parameters[0]
+    if len(selector.elements) != 2:
+        raise TranslateException("Invalid parameter for function 'empty'")
+    if not isinstance(selector.elements[0], model.VariableReference):
+        raise TranslateException("Invalid parameter for function 'empty'")
+    if not isinstance(selector.elements[1], model.VariableReference):
+        raise TranslateException("Invalid parameter for function 'empty'")
+    process_name = selector.elements[0].name
+    queue_name = selector.elements[1].name
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+
+    process = context.processes[process_name]
+
+    queue_exist = next(
+        (x for x in process.input_signals if x["name"].lower() == queue_name.lower()),
+        None,
+    )
+    if queue_exist is None:
+        raise TranslateException(
+            "Cannot find queue with name '{}' in process '{}'".format(
+                queue_name, process_name
+            )
+        )
+
+    return "{}_{}_channel".format(process_name.lower(), queue_name.lower())
+
+
+def _generate_empty(context: GenerateContext, expr: model.CallExpression):
+    queue_variable = _get_queue_name(context, expr)
+    return (
+        promelaBuilder.CallBuilder()
+        .withTarget("empty")
+        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        .build()
+    )
+
+
+def _generate_queue_length(context: GenerateContext, expr: model.CallExpression):
+    queue_variable = _get_queue_name(context, expr)
+    return (
+        promelaBuilder.CallBuilder()
+        .withTarget("len")
+        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        .build()
+    )
+
+
 @dispatch(GenerateContext, model.CallExpression)
 def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
