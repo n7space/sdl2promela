@@ -559,9 +559,9 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
         elif expr.function.name == "exist":
             return _generate_exist(context, expr)
         elif expr.function.name == "empty":
-            raise TranslateException("Not implemented.")
+            return _generate_empty(context, expr)
         elif expr.function.name == "queue_length":
-            raise TranslateException("Not implemented.")
+            return _generate_queue_length(context, expr)
 
         raise TranslateException(
             "Function '{}' is not supported.".format(expr.function.name)

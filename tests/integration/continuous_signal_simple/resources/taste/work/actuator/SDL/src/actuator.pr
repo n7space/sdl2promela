@@ -1,0 +1,42 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (1293, 135), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger := 0;
+    dcl result_param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (883, 172), (70, 35) */
+    state Wait;
+        /* CIF provided (856, 227), (122, 35) */
+        provided check_param /=0;
+            /* CIF task (812, 282), (211, 35) */
+            task check_param := check_param - 1;
+            /* CIF decision (857, 337), (121, 50) */
+            decision check_param = 0;
+                /* CIF ANSWER (838, 407), (70, 24) */
+                (true):
+                    /* CIF task (810, 451), (124, 35) */
+                    task result_param := 0;
+                    /* CIF output (801, 501), (143, 35) */
+                    output result(result_param);
+                    /* CIF NEXTSTATE (838, 556), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (955, 407), (70, 24) */
+                (false):
+                    /* CIF NEXTSTATE (955, 451), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (571, 176), (70, 35) */
+    state Wait;
+        /* CIF input (535, 231), (141, 35) */
+        input check(check_param);
+            /* CIF NEXTSTATE (571, 286), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
