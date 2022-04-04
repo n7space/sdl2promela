@@ -16,7 +16,8 @@
 	asn1_choice \
 	integer_expressions \
 	relation_expressions \
-	boolean_expressions
+	boolean_expressions \
+	continuous_signal_simple
 
 check: \
 	simplesignals \
@@ -36,7 +37,8 @@ check: \
 	asn1_choice \
 	integer_expressions \
 	relation_expressions \
-	boolean_expressions
+	boolean_expressions \
+	continuous_signal_simple
 
 simplesignals:
 	${MAKE} -C $@ check
@@ -90,4 +92,7 @@ relation_expressions:
 	${MAKE} -C $@ check
 
 boolean_expressions:
+	${MAKE} -C $@ check
+
+continuous_signal_simple:
 	${MAKE} -C $@ check
