@@ -1004,10 +1004,15 @@ class Model:
         for inputs in self.source.mapping.values():
             if isinstance(inputs, List):
                 for input in inputs:
+                    # The input.inputList may contains multiple input signals
+                    # To get the valid parameter list of one signal,
+                    # The inputList with one element shall be considered.
+                    # Also, the '*' does not contains proper parameter list.
                     if (
                         isinstance(input, ogAST.Input)
                         and (name in input.inputlist)
                         and len(input.inputlist) == 1
+                        and input.inputString != "*"
                     ):
                         result.add(input)
         return list(result)
@@ -1017,7 +1022,10 @@ class Model:
         if len(inputs) == 0:
             return []
         result = []
-        # All inputs of the same name should have the same parameters,
+        # TODO implement support for different target variables
+        # for input signals.
+        # The current implementation assumes that:
+        # all inputs of the same name should have the same parameters,
         # so the first one should be good enough
         input = inputs[0]
         for parameterName in input.parameters:
