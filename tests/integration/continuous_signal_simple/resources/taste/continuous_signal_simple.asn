@@ -1,0 +1,9 @@
+CONTINUOUS-SIGNAL-SIMPLE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (1 .. 4)
+
+END
+

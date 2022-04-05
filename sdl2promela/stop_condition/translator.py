@@ -443,7 +443,7 @@ def _generate_length(context: GenerateContext, expr: model.CallExpression):
     )
 
 
-def _generate_present(context: GenerateContext, expr: model.CallExpression):
+def _generate_present_call(context: GenerateContext, expr: model.CallExpression):
     if len(expr.parameters) != 1:
         raise TranslateException("Function 'present' requires one parameter")
     result = _generate(context, expr.parameters[0])
@@ -465,7 +465,7 @@ def _generate_present(context: GenerateContext, expr: model.CallExpression):
     )
 
 
-def _generate_exist(context: GenerateContext, expr: model.CallExpression):
+def _generate_exist_call(context: GenerateContext, expr: model.CallExpression):
     if len(expr.parameters) != 1:
         raise TranslateException("Function 'exist' requires one parameter")
     result = _generate(context, expr.parameters[0])
@@ -490,6 +490,65 @@ def _generate_exist(context: GenerateContext, expr: model.CallExpression):
     )
 
 
+def _construct_queue_variable_name_from_call(
+    context: GenerateContext, expr: model.CallExpression, function: str
+):
+    if len(expr.parameters) != 1:
+        raise TranslateException(
+            "Function '{}' requires one parameter".format(function)
+        )
+    if not isinstance(expr.parameters[0], model.Selector):
+        raise TranslateException("Invalid parameter for function '{}'".format(function))
+    selector: model.Selector = expr.parameters[0]
+    if len(selector.elements) != 2:
+        raise TranslateException("Invalid parameter for function '{}'".format(function))
+    if not isinstance(selector.elements[0], model.VariableReference):
+        raise TranslateException("Invalid parameter for function '{}'".format(function))
+    if not isinstance(selector.elements[1], model.VariableReference):
+        raise TranslateException("Invalid parameter for function '{}'".format(function))
+    process_name = selector.elements[0].name
+    queue_name = selector.elements[1].name
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+
+    process = context.processes[process_name]
+
+    queue_exist = next(
+        (x for x in process.input_signals if x["name"].lower() == queue_name.lower()),
+        None,
+    )
+    if queue_exist is None:
+        raise TranslateException(
+            "Cannot find queue with name '{}' in process '{}'".format(
+                queue_name, process_name
+            )
+        )
+
+    return "{}_{}_channel".format(process_name.lower(), queue_name.lower())
+
+
+def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
+    queue_variable = _construct_queue_variable_name_from_call(context, expr, "empty")
+    return (
+        promelaBuilder.CallBuilder()
+        .withTarget("empty")
+        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        .build()
+    )
+
+
+def _generate_queue_length_call(context: GenerateContext, expr: model.CallExpression):
+    queue_variable = _construct_queue_variable_name_from_call(context, expr, "length")
+    return (
+        promelaBuilder.CallBuilder()
+        .withTarget("len")
+        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        .build()
+    )
+
+
 @dispatch(GenerateContext, model.CallExpression)
 def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
@@ -500,13 +559,13 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
         elif expr.function.name == "length":
             return _generate_length(context, expr)
         elif expr.function.name == "present":
-            return _generate_present(context, expr)
+            return _generate_present_call(context, expr)
         elif expr.function.name == "exist":
-            return _generate_exist(context, expr)
+            return _generate_exist_call(context, expr)
         elif expr.function.name == "empty":
-            raise TranslateException("Not implemented.")
+            return _generate_empty_call(context, expr)
         elif expr.function.name == "queue_length":
-            raise TranslateException("Not implemented.")
+            return _generate_queue_length_call(context, expr)
 
         raise TranslateException(
             "Function '{}' is not supported.".format(expr.function.name)

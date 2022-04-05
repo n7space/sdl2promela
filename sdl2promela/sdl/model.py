@@ -230,6 +230,19 @@ class Input:
         self.transitions = {}
 
 
+class ContinuousSignal:
+    """SDL Continuous Signal."""
+
+    trigger: Expression
+    """Condition expression associated with continous signal."""
+    transition: int
+    """Transition id associated with continuous signal."""
+
+    def __init__(self):
+        self.trigger = None
+        self.transitions = {}
+
+
 class BinaryOperator(Enum):
     """Binary operator for use in expressions."""
 
@@ -937,6 +950,8 @@ class Model:
     """Map associating input signal names with the signals themselves."""
     transitions: Dict[int, Transition]
     """Map associating transition IDs with the transitions themselves."""
+    continuous_signals: Dict[str, List[ContinuousSignal]]
+    """Map acociatting state with continuous signals."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
     types: Dict[str, object]
@@ -955,12 +970,14 @@ class Model:
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}
+        self.continuous_signals = {}
         self.transitions = {}
         self.types = getattr(process.DV, "types", {})
         self.variables = process.variables
 
         self.__gather_states()
         self.__gather_inputs()
+        self.__gather_continuous_signals()
         self.__gather_transitions()
         self.__gather_floating_labels()
 
@@ -972,12 +989,31 @@ class Model:
             state.name = stateName
             self.states[stateName] = state
 
+    def __gather_continuous_signals(self):
+        for state in self.states:
+            self.continuous_signals[state] = []
+        for state, signals in self.source.cs_mapping.items():
+            for signal in signals:
+                cs = ContinuousSignal()
+                cs.trigger = convert(signal.trigger.question)
+                cs.transition = signal.transition_id
+                self.continuous_signals[state].append(cs)
+
     def __get_inputs_of_name(self, name: str) -> List[ogAST.Input]:
         result = set()
         for inputs in self.source.mapping.values():
             if isinstance(inputs, List):
                 for input in inputs:
-                    if isinstance(input, ogAST.Input) and (name in input.inputlist):
+                    # The input.inputList may contain multiple input signals
+                    # To get the valid parameter list of one signal,
+                    # The inputList with one element shall be considered.
+                    # Also, the '*' does not contains proper parameter list.
+                    if (
+                        isinstance(input, ogAST.Input)
+                        and (name in input.inputlist)
+                        and len(input.inputlist) == 1
+                        and input.inputString != "*"
+                    ):
                         result.add(input)
         return list(result)
 
@@ -986,7 +1022,10 @@ class Model:
         if len(inputs) == 0:
             return []
         result = []
-        # All inputs of the same name should have the same parameters,
+        # TODO implement support for different target variables
+        # for input signals.
+        # The current implementation assumes that:
+        # all inputs of the same name should have the same parameters,
         # so the first one should be good enough
         input = inputs[0]
         for parameterName in input.parameters:
