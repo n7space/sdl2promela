@@ -1004,7 +1004,7 @@ class Model:
         for inputs in self.source.mapping.values():
             if isinstance(inputs, List):
                 for input in inputs:
-                    # The input.inputList may contains multiple input signals
+                    # The input.inputList may contain multiple input signals
                     # To get the valid parameter list of one signal,
                     # The inputList with one element shall be considered.
                     # Also, the '*' does not contains proper parameter list.
