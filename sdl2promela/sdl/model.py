@@ -1001,7 +1001,11 @@ class Model:
         for inputs in self.source.mapping.values():
             if isinstance(inputs, List):
                 for input in inputs:
-                    if isinstance(input, ogAST.Input) and (name in input.inputlist):
+                    if (
+                        isinstance(input, ogAST.Input)
+                        and (name in input.inputlist)
+                        and len(input.inputlist) == 1
+                    ):
                         result.add(input)
         return list(result)
 
