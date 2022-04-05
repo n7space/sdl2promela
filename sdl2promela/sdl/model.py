@@ -231,9 +231,12 @@ class Input:
 
 
 class ContinuousSignal:
+    """SDL Continuous Signal."""
 
     trigger: Expression
+    """Condition expression associated with continous signal."""
     transition: int
+    """Transition id associated with continuous signal."""
 
     def __init__(self):
         self.trigger = None
