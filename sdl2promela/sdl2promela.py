@@ -1,9 +1,7 @@
-import argparse
 from typing import List
 import logging
 import opengeode
 import sys
-import os
 import traceback
 
 from opengeode import ogAST
@@ -18,29 +16,125 @@ from .stop_condition import model as scl_model
 __log = logging.getLogger("sdl2promela")
 
 
-def __parse_arguments():
-    parser = argparse.ArgumentParser(description="SDL to Promela converter")
-    parser.add_argument(
-        "--sdl",
-        dest="files",
-        type=str,
-        nargs="+",
-        help="SDL system description; can contain only a single process",
-        default=[],
-    )
-    parser.add_argument(
-        "-o", "--output", dest="output_filename", type=str, help="output file name"
-    )
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose output")
-    parser.add_argument("--version", action="version", version=__version__)
-    parser.add_argument(
-        "--scl",
-        help="Read input files as Stop Conditions",
-        nargs="+",
-        type=str,
-        dest="scl_files",
-    )
-    return parser.parse_args()
+class ProgramOptions:
+    """Sdl2Promela Commandline Options"""
+
+    output_filname: str
+    """Output file."""
+    verbose: bool
+    """Show verbose output."""
+    sdl_files: List[List[str]]
+    """Groups of sdl files, every group shall contains one process."""
+    scl_files: [str]
+    """List of Stop Condition Language Files."""
+
+    def __init__(self):
+        self.output_filename = None
+        self.verbose = False
+        self.sdl_files = []
+        self.scl_files = []
+
+    def verify(self) -> bool:
+        return True
+
+
+class ProgramOptionsParseException(Exception):
+    pass
+
+
+def __show_help():
+    usage = """usage: sdl2promela [-h] [--sdl FILES [FILES ...]] [-o OUTPUT_FILENAME] [-v]
+                   [--version] [--scl SCL_FILE]
+
+SDL to Promela converter
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --sdl FILES [FILES ...]
+                        SDL system description; can contain only a single
+                        process,
+  -o OUTPUT_FILENAME, --output OUTPUT_FILENAME
+                        output file name
+  -v, --verbose         verbose output
+  --version             show program's version number and exit
+  --scl SCL_FILE
+                        Read input files as Stop Conditions
+"""
+    print(usage)
+
+
+def __show_version():
+    print(__version__)
+
+
+def __parse_sdl_arguments(index: int, options: ProgramOptions) -> int:
+    group: List[str] = []
+    argv = sys.argv
+
+    while index < len(argv) and not argv[index].startswith("-"):
+        group.append(argv[index])
+        index = index + 1
+
+    options.sdl_files.append(group)
+
+    return index - 1
+
+
+def __parse_arguments_impl() -> ProgramOptions:
+    options = ProgramOptions()
+    argv = sys.argv
+    index = 1
+    while index < len(argv):
+        if argv[index] == "-o" or argv[index] == "--output":
+            if index + 1 >= len(argv):
+                raise ProgramOptionsParseException(
+                    "{} requires filename".format(argv[index])
+                )
+            index = index + 1
+            if options.output_filename is not None:
+                raise ProgramOptionsParseException("Output file already specified.")
+            options.output_filename = argv[index]
+        elif argv[index] == "-v" or argv[index] == "--verbose":
+            options.verbose = True
+        elif argv[index] == "-h" or argv[index] == "--help":
+            __show_help()
+            sys.exit(0)
+        elif argv[index] == "--version":
+            __show_version()
+            sys.exit(0)
+        elif argv[index] == "--scl":
+            if index + 1 >= len(argv):
+                raise ProgramOptionsParseException(
+                    "{} requires filename".format(argv[index])
+                )
+            index = index + 1
+            options.scl_files.append(argv[index])
+        elif argv[index] == "--sdl":
+            if index + 1 >= len(argv):
+                raise ProgramOptionsParseException(
+                    "{} requires filename".format(argv[index])
+                )
+            index = index + 1
+            index = __parse_sdl_arguments(index, options)
+        else:
+            raise ProgramOptionsParseException(
+                "Unknown argument '{}'".format(argv[index])
+            )
+        index = index + 1
+
+    if options.verify():
+        return options
+    else:
+        sys.exit(1)
+
+
+def __parse_arguments() -> ProgramOptions:
+    try:
+        return __parse_arguments_impl()
+    except ProgramOptionsParseException as exception:
+        print("Cannot parse commandline arguments:")
+        print("    {}".format(exception))
+        sys.exit(1)
 
 
 def read_process(sdl_files: List[str]) -> ogAST.Process:
@@ -61,9 +155,9 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
         sys.exit(1)
 
     if len(warnings) > 0:
-        __log.error(f"Warning: found {len(warnings)} warnings:")
+        __log.warning(f"Warning: found {len(warnings)} warnings:")
         for warning in warnings:
-            __log.error(warning)
+            __log.warning(warning)
     if len(errors) > 0:
         __log.error(f"Error: found {len(errors)} errors:")
         for error in errors:
@@ -74,6 +168,12 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
             f"The input SDL files shall contain exactly 1 process, but {len(ast.processes)} were found"
         )
         sys.exit(1)
+
+    __log.info(
+        "Processes: {}, Process types: {}".format(
+            len(ast.processes), len(ast.process_types)
+        )
+    )
 
     return ast.processes[0]
 
@@ -87,31 +187,31 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
     """
     __log.info(f"Reading process from {sdl_files}")
     process = read_process(sdl_files)
-    __log.info(f"Reading done")
+    __log.info("Reading done")
 
     try:
-        __log.info(f"Simplifying SDL model")
+        __log.info("Simplifying SDL model")
         sdl_model = sdlmodel.Model(process)
     except Exception:
         __log.error("SDL model simplification failed")
         traceback.print_exc()
         return False
-    __log.info(f"Simplification done")
+    __log.info("Simplification done")
 
     try:
-        __log.info(f"Translating SDL into Promela")
+        __log.info("Translating SDL into Promela")
         promela_model = translator.translate(sdl_model)
     except Exception:
         __log.error("SDL to Promela model translation failed")
         traceback.print_exc()
         return False
-    __log.info(f"Translating SDL into Promela done")
+    __log.info("Translating SDL into Promela done")
 
     try:
         __log.info(f"Opening {output_file_name} for writing and generating output")
         with open(output_file_name, "w") as file:
             promelagenerator.generate_model(promela_model, file)
-        __log.info(f"Generation done")
+        __log.info("Generation done")
     except Exception:
         __log.error("Promela model generation failed")
         traceback.print_exc()
@@ -132,7 +232,7 @@ def translate_scl(
     for group in sdl_files:
         __log.info(f"Reading process from {group}")
         process = read_process(group)
-        __log.info(f"Reading done")
+        __log.info("Reading done")
         context[process.processName.lower()] = process
     for input_file in scl_files:
         __log.info("Parsing file {}".format(input_file))
@@ -151,35 +251,23 @@ def translate_scl(
     return True
 
 
-def group_sdl_files(sdl_files: List[str]) -> List[List[str]]:
-    dirs = [(os.path.dirname(e), e) for e in sdl_files]
-
-    result = dict()
-    for d, _ in dirs:
-        result[d] = []
-
-    for d, file in dirs:
-        result[d].append(file)
-
-    return [files for _, files in result.items()]
-
-
 def main():
     """
     The main entry point of sdl2promela translator.
     """
-    logging.basicConfig(level=logging.ERROR)
+    logging.basicConfig(level=logging.WARNING)
     arguments = __parse_arguments()
+
     if arguments.verbose:
         __log.setLevel(level=logging.INFO)
 
-    sdl_files = group_sdl_files(arguments.files)
-
     if arguments.scl_files:
-        if not translate_scl(arguments.scl_files, sdl_files, arguments.output_filename):
+        if not translate_scl(
+            arguments.scl_files, arguments.sdl_files, arguments.output_filename
+        ):
             sys.exit(1)
     else:
-        for group in sdl_files:
+        for group in arguments.sdl_files:
             if not translate(group, arguments.output_filename):
                 sys.exit(1)
 
