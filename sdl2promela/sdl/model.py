@@ -942,6 +942,8 @@ class Model:
 
     process_name: str
     """SDL process name."""
+    state_name_prefix: str
+    """Prefix for state names."""
     floating_labels: Dict[str, FloatingLabel]
     """Map associating floating label names with the labels themselves"""
     states: Dict[str, State]
@@ -964,16 +966,20 @@ class Model:
     """
 
     def __init__(self, process: ogAST.Process):
-        self.source = process
-        Helper.flatten(process, sep=SEPARATOR)
+        if process.instance_of_ref:
+            self.source = process.instance_of_ref
+        else:
+            self.source = process
+        Helper.flatten(self.source, sep=SEPARATOR)
         self.process_name = process.processName
+        self.state_name_prefix = self.source.processName
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}
         self.continuous_signals = {}
         self.transitions = {}
-        self.types = getattr(process.DV, "types", {})
-        self.variables = process.variables
+        self.types = getattr(self.source.DV, "types", {})
+        self.variables = self.source.variables
 
         self.__gather_states()
         self.__gather_inputs()

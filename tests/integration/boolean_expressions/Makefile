@@ -40,7 +40,7 @@ test_boolean_expressions:
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -v -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr
 	${SDL2PROMELA} -v -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
-	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
+	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml

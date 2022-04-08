@@ -278,7 +278,7 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
-    return sdl_model.process_name + __STATES_SEPARATOR + state.name
+    return sdl_model.state_name_prefix + __STATES_SEPARATOR + state.name
 
 
 def __get_remote_function_name(

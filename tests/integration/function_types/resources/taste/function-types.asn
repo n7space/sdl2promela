@@ -1,0 +1,11 @@
+FUNCTION-TYPES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 100)
+
+   MyResultInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (1 .. 4)
+
+END
+

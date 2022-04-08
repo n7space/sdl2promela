@@ -17,7 +17,9 @@
 	integer_expressions \
 	relation_expressions \
 	boolean_expressions \
-	continuous_signal_simple
+	continuous_signal_simple \
+	boolean_generator \
+	function_types
 
 check: \
 	simplesignals \
@@ -38,7 +40,9 @@ check: \
 	integer_expressions \
 	relation_expressions \
 	boolean_expressions \
-	continuous_signal_simple
+	continuous_signal_simple \
+	boolean_generator \
+	function_types
 
 simplesignals:
 	${MAKE} -C $@ check
@@ -95,4 +99,10 @@ boolean_expressions:
 	${MAKE} -C $@ check
 
 continuous_signal_simple:
+	${MAKE} -C $@ check
+
+boolean_generator:
+	${MAKE} -C $@ check
+
+function_types:
 	${MAKE} -C $@ check
