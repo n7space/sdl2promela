@@ -942,6 +942,8 @@ class Model:
 
     process_name: str
     """SDL process name."""
+    state_name_prefix: str
+    """Prefix for state names."""
     floating_labels: Dict[str, FloatingLabel]
     """Map associating floating label names with the labels themselves"""
     states: Dict[str, State]
@@ -968,8 +970,9 @@ class Model:
             self.source = process.instance_of_ref
         else:
             self.source = process
-        Helper.flatten(process, sep=SEPARATOR)
+        Helper.flatten(self.source, sep=SEPARATOR)
         self.process_name = process.processName
+        self.state_name_prefix = self.source.processName
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}
