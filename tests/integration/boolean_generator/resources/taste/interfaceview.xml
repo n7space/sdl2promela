@@ -1,0 +1,34 @@
+<InterfaceView asn1file="boolean_generator.asn">
+<Function name="environment" is_type="NO" language="GUI" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="13800 15200 82500 23200"/>
+<Required_Interface name="readValue" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyBool" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="24700 23200"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="13900 28600 82300 58800"/>
+<Provided_Interface name="readValue" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyBool" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="24700 28600"/>
+</Provided_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="environment" ri_name="readValue"/>
+    <Target func_name="controller" pi_name="readValue"/>
+    <Property name="Taste::coordinates" value="24700 23800 24700 28300"/>
+</Connection>
+
+</InterfaceView>

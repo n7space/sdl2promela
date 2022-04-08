@@ -22,9 +22,21 @@ inline Controller_0_RI_0_check_unary(actuator_check_unary_p1)
 {
     actuator_check_unary_channel!actuator_check_unary_p1;
 }
+inline Actuator_check_queue()
+{
+    atomic {
+        empty(actuator_check_binary_channel) && empty(actuator_check_unary_channel);
+    }
+}
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
     controller_result_channel!controller_result_p1;
+}
+inline Controller_check_queue()
+{
+    atomic {
+        empty(controller_result_channel);
+    }
 }
 active proctype actuator_check_binary() priority 1
 {
