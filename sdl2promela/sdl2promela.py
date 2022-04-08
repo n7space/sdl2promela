@@ -35,10 +35,25 @@ class ProgramOptions:
         self.scl_files = []
 
     def verify(self) -> bool:
-        return True
+        """Verify ProgramOptions content and print messages in case of errors."""
+        if self.output_filename is None:
+            print(
+                "Missing OUTPUT_FILENAME parameter. Use -o to specify output filename."
+            )
+            return False
+        elif len(self.scl_files) == 0 and len(self.sdl_files) == 0:
+            print(
+                "Missing input files. Use --scl to specify input stop condition file,"
+            )
+            print("or --sdl to specify input SDL files.")
+            return False
+        else:
+            return True
 
 
 class ProgramOptionsParseException(Exception):
+    """Exception to notify about errors during parsing commandline parameters."""
+
     pass
 
 
