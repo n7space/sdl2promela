@@ -1,0 +1,140 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (663, 65), (325, 242) */
+    -- Text area for declarations and comments
+    
+    dcl test_param MyTestInteger;
+    dcl up_check_param MyInteger;
+    dcl down_check_param MyInteger;
+    dcl up_result_param MyResultInteger;
+    dcl down_result_param MyResultInteger;
+    dcl up_value MyResultInteger;
+    dcl down_value MyResultInteger;
+    dcl error MyInteger;
+    dcl reached MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (423, 92), (70, 35) */
+    START;
+        /* CIF task (419, 147), (76, 35) */
+        task error := 0;
+        /* CIF task (410, 202), (94, 35) */
+        task reached := 0;
+        /* CIF NEXTSTATE (423, 252), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (972, 686), (121, 35) */
+    state WaitingForDown;
+        /* CIF input (922, 741), (221, 35) */
+        input down_result(down_result_param);
+            /* CIF task (919, 796), (227, 35) */
+            task down_value := down_result_param;
+            /* CIF decision (952, 851), (163, 50) */
+            decision up_value = down_value;
+                /* CIF ANSWER (956, 921), (70, 24) */
+                (true):
+                    /* CIF task (943, 965), (94, 35) */
+                    task reached := 1;
+                    /* CIF NEXTSTATE (956, 1015), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (1046, 921), (70, 24) */
+                (false):
+                    /* CIF task (1042, 965), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1046, 1020), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (430, 833), (70, 35) */
+    state Wait;
+        /* CIF input (351, 888), (221, 35) */
+        input down_result(down_result_param);
+            /* CIF task (424, 943), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (427, 998), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (704, 849), (70, 35) */
+    state Wait;
+        /* CIF input (642, 904), (186, 35) */
+        input up_result(up_result_param);
+            /* CIF task (697, 959), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (701, 1014), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1766, 412), (116, 35) */
+    state WaitingForBoth;
+        /* CIF input (1764, 467), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1767, 522), (116, 35) */
+            NEXTSTATE WaitingForBoth;
+    endstate;
+    /* CIF state (1764, 664), (104, 35) */
+    state WaitingForUp;
+        /* CIF input (1756, 719), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1765, 774), (104, 35) */
+            NEXTSTATE WaitingForUp;
+    endstate;
+    /* CIF state (1739, 881), (121, 35) */
+    state WaitingForDown;
+        /* CIF input (1739, 936), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1739, 991), (121, 35) */
+            NEXTSTATE WaitingForDown;
+    endstate;
+    /* CIF state (985, 406), (116, 35) */
+    state WaitingForBoth;
+        /* CIF input (950, 461), (186, 35) */
+        input up_result(up_result_param);
+            /* CIF task (947, 516), (192, 35) */
+            task up_value := up_result_param;
+            /* CIF NEXTSTATE (983, 571), (121, 35) */
+            NEXTSTATE WaitingForDown;
+    endstate;
+    /* CIF state (486, 404), (70, 35) */
+    state Wait;
+        /* CIF input (457, 459), (121, 35) */
+        input test(test_param);
+            /* CIF task (415, 514), (205, 35) */
+            task up_check_param := test_param;
+            /* CIF task (406, 569), (223, 35) */
+            task down_check_param := test_param;
+            /* CIF output (426, 624), (184, 35) */
+            output up_check(up_check_param);
+            /* CIF output (408, 679), (220, 35) */
+            output down_check(down_check_param);
+            /* CIF NEXTSTATE (460, 734), (116, 35) */
+            NEXTSTATE WaitingForBoth;
+    endstate;
+    /* CIF state (1275, 412), (116, 35) */
+    state WaitingForBoth;
+        /* CIF input (1223, 467), (221, 35) */
+        input down_result(down_result_param);
+            /* CIF task (1220, 522), (227, 35) */
+            task down_value := down_result_param;
+            /* CIF NEXTSTATE (1282, 577), (104, 35) */
+            NEXTSTATE WaitingForUp;
+    endstate;
+    /* CIF state (1316, 678), (104, 35) */
+    state WaitingForUp;
+        /* CIF input (1275, 733), (186, 35) */
+        input up_result(up_result_param);
+            /* CIF task (1272, 788), (192, 35) */
+            task up_value := up_result_param;
+            /* CIF decision (1287, 843), (163, 50) */
+            decision up_value = down_value;
+                /* CIF ANSWER (1292, 913), (70, 24) */
+                (true):
+                    /* CIF task (1279, 957), (94, 35) */
+                    task reached := 1;
+                    /* CIF NEXTSTATE (1292, 1007), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (1382, 913), (70, 24) */
+                (false):
+                    /* CIF task (1378, 957), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1382, 1012), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+endprocess Controller;
