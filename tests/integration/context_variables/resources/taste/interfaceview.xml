@@ -1,0 +1,82 @@
+<InterfaceView asn1file="context_variables.acn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="12800 48100 53100 82200"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="53100 75100"/>
+</Provided_Interface>
+
+<Provided_Interface name="test" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="29500 48100"/>
+</Provided_Interface>
+
+<Required_Interface name="check" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="53100 54300"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="81500 44000 126900 79500"/>
+    <ContextParameter name="coeff" type="MyInteger" value="4"/>
+<Provided_Interface name="check" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="81500 51300"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="81500 72400"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="env" is_type="NO" language="GUI" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="14100 23200 51900 39100"/>
+<Required_Interface name="test" kind="Sporadic" layer="default" stack_size="1024" wcet="0" priority="1" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="28700 39100"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result"/>
+    <Target func_name="controller" pi_name="result"/>
+    <Property name="Taste::coordinates" value="80900 72400 67200 72400 67200 75100 53400 75100"/>
+</Connection>
+
+<Connection >
+    <Source func_name="env" ri_name="test"/>
+    <Target func_name="controller" pi_name="test"/>
+    <Property name="Taste::coordinates" value="28700 39700 28700 43700 29500 46200 29500 47800"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="check"/>
+    <Target func_name="actuator" pi_name="check"/>
+    <Property name="Taste::coordinates" value="53700 54300 67400 54300 67400 51300 81200 51300"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>
