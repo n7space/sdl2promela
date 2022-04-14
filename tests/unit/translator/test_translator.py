@@ -67,5 +67,6 @@ def test_translates_loop():
 def test_translates_join():
     translate_and_verify("join.pr", "join.pml")
 
+
 def test_translates_internal_procedures():
     translate_and_verify("internal_procedures.pr", "internal_procedures.pml")

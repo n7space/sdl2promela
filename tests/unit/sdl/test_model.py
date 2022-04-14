@@ -11,6 +11,7 @@ from sdl2promela.sdl.model import (
     NextState,
     Output,
     ProcedureCall,
+    ProcedureParameterDirection,
     VariableReference,
     BinaryOperator,
     ForLoopTask,
@@ -268,3 +269,44 @@ def test_model_reads_internal_procedures():
 
     model = Model(process)
 
+    assert len(model.procedures) == 4
+    proc = model.procedures["proc"]
+    assert proc is not None
+    assert proc.name == "proc"
+    assert len(proc.parameters) == 0
+    assert len(proc.variables) == 0
+    assert len(proc.transition.actions) > 0
+
+    procWithLocalVariables = model.procedures["procWithLocalVariables"]
+    assert procWithLocalVariables is not None
+    assert procWithLocalVariables.name == "procWithLocalVariables"
+    assert len(procWithLocalVariables.parameters) == 0
+    assert len(procWithLocalVariables.variables) == 2
+    assert procWithLocalVariables.variables["l1"] is not None
+    assert procWithLocalVariables.variables["l1"][0].ReferencedTypeName == "MyInteger"
+    assert procWithLocalVariables.variables["l2"] is not None
+    assert procWithLocalVariables.variables["l2"][0].ReferencedTypeName == "MyInteger"
+    assert len(procWithLocalVariables.transition.actions) > 0
+
+    procWithOutput = model.procedures["procWithOutput"]
+    assert procWithOutput is not None
+    assert procWithOutput.name == "procWithOutput"
+    assert len(procWithOutput.parameters) == 0
+    assert len(procWithOutput.variables) == 0
+    assert len(procWithOutput.transition.actions) > 0
+
+    procWithArguments = model.procedures["procWithArguments"]
+    assert procWithArguments is not None
+    assert procWithArguments.name == "procWithArguments"
+    assert len(procWithArguments.parameters) == 3
+    assert procWithArguments.parameters[0].name == "p1"
+    assert procWithArguments.parameters[0].direction == ProcedureParameterDirection.IN
+    assert procWithArguments.parameters[0].typeObject.ReferencedTypeName == "MyInteger"
+    assert procWithArguments.parameters[1].name == "p2"
+    assert procWithArguments.parameters[1].direction == ProcedureParameterDirection.IN
+    assert procWithArguments.parameters[1].typeObject.ReferencedTypeName == "MyInteger"
+    assert procWithArguments.parameters[2].name == "r"
+    assert procWithArguments.parameters[2].direction == ProcedureParameterDirection.OUT
+    assert procWithArguments.parameters[2].typeObject.ReferencedTypeName == "MyInteger"
+    assert len(procWithArguments.variables) == 0
+    assert len(procWithArguments.transition.actions) > 0
