@@ -332,23 +332,23 @@ class UnaryExpression(Expression):
             f"UnaryExpression(operator={self.operator}, expression={self.expression})"
         )
 
-class ProcecureCall(Expression):
+class ProcedureCall(Expression):
     """Procedure call."""
 
-    procedureName : str
+    name : str
     """Name of the called procedure."""
 
-    arguments : List[Expression]
+    parameters : List[Expression]
     """List of call parameters (any expression is possible)."""
 
 
     def __init__(self):
-        self.procedureName = None
-        self.arguments = []
+        self.name = None
+        self.parameters = []
 
     def __str__(self) -> str:
-        result =  f"ProcecureCall(procedureName={self.procedureName},arguments="
-        result += ",".join(arguments)
+        result =  f"ProcedureCall(name={self.name},parameters="
+        result += ",".join(self.parameters)
         result += ")"
         return result        
 
@@ -900,10 +900,20 @@ def convert(source: ogAST.PrimIndex):
 
 @dispatch(ogAST.PrimCall)
 def convert(source: ogAST.PrimCall):
-    call = ProcecureCall()
-    call.procedureName = source.value[0]
-    for parameter in source.value[1]["procParams"]:
-        call.arguments.append(convert(parameter))
+    call = ProcedureCall()
+    call.name = source.value[0]
+    call.parameters = [
+        convert(expression) for expression in  source.value[1]["procParams"]
+    ]
+    return call
+
+@dispatch(ogAST.ProcedureCall)
+def convert(source: ogAST.ProcedureCall):
+    call = ProcedureCall()
+    call.name = source.output[0]["outputName"]
+    call.parameters = [
+        convert(expression) for expression in source.output[0]["params"]
+    ]
     
     return call
 

@@ -10,6 +10,7 @@ from sdl2promela.sdl.model import (
     Model,
     NextState,
     Output,
+    ProcedureCall,
     VariableReference,
     BinaryOperator,
     ForLoopTask,
@@ -232,9 +233,37 @@ def test_model_reads_for_with_range():
     assert task.range.stop.value == "10"
     assert task.range.step.value == "2"
 
+def test_model_reads_procedure_calls():
+    path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
+    # There are 3 expected warning regarding the range
+    process = read_main_process(path, 3)
+
+    model = Model(process)
+    assert len(model.transitions) == 2
+    actions = model.transitions[1].actions
+    assert len(actions) == 4
+    assert isinstance(actions[0], ProcedureCall)
+    assert actions[0].name == "proc"
+    assert len(actions[0].parameters) == 0
+    assert isinstance(actions[1], AssignmentTask)
+    right = actions[1].assignment.right
+    assert isinstance(right, ProcedureCall)
+    assert right.name == "procWithArguments"
+    assert len(right.parameters) == 3
+    assert isinstance(right.parameters[0], Constant)
+    assert isinstance(right.parameters[1], VariableReference)
+    assert isinstance(right.parameters[2], VariableReference)
+    assert isinstance(actions[2], ProcedureCall)
+    assert actions[2].name == "procWithLocalVariables"
+    assert len(actions[2].parameters) == 0
+    assert isinstance(actions[3], ProcedureCall)
+    assert actions[3].name == "procWithOutput"
+    assert len(actions[3].parameters) == 0
+
+
 def test_model_reads_internal_procedures():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
-    # There are 2 expected warning regarding the range
+    # There are 3 expected warning regarding the range
     process = read_main_process(path, 3)
 
     model = Model(process)
