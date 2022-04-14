@@ -37,7 +37,7 @@ taste/work/worker/SDL/*
 !taste/work/worker/SDL/Context-worker.asn
 !taste/work/worker/SDL/src
 taste/work/worker/SDL/src/*
-!taste/work/worker/SDL/src/actuator.pr
+!taste/work/worker/SDL/src/worker.pr
 !taste/work/worker/SDL/src/system_structure.pr
 !taste/work/worker/SDL/src/dataview-uniq.asn
 
