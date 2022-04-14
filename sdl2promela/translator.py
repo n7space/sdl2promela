@@ -126,6 +126,15 @@ def __generate_variable_name(
         return VariableReferenceBuilder(variable_reference.variableName.lower()).build()
 
 
+@dispatch(sdlmodel.Model, sdlmodel.ConstantReference, bool)
+def __generate_variable_name(
+    sdl_model: sdlmodel.Model,
+    constant_reference: sdlmodel.ConstantReference,
+    toplevel: bool,
+):
+    return VariableReferenceBuilder(constant_reference.constantName.lower()).build()
+
+
 @dispatch(sdlmodel.Model, sdlmodel.MemberAccess, bool)
 def __generate_variable_name(
     sdl_model: sdlmodel.Model,

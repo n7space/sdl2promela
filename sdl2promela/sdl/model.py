@@ -115,6 +115,19 @@ class VariableReference(Expression):
         return f"VariableReference(name={self.variableName})"
 
 
+class ConstantReference(Expression):
+    """Constant reference."""
+
+    constantName: str
+    """Constant name."""
+
+    def __init__(self, name):
+        self.constantName = name
+
+    def __str__(self):
+        return f"ConstantReference(name={self.variableName})"
+
+
 class ArrayAccess(Expression):
     """Access to element of SEQUENCE OF."""
 
@@ -694,6 +707,13 @@ def convert(source: ogAST.PrimBitStringLiteral):
 def convert(source: ogAST.PrimChoiceItem):
     value = convert(source.value["value"])
     return Choice(source.value["choice"], value)
+
+
+@dispatch(ogAST.PrimConstant)
+def convert(source: ogAST.PrimConstant):
+    constantReference = ConstantReference(source.value[0])
+
+    return constantReference
 
 
 @dispatch(int)
