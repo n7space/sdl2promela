@@ -1,3 +1,4 @@
+from ast import arguments
 from typing import List, Dict, Union, Tuple
 from multipledispatch import dispatch
 from opengeode import ogAST
@@ -331,6 +332,25 @@ class UnaryExpression(Expression):
             f"UnaryExpression(operator={self.operator}, expression={self.expression})"
         )
 
+class ProcecureCall(Expression):
+    """Procedure call."""
+
+    procedureName : str
+    """Name of the called procedure."""
+
+    arguments : List[Expression]
+    """List of call parameters (any expression is possible)."""
+
+
+    def __init__(self):
+        self.procedureName = None
+        self.arguments = []
+
+    def __str__(self) -> str:
+        result =  f"ProcecureCall(procedureName={self.procedureName},arguments="
+        result += ",".join(arguments)
+        result += ")"
+        return result        
 
 class Action:
     """Base class for a transition action."""
@@ -877,6 +897,15 @@ def convert(source: ogAST.PrimIndex):
     result = ArrayAccess(variable, index)
 
     return result
+
+@dispatch(ogAST.PrimCall)
+def convert(source: ogAST.PrimCall):
+    call = ProcecureCall()
+    call.procedureName = source.value[0]
+    for parameter in source.value[1]["procParams"]:
+        call.arguments.append(convert(parameter))
+    
+    return call
 
 
 @dispatch(ogAST.Terminator)
