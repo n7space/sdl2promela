@@ -961,8 +961,8 @@ class Model:
     """SDL model in a simplified, normalized form (with no nested or parallel states)."""
 
     process_name: str
-    """SDL process name."""
-    state_name_prefix: str
+    """Process implementation name (name of process or process type if it exists)."""
+    process_implementation_name: str
     """Prefix for state names."""
     floating_labels: Dict[str, FloatingLabel]
     """Map associating floating label names with the labels themselves"""
@@ -992,7 +992,7 @@ class Model:
             self.source = process
         Helper.flatten(self.source, sep=SEPARATOR)
         self.process_name = process.processName
-        self.state_name_prefix = self.source.processName
+        self.process_implementation_name = self.source.processName
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}

@@ -132,7 +132,16 @@ def __generate_variable_name(
     constant_reference: sdlmodel.ConstantReference,
     toplevel: bool,
 ):
-    return VariableReferenceBuilder(constant_reference.constantName.lower()).build()
+    if constant_reference.constantName == "{}_ctxt".format(
+        sdl_model.process_implementation_name.lower()
+    ):
+        # When process is an instance of process type,
+        # this reference name shall be overwriten
+        return VariableReferenceBuilder(
+            "{}_ctxt".format(sdl_model.process_name.lower())
+        ).build()
+    else:
+        return VariableReferenceBuilder(constant_reference.constantName.lower()).build()
 
 
 @dispatch(sdlmodel.Model, sdlmodel.MemberAccess, bool)
@@ -287,7 +296,7 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
 
 
 def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
-    return sdl_model.state_name_prefix + __STATES_SEPARATOR + state.name
+    return sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
 
 
 def __get_remote_function_name(
