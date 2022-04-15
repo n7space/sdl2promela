@@ -1,0 +1,17 @@
+Context-actuator DEFINITIONS ::=
+BEGIN
+   IMPORTS
+      MyInteger FROM CONTEXT-VARIABLES-DATAVIEW;
+
+--  Group all context parameters of this function in a record
+Context-actuator ::= SEQUENCE {
+   coeff MyInteger
+
+}
+
+--  Declare a constant with the values set by the user in the interface view
+actuator-ctxt Context-actuator ::= {
+   coeff 4
+
+}
+END

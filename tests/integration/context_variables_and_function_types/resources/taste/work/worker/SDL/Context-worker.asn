@@ -1,0 +1,17 @@
+Context-worker DEFINITIONS ::=
+BEGIN
+   IMPORTS
+      MyInteger FROM CONTEXT-VARIABLES-AND-FUNCTION-TYPES-DATAVIEW;
+
+--  Group all context parameters of this function in a record
+Context-worker ::= SEQUENCE {
+   coeff MyInteger
+
+}
+
+--  Declare a constant with the values set by the user in the interface view
+worker-ctxt Context-worker ::= {
+   coeff 4
+
+}
+END

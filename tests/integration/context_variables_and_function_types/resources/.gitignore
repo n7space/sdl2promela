@@ -25,9 +25,20 @@ taste/work/actuator/SDL/*
 !taste/work/actuator/SDL/Context-actuator.asn
 !taste/work/actuator/SDL/src
 taste/work/actuator/SDL/src/*
-!taste/work/actuator/SDL/src/actuator.pr
 !taste/work/actuator/SDL/src/system_structure.pr
 !taste/work/actuator/SDL/src/dataview-uniq.asn
+
+# Except worker source
+!taste/work/worker/
+taste/work/worker/*
+!taste/work/worker/SDL
+taste/work/worker/SDL/*
+!taste/work/worker/SDL/Context-worker.asn
+!taste/work/worker/SDL/src
+taste/work/worker/SDL/src/*
+!taste/work/worker/SDL/src/worker.pr
+!taste/work/worker/SDL/src/system_structure.pr
+!taste/work/worker/SDL/src/dataview-uniq.asn
 
 # Ignore whole tmc directory
 tmc/*

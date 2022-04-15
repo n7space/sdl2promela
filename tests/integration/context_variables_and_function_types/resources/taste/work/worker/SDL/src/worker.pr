@@ -1,0 +1,24 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process type Worker;
+    /* CIF TEXT (386, 245), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger;
+    dcl result_param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1086, 169), (70, 35) */
+    state Wait;
+        /* CIF input (1050, 224), (141, 35) */
+        input check(check_param);
+            /* CIF task (964, 279), (313, 35) */
+            task result_param := worker_ctxt.coeff + check_param;
+            /* CIF output (1049, 334), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1086, 389), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess type Worker;
