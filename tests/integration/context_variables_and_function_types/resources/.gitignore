@@ -25,7 +25,6 @@ taste/work/actuator/SDL/*
 !taste/work/actuator/SDL/Context-actuator.asn
 !taste/work/actuator/SDL/src
 taste/work/actuator/SDL/src/*
-!taste/work/actuator/SDL/src/actuator.pr
 !taste/work/actuator/SDL/src/system_structure.pr
 !taste/work/actuator/SDL/src/dataview-uniq.asn
 
