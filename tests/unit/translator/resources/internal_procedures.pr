@@ -28,7 +28,7 @@ process Host;
     DCL a MyINteger;
     DCL b MyInteger;
     DCL y MyInteger;
-    DCL r MyInteger;
+    DCL c MyInteger;
     /* CIF ENDTEXT */
     /* CIF procedure (811, 196), (120, 35) */
     procedure procWithOutput;
@@ -92,7 +92,7 @@ process Host;
             /* CIF PROCEDURECALL (448, 436), (70, 35) */
             call proc;
             /* CIF task (369, 491), (227, 35) */
-            task r := call procWithArguments(1,b, y);
+            task c := call procWithArguments(1,b, y);
             /* CIF PROCEDURECALL (382, 541), (201, 35) */
             call procWithLocalVariables;
             /* CIF PROCEDURECALL (422, 596), (120, 35) */

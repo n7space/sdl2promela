@@ -82,6 +82,11 @@ def __get_promela_binary_operator(
 def __get_procedure_inline_name(sdl_model: sdlmodel.Model, procedure_name : str) -> str:
     return sdl_model.process_name + SEPARATOR + procedure_name
 
+def __get_procedure_inline_parameter_name(name : str) -> str:
+    return f"param_{name}"
+
+def __get_procedure_inline_return_name() -> str:
+    return "param_returns"
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
     return sdl_model.process_name + SEPARATOR + "transition"
@@ -102,19 +107,24 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_variable_name(sdl_model: sdlmodel.Model, variable: str):
-    return (
-        MemberAccessBuilder()
-        .withUtypeReference(
+    if not variable in sdl_model.variables:
+        # Variable is not present in the set of process variables, and so it
+        # is not a member of the process context, but a local construct instead
+        return VariableReferenceBuilder(variable.lower()).build()
+    else:
+        return (
             MemberAccessBuilder()
-            .withUtypeReference(VariableReferenceBuilder(__GLOBAL_STATE).build())
-            .withMember(
-                VariableReferenceBuilder(sdl_model.process_name.lower()).build()
+            .withUtypeReference(
+                MemberAccessBuilder()
+                .withUtypeReference(VariableReferenceBuilder(__GLOBAL_STATE).build())
+                .withMember(
+                    VariableReferenceBuilder(sdl_model.process_name.lower()).build()
+                )
+                .build()
             )
+            .withMember(VariableReferenceBuilder(variable.lower()).build())
             .build()
         )
-        .withMember(VariableReferenceBuilder(variable.lower()).build())
-        .build()
-    )
 
 
 @dispatch(sdlmodel.Model, sdlmodel.VariableReference, bool)
@@ -302,6 +312,45 @@ def __get_remote_function_name(
 ) -> str:
     return sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
 
+def __generate_procedure_inline(
+    sdl_model: sdlmodel.Model, procedure : sdlmodel.Procedure
+) -> promelamodel.Inline:
+    builder = InlineBuilder()
+    builder.withName(__get_procedure_inline_name(sdl_model, procedure.name))
+    blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for localVariable, localVariableTypeObject in procedure.variables.items():
+        localVariableType = resolve_asn1_type(sdl_model.types, localVariableTypeObject[0])
+        blockBuilder.withStatement(VariableDeclarationBuilder(localVariable,localVariableType.CName).build())
+    # Procedure return, if any, is handled via the first parameter
+    if procedure.returnType is not None:
+        builder.withParameter(__get_procedure_inline_return_name())
+    for parameter in procedure.parameters:
+        # Inlines are like macros. For a call foo(1+3), the 1+3 will be used
+        # wherever the parameter is referenced. To avoid that, an intermediate
+        # variable is introduced. This can be done only for inputs, as for outputs
+        # such expressions are forbidden, and an intermediate variable would make
+        # the output value propagation more difficult
+        if parameter.direction == sdlmodel.ProcedureParameterDirection.IN:
+            intermediateParameterName = __get_procedure_inline_parameter_name(parameter.name)
+            builder.withParameter(intermediateParameterName)
+            parameterType = resolve_asn1_type(sdl_model.types, parameter.typeObject)
+            blockBuilder.withStatement(VariableDeclarationBuilder(parameter.name,parameterType.CName).build())
+            assignInlineName = __get_assign_value_inline_name(parameterType)
+            blockBuilder.withStatements(
+                [
+                    CallBuilder()
+                    .withTarget(assignInlineName)
+                    .withParameter(VariableReferenceBuilder(parameter.name).build())
+                    .withParameter(VariableReferenceBuilder(intermediateParameterName).build())
+                    .build()
+                ]
+        )
+        else:
+            builder.withParameter(parameter.name)
+    blockBuilder.withStatements(__generate_transition(sdl_model, procedure.transition))
+    builder.withDefinition(blockBuilder.build())
+    return builder.build()
+
 
 def __generate_input_function(
     sdl_model: sdlmodel.Model, input: sdlmodel.Input
@@ -481,6 +530,22 @@ def __generate_statement(
     join: sdlmodel.Join,
 ) -> promelamodel.Statement:
     return promelamodel.GoTo(join.label_name)
+
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.ProcedureReturn)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    procedureReturn: sdlmodel.ProcedureReturn,
+) -> promelamodel.Statement:
+    # TODO check how this behaves with multiple returns
+    if procedureReturn.expression is None:
+        return None
+    resolvedType = resolve_asn1_type(sdl_model.types, transition.parent.returnType)
+    assignInlineName = __get_assign_value_inline_name(resolvedType)
+    return CallBuilder().withTarget(assignInlineName) \
+        .withParameter(VariableReferenceBuilder(__get_procedure_inline_return_name()).build()) \
+        .withParameter(__generate_expression(sdl_model, procedureReturn.expression)) \
+        .build()
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
@@ -1067,13 +1132,15 @@ def __generate_transition(
     for action in transition.actions:
         statements.append(__generate_statement(sdl_model, transition, action))
 
-    # TODO - this should be conditional
-    statements.append(
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
-        .withSource(VariableReferenceBuilder(__INVALID_ID).build())
-        .build()
-    )
+    if not isinstance(transition.parent, sdlmodel.Procedure):
+        # Procedures do not change the current transition
+        # TODO - this should be conditional
+        statements.append(
+            AssignmentBuilder()
+            .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+            .withSource(VariableReferenceBuilder(__INVALID_ID).build())
+            .build()
+        )
 
     return statements
 
@@ -1236,6 +1303,9 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     :returns: Promela model.
     """
     builder = ModelBuilder()
+    # Inlines for procedures must be first
+    for procedure in sdl_model.procedures.values():
+        builder.withInline(__generate_procedure_inline(sdl_model, procedure))
     builder.withInline(__generate_transition_function(sdl_model))
     builder.withInline(__generate_init_function(sdl_model))
     for name, input in sdl_model.inputs.items():

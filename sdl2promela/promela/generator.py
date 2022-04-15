@@ -258,8 +258,9 @@ def generate(context: Context, block: model.Block):
 @dispatch(Context, StatementsWrapper)
 def generate(context: Context, wrapper: StatementsWrapper):
     for i in range(0, len(wrapper.statements)):
-        generate(context, wrapper.statements[i])
-        context.output(";\n")
+        if wrapper.statements[i] is not None:
+            generate(context, wrapper.statements[i])
+            context.output(";\n")
 
 
 @dispatch(Context, model.Do)

@@ -415,7 +415,7 @@ class ForLoopTask(Task):
         self.range = None
         self.iteratorName = None
 
-
+# TODO Investigate whether the parameters should actually be Expressions
 class Output(Action):
     """Signal output action."""
 
@@ -497,9 +497,13 @@ class Transition:
     actions: List[Action]
     """List of transition actions."""
 
+    parent: Union["Model", "Procedure"]
+    """Parent of the transition"""
+
     def __init__(self):
         self.id = 0
         self.actions = []
+        self.parent = None
 
 
 class FloatingLabel:
@@ -569,11 +573,15 @@ class Procedure:
     is initial variable value.
     """
 
+    returnType : object
+    """Procedure return type. Can be None."""
+
     def __init__(self):
         self.name = ""
         self.parameters = []
         self.variables = {}
         self.transition = None
+        self.returnType = None
 
 
 def appendAllActions(destination, source):
@@ -1174,6 +1182,7 @@ class Model:
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
         transition.actions = []
+        transition.parent = self
         appendAllActions(transition, source)
         return transition
 
@@ -1196,6 +1205,7 @@ class Model:
             procedure = Procedure()
             procedure.name = src_procedure.inputString
             procedure.variables = src_procedure.variables
+            procedure.returnType = src_procedure.return_type
             for src_parameter in src_procedure.fpar:
                 parameter = ProcedureParameter()
                 parameter.name = src_parameter["name"]
@@ -1205,4 +1215,5 @@ class Model:
                 procedure.parameters.append(parameter)
             if src_procedure.transitions[0] is not None:
                 procedure.transition =  self.__convert_transition(src_procedure.transitions[0])
+                procedure.transition.parent = procedure
             self.procedures[procedure.name] = procedure
