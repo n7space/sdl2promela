@@ -79,6 +79,9 @@ def __get_promela_binary_operator(
         )
     return __BINARY_OPERATOR_DICTIONARY[op]
 
+def __get_procedure_inline_name(sdl_model: sdlmodel.Model, procedure_name : str) -> str:
+    return sdl_model.process_name + SEPARATOR + procedure_name
+
 
 def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
     return sdl_model.process_name + SEPARATOR + "transition"
@@ -272,6 +275,19 @@ def __generate_expression(
         .build()
     )
 
+@dispatch(sdlmodel.Model, sdlmodel.ProcedureCall)
+def __generate_expression(
+    sdl_model: sdlmodel.Model, expression: sdlmodel.ProcedureCall
+):
+    # As promela inlines cannot be used within expressions, this cannot be
+    # implemented directly. A workaround is possible by preprocessing
+    # the statements such that expressions containing calls are split
+    # into separate expressions for the calls, assigning results to intermediate values
+    # and then using this values in the actual expression
+    # TODO
+    raise NotImplementedError(
+            f"Call to {str(expression.name)} cannot be made within an expression"
+        )
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
     return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
@@ -508,17 +524,25 @@ def __generate_assignment(
     left_type: type,
 ) -> List[promelamodel.Statement]:
     finalType = resolve_asn1_type(sdl_model.types, left_type)
-
-    assignInlineName = __get_assign_value_inline_name(finalType)
-
     statements: List[promelamodel.Statement] = []
-    statements.append(
-        CallBuilder()
-        .withTarget(assignInlineName)
-        .withParameter(__generate_variable_name(sdl_model, left, True))
-        .withParameter(__generate_expression(sdl_model, right))
-        .build()
-    )
+    if isinstance(right, sdlmodel.ProcedureCall):
+        # Inlines cannot return a value, and so the return is handled via
+        # the first parameter
+        inlineCall = CallBuilder()
+        inlineCall.withTarget(__get_procedure_inline_name(sdl_model, right.name))
+        inlineCall.withParameter(__generate_variable_name(sdl_model, left, True))
+        for parameter in right.parameters:
+            inlineCall.withParameter(__generate_expression(sdl_model, parameter))
+        statements.append(inlineCall.build())
+    else:
+        assignInlineName = __get_assign_value_inline_name(finalType)
+        statements.append(
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(__generate_variable_name(sdl_model, left, True))
+            .withParameter(__generate_expression(sdl_model, right))
+            .build()
+       )
 
     return statements
 
@@ -1012,6 +1036,17 @@ def __generate_statement(
         .build()
     )
 
+@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.ProcedureCall)
+def __generate_statement(
+    sdl_model: sdlmodel.Model,
+    transition: sdlmodel.Transition,
+    call: sdlmodel.ProcedureCall,
+) -> promelamodel.Statement:
+    inlineCall = CallBuilder()
+    inlineCall.withTarget(__get_procedure_inline_name(sdl_model, call.name))
+    for parameter in call.parameters:
+        inlineCall.withParameter(__generate_expression(sdl_model, parameter))
+    return inlineCall.build()
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Output)
 def __generate_statement(
