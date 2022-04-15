@@ -1,0 +1,331 @@
+---------------------------------------------------
+-- AADL2.2
+-- TASTE type interfaceview
+-- 
+-- generated code: do not edit
+---------------------------------------------------
+
+
+PACKAGE interfaceview::IV::controller
+PUBLIC
+
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+WITH interfaceview::IV::actuator;
+
+SUBPROGRAM PI_result
+END PI_result;
+
+SUBPROGRAM IMPLEMENTATION PI_result.others
+END PI_result.others;
+
+
+SUBPROGRAM RI_check
+FEATURES
+    p1 : IN PARAMETER DataView::MyInteger {
+       Taste::encoding => NATIVE;
+    };
+END RI_check;
+
+SUBPROGRAM IMPLEMENTATION RI_check.others
+END RI_check.others;
+
+
+SUBPROGRAM RI_work
+FEATURES
+    p1 : IN PARAMETER DataView::MyInteger {
+       Taste::encoding => NATIVE;
+    };
+END RI_work;
+
+SUBPROGRAM IMPLEMENTATION RI_work.others
+END RI_work.others;
+
+
+SUBPROGRAM RI_nop
+END RI_nop;
+
+SUBPROGRAM IMPLEMENTATION RI_nop.others
+END RI_nop.others;
+
+
+SUBPROGRAM RI_enable
+END RI_enable;
+
+SUBPROGRAM IMPLEMENTATION RI_enable.others
+END RI_enable.others;
+
+
+SUBPROGRAM RI_disable
+END RI_disable;
+
+SUBPROGRAM IMPLEMENTATION RI_disable.others
+END RI_disable.others;
+
+
+
+SYSTEM controller
+FEATURES
+   PI_result : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: controller:: PI_result.others {
+      Taste::InterfaceName           => "result";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_check : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_check.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "check";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_work : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_work.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "work";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_nop : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_nop.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "nop";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_enable : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_enable.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "enable";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_disable : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_disable.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "disable";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+PROPERTIES
+   -- ignored property: name = controller
+   -- ignored property: is_type = NO
+   Source_Language => (SDL);
+   -- ignored property: default_implementation = default
+   -- ignored property: FPGA_Configurations = 
+END controller;
+
+SYSTEM IMPLEMENTATION controller.others
+END controller.others;
+
+END interfaceview::IV::controller;
+
+
+
+PACKAGE interfaceview::IV::actuator
+PUBLIC
+
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+WITH interfaceview::IV::controller;
+
+SUBPROGRAM PI_check
+FEATURES
+    p1 : IN PARAMETER DataView::MyInteger {
+       Taste::encoding => NATIVE;
+    };
+END PI_check;
+
+SUBPROGRAM IMPLEMENTATION PI_check.others
+END PI_check.others;
+
+
+SUBPROGRAM PI_work
+FEATURES
+    p1 : IN PARAMETER DataView::MyInteger {
+       Taste::encoding => NATIVE;
+    };
+END PI_work;
+
+SUBPROGRAM IMPLEMENTATION PI_work.others
+END PI_work.others;
+
+
+SUBPROGRAM PI_nop
+END PI_nop;
+
+SUBPROGRAM IMPLEMENTATION PI_nop.others
+END PI_nop.others;
+
+
+SUBPROGRAM PI_enable
+END PI_enable;
+
+SUBPROGRAM IMPLEMENTATION PI_enable.others
+END PI_enable.others;
+
+
+SUBPROGRAM PI_disable
+END PI_disable;
+
+SUBPROGRAM IMPLEMENTATION PI_disable.others
+END PI_disable.others;
+
+
+SUBPROGRAM RI_result
+END RI_result;
+
+SUBPROGRAM IMPLEMENTATION RI_result.others
+END RI_result.others;
+
+
+
+SYSTEM actuator
+FEATURES
+   PI_check : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_check.others {
+      Taste::InterfaceName           => "check";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   PI_work : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_work.others {
+      Taste::InterfaceName           => "work";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   PI_nop : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_nop.others {
+      Taste::InterfaceName           => "nop";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   PI_enable : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_enable.others {
+      Taste::InterfaceName           => "enable";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   PI_disable : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_disable.others {
+      Taste::InterfaceName           => "disable";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+   RI_result : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: controller:: PI_result.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "result";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::RCMperiod               => 0 ms;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Taste::Associated_Queue_Size   => 1;      
+   };
+PROPERTIES
+   -- ignored property: name = actuator
+   -- ignored property: is_type = NO
+   Source_Language => (SDL);
+   -- ignored property: default_implementation = default
+   -- ignored property: FPGA_Configurations = 
+END actuator;
+
+SYSTEM IMPLEMENTATION actuator.others
+END actuator.others;
+
+END interfaceview::IV::actuator;
+
+
+PACKAGE interfaceview::IV
+PUBLIC
+
+WITH interfaceview::IV::controller;
+WITH interfaceview::IV::actuator;
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+
+SYSTEM interfaceview
+PROPERTIES
+   Taste::dataView     => ("DataView");
+   TASTE::dataViewPath => ("DataView.aadl");
+END interfaceview;
+
+SYSTEM IMPLEMENTATION interfaceview.others
+SUBCOMPONENTS
+  controller : SYSTEM interfaceview::IV::controller::controller.others;
+  actuator : SYSTEM interfaceview::IV::actuator::actuator.others;
+CONNECTIONS
+   controller_RI_check_actuator_PI_check : SUBPROGRAM ACCESS actuator.PI_check -> controller.RI_check;
+   actuator_RI_result_controller_PI_result : SUBPROGRAM ACCESS controller.PI_result -> actuator.RI_result;
+   controller_RI_disable_actuator_PI_disable : SUBPROGRAM ACCESS actuator.PI_disable -> controller.RI_disable;
+   controller_RI_work_actuator_PI_work : SUBPROGRAM ACCESS actuator.PI_work -> controller.RI_work;
+   controller_RI_nop_actuator_PI_nop : SUBPROGRAM ACCESS actuator.PI_nop -> controller.RI_nop;
+   controller_RI_enable_actuator_PI_enable : SUBPROGRAM ACCESS actuator.PI_enable -> controller.RI_enable;
+END interfaceview.others;
+
+PROPERTIES
+   Taste::dataView     => ("DataView");
+   Taste::dataViewPath => ("DataView.aadl");
+   Taste::coordinates  => "0 0 297000 210000";
+   Taste::version      => "3.0";
+END interfaceview::IV;

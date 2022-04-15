@@ -1,0 +1,103 @@
+/* CIF PROCESS (250, 149), (150, 75) */
+process Actuator;
+    /* CIF TEXT (393, 165), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger;
+    dcl work_param MyInteger;
+    dcl result_param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (842, 89), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (842, 139), (70, 35) */
+        NEXTSTATE A;
+    /* CIF state (1640, 310), (70, 35) */
+    state B,C;
+        /* CIF input (1608, 365), (133, 35) */
+        input work(work_param);
+            /* CIF output (1640, 420), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (1640, 475), (70, 35) */
+            NEXTSTATE A;
+    endstate;
+    /* CIF state (1023, 262), (70, 35) */
+    state A;
+        /* CIF input (981, 317), (141, 35) */
+        input check(check_param);
+            /* CIF decision (992, 372), (121, 50) */
+            decision check_param = 0;
+                /* CIF ANSWER (978, 442), (70, 24) */
+                (true):
+                    /* CIF output (978, 486), (70, 35) */
+                    output result;
+                    /* CIF NEXTSTATE (978, 536), (70, 35) */
+                    NEXTSTATE A;
+                /* CIF ANSWER (1068, 442), (70, 24) */
+                (false):
+                    /* CIF output (1068, 486), (70, 35) */
+                    output result;
+                    /* CIF NEXTSTATE (1068, 536), (70, 35) */
+                    NEXTSTATE B;
+            enddecision;
+    endstate;
+    /* CIF state (1335, 306), (70, 35) */
+    state A;
+        /* CIF input (1297, 361), (133, 35) */
+        input work(work_param);
+            /* CIF output (1329, 416), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (1329, 466), (70, 35) */
+            NEXTSTATE C;
+    endstate;
+    /* CIF state (1030, 650), (70, 35) */
+    state C;
+        /* CIF input (1028, 705), (70, 35) */
+        input enable;
+            /* CIF output (1028, 760), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (1028, 810), (70, 35) */
+            NEXTSTATE A;
+    endstate;
+    /* CIF state (1344, 638), (70, 35) */
+    state A,C;
+        /* CIF input (1344, 693), (70, 35) */
+        input disable;
+            /* CIF output (1344, 748), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (1344, 798), (70, 35) */
+            NEXTSTATE C;
+    endstate;
+    /* CIF state (818, 638), (70, 35) */
+    state *(C);
+        /* CIF input (816, 693), (70, 35) */
+        input enable;
+            /* CIF output (816, 748), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (816, 798), (70, 35) */
+            NEXTSTATE -;
+    endstate;
+    /* CIF state (1663, 628), (70, 35) */
+    state B;
+        /* CIF input (1663, 683), (70, 35) */
+        input disable;
+            /* CIF output (1663, 738), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (1663, 788), (70, 35) */
+            NEXTSTATE A;
+    endstate;
+    /* CIF state (1711, 113), (70, 35) */
+    state C;
+    endstate;
+    /* CIF state (1388, 107), (70, 35) */
+    state B;
+    endstate;
+    /* CIF state (438, 395), (70, 35) */
+    state *;
+        /* CIF input (438, 450), (70, 35) */
+        input nop;
+            /* CIF output (438, 505), (70, 35) */
+            output result;
+            /* CIF NEXTSTATE (438, 555), (70, 35) */
+            NEXTSTATE -;
+    endstate;
+endprocess Actuator;
