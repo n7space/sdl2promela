@@ -247,10 +247,12 @@ def generate(context: Context, block: model.Block):
 
 @dispatch(Context, model.StatementsWrapper)
 def generate(context: Context, wrapper: model.StatementsWrapper):
-    for i in range(0, len(wrapper.statements)):
-        if wrapper.statements[i] is not None:
-            generate(context, wrapper.statements[i])
-            context.output(";\n")
+    for statement in wrapper.statements:
+        if statement is not None:
+            generate(context, statement)
+            # Avoid multiple ";" for nested statement wrappers
+            if not isinstance(statement, model.StatementsWrapper):
+                context.output(";\n")
 
 
 @dispatch(Context, model.Do)

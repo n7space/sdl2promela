@@ -36,6 +36,6 @@ inline Complexsdl_0_PI_0_impulse(tmp_param_in)
   ::(global_state.complexsdl.state == Complexsdl_States_wait)->
     Complexsdl_0_transition(1);
   ::else->
-    break;
+    skip;
   fi;
 }

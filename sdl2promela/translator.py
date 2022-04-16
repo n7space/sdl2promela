@@ -474,7 +474,7 @@ def __generate_input_function(
         )
 
     switch_builder.withAlternative(
-        AlternativeBuilder().withStatements([promelamodel.Break()]).build()
+        AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
     )
 
     blockBuilder.withStatements([switch_builder.build()])

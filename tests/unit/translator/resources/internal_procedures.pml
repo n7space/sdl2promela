@@ -9,12 +9,10 @@ inline Host_0_multireturn(param_returns, param_a)
     MyInteger_assign_value(param_returns, r);
     goto Host_0_multireturn_0_end;
     ;
-    ;
   ::(a <= 10)->
     MyInteger_assign_value(r, (a + 1));
     MyInteger_assign_value(param_returns, (a * r));
     goto Host_0_multireturn_0_end;
-    ;
     ;
   fi;
   Host_0_multireturn_0_end: ;
@@ -33,7 +31,6 @@ inline Host_0_procWithArguments(param_returns, param_p1, param_p2, r)
   MyInteger_assign_value(r, (p1 + p2));
   MyInteger_assign_value(param_returns, r);
   goto Host_0_procWithArguments_0_end;
-  ;
   ;
   Host_0_procWithArguments_0_end: ;
 }
@@ -84,6 +81,6 @@ inline Host_0_PI_0_trigger(x_param_in)
   ::(global_state.host.state == Host_States_wait)->
     Host_0_transition(1);
   ::else->
-    break;
+    skip;
   fi;
 }
