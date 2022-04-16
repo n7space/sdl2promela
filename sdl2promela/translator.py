@@ -67,27 +67,46 @@ BIT_STRING_TYPE_NAME = "BitStringType"
 
 
 class Context:
+    """Translator context."""
 
     sdl_model: sdlmodel.Model
+    """Model that is being translated."""
+
     parents: List[object]
+    """Stack of objects that are being translated."""
 
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
 
     def push_parent(self, parent: object):
+        """
+        Push parent onto the parent stack.
+        :param parent: Parent to be pushed.
+        """
         self.parents.append(parent)
 
     def pop_parent(self):
+        """
+        Remove the current parent from the stack.
+        """
         self.parents.pop()
 
     def get_parent_transition(self) -> sdlmodel.Transition:
+        """
+        Return the current parent transition.
+        :returns: Current parent transition, or None if outside of any.
+        """
         for parent in reversed(self.parents):
             if isinstance(parent, sdlmodel.Transition):
                 return parent
         return None
 
     def get_parent_procedure(self) -> sdlmodel.Procedure:
+        """
+        Return the current parent procedure.
+        :returns: Current parent procedure, or None if outside of any.
+        """
         for parent in reversed(self.parents):
             if isinstance(parent, sdlmodel.Procedure):
                 return parent
