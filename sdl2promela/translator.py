@@ -135,11 +135,21 @@ def __get_state_variable_name(context : Context) -> str:
         __GLOBAL_STATE + "." + context.sdl_model.process_name.lower() + "." + __STATE_VARIABLE
     )
 
+def __is_local_variable(context : Context, variable: str):
+    procedure = context.get_parent_procedure()
+    if procedure is not None:
+        if variable in procedure.variables.keys():
+            return True
+        else:
+            for parameter in procedure.parameters:
+                if parameter.name == variable:
+                    return True
+    return False
+
 
 def __get_variable_name(context : Context, variable: str):
-    if False: #not variable in sdl_model.variables:
-        # Variable is not present in the set of process variables, and so it
-        # is not a member of the process context, but a local construct instead
+    
+    if __is_local_variable(context, variable):
         return VariableReferenceBuilder(variable.lower()).build()
     else:
         return (
@@ -345,6 +355,7 @@ def __get_remote_function_name(
 def __generate_procedure_inline(
     context : Context, procedure : sdlmodel.Procedure
 ) -> promelamodel.Inline:
+    context.push_parent(procedure)
     builder = InlineBuilder()
     builder.withName(__get_procedure_inline_name(context, procedure.name))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
@@ -382,6 +393,7 @@ def __generate_procedure_inline(
     # and this part must be aware of the decision.
     blockBuilder.withStatement(promelamodel.Label(__get_procedure_inline_end_label_name(context, procedure.name)))
     builder.withDefinition(blockBuilder.build())
+    context.pop_parent()
     return builder.build()
 
 
@@ -1164,6 +1176,7 @@ def __generate_statement(
 def __generate_transition(
     context : Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
+    context.push_parent(transition)
     statements = []
     for action in transition.actions:
         statements.append(__generate_statement(context, transition, action))
@@ -1177,7 +1190,8 @@ def __generate_transition(
             .withSource(VariableReferenceBuilder(__INVALID_ID).build())
             .build()
         )
-
+    
+    context.pop_parent()
     return statements
 
 
