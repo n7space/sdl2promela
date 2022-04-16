@@ -1,0 +1,9 @@
+CONTEXT-VARIABLES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 100)
+
+
+   MyTestInteger ::= INTEGER (0 .. 8)
+END
+

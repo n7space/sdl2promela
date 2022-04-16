@@ -1,0 +1,37 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (1318, 142), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger;
+    dcl result_param MyInteger;
+    dcl error MyInteger;
+    
+    /* CIF ENDTEXT */
+    /* CIF START (507, 222), (70, 35) */
+    START;
+        /* CIF task (479, 277), (124, 35) */
+        task check_param := 1;
+        /* CIF output (471, 332), (141, 35) */
+        output check(check_param);
+        /* CIF NEXTSTATE (507, 382), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (894, 236), (70, 35) */
+    state Wait;
+        /* CIF input (857, 291), (143, 35) */
+        input result(result_param);
+            /* CIF decision (864, 346), (129, 50) */
+            decision result_param = 11;
+                /* CIF ANSWER (849, 416), (70, 24) */
+                (true):
+                    /* CIF NEXTSTATE (849, 460), (70, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (939, 416), (70, 24) */
+                (false):
+                    /* CIF task (935, 460), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (939, 510), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+endprocess Controller;

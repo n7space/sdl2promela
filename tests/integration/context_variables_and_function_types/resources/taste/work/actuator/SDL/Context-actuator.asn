@@ -1,0 +1,10 @@
+Context-actuator DEFINITIONS ::=
+BEGIN
+   IMPORTS
+      Context-worker FROM Context-worker;
+
+actuator-ctxt Context-worker ::= {
+   coeff 10
+
+}
+END

@@ -1,0 +1,63 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (457, 231), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger;
+    dcl result_param MyInteger;
+    dcl test_param MyTestInteger;
+    dcl error MyInteger;
+    dcl expected MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1903, 188), (83, 35) */
+    state Operation;
+        /* CIF input (1873, 243), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1860, 298), (169, 50) */
+            decision result_param = expected;
+                /* CIF ANSWER (1865, 368), (70, 24) */
+                (true):
+                    /* CIF NEXTSTATE (1858, 412), (83, 35) */
+                    NEXTSTATE Wait;
+                /* CIF ANSWER (1955, 368), (70, 24) */
+                (false):
+                    /* CIF task (1951, 412), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1955, 467), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (1037, 195), (70, 35) */
+    state Wait;
+        /* CIF input (1011, 250), (121, 35) */
+        input test(test_param);
+            /* CIF task (979, 305), (184, 35) */
+            task check_param := test_param;
+            /* CIF task (974, 360), (195, 35) */
+            task expected := check_param + 4;
+            /* CIF output (1001, 415), (141, 35) */
+            output check(check_param);
+            /* CIF NEXTSTATE (1030, 470), (83, 35) */
+            NEXTSTATE Operation;
+    endstate;
+    /* CIF state (1268, 194), (70, 35) */
+    state Wait;
+        /* CIF input (1231, 249), (143, 35) */
+        input result(result_param);
+            /* CIF task (1264, 304), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (1268, 359), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1563, 192), (83, 35) */
+    state Operation;
+        /* CIF input (1544, 247), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1563, 302), (83, 35) */
+            NEXTSTATE Operation;
+    endstate;
+endprocess Controller;

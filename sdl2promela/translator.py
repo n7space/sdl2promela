@@ -201,6 +201,20 @@ def __get_variable_name(context: Context, variable: str):
         )
 
 
+def __get_constant_name(
+    context: Context, constant_reference: sdlmodel.ConstantReference
+):
+    if constant_reference.constantName == "{}_ctxt".format(
+        context.sdl_model.process_implementation_name.lower()
+    ):
+        # When process is an instance of process type,
+        # this reference name shall be overwriten
+        return "{}_ctxt".format(context.sdl_model.process_name.lower())
+
+    else:
+        return constant_reference.constantName.lower()
+
+
 @dispatch(Context, sdlmodel.VariableReference, bool)
 def __generate_variable_name(
     context: Context,
@@ -211,6 +225,17 @@ def __generate_variable_name(
         return __get_variable_name(context, variable_reference.variableName)
     else:
         return VariableReferenceBuilder(variable_reference.variableName.lower()).build()
+
+
+@dispatch(Context, sdlmodel.ConstantReference, bool)
+def __generate_variable_name(
+    context: Context,
+    constant_reference: sdlmodel.ConstantReference,
+    toplevel: bool,
+):
+    return VariableReferenceBuilder(
+        __get_constant_name(context, constant_reference)
+    ).build()
 
 
 @dispatch(Context, sdlmodel.MemberAccess, bool)
@@ -368,7 +393,9 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
 
 
 def __get_state_name(context: Context, state: sdlmodel.State) -> str:
-    return context.sdl_model.state_name_prefix + __STATES_SEPARATOR + state.name
+    return (
+        context.sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
+    )
 
 
 def __get_remote_function_name(context: Context, output: sdlmodel.Output) -> str:

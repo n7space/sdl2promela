@@ -116,6 +116,19 @@ class VariableReference(Expression):
         return f"VariableReference(name={self.variableName})"
 
 
+class ConstantReference(Expression):
+    """Constant reference."""
+
+    constantName: str
+    """Constant name."""
+
+    def __init__(self, name):
+        self.constantName = name
+
+    def __str__(self):
+        return f"ConstantReference(name={self.variableName})"
+
+
 class ArrayAccess(Expression):
     """Access to element of SEQUENCE OF."""
 
@@ -790,6 +803,13 @@ def convert(source: ogAST.PrimChoiceItem):
     return Choice(source.value["choice"], value)
 
 
+@dispatch(ogAST.PrimConstant)
+def convert(source: ogAST.PrimConstant):
+    constantReference = ConstantReference(source.value[0])
+
+    return constantReference
+
+
 @dispatch(int)
 def convert(source: int):
     return Constant(str(source))
@@ -1059,8 +1079,8 @@ class Model:
     """SDL model in a simplified, normalized form (with no nested or parallel states)."""
 
     process_name: str
-    """SDL process name."""
-    state_name_prefix: str
+    """Process implementation name (name of process or process type if it exists)."""
+    process_implementation_name: str
     """Prefix for state names."""
     floating_labels: Dict[str, FloatingLabel]
     """Map associating floating label names with the labels themselves"""
@@ -1092,7 +1112,7 @@ class Model:
             self.source = process
         Helper.flatten(self.source, sep=SEPARATOR)
         self.process_name = process.processName
-        self.state_name_prefix = self.source.processName
+        self.process_implementation_name = self.source.processName
         self.floating_labels = {}
         self.states = {}
         self.inputs = {}
