@@ -234,6 +234,7 @@ def test_model_reads_for_with_range():
     assert task.range.stop.value == "10"
     assert task.range.step.value == "2"
 
+
 def test_model_reads_procedure_calls():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
     # There are 3 expected warning regarding the range

@@ -332,25 +332,26 @@ class UnaryExpression(Expression):
             f"UnaryExpression(operator={self.operator}, expression={self.expression})"
         )
 
+
 class ProcedureCall(Expression):
     """Procedure call."""
 
-    name : str
+    name: str
     """Name of the called procedure."""
 
-    parameters : List[Expression]
+    parameters: List[Expression]
     """List of call parameters (any expression is possible)."""
-
 
     def __init__(self):
         self.name = None
         self.parameters = []
 
     def __str__(self) -> str:
-        result =  f"ProcedureCall(name={self.name},parameters="
+        result = f"ProcedureCall(name={self.name},parameters="
         result += ",".join(self.parameters)
         result += ")"
         return result
+
 
 class Action:
     """Base class for a transition action."""
@@ -414,6 +415,7 @@ class ForLoopTask(Task):
         self.actions = []
         self.range = None
         self.iteratorName = None
+
 
 # TODO Investigate whether the parameters should actually be Expressions
 class Output(Action):
@@ -518,6 +520,7 @@ class FloatingLabel:
         self.name = ""
         self.actions = []
 
+
 class ProcedureParameterDirection(Enum):
     """Direction of a procedure parameter."""
 
@@ -527,25 +530,27 @@ class ProcedureParameterDirection(Enum):
     OUT = 2
     """Output parameter."""
 
+
 class ProcedureReturn(Terminator):
     """SDL procedure return statement."""
 
-    expression : Expression
+    expression: Expression
     """Return statement value."""
 
     def __init__(self):
         self.expression = None
 
+
 class ProcedureParameter:
     """Procedure parameter."""
 
-    name : str
+    name: str
     """Parameter name."""
 
-    direction : ProcedureParameterDirection
+    direction: ProcedureParameterDirection
     """Parameter direction."""
 
-    typeObject : object
+    typeObject: object
     """Parameter type."""
 
     def __init__(self):
@@ -573,7 +578,7 @@ class Procedure:
     is initial variable value.
     """
 
-    returnType : object
+    returnType: object
     """Procedure return type. Can be None."""
 
     def __init__(self):
@@ -967,22 +972,22 @@ def convert(source: ogAST.PrimIndex):
 
     return result
 
+
 @dispatch(ogAST.PrimCall)
 def convert(source: ogAST.PrimCall):
     call = ProcedureCall()
     call.name = source.value[0]
     call.parameters = [
-        convert(expression) for expression in  source.value[1]["procParams"]
+        convert(expression) for expression in source.value[1]["procParams"]
     ]
     return call
+
 
 @dispatch(ogAST.ProcedureCall)
 def convert(source: ogAST.ProcedureCall):
     call = ProcedureCall()
     call.name = source.output[0]["outputName"]
-    call.parameters = [
-        convert(expression) for expression in source.output[0]["params"]
-    ]
+    call.parameters = [convert(expression) for expression in source.output[0]["params"]]
 
     return call
 
@@ -1209,11 +1214,16 @@ class Model:
             for src_parameter in src_procedure.fpar:
                 parameter = ProcedureParameter()
                 parameter.name = src_parameter["name"]
-                parameter.direction = ProcedureParameterDirection.OUT \
-                    if src_parameter["direction"] == "out" else ProcedureParameterDirection.IN 
+                parameter.direction = (
+                    ProcedureParameterDirection.OUT
+                    if src_parameter["direction"] == "out"
+                    else ProcedureParameterDirection.IN
+                )
                 parameter.typeObject = src_parameter["type"]
                 procedure.parameters.append(parameter)
             if src_procedure.transitions[0] is not None:
-                procedure.transition =  self.__convert_transition(src_procedure.transitions[0])
+                procedure.transition = self.__convert_transition(
+                    src_procedure.transitions[0]
+                )
                 procedure.transition.parent = procedure
             self.procedures[procedure.name] = procedure
