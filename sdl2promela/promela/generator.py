@@ -87,16 +87,6 @@ class Context:
         self.pending_indent = lines[-1].endswith("\n")
 
 
-class StatementsWrapper:
-    """Wrapper for passing a list of statements as a single item compatible with dispatch mechanics."""
-
-    statements: List[model.Statement]
-    """List of statements."""
-
-    def __init__(self, statements: List[model.Statement]):
-        self.statements = statements
-
-
 @dispatch
 def generate(context, element):
     """
@@ -249,14 +239,14 @@ def generate(context: Context, block: model.Block):
         context.output("{\n")
     context.push_indent(INDENT)
     context.push_parent(block)
-    generate(context, StatementsWrapper(block.statements))
+    generate(context, model.StatementsWrapper(block.statements))
     context.pop_parent()
     context.pop_indent()
     context.output("}\n")
 
 
-@dispatch(Context, StatementsWrapper)
-def generate(context: Context, wrapper: StatementsWrapper):
+@dispatch(Context, model.StatementsWrapper)
+def generate(context: Context, wrapper: model.StatementsWrapper):
     for i in range(0, len(wrapper.statements)):
         if wrapper.statements[i] is not None:
             generate(context, wrapper.statements[i])
@@ -302,7 +292,7 @@ def generate(context: Context, alternative: model.Alternative):
             generate(context, alternative.condition)
         context.output("->\n")
     context.push_indent(INDENT)
-    generate(context, StatementsWrapper(alternative.definition))
+    generate(context, model.StatementsWrapper(alternative.definition))
     if alternative.type == model.BlockType.ATOMIC:
         context.pop_indent()
         context.output("}\n")

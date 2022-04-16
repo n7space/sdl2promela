@@ -344,6 +344,16 @@ class NeverClaim:
         self.definition = None
 
 
+class StatementsWrapper:
+    """Wrapper for passing a list of statements as a single item compatible with dispatch mechanics."""
+
+    statements: List[Statement]
+    """List of statements."""
+
+    def __init__(self, statements: List[Statement]):
+        self.statements = statements
+
+
 class Model:
     """Promela model."""
 

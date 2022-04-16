@@ -554,11 +554,7 @@ def __generate_statement(
         .withParameter(__generate_expression(sdl_model, procedureReturn.expression)) \
         .build())
     statements.append(promelamodel.GoTo(__get_procedure_inline_end_label_name(sdl_model, transition.parent.name)))
-    return (
-        BlockBuilder(promelamodel.BlockType.BLOCK)
-        .withStatements(statements)
-        .build()
-    )
+    return promelamodel.StatementsWrapper(statements)
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
