@@ -82,6 +82,9 @@ def __get_promela_binary_operator(
 def __get_procedure_inline_name(sdl_model: sdlmodel.Model, procedure_name : str) -> str:
     return sdl_model.process_name + SEPARATOR + procedure_name
 
+def __get_procedure_inline_end_label_name(sdl_model: sdlmodel.Model, procedure_name : str) -> str:
+    return sdl_model.process_name + SEPARATOR + procedure_name + SEPARATOR + "end"
+
 def __get_procedure_inline_parameter_name(name : str) -> str:
     return f"param_{name}"
 
@@ -107,7 +110,7 @@ def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
 
 
 def __get_variable_name(sdl_model: sdlmodel.Model, variable: str):
-    if not variable in sdl_model.variables:
+    if False: #not variable in sdl_model.variables:
         # Variable is not present in the set of process variables, and so it
         # is not a member of the process context, but a local construct instead
         return VariableReferenceBuilder(variable.lower()).build()
@@ -348,6 +351,9 @@ def __generate_procedure_inline(
         else:
             builder.withParameter(parameter.name)
     blockBuilder.withStatements(__generate_transition(sdl_model, procedure.transition))
+    # This can be optimized - not needed if there is only one return, but both the return statement
+    # and this part must be aware of the decision.
+    blockBuilder.withStatement(promelamodel.Label(__get_procedure_inline_end_label_name(sdl_model, procedure.name)))
     builder.withDefinition(blockBuilder.build())
     return builder.build()
 
@@ -537,15 +543,22 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     procedureReturn: sdlmodel.ProcedureReturn,
 ) -> promelamodel.Statement:
-    # TODO check how this behaves with multiple returns
+    assert(isinstance(transition.parent, sdlmodel.Procedure))
     if procedureReturn.expression is None:
         return None
     resolvedType = resolve_asn1_type(sdl_model.types, transition.parent.returnType)
     assignInlineName = __get_assign_value_inline_name(resolvedType)
-    return CallBuilder().withTarget(assignInlineName) \
+    statements = []
+    statements.append(CallBuilder().withTarget(assignInlineName) \
         .withParameter(VariableReferenceBuilder(__get_procedure_inline_return_name()).build()) \
         .withParameter(__generate_expression(sdl_model, procedureReturn.expression)) \
+        .build())
+    statements.append(promelamodel.GoTo(__get_procedure_inline_end_label_name(sdl_model, transition.parent.name)))
+    return (
+        BlockBuilder(promelamodel.BlockType.BLOCK)
+        .withStatements(statements)
         .build()
+    )
 
 
 @dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
