@@ -1,0 +1,18 @@
+/* CIF Keep Specific Geode ASNFilename 'dataview-uniq.asn' */
+use Datamodel;
+
+system InputObserver;
+    /* CIF TEXT (783, 105), (388, 140) */
+    signal trigger_in (T_Int32) renames input trigger to MODEL;
+    /* CIF ENDTEXT */
+    channel c
+        from env to InputObserver with trigger_in;
+    endchannel;
+    block InputObserver;
+        signalroute r
+            from env to InputObserver with trigger_in;
+        connect c and r;
+        /* CIF PROCESS (557, 255), (150, 75) */
+        process InputObserver referenced;
+    endblock;
+endsystem;
