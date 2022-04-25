@@ -169,14 +169,18 @@ def __parse_arguments() -> ProgramOptions:
 
 
 def __export_observer_attachment_infos(
-    file_name: str, attachments: List[sdlmodel.ObserverAttachmentInfo]
+    process_name: str,
+    file_name: str,
+    attachments: List[sdlmodel.ObserverAttachmentInfo],
 ):
     try:
         __log.info(f"Opening {file_name} for writing attachment infos")
         with open(file_name, "w") as file:
             for attachment in attachments:
                 print(
-                    str(attachment.kind)
+                    process_name
+                    + ":"
+                    + str(attachment.kind)
                     + ":"
                     + attachment.observerSignalName
                     + ":"
@@ -280,7 +284,9 @@ def translate(
 
     if attachment_info_file_name is not None:
         __export_observer_attachment_infos(
-            attachment_info_file_name, sdl_model.observer_attachments
+            sdl_model.process_name,
+            attachment_info_file_name,
+            sdl_model.observer_attachments,
         )
     return True
 
