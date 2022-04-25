@@ -602,6 +602,7 @@ class Procedure:
         self.transition = None
         self.returnType = None
 
+
 class ObservedSignalKind(Enum):
     """Kind of the observed signal."""
 
@@ -610,6 +611,7 @@ class ObservedSignalKind(Enum):
 
     OUTPUT = 2
     """Output Observer, inspecting and mutating output from a function."""
+
 
 class ObserverAttachmentInfo:
     """Observer attachment info sourced from the Renames clause."""
@@ -623,10 +625,10 @@ class ObserverAttachmentInfo:
     kind: ObservedSignalKind
     """Kind of the observerd signal."""
 
-    senderName:str
+    senderName: str
     """Name of the Sender."""
 
-    recipientName:str
+    recipientName: str
     """Name of the Recipient."""
 
     def __init__(self):
@@ -635,6 +637,7 @@ class ObserverAttachmentInfo:
         self.kind = ObservedSignalKind.INPUT
         self.senderName = None
         self.recipientName = None
+
 
 def appendAllActions(destination, source):
     """
@@ -1220,7 +1223,6 @@ class Model:
             result.append(parameter)
         return result
 
-
     def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: object):
         if astItem is None:
             return
@@ -1228,7 +1230,7 @@ class Model:
             info.kind = ObservedSignalKind.INPUT
         elif astItem.type == lexer.OUTPUT_EXPRESSION:
             info.kind = ObservedSignalKind.OUTPUT
-        elif  astItem.type == lexer.ID:
+        elif astItem.type == lexer.ID:
             info.originalSignalName = astItem.text
         elif astItem.type == lexer.TO:
             # TO is assumed to be a simple function name
@@ -1238,16 +1240,16 @@ class Model:
             # FROM is assumed to be a simple function name
             info.senderName = astItem.children[0].text
             return
-        if  astItem.children is None:
+        if astItem.children is None:
             return
         for child in astItem.children:
-            self.__extract_attachment_info(info, child) 
+            self.__extract_attachment_info(info, child)
 
     def __gather_inputs(self):
         # Gather all inputs and their parameters
         for inputSignal in self.source.input_signals:
             input = Input()
-            input.name = inputSignal["name"] 
+            input.name = inputSignal["name"]
             input.parameters = self.__get_input_parameters(input.name)
             input.transitions = {}
             if inputSignal["renames"] is not None:
