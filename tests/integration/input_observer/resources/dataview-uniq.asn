@@ -1,42 +1,24 @@
+Model-Datamodel DEFINITIONS ::=
+BEGIN
+IMPORTS
+   MyInteger FROM INPUTMONITORING-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+
+Model-States ::= ENUMERATED {two, one}
+
+Model-Context ::= SEQUENCE {
+   state Model-States,
+   init-done BOOLEAN,
+   x T-Int32,
+   y T-Int32
+}
+
+END
+
 INPUTMONITORING-DATAVIEW DEFINITIONS ::=
 BEGIN
 
    MyInteger ::= INTEGER (0 .. 10000)
-
--- ASN.1 Type definitions must start with an uppercase
--- Field names in records (SEQUENCE) must start with a lowercase
--- Underscores are not allowed: use dash (hyphen) 
--- For integers do not assume that small ranges will be translated to small
--- types in C or Ada (expect unsigned or signed 64 bits types with subtypes
--- for the range in Ada)
-
--- Simple types:
-
--- TASTE-Boolean ::= BOOLEAN
--- MyInteger   ::= INTEGER (0..255)
--- MyReal      ::= REAL (0.0 .. 1000.0)
--- MyBool      ::= BOOLEAN
--- MyEnum      ::= ENUMERATED { hello, world, how-are-you }
-
--- Complex types:
-
---  MySeq       ::= SEQUENCE {
---      input-data  MyInteger,
---      output-data MyInteger,
---      validity    ENUMERATED { valid, invalid }
---  }
---
---  MyChoice    ::= CHOICE {
---      a BOOLEAN,
---      b MySeq
---  }
---
---  MySeqOf     ::= SEQUENCE (SIZE (2)) OF MyEnum
---
---  MyOctStr    ::= OCTET STRING (SIZE (3))
---
---  -- You can also declare constants
---  myVar       MySeqOf     ::= { hello, world }
 
 END
 
@@ -60,22 +42,114 @@ T-Null-Record ::= SEQUENCE {}
 
 END
 
-Model-Datamodel DEFINITIONS ::=
+
+
+Simulation-DataView DEFINITIONS ::=
 BEGIN
-IMPORTS
-   MyInteger FROM INPUTMONITORING-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+   IMPORTS
+      
+      --  ASN.1 modules used by thread mmi_action
+      T-Int32 FROM TASTE-BasicTypes
+      
+      
+      --  ASN.1 modules used by thread model_trigger
+      T-Int32 FROM TASTE-BasicTypes
+      
+      -- Import generic integer type (used for timers)
+      T-UInt32 FROM TASTE-BasicTypes
+      --  Import the SDL function states needed for the global system state
+      Model-Context FROM Model-Datamodel
+   ;
 
-Model-States ::= ENUMERATED {two, one}
+   --  List all the TASTE functions present in the system
+   PID ::= ENUMERATED {
+        env, mmi, model
+   }
 
-Model-Context ::= SEQUENCE {
-   state Model-States,
-   init-done BOOLEAN,
-   x T-Int32,
-   y T-Int32
-}
+   --  Simulator needs to knows about cyclic interfaces
+   Periodic-Event {Event-Ty} ::= SEQUENCE {
+      period INTEGER (0 .. 500000),  -- Upper limit is arbitrary
+      event  Event-Ty
+   }
+
+   --  To keep a constant list of events.
+   Periodic-Events {Event-Ty, INTEGER:max} ::=
+      SEQUENCE (SIZE (0 .. max)) OF Periodic-Event {Event-Ty}
+
+   
+   
+   
+   Mmi-Event ::= CHOICE {
+      msg-in CHOICE {
+         action SEQUENCE { y T-Int32}
+      },
+      msg-out CHOICE {
+         trigger SEQUENCE { z T-Int32 }
+      }
+   }
+   
+   Model-Event ::= CHOICE {
+      msg-in CHOICE {
+         input-none SEQUENCE {},
+         trigger SEQUENCE { z T-Int32}
+      },
+      msg-out CHOICE {
+         action SEQUENCE { y T-Int32 }
+      }
+   }
+   
+
+   --  Current observer state flag (used by model checkers)
+   Observer-State-Kind ::= ENUMERATED {
+      regular-state,
+      error-state,
+      ignore-state,
+      success-state
+   }
+
+   --  Event related to the execution of a PI or call of a RI in the functional code
+   Function-Event ::= CHOICE {
+      mmi   Mmi-Event,
+      model Model-Event
+   }
+
+   --  Type used to store events in a database: associate a name to the event
+   Named-Function-Event ::= SEQUENCE {
+      id    IA5String (SIZE (1..80)),
+      event Function-Event
+   }
+
+   --  Event at interface level (PI or RI), including source and destination ID
+   Interface-Event ::= SEQUENCE {
+      source PID,
+      dest   PID,
+      event  Function-Event
+   }
+
+   --  Event sent to the observers
+   Observable-Event ::= CHOICE {
+      no-event        SEQUENCE {},
+      system-startup  SEQUENCE {},
+      input-event     Interface-Event,   --  input event is evaluated after the transition
+      output-event    Interface-Event,   --  output event is evaluated before the message is sent
+      unhandled-input Interface-Event    --  message received in a state where it is not expected
+   }
+
+   --  constant that can be used to refer to the absence of an input/output event
+   nothing Observable-Event ::= no-event : {}
+
+   --  Define a queue of events, corresponding to the input queue for each function
+   max-events INTEGER ::= 10
+   Events-Ty ::= SEQUENCE (SIZE (0 .. max-events)) OF Observable-Event
+
+   --  Global system state (excluding observers, which are defined later)
+   model-queue-size INTEGER ::= 2
+   System-State ::= SEQUENCE {
+      --  Message queues
+      model-queue Events-Ty (SIZE (0 .. model-queue-size)),
+
+      model  Model-Context
+   }
 
 END
-
-
 

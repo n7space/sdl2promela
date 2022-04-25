@@ -1,17 +1,19 @@
-
-        process InputObserver;
-            /* CIF TEXT (421, 121), (267, 140) */
-            dcl x T_Int32;
-            /* CIF ENDTEXT */
-            /* CIF START (22, 71), (70, 35) */
-            START;
-                /* CIF NEXTSTATE (22, 126), (70, 35) */
-                NEXTSTATE Wait;
-            /* CIF state (221, 87), (70, 35) */
-            state Wait;
-                /* CIF input (208, 142), (95, 35) */
-                input trigger_in(x);
-                    /* CIF NEXTSTATE (221, 197), (70, 35) */
-                    NEXTSTATE Wait;
-            endstate;
-        endprocess InputObserver;
+/* CIF PROCESS (250, 150), (150, 75) */
+process InputObserver;
+    /* CIF TEXT (421, 121), (267, 140) */
+    monitor st System_State;
+    monitor event Observable_Event;
+    dcl y T_Int32;
+    /* CIF ENDTEXT */
+    /* CIF START (22, 71), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (22, 126), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (221, 87), (70, 35) */
+    state Wait;
+        /* CIF input (206, 142), (95, 35) */
+        input trigger_in(x);
+            /* CIF NEXTSTATE (219, 197), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess InputObserver;

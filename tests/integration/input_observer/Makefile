@@ -38,7 +38,12 @@ check: ${TESTS}
 input_observer:
 	echo "Test input_observer"
 	${CREATE_EMPTY_TEST_DIR}
-	${SDL2PROMELA} -v -o ${TEST_DIR}/inputobserver.pml --sdl ${RES_DIR}/system_structure.pr ${RES_DIR}/InputObserver.pr
+	cp ${RES_DIR}/system_structure.pr ${TEST_DIR}
+	cp ${RES_DIR}/InputObserver.pr ${TEST_DIR}
+	cp ${RES_DIR}/dataview-uniq.asn ${TEST_DIR}
+	cd  ${TEST_DIR} && opengeode --toAda system_structure.pr InputObserver.pr
+	${SDL2PROMELA} -v -o ${TEST_DIR}/inputobserver.pml -oi ${TEST_DIR}/inputobserver.info \
+		--sdl ${TEST_DIR}/system_structure.pr ${TEST_DIR}/InputObserver.pr
 	cp ${RES_DIR}/harness.pml ${TEST_DIR}/harness.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m harness.pml

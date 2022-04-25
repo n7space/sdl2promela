@@ -4,6 +4,7 @@ from multipledispatch import dispatch
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
+from opengeode import sdl92Lexer as lexer
 from enum import Enum
 
 
@@ -601,6 +602,39 @@ class Procedure:
         self.transition = None
         self.returnType = None
 
+class ObservedSignalKind(Enum):
+    """Kind of the observed signal."""
+
+    INPUT = 1
+    """Input Observer, inspecting input to a function."""
+
+    OUTPUT = 2
+    """Output Observer, inspecting and mutating output from a function."""
+
+class ObserverAttachmentInfo:
+    """Observer attachment info sourced from the Renames clause."""
+
+    observerSignalName: str
+    """Name of the signal within the Observer."""
+
+    originalSignalName: str
+    """Name of the signal in the model."""
+
+    kind: ObservedSignalKind
+    """Kind of the observerd signal."""
+
+    senderName:str
+    """Name of the Sender."""
+
+    recipientName:str
+    """Name of the Recipient."""
+
+    def __init__(self):
+        self.observerSignalName = ""
+        self.originalSignalName = ""
+        self.kind = ObservedSignalKind.INPUT
+        self.senderName = None
+        self.recipientName = None
 
 def appendAllActions(destination, source):
     """
@@ -1104,6 +1138,8 @@ class Model:
     """
     procedures: Dict[str, Procedure]
     """Dictionary of procedures."""
+    observer_attachments: List[ObserverAttachmentInfo]
+    """List of observer attachments."""
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1118,6 +1154,7 @@ class Model:
         self.inputs = {}
         self.continuous_signals = {}
         self.transitions = {}
+        self.observer_attachments = []
         self.types = getattr(self.source.DV, "types", {})
         self.variables = self.source.variables
         self.procedures = {}
@@ -1142,6 +1179,8 @@ class Model:
             self.continuous_signals[state] = []
         for state, signals in self.source.cs_mapping.items():
             for signal in signals:
+                if signal.observer_input is not None:
+                    continue
                 cs = ContinuousSignal()
                 cs.trigger = convert(signal.trigger.question)
                 cs.transition = signal.transition_id
@@ -1181,13 +1220,41 @@ class Model:
             result.append(parameter)
         return result
 
+
+    def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: object):
+        if astItem is None:
+            return
+        if astItem.type == lexer.INPUT_EXPRESSION:
+            info.kind = ObservedSignalKind.INPUT
+        elif astItem.type == lexer.OUTPUT_EXPRESSION:
+            info.kind = ObservedSignalKind.OUTPUT
+        elif  astItem.type == lexer.ID:
+            info.originalSignalName = astItem.text
+        elif astItem.type == lexer.TO:
+            # TO is assumed to be a simple function name
+            info.recipientName = astItem.children[0].text
+            return
+        elif astItem.type == lexer.FROM:
+            # FROM is assumed to be a simple function name
+            info.senderName = astItem.children[0].text
+            return
+        if  astItem.children is None:
+            return
+        for child in astItem.children:
+            self.__extract_attachment_info(info, child) 
+
     def __gather_inputs(self):
         # Gather all inputs and their parameters
         for inputSignal in self.source.input_signals:
             input = Input()
-            input.name = inputSignal["name"]
+            input.name = inputSignal["name"] 
             input.parameters = self.__get_input_parameters(input.name)
             input.transitions = {}
+            if inputSignal["renames"] is not None:
+                info = ObserverAttachmentInfo()
+                self.__extract_attachment_info(info, inputSignal["renames"])
+                info.observerSignalName = input.name
+                self.observer_attachments.append(info)
             self.inputs[input.name] = input
         # Build transition list
         for state_name, input_list in self.source.mapping.items():
