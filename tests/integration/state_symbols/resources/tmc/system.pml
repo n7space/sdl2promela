@@ -15,8 +15,8 @@ chan actuator_nop_channel = [1] of {int};
 chan actuator_enable_channel = [1] of {int};
 chan actuator_disable_channel = [1] of {int};
 system_state global_state;
-chan controller_lock = [1] of {int};
 chan actuator_lock = [1] of {int};
+chan controller_lock = [1] of {int};
 inline Actuator_0_RI_0_result()
 {
     int dummy;
@@ -141,10 +141,10 @@ init
 {
     atomic {
         int init_token = 1;
-        Controller_0_init();
-        controller_lock!init_token;
         Actuator_0_init();
         actuator_lock!init_token;
+        Controller_0_init();
+        controller_lock!init_token;
         inited = 1;
     }
 }
