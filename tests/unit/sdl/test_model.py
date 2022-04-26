@@ -51,10 +51,10 @@ def test_model_reads_inputs():
     assert len(model.inputs) == 2
     assert model.inputs["signal_1"].name == "signal_1"
     assert len(model.inputs["signal_1"].transitions) == 1
-    assert model.states["state_1"] in model.inputs["signal_1"].transitions.values()
+    assert model.states["state_1"] in model.inputs["signal_1"].transitions.keys()
     assert model.inputs["signal_2"].name == "signal_2"
     assert len(model.inputs["signal_2"].transitions) == 1
-    assert model.states["state_2"] in model.inputs["signal_2"].transitions.values()
+    assert model.states["state_2"] in model.inputs["signal_2"].transitions.keys()
 
 
 def test_model_reads_transitions():
@@ -65,8 +65,8 @@ def test_model_reads_transitions():
 
     assert len(model.transitions) == 3
     start_tid = 0
-    signal_1_tid = next(iter(model.inputs["signal_1"].transitions))
-    signal_2_tid = next(iter(model.inputs["signal_2"].transitions))
+    signal_1_tid = next(iter(model.inputs["signal_1"].transitions.values()))
+    signal_2_tid = next(iter(model.inputs["signal_2"].transitions.values()))
     assert start_tid in model.transitions.keys()
     assert signal_1_tid in model.transitions.keys()
     assert signal_2_tid in model.transitions.keys()
@@ -78,8 +78,8 @@ def test_model_reads_next_state_action():
 
     model = Model(process)
 
-    signal_1_tid = next(iter(model.inputs["signal_1"].transitions))
-    signal_2_tid = next(iter(model.inputs["signal_2"].transitions))
+    signal_1_tid = next(iter(model.inputs["signal_1"].transitions.values()))
+    signal_2_tid = next(iter(model.inputs["signal_2"].transitions.values()))
     signal_1_transition = model.transitions[signal_1_tid]
     signal_2_transition = model.transitions[signal_2_tid]
     assert len(signal_1_transition.actions) == 1
@@ -98,7 +98,7 @@ def test_model_reads_output():
 
     model = Model(process)
 
-    tid = next(iter(model.inputs["signal_in"].transitions))
+    tid = next(iter(model.inputs["signal_in"].transitions.values()))
     transition = model.transitions[tid]
     assert len(transition.actions) == 2
     action = transition.actions[0]
