@@ -21,47 +21,47 @@ SUBPROGRAM IMPLEMENTATION PI_result.others
 END PI_result.others;
 
 
-SUBPROGRAM RI_check
+SUBPROGRAM RI_test_simple_state
 FEATURES
     p1 : IN PARAMETER DataView::MyInteger {
        Taste::encoding => NATIVE;
     };
-END RI_check;
+END RI_test_simple_state;
 
-SUBPROGRAM IMPLEMENTATION RI_check.others
-END RI_check.others;
+SUBPROGRAM IMPLEMENTATION RI_test_simple_state.others
+END RI_test_simple_state.others;
 
 
-SUBPROGRAM RI_work
+SUBPROGRAM RI_test_state_list
 FEATURES
     p1 : IN PARAMETER DataView::MyInteger {
        Taste::encoding => NATIVE;
     };
-END RI_work;
+END RI_test_state_list;
 
-SUBPROGRAM IMPLEMENTATION RI_work.others
-END RI_work.others;
-
-
-SUBPROGRAM RI_nop
-END RI_nop;
-
-SUBPROGRAM IMPLEMENTATION RI_nop.others
-END RI_nop.others;
+SUBPROGRAM IMPLEMENTATION RI_test_state_list.others
+END RI_test_state_list.others;
 
 
-SUBPROGRAM RI_enable
-END RI_enable;
+SUBPROGRAM RI_test_star
+END RI_test_star;
 
-SUBPROGRAM IMPLEMENTATION RI_enable.others
-END RI_enable.others;
+SUBPROGRAM IMPLEMENTATION RI_test_star.others
+END RI_test_star.others;
 
 
-SUBPROGRAM RI_disable
-END RI_disable;
+SUBPROGRAM RI_test_excluded_state
+END RI_test_excluded_state;
 
-SUBPROGRAM IMPLEMENTATION RI_disable.others
-END RI_disable.others;
+SUBPROGRAM IMPLEMENTATION RI_test_excluded_state.others
+END RI_test_excluded_state.others;
+
+
+SUBPROGRAM RI_test_state_list2
+END RI_test_state_list2;
+
+SUBPROGRAM IMPLEMENTATION RI_test_state_list2.others
+END RI_test_state_list2.others;
 
 
 
@@ -72,71 +72,71 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   RI_check : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_check.others {
+   RI_test_simple_state : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_simple_state.others {
       Taste::labelInheritance        => "true";
-      Taste::InterfaceName           => "check";            
+      Taste::InterfaceName           => "test_simple_state";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   RI_work : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_work.others {
+   RI_test_state_list : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_state_list.others {
       Taste::labelInheritance        => "true";
-      Taste::InterfaceName           => "work";            
+      Taste::InterfaceName           => "test_state_list";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   RI_nop : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_nop.others {
+   RI_test_star : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_star.others {
       Taste::labelInheritance        => "true";
-      Taste::InterfaceName           => "nop";            
+      Taste::InterfaceName           => "test_star";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   RI_enable : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_enable.others {
+   RI_test_excluded_state : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_excluded_state.others {
       Taste::labelInheritance        => "true";
-      Taste::InterfaceName           => "enable";            
+      Taste::InterfaceName           => "test_excluded_state";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   RI_disable : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_disable.others {
+   RI_test_state_list2 : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_state_list2.others {
       Taste::labelInheritance        => "true";
-      Taste::InterfaceName           => "disable";            
+      Taste::InterfaceName           => "test_state_list2";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
 PROPERTIES
    -- ignored property: name = controller
@@ -161,47 +161,47 @@ WITH DataView;
 WITH TASTE_IV_Properties;
 WITH interfaceview::IV::controller;
 
-SUBPROGRAM PI_check
+SUBPROGRAM PI_test_simple_state
 FEATURES
     p1 : IN PARAMETER DataView::MyInteger {
        Taste::encoding => NATIVE;
     };
-END PI_check;
+END PI_test_simple_state;
 
-SUBPROGRAM IMPLEMENTATION PI_check.others
-END PI_check.others;
+SUBPROGRAM IMPLEMENTATION PI_test_simple_state.others
+END PI_test_simple_state.others;
 
 
-SUBPROGRAM PI_work
+SUBPROGRAM PI_test_state_list
 FEATURES
     p1 : IN PARAMETER DataView::MyInteger {
        Taste::encoding => NATIVE;
     };
-END PI_work;
+END PI_test_state_list;
 
-SUBPROGRAM IMPLEMENTATION PI_work.others
-END PI_work.others;
-
-
-SUBPROGRAM PI_nop
-END PI_nop;
-
-SUBPROGRAM IMPLEMENTATION PI_nop.others
-END PI_nop.others;
+SUBPROGRAM IMPLEMENTATION PI_test_state_list.others
+END PI_test_state_list.others;
 
 
-SUBPROGRAM PI_enable
-END PI_enable;
+SUBPROGRAM PI_test_star
+END PI_test_star;
 
-SUBPROGRAM IMPLEMENTATION PI_enable.others
-END PI_enable.others;
+SUBPROGRAM IMPLEMENTATION PI_test_star.others
+END PI_test_star.others;
 
 
-SUBPROGRAM PI_disable
-END PI_disable;
+SUBPROGRAM PI_test_excluded_state
+END PI_test_excluded_state;
 
-SUBPROGRAM IMPLEMENTATION PI_disable.others
-END PI_disable.others;
+SUBPROGRAM IMPLEMENTATION PI_test_excluded_state.others
+END PI_test_excluded_state.others;
+
+
+SUBPROGRAM PI_test_state_list2
+END PI_test_state_list2;
+
+SUBPROGRAM IMPLEMENTATION PI_test_state_list2.others
+END PI_test_state_list2.others;
 
 
 SUBPROGRAM RI_result
@@ -214,60 +214,60 @@ END RI_result.others;
 
 SYSTEM actuator
 FEATURES
-   PI_check : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_check.others {
-      Taste::InterfaceName           => "check";            
+   PI_test_simple_state : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_simple_state.others {
+      Taste::InterfaceName           => "test_simple_state";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   PI_work : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_work.others {
-      Taste::InterfaceName           => "work";            
+   PI_test_state_list : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_state_list.others {
+      Taste::InterfaceName           => "test_state_list";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   PI_nop : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_nop.others {
-      Taste::InterfaceName           => "nop";            
+   PI_test_star : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_star.others {
+      Taste::InterfaceName           => "test_star";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   PI_enable : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_enable.others {
-      Taste::InterfaceName           => "enable";            
+   PI_test_excluded_state : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_excluded_state.others {
+      Taste::InterfaceName           => "test_excluded_state";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
-   PI_disable : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_disable.others {
-      Taste::InterfaceName           => "disable";            
+   PI_test_state_list2 : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_state_list2.others {
+      Taste::InterfaceName           => "test_state_list2";            
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
    RI_result : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: controller:: PI_result.others {
       Taste::labelInheritance        => "true";
@@ -275,11 +275,11 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Interface_Stack_Size    => 1024;      
       Taste::RCMperiod               => 0 ms;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
-      Taste::Interface_Priority      => 1;      
+      Taste::Interface_Stack_Size    => 1024;      
       Taste::Associated_Queue_Size   => 1;      
+      Taste::Interface_Priority      => 1;      
    };
 PROPERTIES
    -- ignored property: name = actuator
@@ -315,12 +315,12 @@ SUBCOMPONENTS
   controller : SYSTEM interfaceview::IV::controller::controller.others;
   actuator : SYSTEM interfaceview::IV::actuator::actuator.others;
 CONNECTIONS
-   controller_RI_check_actuator_PI_check : SUBPROGRAM ACCESS actuator.PI_check -> controller.RI_check;
+   controller_RI_test_star_actuator_PI_test_star : SUBPROGRAM ACCESS actuator.PI_test_star -> controller.RI_test_star;
+   controller_RI_test_state_list_actuator_PI_test_state_list : SUBPROGRAM ACCESS actuator.PI_test_state_list -> controller.RI_test_state_list;
+   controller_RI_test_excluded_state_actuator_PI_test_excluded_state : SUBPROGRAM ACCESS actuator.PI_test_excluded_state -> controller.RI_test_excluded_state;
+   controller_RI_test_simple_state_actuator_PI_test_simple_state : SUBPROGRAM ACCESS actuator.PI_test_simple_state -> controller.RI_test_simple_state;
    actuator_RI_result_controller_PI_result : SUBPROGRAM ACCESS controller.PI_result -> actuator.RI_result;
-   controller_RI_disable_actuator_PI_disable : SUBPROGRAM ACCESS actuator.PI_disable -> controller.RI_disable;
-   controller_RI_work_actuator_PI_work : SUBPROGRAM ACCESS actuator.PI_work -> controller.RI_work;
-   controller_RI_nop_actuator_PI_nop : SUBPROGRAM ACCESS actuator.PI_nop -> controller.RI_nop;
-   controller_RI_enable_actuator_PI_enable : SUBPROGRAM ACCESS actuator.PI_enable -> controller.RI_enable;
+   controller_RI_test_state_list2_actuator_PI_test_state_list2 : SUBPROGRAM ACCESS actuator.PI_test_state_list2 -> controller.RI_test_state_list2;
 END interfaceview.others;
 
 PROPERTIES

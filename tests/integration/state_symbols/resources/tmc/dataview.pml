@@ -16,14 +16,15 @@
 #define T_Int8 int
 #define T_UInt8 int
 #define T_Boolean bool
-#define Actuator_States_c 0
-#define Actuator_States_a 1
+#define Actuator_States_a 0
+#define Actuator_States_c 1
 #define Actuator_States_b 2
-#define Controller_States_a 0
-#define Controller_States_c 1
-#define Controller_States_b 2
-#define Controller_States_e 3
-#define Controller_States_d 4
+#define Controller_States_verifysimplestate 0
+#define Controller_States_verifyexcludedstate 1
+#define Controller_States_verifystatelist2 2
+#define Controller_States_verifystatelist 3
+#define Controller_States_verifystar 4
+#define Controller_States_verifydone 5
 typedef Actuator_Context {
     Actuator_Context_state state;
     Actuator_Context_init_done init_done;

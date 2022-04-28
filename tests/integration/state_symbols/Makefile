@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	test_state_symbols
 
-#.SILENT : \
-#	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \

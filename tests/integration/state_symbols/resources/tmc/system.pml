@@ -9,11 +9,11 @@ typedef system_state {
 
 int inited;
 chan controller_result_channel = [1] of {int};
-chan actuator_check_channel = [1] of {MyInteger};
-chan actuator_work_channel = [1] of {MyInteger};
-chan actuator_nop_channel = [1] of {int};
-chan actuator_enable_channel = [1] of {int};
-chan actuator_disable_channel = [1] of {int};
+chan actuator_test_simple_state_channel = [1] of {MyInteger};
+chan actuator_test_state_list_channel = [1] of {MyInteger};
+chan actuator_test_star_channel = [1] of {int};
+chan actuator_test_excluded_state_channel = [1] of {int};
+chan actuator_test_state_list2_channel = [1] of {int};
 system_state global_state;
 chan actuator_lock = [1] of {int};
 chan controller_lock = [1] of {int};
@@ -28,33 +28,33 @@ inline Controller_check_queue()
         empty(controller_result_channel);
     }
 }
-inline Controller_0_RI_0_check(actuator_check_p1)
+inline Controller_0_RI_0_test_simple_state(actuator_test_simple_state_p1)
 {
-    actuator_check_channel!actuator_check_p1;
+    actuator_test_simple_state_channel!actuator_test_simple_state_p1;
 }
-inline Controller_0_RI_0_work(actuator_work_p1)
+inline Controller_0_RI_0_test_state_list(actuator_test_state_list_p1)
 {
-    actuator_work_channel!actuator_work_p1;
+    actuator_test_state_list_channel!actuator_test_state_list_p1;
 }
-inline Controller_0_RI_0_nop()
+inline Controller_0_RI_0_test_star()
 {
     int dummy;
-    actuator_nop_channel!dummy;
+    actuator_test_star_channel!dummy;
 }
-inline Controller_0_RI_0_enable()
+inline Controller_0_RI_0_test_excluded_state()
 {
     int dummy;
-    actuator_enable_channel!dummy;
+    actuator_test_excluded_state_channel!dummy;
 }
-inline Controller_0_RI_0_disable()
+inline Controller_0_RI_0_test_state_list2()
 {
     int dummy;
-    actuator_disable_channel!dummy;
+    actuator_test_state_list2_channel!dummy;
 }
 inline Actuator_check_queue()
 {
     atomic {
-        empty(actuator_check_channel) && empty(actuator_work_channel) && empty(actuator_nop_channel) && empty(actuator_enable_channel) && empty(actuator_disable_channel);
+        empty(actuator_test_simple_state_channel) && empty(actuator_test_state_list_channel) && empty(actuator_test_star_channel) && empty(actuator_test_excluded_state_channel) && empty(actuator_test_state_list2_channel);
     }
 }
 active proctype controller_result() priority 1
@@ -70,69 +70,69 @@ active proctype controller_result() priority 1
     }
     od;
 }
-active proctype actuator_check() priority 1
+active proctype actuator_test_simple_state() priority 1
 {
     inited;
     int token;
     MyInteger signal_parameter;
     do
     ::  atomic {
-        actuator_check_channel?signal_parameter;
+        actuator_test_simple_state_channel?signal_parameter;
         actuator_lock?token;
-        Actuator_0_PI_0_check(signal_parameter);
+        Actuator_0_PI_0_test_simple_state(signal_parameter);
         actuator_lock!token;
     }
     od;
 }
-active proctype actuator_work() priority 1
+active proctype actuator_test_state_list() priority 1
 {
     inited;
     int token;
     MyInteger signal_parameter;
     do
     ::  atomic {
-        actuator_work_channel?signal_parameter;
+        actuator_test_state_list_channel?signal_parameter;
         actuator_lock?token;
-        Actuator_0_PI_0_work(signal_parameter);
+        Actuator_0_PI_0_test_state_list(signal_parameter);
         actuator_lock!token;
     }
     od;
 }
-active proctype actuator_nop() priority 1
+active proctype actuator_test_star() priority 1
 {
     inited;
     int token;
     do
     ::  atomic {
-        actuator_nop_channel?_;
+        actuator_test_star_channel?_;
         actuator_lock?token;
-        Actuator_0_PI_0_nop();
+        Actuator_0_PI_0_test_star();
         actuator_lock!token;
     }
     od;
 }
-active proctype actuator_enable() priority 1
+active proctype actuator_test_excluded_state() priority 1
 {
     inited;
     int token;
     do
     ::  atomic {
-        actuator_enable_channel?_;
+        actuator_test_excluded_state_channel?_;
         actuator_lock?token;
-        Actuator_0_PI_0_enable();
+        Actuator_0_PI_0_test_excluded_state();
         actuator_lock!token;
     }
     od;
 }
-active proctype actuator_disable() priority 1
+active proctype actuator_test_state_list2() priority 1
 {
     inited;
     int token;
     do
     ::  atomic {
-        actuator_disable_channel?_;
+        actuator_test_state_list2_channel?_;
         actuator_lock?token;
-        Actuator_0_PI_0_disable();
+        Actuator_0_PI_0_test_state_list2();
         actuator_lock!token;
     }
     od;
