@@ -112,6 +112,8 @@ class Context:
                 return parent
         return None
 
+def __escapeIv(name : str) -> str:
+    return name.capitalize()
 
 def __get_assign_value_inline_name(type: object) -> str:
     return "{}_assign_value".format(type.CName)
@@ -405,7 +407,7 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
 
 def __get_state_name(context: Context, state: sdlmodel.State) -> str:
     return (
-        context.sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
+        __escapeIv(context.sdl_model.process_implementation_name) + __STATES_SEPARATOR + state.name
     )
 
 
