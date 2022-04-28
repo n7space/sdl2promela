@@ -10,6 +10,8 @@ from sdl2promela.sdl.model import (
     Model,
     NextState,
     Output,
+    ProcedureCall,
+    ProcedureParameterDirection,
     VariableReference,
     BinaryOperator,
     ForLoopTask,
@@ -231,3 +233,81 @@ def test_model_reads_for_with_range():
     assert task.range.start.value == "0"
     assert task.range.stop.value == "10"
     assert task.range.step.value == "2"
+
+
+def test_model_reads_procedure_calls():
+    path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
+    # There are 3 expected warning regarding the range
+    process = read_main_process(path, 3)
+
+    model = Model(process)
+    assert len(model.transitions) == 2
+    actions = model.transitions[1].actions
+    assert len(actions) == 4
+    assert isinstance(actions[0], ProcedureCall)
+    assert actions[0].name == "proc"
+    assert len(actions[0].parameters) == 0
+    assert isinstance(actions[1], AssignmentTask)
+    right = actions[1].assignment.right
+    assert isinstance(right, ProcedureCall)
+    assert right.name == "procWithArguments"
+    assert len(right.parameters) == 3
+    assert isinstance(right.parameters[0], Constant)
+    assert isinstance(right.parameters[1], VariableReference)
+    assert isinstance(right.parameters[2], VariableReference)
+    assert isinstance(actions[2], ProcedureCall)
+    assert actions[2].name == "procWithLocalVariables"
+    assert len(actions[2].parameters) == 0
+    assert isinstance(actions[3], ProcedureCall)
+    assert actions[3].name == "procWithOutput"
+    assert len(actions[3].parameters) == 0
+
+
+def test_model_reads_internal_procedures():
+    path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
+    # There are 3 expected warning regarding the range
+    process = read_main_process(path, 3)
+
+    model = Model(process)
+
+    assert len(model.procedures) == 4
+    proc = model.procedures["proc"]
+    assert proc is not None
+    assert proc.name == "proc"
+    assert len(proc.parameters) == 0
+    assert len(proc.variables) == 0
+    assert len(proc.transition.actions) > 0
+
+    procWithLocalVariables = model.procedures["procWithLocalVariables"]
+    assert procWithLocalVariables is not None
+    assert procWithLocalVariables.name == "procWithLocalVariables"
+    assert len(procWithLocalVariables.parameters) == 0
+    assert len(procWithLocalVariables.variables) == 2
+    assert procWithLocalVariables.variables["l1"] is not None
+    assert procWithLocalVariables.variables["l1"][0].ReferencedTypeName == "MyInteger"
+    assert procWithLocalVariables.variables["l2"] is not None
+    assert procWithLocalVariables.variables["l2"][0].ReferencedTypeName == "MyInteger"
+    assert len(procWithLocalVariables.transition.actions) > 0
+
+    procWithOutput = model.procedures["procWithOutput"]
+    assert procWithOutput is not None
+    assert procWithOutput.name == "procWithOutput"
+    assert len(procWithOutput.parameters) == 0
+    assert len(procWithOutput.variables) == 0
+    assert len(procWithOutput.transition.actions) > 0
+
+    procWithArguments = model.procedures["procWithArguments"]
+    assert procWithArguments is not None
+    assert procWithArguments.name == "procWithArguments"
+    assert len(procWithArguments.parameters) == 3
+    assert procWithArguments.parameters[0].name == "p1"
+    assert procWithArguments.parameters[0].direction == ProcedureParameterDirection.IN
+    assert procWithArguments.parameters[0].typeObject.ReferencedTypeName == "MyInteger"
+    assert procWithArguments.parameters[1].name == "p2"
+    assert procWithArguments.parameters[1].direction == ProcedureParameterDirection.IN
+    assert procWithArguments.parameters[1].typeObject.ReferencedTypeName == "MyInteger"
+    assert procWithArguments.parameters[2].name == "r"
+    assert procWithArguments.parameters[2].direction == ProcedureParameterDirection.OUT
+    assert procWithArguments.parameters[2].typeObject.ReferencedTypeName == "MyInteger"
+    assert len(procWithArguments.variables) == 0
+    assert len(procWithArguments.transition.actions) > 0

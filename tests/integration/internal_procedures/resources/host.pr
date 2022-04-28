@@ -1,0 +1,75 @@
+/* CIF Keep Specific Geode ASNFilename 'dataview-uniq.asn' */
+use Datamodel;
+
+system Host;
+
+   /* CIF Keep Specific Geode PARAMNAMES x */
+   signal trigger (MyInteger);
+
+   /* CIF Keep Specific Geode PARAMNAMES x */
+   signal action (MyInteger);
+
+   channel c
+      from env to Host with trigger;
+      from Host to env with action;
+   endchannel;
+
+   block Host;
+
+      signalroute r
+      from env to Host with trigger;
+      from Host to env with action;
+      connect c and r;
+
+/* CIF PROCESS (250, 150), (150, 75) */
+process Host;
+    /* CIF TEXT (425, 0), (267, 140) */
+    DCL x MyInteger;
+    DCL y MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF procedure (815, 246), (91, 40) */
+    procedure multireturn;
+        /* CIF TEXT (77, 33), (177, 88) */
+        fpar 
+        in a MyInteger;
+        returns MyInteger;
+        
+        DCL r MyInteger;
+        /* CIF ENDTEXT */
+        /* CIF START (451, 134), (70, 35) */
+        START;
+            /* CIF decision (451, 189), (70, 50) */
+            decision a;
+                /* CIF ANSWER (406, 259), (70, 24) */
+                (> 10):
+                    /* CIF task (406, 303), (70, 35) */
+                    task r := a * 2;
+                    /* CIF return (424, 358), (35, 35) */
+                    return r;
+                /* CIF ANSWER (496, 259), (70, 24) */
+                (<= 10):
+                    /* CIF task (495, 303), (71, 35) */
+                    task r := a + 1;
+                    /* CIF return (514, 358), (35, 35) */
+                    return a * r;
+            enddecision;
+    endprocedure;
+   
+    /* CIF START (320, 326), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 376), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (450, 326), (70, 35) */
+    state Wait;
+        /* CIF input (442, 381), (78, 35) */
+        input trigger(x);
+            /* CIF task (405, 651), (152, 35) */
+            task y := call multireturn(x);
+            /* CIF output (405, 800), (184, 35) */
+            output action(y);
+            /* CIF NEXTSTATE (447, 706), (70, 35) */
+            NEXTSTATE wait;
+    endstate;
+endprocess Host;
+   endblock;
+endsystem;
