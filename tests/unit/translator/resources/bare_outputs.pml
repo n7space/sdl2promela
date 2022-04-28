@@ -26,6 +26,6 @@ inline bare_outputs_0_PI_0_signal_in()
   ::(global_state.bare_outputs.state == bare_outputs_States_state_1)->
     bare_outputs_0_transition(1);
   ::else->
-    break;
+    skip;
   fi;
 }

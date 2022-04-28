@@ -66,6 +66,53 @@ OCTET_STRING_TYPE_NAME = "OctetStringType"
 BIT_STRING_TYPE_NAME = "BitStringType"
 
 
+class Context:
+    """Translator context."""
+
+    sdl_model: sdlmodel.Model
+    """Model that is being translated."""
+
+    parents: List[object]
+    """Stack of objects that are being translated."""
+
+    def __init__(self, sdl_model: sdlmodel.Model):
+        self.sdl_model = sdl_model
+        self.parents = []
+
+    def push_parent(self, parent: object):
+        """
+        Push parent onto the parent stack.
+        :param parent: Parent to be pushed.
+        """
+        self.parents.append(parent)
+
+    def pop_parent(self):
+        """
+        Remove the current parent from the stack.
+        """
+        self.parents.pop()
+
+    def get_parent_transition(self) -> sdlmodel.Transition:
+        """
+        Return the current parent transition.
+        :returns: Current parent transition, or None if outside of any.
+        """
+        for parent in reversed(self.parents):
+            if isinstance(parent, sdlmodel.Transition):
+                return parent
+        return None
+
+    def get_parent_procedure(self) -> sdlmodel.Procedure:
+        """
+        Return the current parent procedure.
+        :returns: Current parent procedure, or None if outside of any.
+        """
+        for parent in reversed(self.parents):
+            if isinstance(parent, sdlmodel.Procedure):
+                return parent
+        return None
+
+
 def __get_assign_value_inline_name(type: object) -> str:
     return "{}_assign_value".format(type.CName)
 
@@ -80,96 +127,136 @@ def __get_promela_binary_operator(
     return __BINARY_OPERATOR_DICTIONARY[op]
 
 
-def __get_transition_function_name(sdl_model: sdlmodel.Model) -> str:
-    return sdl_model.process_name + SEPARATOR + "transition"
+def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
+    return context.sdl_model.process_name + SEPARATOR + procedure_name
 
 
-def __get_input_function_name(sdl_model: sdlmodel.Model, input: sdlmodel.Input) -> str:
-    return sdl_model.process_name + SEPARATOR + "PI" + SEPARATOR + input.name
-
-
-def __get_init_function_name(sdl_model: sdlmodel.Model) -> str:
-    return sdl_model.process_name + SEPARATOR + __INIT
-
-
-def __get_state_variable_name(sdl_model: sdlmodel.Model) -> str:
+def __get_procedure_inline_end_label_name(context: Context, procedure_name: str) -> str:
     return (
-        __GLOBAL_STATE + "." + sdl_model.process_name.lower() + "." + __STATE_VARIABLE
+        context.sdl_model.process_name + SEPARATOR + procedure_name + SEPARATOR + "end"
     )
 
 
-def __get_variable_name(sdl_model: sdlmodel.Model, variable: str):
+def __get_procedure_inline_parameter_name(name: str) -> str:
+    return f"param_{name}"
+
+
+def __get_procedure_inline_return_name() -> str:
+    return "param_returns"
+
+
+def __get_transition_function_name(context: Context) -> str:
+    return context.sdl_model.process_name + SEPARATOR + "transition"
+
+
+def __get_input_function_name(context: Context, input: sdlmodel.Input) -> str:
+    return context.sdl_model.process_name + SEPARATOR + "PI" + SEPARATOR + input.name
+
+
+def __get_init_function_name(context: Context) -> str:
+    return context.sdl_model.process_name + SEPARATOR + __INIT
+
+
+def __get_state_variable_name(context: Context) -> str:
     return (
-        MemberAccessBuilder()
-        .withUtypeReference(
+        __GLOBAL_STATE
+        + "."
+        + context.sdl_model.process_name.lower()
+        + "."
+        + __STATE_VARIABLE
+    )
+
+
+def __is_local_variable(context: Context, variable: str):
+    procedure = context.get_parent_procedure()
+    if procedure is not None:
+        if variable in procedure.variables.keys():
+            return True
+        else:
+            for parameter in procedure.parameters:
+                if parameter.name == variable:
+                    return True
+    return False
+
+
+def __get_variable_name(context: Context, variable: str):
+
+    if __is_local_variable(context, variable):
+        return VariableReferenceBuilder(variable.lower()).build()
+    else:
+        return (
             MemberAccessBuilder()
-            .withUtypeReference(VariableReferenceBuilder(__GLOBAL_STATE).build())
-            .withMember(
-                VariableReferenceBuilder(sdl_model.process_name.lower()).build()
+            .withUtypeReference(
+                MemberAccessBuilder()
+                .withUtypeReference(VariableReferenceBuilder(__GLOBAL_STATE).build())
+                .withMember(
+                    VariableReferenceBuilder(
+                        context.sdl_model.process_name.lower()
+                    ).build()
+                )
+                .build()
             )
+            .withMember(VariableReferenceBuilder(variable.lower()).build())
             .build()
         )
-        .withMember(VariableReferenceBuilder(variable.lower()).build())
-        .build()
-    )
 
 
 def __get_constant_name(
-    sdl_model: sdlmodel.Model, constant_reference: sdlmodel.ConstantReference
+    context: Context, constant_reference: sdlmodel.ConstantReference
 ):
     if constant_reference.constantName == "{}_ctxt".format(
-        sdl_model.process_implementation_name.lower()
+        context.sdl_model.process_implementation_name.lower()
     ):
         # When process is an instance of process type,
         # this reference name shall be overwriten
-        return "{}_ctxt".format(sdl_model.process_name.lower())
+        return "{}_ctxt".format(context.sdl_model.process_name.lower())
 
     else:
         return constant_reference.constantName.lower()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.VariableReference, bool)
+@dispatch(Context, sdlmodel.VariableReference, bool)
 def __generate_variable_name(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     variable_reference: sdlmodel.VariableReference,
     toplevel: bool,
 ):
     if toplevel:
-        return __get_variable_name(sdl_model, variable_reference.variableName)
+        return __get_variable_name(context, variable_reference.variableName)
     else:
         return VariableReferenceBuilder(variable_reference.variableName.lower()).build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.ConstantReference, bool)
+@dispatch(Context, sdlmodel.ConstantReference, bool)
 def __generate_variable_name(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     constant_reference: sdlmodel.ConstantReference,
     toplevel: bool,
 ):
     return VariableReferenceBuilder(
-        __get_constant_name(sdl_model, constant_reference)
+        __get_constant_name(context, constant_reference)
     ).build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.MemberAccess, bool)
+@dispatch(Context, sdlmodel.MemberAccess, bool)
 def __generate_variable_name(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     member_access: sdlmodel.MemberAccess,
     toplevel: bool,
 ):
     return (
         MemberAccessBuilder()
         .withUtypeReference(
-            __generate_variable_name(sdl_model, member_access.sequence, toplevel)
+            __generate_variable_name(context, member_access.sequence, toplevel)
         )
-        .withMember(__generate_variable_name(sdl_model, member_access.member, False))
+        .withMember(__generate_variable_name(context, member_access.member, False))
         .build()
     )
 
 
-@dispatch(sdlmodel.Model, sdlmodel.ArrayAccess, bool)
+@dispatch(Context, sdlmodel.ArrayAccess, bool)
 def __generate_variable_name(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     array_access: sdlmodel.ArrayAccess,
     toplevel: bool,
 ):
@@ -178,53 +265,45 @@ def __generate_variable_name(
         .withArray(
             MemberAccessBuilder()
             .withUtypeReference(
-                __generate_variable_name(sdl_model, array_access.array, toplevel)
+                __generate_variable_name(context, array_access.array, toplevel)
             )
             .withMember(VariableReferenceBuilder(SEQUENCEOF_DATA_MEMBER_NAME).build())
             .build()
         )
-        .withIndex(__generate_expression(sdl_model, array_access.element))
+        .withIndex(__generate_expression(context, array_access.element))
         .build()
     )
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Constant)
-def __generate_expression(sdl_model: sdlmodel.Model, constant: sdlmodel.Constant):
+@dispatch(Context, sdlmodel.Constant)
+def __generate_expression(context: Context, constant: sdlmodel.Constant):
     return VariableReferenceBuilder(constant.value).build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.VariableReference)
-def __generate_expression(
-    sdl_model: sdlmodel.Model, variable: sdlmodel.VariableReference
-):
-    return __generate_variable_name(sdl_model, variable, True)
+@dispatch(Context, sdlmodel.VariableReference)
+def __generate_expression(context: Context, variable: sdlmodel.VariableReference):
+    return __generate_variable_name(context, variable, True)
 
 
-@dispatch(sdlmodel.Model, sdlmodel.EnumValue)
-def __generate_expression(sdl_model: sdlmodel.Model, enumValue: sdlmodel.EnumValue):
-    finalType = resolve_asn1_type(sdl_model.types, enumValue.type)
+@dispatch(Context, sdlmodel.EnumValue)
+def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
+    finalType = resolve_asn1_type(context.sdl_model.types, enumValue.type)
     value = "{}_{}".format(finalType.CName, enumValue.value)
     return VariableReferenceBuilder(value).build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.ArrayAccess)
-def __generate_expression(
-    sdl_model: sdlmodel.Model, array_access: sdlmodel.ArrayAccess
-):
-    return __generate_variable_name(sdl_model, array_access, True)
+@dispatch(Context, sdlmodel.ArrayAccess)
+def __generate_expression(context: Context, array_access: sdlmodel.ArrayAccess):
+    return __generate_variable_name(context, array_access, True)
 
 
-@dispatch(sdlmodel.Model, sdlmodel.MemberAccess)
-def __generate_expression(
-    sdl_model: sdlmodel.Model, member_access: sdlmodel.MemberAccess
-):
-    return __generate_variable_name(sdl_model, member_access, True)
+@dispatch(Context, sdlmodel.MemberAccess)
+def __generate_expression(context: Context, member_access: sdlmodel.MemberAccess):
+    return __generate_variable_name(context, member_access, True)
 
 
-@dispatch(sdlmodel.Model, sdlmodel.BinaryExpression)
-def __generate_expression(
-    sdl_model: sdlmodel.Model, expression: sdlmodel.BinaryExpression
-):
+@dispatch(Context, sdlmodel.BinaryExpression)
+def __generate_expression(context: Context, expression: sdlmodel.BinaryExpression):
     if expression.operator == sdlmodel.BinaryOperator.ASSIGN:
         pass
     elif expression.operator == sdlmodel.BinaryOperator.XOR:
@@ -234,18 +313,18 @@ def __generate_expression(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
                 .withLeft(
                     UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
-                    .withExpression(__generate_expression(sdl_model, expression.left))
+                    .withExpression(__generate_expression(context, expression.left))
                     .build()
                 )
-                .withRight(__generate_expression(sdl_model, expression.right))
+                .withRight(__generate_expression(context, expression.right))
                 .build()
             )
             .withRight(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
-                .withLeft(__generate_expression(sdl_model, expression.left))
+                .withLeft(__generate_expression(context, expression.left))
                 .withRight(
                     UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
-                    .withExpression(__generate_expression(sdl_model, expression.right))
+                    .withExpression(__generate_expression(context, expression.right))
                     .build()
                 )
                 .build()
@@ -257,13 +336,13 @@ def __generate_expression(
             BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
             .withLeft(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
-                .withLeft(__generate_expression(sdl_model, expression.left))
-                .withRight(__generate_expression(sdl_model, expression.right))
+                .withLeft(__generate_expression(context, expression.left))
+                .withRight(__generate_expression(context, expression.right))
                 .build()
             )
             .withRight(
                 UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
-                .withExpression(__generate_expression(sdl_model, expression.left))
+                .withExpression(__generate_expression(context, expression.left))
                 .build()
             )
             .build()
@@ -271,16 +350,14 @@ def __generate_expression(
     else:
         return (
             BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
-            .withLeft(__generate_expression(sdl_model, expression.left))
-            .withRight(__generate_expression(sdl_model, expression.right))
+            .withLeft(__generate_expression(context, expression.left))
+            .withRight(__generate_expression(context, expression.right))
             .build()
         )
 
 
-@dispatch(sdlmodel.Model, sdlmodel.UnaryExpression)
-def __generate_expression(
-    sdl_model: sdlmodel.Model, expression: sdlmodel.UnaryExpression
-):
+@dispatch(Context, sdlmodel.UnaryExpression)
+def __generate_expression(context: Context, expression: sdlmodel.UnaryExpression):
     if expression.operator == sdlmodel.UnaryOperator.NEG:
         operator = promelamodel.UnaryOperator.NEGATIVE
     elif expression.operator == sdlmodel.UnaryOperator.NOT:
@@ -293,8 +370,21 @@ def __generate_expression(
         )
     return (
         UnaryExpressionBuilder(operator)
-        .withExpression(__generate_expression(sdl_model, expression.expression))
+        .withExpression(__generate_expression(context, expression.expression))
         .build()
+    )
+
+
+@dispatch(Context, sdlmodel.ProcedureCall)
+def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
+    # As promela inlines cannot be used within expressions, this cannot be
+    # implemented directly. A workaround is possible by preprocessing
+    # the statements such that expressions containing calls are split
+    # into separate expressions for the calls, assigning results to intermediate values
+    # and then using this values in the actual expression
+    # TODO
+    raise NotImplementedError(
+        f"Call to {str(expression.name)} cannot be made within an expression"
     )
 
 
@@ -302,27 +392,88 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
     return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
 
 
-def __get_state_name(sdl_model: sdlmodel.Model, state: sdlmodel.State) -> str:
-    return sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
+def __get_state_name(context: Context, state: sdlmodel.State) -> str:
+    return (
+        context.sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
+    )
 
 
-def __get_remote_function_name(
-    sdl_model: sdlmodel.Model, output: sdlmodel.Output
-) -> str:
-    return sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
+def __get_remote_function_name(context: Context, output: sdlmodel.Output) -> str:
+    return context.sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
+
+
+def __generate_procedure_inline(
+    context: Context, procedure: sdlmodel.Procedure
+) -> promelamodel.Inline:
+    context.push_parent(procedure)
+    builder = InlineBuilder()
+    builder.withName(__get_procedure_inline_name(context, procedure.name))
+    blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for localVariable, localVariableTypeObject in procedure.variables.items():
+        localVariableType = resolve_asn1_type(
+            context.sdl_model.types, localVariableTypeObject[0]
+        )
+        blockBuilder.withStatement(
+            VariableDeclarationBuilder(localVariable, localVariableType.CName).build()
+        )
+    # Procedure return, if any, is handled via the first parameter
+    if procedure.returnType is not None:
+        builder.withParameter(__get_procedure_inline_return_name())
+    for parameter in procedure.parameters:
+        # Inlines are like macros. For a call foo(1+3), the 1+3 will be used
+        # wherever the parameter is referenced. To avoid that, an intermediate
+        # variable is introduced. This can be done only for inputs, as for outputs
+        # such expressions are forbidden, and an intermediate variable would make
+        # the output value propagation more difficult
+        if parameter.direction == sdlmodel.ProcedureParameterDirection.IN:
+            intermediateParameterName = __get_procedure_inline_parameter_name(
+                parameter.name
+            )
+            builder.withParameter(intermediateParameterName)
+            parameterType = resolve_asn1_type(
+                context.sdl_model.types, parameter.typeObject
+            )
+            blockBuilder.withStatement(
+                VariableDeclarationBuilder(parameter.name, parameterType.CName).build()
+            )
+            assignInlineName = __get_assign_value_inline_name(parameterType)
+            blockBuilder.withStatements(
+                [
+                    CallBuilder()
+                    .withTarget(assignInlineName)
+                    .withParameter(VariableReferenceBuilder(parameter.name).build())
+                    .withParameter(
+                        VariableReferenceBuilder(intermediateParameterName).build()
+                    )
+                    .build()
+                ]
+            )
+        else:
+            builder.withParameter(parameter.name)
+    blockBuilder.withStatements(__generate_transition(context, procedure.transition))
+    # This can be optimized - not needed if there is only one return, but both the return statement
+    # and this part must be aware of the decision.
+    blockBuilder.withStatement(
+        promelamodel.Label(
+            __get_procedure_inline_end_label_name(context, procedure.name)
+        )
+    )
+    builder.withDefinition(blockBuilder.build())
+    context.pop_parent()
+    return builder.build()
 
 
 def __generate_input_function(
-    sdl_model: sdlmodel.Model, input: sdlmodel.Input
+    context: Context, input: sdlmodel.Input
 ) -> promelamodel.Inline:
     builder = InlineBuilder()
-    builder.withName(__get_input_function_name(sdl_model, input))
+    builder.withName(__get_input_function_name(context, input))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
     for parameter in input.parameters:
         builder.withParameter(__get_parameter_name(parameter.target_variable))
 
-        variable = sdl_model.variables[parameter.target_variable.variableName]
-        variableType = resolve_asn1_type(sdl_model.types, variable[0])
+        variable = context.sdl_model.variables[parameter.target_variable.variableName]
+        variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
         assignInlineName = __get_assign_value_inline_name(variableType)
 
         blockBuilder.withStatements(
@@ -330,7 +481,7 @@ def __generate_input_function(
                 CallBuilder()
                 .withTarget(assignInlineName)
                 .withParameter(
-                    __generate_variable_name(sdl_model, parameter.target_variable, True)
+                    __generate_variable_name(context, parameter.target_variable, True)
                 )
                 .withParameter(
                     VariableReferenceBuilder(
@@ -343,8 +494,8 @@ def __generate_input_function(
 
     switch_builder = SwitchBuilder()
 
-    state_variable_name = __get_state_variable_name(sdl_model)
-    transition_function_name = __get_transition_function_name(sdl_model)
+    state_variable_name = __get_state_variable_name(context)
+    transition_function_name = __get_transition_function_name(context)
 
     for state, transition_id in input.transitions.items():
         switch_builder.withAlternative(
@@ -353,7 +504,7 @@ def __generate_input_function(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
                 .withLeft(VariableReferenceBuilder(state_variable_name).build())
                 .withRight(
-                    VariableReferenceBuilder(__get_state_name(sdl_model, state)).build()
+                    VariableReferenceBuilder(__get_state_name(context, state)).build()
                 )
                 .build()
             )
@@ -369,7 +520,7 @@ def __generate_input_function(
         )
 
     switch_builder.withAlternative(
-        AlternativeBuilder().withStatements([promelamodel.Break()]).build()
+        AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
     )
 
     blockBuilder.withStatements([switch_builder.build()])
@@ -378,7 +529,7 @@ def __generate_input_function(
 
 
 def __translate_answer_condition(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     left: sdlmodel.Expression,
     right: sdlmodel.Expression,
@@ -388,30 +539,30 @@ def __translate_answer_condition(
         expression.left = left
         expression.operator = right.operator
         expression.right = right.right
-        return __generate_expression(sdl_model, expression)
+        return __generate_expression(context, expression)
     raise NotImplementedError(
         "translate_answer_condition not implemented for " + left + " and " + right
     )
 
 
 @dispatch
-def __generate_statement(sdl_model, transition, action) -> promelamodel.Statement:
+def __generate_statement(context, transition, action) -> promelamodel.Statement:
     raise NotImplementedError("generate_statement not implemented for " + action)
 
 
 def __generate_for_over_a_numeric_range(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     task: sdlmodel.ForLoopTask,
     inner_statements: List[promelamodel.Statement],
 ) -> promelamodel.Statement:
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    iteratorReference = __generate_variable_name(sdl_model, task.iteratorName, True)
+    iteratorReference = __generate_variable_name(context, task.iteratorName, True)
     block_builder.withStatements(
         [
             AssignmentBuilder()
             .withTarget(iteratorReference)
-            .withSource(__generate_expression(sdl_model, task.range.start))
+            .withSource(__generate_expression(context, task.range.start))
             .build()
         ]
     )
@@ -423,7 +574,7 @@ def __generate_for_over_a_numeric_range(
                 .withCondition(
                     BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
                     .withLeft(iteratorReference)
-                    .withRight(__generate_expression(sdl_model, task.range.stop))
+                    .withRight(__generate_expression(context, task.range.stop))
                     .build()
                 )
                 .withStatements(inner_statements)
@@ -434,9 +585,7 @@ def __generate_for_over_a_numeric_range(
                         .withSource(
                             BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
                             .withLeft(iteratorReference)
-                            .withRight(
-                                __generate_expression(sdl_model, task.range.step)
-                            )
+                            .withRight(__generate_expression(context, task.range.step))
                             .build()
                         )
                         .build()
@@ -453,20 +602,20 @@ def __generate_for_over_a_numeric_range(
     return block_builder.build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.ForLoopTask)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.ForLoopTask)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     task: sdlmodel.ForLoopTask,
 ) -> promelamodel.Statement:
     inner_statements = []
     for action in task.actions:
-        statement = __generate_statement(sdl_model, transition, action)
+        statement = __generate_statement(context, transition, action)
         inner_statements.append(statement)
 
     if isinstance(task.range, sdlmodel.NumericForLoopRange):
         return __generate_for_over_a_numeric_range(
-            sdl_model, transition, task, inner_statements
+            context, transition, task, inner_statements
         )
     else:
         raise NotImplementedError(
@@ -474,32 +623,63 @@ def __generate_statement(
         )
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Label)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.Label)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     label: sdlmodel.Label,
 ) -> promelamodel.Statement:
     return promelamodel.Label(label.name)
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Join)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.Join)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     join: sdlmodel.Join,
 ) -> promelamodel.Statement:
     return promelamodel.GoTo(join.label_name)
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.AssignmentTask)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureReturn)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
+    transition: sdlmodel.Transition,
+    procedureReturn: sdlmodel.ProcedureReturn,
+) -> promelamodel.Statement:
+    assert isinstance(transition.parent, sdlmodel.Procedure)
+    if procedureReturn.expression is None:
+        return None
+    resolvedType = resolve_asn1_type(
+        context.sdl_model.types, transition.parent.returnType
+    )
+    assignInlineName = __get_assign_value_inline_name(resolvedType)
+    statements = []
+    statements.append(
+        CallBuilder()
+        .withTarget(assignInlineName)
+        .withParameter(
+            VariableReferenceBuilder(__get_procedure_inline_return_name()).build()
+        )
+        .withParameter(__generate_expression(context, procedureReturn.expression))
+        .build()
+    )
+    statements.append(
+        promelamodel.GoTo(
+            __get_procedure_inline_end_label_name(context, transition.parent.name)
+        )
+    )
+    return promelamodel.StatementsWrapper(statements)
+
+
+@dispatch(Context, sdlmodel.Transition, sdlmodel.AssignmentTask)
+def __generate_statement(
+    context: Context,
     transition: sdlmodel.Transition,
     assignment: sdlmodel.AssignmentTask,
 ) -> promelamodel.Statement:
     statements: List[promelamodel.Statement] = __generate_assignment(
-        sdl_model,
+        context,
         assignment.assignment.left,
         assignment.assignment.right,
         assignment.type,
@@ -515,7 +695,7 @@ def __generate_statement(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -525,31 +705,39 @@ def __generate_statement(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.Expression,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
-
-    assignInlineName = __get_assign_value_inline_name(finalType)
-
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
-    statements.append(
-        CallBuilder()
-        .withTarget(assignInlineName)
-        .withParameter(__generate_variable_name(sdl_model, left, True))
-        .withParameter(__generate_expression(sdl_model, right))
-        .build()
-    )
+    if isinstance(right, sdlmodel.ProcedureCall):
+        # Inlines cannot return a value, and so the return is handled via
+        # the first parameter
+        inlineCall = CallBuilder()
+        inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
+        inlineCall.withParameter(__generate_variable_name(context, left, True))
+        for parameter in right.parameters:
+            inlineCall.withParameter(__generate_expression(context, parameter))
+        statements.append(inlineCall.build())
+    else:
+        assignInlineName = __get_assign_value_inline_name(finalType)
+        statements.append(
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(__generate_variable_name(context, left, True))
+            .withParameter(__generate_expression(context, right))
+            .build()
+        )
 
     return statements
 
 
 def append_length_assignment_for_string_type(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     statements: List[promelamodel.Statement],
     target: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
@@ -559,7 +747,7 @@ def append_length_assignment_for_string_type(
 ):
     length_field = (
         MemberAccessBuilder()
-        .withUtypeReference(__generate_variable_name(sdl_model, target, True))
+        .withUtypeReference(__generate_variable_name(context, target, True))
         .withMember(VariableReferenceBuilder(STRING_LENGTH_MEMBER_NAME).build())
         .build()
     )
@@ -575,7 +763,7 @@ def append_length_assignment_for_string_type(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -585,14 +773,14 @@ def append_length_assignment_for_string_type(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.EmptyStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if (
         finalType.kind == OCTET_STRING_TYPE_NAME
         or finalType.kind == IA5_STRING_TYPE_NAME
@@ -607,13 +795,13 @@ def __generate_assignment(
         statements: List[promelamodel.Statement] = []
 
         append_length_assignment_for_string_type(
-            sdl_model, statements, left, finalType, 0
+            context, statements, left, finalType, 0
         )
 
         for index in range(int(finalType.Max)):
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(sdl_model, data_field, True))
+                .withArray(__generate_variable_name(context, data_field, True))
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -640,7 +828,7 @@ def check_length_constraint(target_type: object, length: int):
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -650,14 +838,14 @@ def check_length_constraint(target_type: object, length: int):
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.StringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if (
         finalType.kind == OCTET_STRING_TYPE_NAME
         or finalType.kind == IA5_STRING_TYPE_NAME
@@ -671,7 +859,7 @@ def __generate_assignment(
         statements: List[promelamodel.Statement] = []
 
         append_length_assignment_for_string_type(
-            sdl_model, statements, left, finalType, length
+            context, statements, left, finalType, length
         )
 
         for index in range(int(finalType.Max)):
@@ -680,7 +868,7 @@ def __generate_assignment(
             )
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(sdl_model, data_field, True))
+                .withArray(__generate_variable_name(context, data_field, True))
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -696,7 +884,7 @@ def __generate_assignment(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -706,14 +894,14 @@ def __generate_assignment(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.OctetStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if (
         finalType.kind == OCTET_STRING_TYPE_NAME
         or finalType.kind == IA5_STRING_TYPE_NAME
@@ -728,7 +916,7 @@ def __generate_assignment(
         statements: List[promelamodel.Statement] = []
 
         append_length_assignment_for_string_type(
-            sdl_model, statements, left, finalType, length
+            context, statements, left, finalType, length
         )
 
         for index in range(int(finalType.Max)):
@@ -737,7 +925,7 @@ def __generate_assignment(
             )
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(sdl_model, data_field, True))
+                .withArray(__generate_variable_name(context, data_field, True))
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -753,7 +941,7 @@ def __generate_assignment(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -763,14 +951,14 @@ def __generate_assignment(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.BitStringValue,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if (
         finalType.kind == OCTET_STRING_TYPE_NAME
         or finalType.kind == IA5_STRING_TYPE_NAME
@@ -781,7 +969,7 @@ def __generate_assignment(
         statements: List[promelamodel.Statement] = []
 
         append_length_assignment_for_string_type(
-            sdl_model, statements, left, finalType, length
+            context, statements, left, finalType, length
         )
 
         for index in range(int(finalType.Max)):
@@ -790,7 +978,7 @@ def __generate_assignment(
             )
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(sdl_model, left, True))
+                .withArray(__generate_variable_name(context, left, True))
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -806,7 +994,7 @@ def __generate_assignment(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -816,14 +1004,14 @@ def __generate_assignment(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.Sequence,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if finalType.kind != SEQUENCE_TYPE_NAME:
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE value"
@@ -841,7 +1029,7 @@ def __generate_assignment(
         if name in right.elements:
             statements.extend(
                 __generate_assignment(
-                    sdl_model,
+                    context,
                     sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name)),
                     right.elements[name],
                     dataType.type,
@@ -857,7 +1045,7 @@ def __generate_assignment(
                     .withUtypeReference(
                         MemberAccessBuilder()
                         .withUtypeReference(
-                            __generate_variable_name(sdl_model, left, True)
+                            __generate_variable_name(context, left, True)
                         )
                         .withMember(
                             VariableReferenceBuilder(SEQUENCE_EXIST_MEMBER_NAME).build()
@@ -875,7 +1063,7 @@ def __generate_assignment(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -885,14 +1073,14 @@ def __generate_assignment(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.SequenceOf,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     if finalType.kind != SEQUENCEOF_TYPE_NAME:
         raise Exception(
             f"Invalid assignment: {finalType.CName} does not accept SEQUENCE OF value"
@@ -906,7 +1094,7 @@ def __generate_assignment(
 
     length_field = (
         MemberAccessBuilder()
-        .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+        .withUtypeReference(__generate_variable_name(context, left, True))
         .withMember(VariableReferenceBuilder(SEQUENCEOF_LENGTH_MEMBER_NAME).build())
         .build()
     )
@@ -924,7 +1112,7 @@ def __generate_assignment(
     for index in range(length):
         statements.extend(
             __generate_assignment(
-                sdl_model,
+                context,
                 sdlmodel.ArrayAccess(left, sdlmodel.Constant(str(index))),
                 right.elements[index],
                 finalType.type,
@@ -935,7 +1123,7 @@ def __generate_assignment(
 
 
 @dispatch(
-    sdlmodel.Model,
+    Context,
     (
         sdlmodel.VariableReference,
         sdlmodel.ArrayAccess,
@@ -945,14 +1133,14 @@ def __generate_assignment(
     type,
 )
 def __generate_assignment(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     left: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
     right: sdlmodel.Choice,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(sdl_model.types, left_type)
+    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
 
     if right.choice not in finalType.Children:
@@ -968,7 +1156,7 @@ def __generate_assignment(
 
     selection_field = (
         MemberAccessBuilder()
-        .withUtypeReference(__generate_variable_name(sdl_model, left, True))
+        .withUtypeReference(__generate_variable_name(context, left, True))
         .withMember(VariableReferenceBuilder(CHOICE_SELECTION_MEMBER_NAME).build())
         .build()
     )
@@ -988,15 +1176,15 @@ def __generate_assignment(
     )
 
     statements.extend(
-        __generate_assignment(sdl_model, data_field, right.value, valueType)
+        __generate_assignment(context, data_field, right.value, valueType)
     )
 
     return statements
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Decision)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.Decision)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     decision: sdlmodel.Decision,
 ) -> promelamodel.Statement:
@@ -1004,7 +1192,7 @@ def __generate_statement(
     for answer in decision.answers:
         statements = []
         for action in answer.actions:
-            statements.append(__generate_statement(sdl_model, transition, action))
+            statements.append(__generate_statement(context, transition, action))
         if len(statements) == 0:
             statements.append(promelamodel.Skip())
         for condition in answer.conditions:
@@ -1012,7 +1200,7 @@ def __generate_statement(
                 AlternativeBuilder()
                 .withCondition(
                     __translate_answer_condition(
-                        sdl_model, transition, decision.condition, condition
+                        context, transition, decision.condition, condition
                     )
                 )
                 .withStatements(statements)
@@ -1021,15 +1209,15 @@ def __generate_statement(
     return builder.build()
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.NextState)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.NextState)
 def __generate_statement(
-    sdl_model: sdlmodel.Model,
+    context: Context,
     transition: sdlmodel.Transition,
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
-    state_variable = __get_state_variable_name(sdl_model)
-    state = sdl_model.states[next_state.state_name.lower()]
-    state_name = __get_state_name(sdl_model, state)
+    state_variable = __get_state_variable_name(context)
+    state = context.sdl_model.states[next_state.state_name.lower()]
+    state_name = __get_state_name(context, state)
     return (
         AssignmentBuilder()
         .withTarget(VariableReferenceBuilder(state_variable).build())
@@ -1038,41 +1226,58 @@ def __generate_statement(
     )
 
 
-@dispatch(sdlmodel.Model, sdlmodel.Transition, sdlmodel.Output)
+@dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureCall)
 def __generate_statement(
-    sdl_model: sdlmodel.Model, transition: sdlmodel.Transition, output: sdlmodel.Output
+    context: Context,
+    transition: sdlmodel.Transition,
+    call: sdlmodel.ProcedureCall,
 ) -> promelamodel.Statement:
-    name = __get_remote_function_name(sdl_model, output)
+    inlineCall = CallBuilder()
+    inlineCall.withTarget(__get_procedure_inline_name(context, call.name))
+    for parameter in call.parameters:
+        inlineCall.withParameter(__generate_expression(context, parameter))
+    return inlineCall.build()
+
+
+@dispatch(Context, sdlmodel.Transition, sdlmodel.Output)
+def __generate_statement(
+    context: Context, transition: sdlmodel.Transition, output: sdlmodel.Output
+) -> promelamodel.Statement:
+    name = __get_remote_function_name(context, output)
     if len(output.parameters) == 0:
         return CallBuilder().withTarget(name).build()
     else:
-        parameter_name = __generate_variable_name(sdl_model, output.parameters[0], True)
+        parameter_name = __generate_variable_name(context, output.parameters[0], True)
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
 def __generate_transition(
-    sdl_model: sdlmodel.Model, transition: sdlmodel.Transition
+    context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
+    context.push_parent(transition)
     statements = []
     for action in transition.actions:
-        statements.append(__generate_statement(sdl_model, transition, action))
+        statements.append(__generate_statement(context, transition, action))
 
-    # TODO - this should be conditional
-    statements.append(
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
-        .withSource(VariableReferenceBuilder(__INVALID_ID).build())
-        .build()
-    )
+    if not isinstance(transition.parent, sdlmodel.Procedure):
+        # Procedures do not change the current transition
+        # TODO - this should be conditional
+        statements.append(
+            AssignmentBuilder()
+            .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+            .withSource(VariableReferenceBuilder(__INVALID_ID).build())
+            .build()
+        )
 
+    context.pop_parent()
     return statements
 
 
-def __generate_init_function(sdl_model: sdlmodel.Model) -> promelamodel.Inline:
+def __generate_init_function(context: Context) -> promelamodel.Inline:
     builder = InlineBuilder()
-    builder.withName(__get_init_function_name(sdl_model))
+    builder.withName(__get_init_function_name(context))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    transition_function_name = __get_transition_function_name(sdl_model)
+    transition_function_name = __get_transition_function_name(context)
     blockBuilder.withStatements(
         [
             CallBuilder()
@@ -1085,10 +1290,10 @@ def __generate_init_function(sdl_model: sdlmodel.Model) -> promelamodel.Inline:
     return builder.build()
 
 
-def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Statement:
+def __generate_continuous_signals(context: Context) -> promelamodel.Statement:
     inner_switch_builder = SwitchBuilder()
-    state_variable_name = __get_state_variable_name(sdl_model)
-    for name, signals in sdl_model.continuous_signals.items():
+    state_variable_name = __get_state_variable_name(context)
+    for name, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
             statements = []
             for signal in signals:
@@ -1096,7 +1301,7 @@ def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Sta
                     SwitchBuilder()
                     .withAlternative(
                         AlternativeBuilder()
-                        .withCondition(__generate_expression(sdl_model, signal.trigger))
+                        .withCondition(__generate_expression(context, signal.trigger))
                         .withStatements(
                             [
                                 AssignmentBuilder()
@@ -1118,8 +1323,8 @@ def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Sta
                     )
                     .build()
                 )
-            state = sdl_model.states[name]
-            state_name = __get_state_name(sdl_model, state)
+            state = context.sdl_model.states[name]
+            state_name = __get_state_name(context, state)
             inner_switch_builder.withAlternative(
                 AlternativeBuilder()
                 .withCondition(
@@ -1136,7 +1341,7 @@ def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Sta
         AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
     )
 
-    check_queue_inline = "{}_check_queue".format(sdl_model.process_name)
+    check_queue_inline = "{}_check_queue".format(context.sdl_model.process_name)
     switch_builder = SwitchBuilder()
     switch_builder.withAlternative(
         AlternativeBuilder()
@@ -1151,9 +1356,9 @@ def __generate_continuous_signals(sdl_model: sdlmodel.Model) -> promelamodel.Sta
     return switch_builder.build()
 
 
-def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.Inline:
+def __generate_transition_function(context: Context) -> promelamodel.Inline:
     builder = InlineBuilder()
-    builder.withName(__get_transition_function_name(sdl_model))
+    builder.withName(__get_transition_function_name(context))
     builder.withParameter(__TRANSITION_ARGUMENT)
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
 
@@ -1172,7 +1377,7 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
         .build()
     )
 
-    for id, transition in sdl_model.transitions.items():
+    for id, transition in context.sdl_model.transitions.items():
         switch_builder.withAlternative(
             AlternativeBuilder()
             .withCondition(
@@ -1181,25 +1386,25 @@ def __generate_transition_function(sdl_model: sdlmodel.Model) -> promelamodel.In
                 .withRight(VariableReferenceBuilder(str(id)).build())
                 .build()
             )
-            .withStatements(__generate_transition(sdl_model, transition))
+            .withStatements(__generate_transition(context, transition))
             .build()
         )
 
     statements = []
     statements.append(switch_builder.build())
     continuous_signals_present = False
-    for _, signals in sdl_model.continuous_signals.items():
+    for _, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
             continuous_signals_present = True
     if continuous_signals_present:
-        statements.append(__generate_continuous_signals(sdl_model))
-    if sdl_model.floating_labels:
+        statements.append(__generate_continuous_signals(context))
+    if context.sdl_model.floating_labels:
         statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
-        for name, label in sdl_model.floating_labels.items():
+        for name, label in context.sdl_model.floating_labels.items():
             statements.append(promelamodel.Label(name))
             fake_transition = sdlmodel.Transition()
             fake_transition.actions = label.actions
-            statements.extend(__generate_transition(sdl_model, fake_transition))
+            statements.extend(__generate_transition(context, fake_transition))
             statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
 
@@ -1226,9 +1431,13 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     :returns: Promela model.
     """
     builder = ModelBuilder()
-    builder.withInline(__generate_transition_function(sdl_model))
-    builder.withInline(__generate_init_function(sdl_model))
+    context = Context(sdl_model)
+    # Inlines for procedures must be first
+    for procedure in sdl_model.procedures.values():
+        builder.withInline(__generate_procedure_inline(context, procedure))
+    builder.withInline(__generate_transition_function(context))
+    builder.withInline(__generate_init_function(context))
     for name, input in sdl_model.inputs.items():
-        builder.withInline(__generate_input_function(sdl_model, input))
+        builder.withInline(__generate_input_function(context, input))
     model = builder.build()
     return model

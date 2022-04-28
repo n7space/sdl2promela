@@ -1,3 +1,4 @@
+from ast import arguments
 from typing import List, Dict, Union, Tuple
 from multipledispatch import dispatch
 from opengeode import ogAST
@@ -345,6 +346,26 @@ class UnaryExpression(Expression):
         )
 
 
+class ProcedureCall(Expression):
+    """Procedure call."""
+
+    name: str
+    """Name of the called procedure."""
+
+    parameters: List[Expression]
+    """List of call parameters (any expression is possible)."""
+
+    def __init__(self):
+        self.name = None
+        self.parameters = []
+
+    def __str__(self) -> str:
+        result = f"ProcedureCall(name={self.name},parameters="
+        result += ",".join(self.parameters)
+        result += ")"
+        return result
+
+
 class Action:
     """Base class for a transition action."""
 
@@ -409,6 +430,7 @@ class ForLoopTask(Task):
         self.iteratorName = None
 
 
+# TODO Investigate whether the parameters should actually be Expressions
 class Output(Action):
     """Signal output action."""
 
@@ -490,9 +512,13 @@ class Transition:
     actions: List[Action]
     """List of transition actions."""
 
+    parent: Union["Model", "Procedure"]
+    """Parent of the transition"""
+
     def __init__(self):
         self.id = 0
         self.actions = []
+        self.parent = None
 
 
 class FloatingLabel:
@@ -506,6 +532,74 @@ class FloatingLabel:
     def __init__(self):
         self.name = ""
         self.actions = []
+
+
+class ProcedureParameterDirection(Enum):
+    """Direction of a procedure parameter."""
+
+    IN = 1
+    """Input parameter."""
+
+    OUT = 2
+    """Output parameter."""
+
+
+class ProcedureReturn(Terminator):
+    """SDL procedure return statement."""
+
+    expression: Expression
+    """Return statement value."""
+
+    def __init__(self):
+        self.expression = None
+
+
+class ProcedureParameter:
+    """Procedure parameter."""
+
+    name: str
+    """Parameter name."""
+
+    direction: ProcedureParameterDirection
+    """Parameter direction."""
+
+    typeObject: object
+    """Parameter type."""
+
+    def __init__(self):
+        self.name = ""
+        self.direction = ProcedureParameterDirection.IN
+        self.typeObject = None
+
+
+class Procedure:
+    """SDL procedure."""
+
+    name: str
+    """Procedure name."""
+
+    parameters: List[ProcedureParameter]
+    """Procedure parameters."""
+
+    transition: Transition
+    """Procedure actions."""
+
+    variables: Dict[str, Tuple[object, object]]
+    """
+    All variables defined in the procedure, the key is a variable name,
+    The value is a tuple where first element is type and the second
+    is initial variable value.
+    """
+
+    returnType: object
+    """Procedure return type. Can be None."""
+
+    def __init__(self):
+        self.name = ""
+        self.parameters = []
+        self.variables = {}
+        self.transition = None
+        self.returnType = None
 
 
 def appendAllActions(destination, source):
@@ -899,6 +993,25 @@ def convert(source: ogAST.PrimIndex):
     return result
 
 
+@dispatch(ogAST.PrimCall)
+def convert(source: ogAST.PrimCall):
+    call = ProcedureCall()
+    call.name = source.value[0]
+    call.parameters = [
+        convert(expression) for expression in source.value[1]["procParams"]
+    ]
+    return call
+
+
+@dispatch(ogAST.ProcedureCall)
+def convert(source: ogAST.ProcedureCall):
+    call = ProcedureCall()
+    call.name = source.output[0]["outputName"]
+    call.parameters = [convert(expression) for expression in source.output[0]["params"]]
+
+    return call
+
+
 @dispatch(ogAST.Terminator)
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
@@ -911,6 +1024,11 @@ def convert(source: ogAST.Terminator) -> Action:
         join = Join()
         join.label_name = source.inputString
         return join
+    elif source.kind == "return":
+        r = ProcedureReturn()
+        if source.return_expr is not None:
+            r.expression = convert(source.return_expr)
+        return r
     else:
         raise ValueError("Unsupported terminator type: " + source)
     return None
@@ -984,6 +1102,8 @@ class Model:
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
+    procedures: Dict[str, Procedure]
+    """Dictionary of procedures."""
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1000,12 +1120,14 @@ class Model:
         self.transitions = {}
         self.types = getattr(self.source.DV, "types", {})
         self.variables = self.source.variables
+        self.procedures = {}
 
         self.__gather_states()
         self.__gather_inputs()
         self.__gather_continuous_signals()
         self.__gather_transitions()
         self.__gather_floating_labels()
+        self.__gather_procedures()
 
     def __gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -1084,6 +1206,7 @@ class Model:
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
         transition.actions = []
+        transition.parent = self
         appendAllActions(transition, source)
         return transition
 
@@ -1100,3 +1223,26 @@ class Model:
             if src_transition is not None:
                 appendAllActions(dst_label, src_transition)
             self.floating_labels[dst_label.name] = dst_label
+
+    def __gather_procedures(self):
+        for src_procedure in self.source.procedures:
+            procedure = Procedure()
+            procedure.name = src_procedure.inputString
+            procedure.variables = src_procedure.variables
+            procedure.returnType = src_procedure.return_type
+            for src_parameter in src_procedure.fpar:
+                parameter = ProcedureParameter()
+                parameter.name = src_parameter["name"]
+                parameter.direction = (
+                    ProcedureParameterDirection.OUT
+                    if src_parameter["direction"] == "out"
+                    else ProcedureParameterDirection.IN
+                )
+                parameter.typeObject = src_parameter["type"]
+                procedure.parameters.append(parameter)
+            if src_procedure.transitions[0] is not None:
+                procedure.transition = self.__convert_transition(
+                    src_procedure.transitions[0]
+                )
+                procedure.transition.parent = procedure
+            self.procedures[procedure.name] = procedure
