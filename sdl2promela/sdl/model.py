@@ -222,8 +222,11 @@ class Parameter:
     target_variable: VariableReference
     """Target variable reference."""
 
+    declared_type: object
+
     def __init__(self, name: str):
         self.target_variable = VariableReference(name)
+        self.declared_type = None
 
     def __str__(self):
         return f"Parameter(target_variable={self.target_variable})"
@@ -1139,6 +1142,8 @@ class Model:
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
+    implicit_variables: Dict[str, Tuple[object, object]]
+    """TODO"""
     procedures: Dict[str, Procedure]
     """Dictionary of procedures."""
     observer_attachments: List[ObserverAttachmentInfo]
@@ -1161,6 +1166,7 @@ class Model:
         self.types = getattr(self.source.DV, "types", {})
         self.variables = self.source.variables
         self.procedures = {}
+        self.implicit_variables = {}
 
         self.__gather_states()
         self.__gather_inputs()
@@ -1245,12 +1251,40 @@ class Model:
         for child in astItem.children:
             self.__extract_attachment_info(info, child)
 
+    def __assign_input_parameter_type(self, input: Input, signal: Dict):
+        declared_type = signal["type"]
+        if declared_type is None:
+            return
+        if len(input.parameters) != 1:
+            raise Exception(f"Signal {input.name} has type, but no parameter")
+        input.parameters[0].declared_type = declared_type
+
+    def __handle_implicit_variable_declarations(self, input_block: ogAST.Input):
+        if len(input_block.parameters) == 0:
+            return
+        # It has already been checked that at most one parameter is allowed
+        parameter_name = input_block.parameters[0]
+        if parameter_name not in self.source.aliases.keys():
+            # OpenGEODE creates aliases for implicit parameters
+            return
+        declared_type = self.variables[parameter_name]
+        if parameter_name in self.implicit_variables:
+            if declared_type != self.implicit_variables[parameter_name]:
+                raise Exception(
+                    f"{parameter_name} parameter type is inconsistent with an implicit variable declared earlier"
+                )
+        else:
+            self.implicit_variables[parameter_name] = declared_type
+
     def __gather_inputs(self):
         # Gather all inputs and their parameters
         for inputSignal in self.source.input_signals:
             input = Input()
             input.name = inputSignal["name"]
             input.parameters = self.__get_input_parameters(input.name)
+            if len(input.parameters) > 1:
+                raise Exception(f"Too many parameters for {input.name}")
+            self.__assign_input_parameter_type(input, inputSignal)
             input.transitions = {}
             if inputSignal["renames"] is not None:
                 info = ObserverAttachmentInfo()
@@ -1265,6 +1299,7 @@ class Model:
                 continue
             for input_block in input_list:
                 id = input_block.transition_id
+                self.__handle_implicit_variable_declarations(input_block)
                 # One Input block may refer to multiple signals,
                 # Using '*' or ','
                 # Iterate over all possible input signals

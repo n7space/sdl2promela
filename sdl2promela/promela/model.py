@@ -365,9 +365,12 @@ class Model:
     """List of inline functions."""
     never: NeverClaim
     """Optional never claim."""
+    variable_declarations: VariableDeclaration
+    """List of variable declarations."""
 
     def __init__(self):
         self.prologue = ""
         self.epilogue = ""
         self.inlines = []
+        self.variable_declarations = []
         self.never = None

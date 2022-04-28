@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -127,6 +127,10 @@ def __get_promela_binary_operator(
     return __BINARY_OPERATOR_DICTIONARY[op]
 
 
+def __get_implicit_variable_name(context: Context, variable_name: str) -> str:
+    return context.sdl_model.process_name + SEPARATOR + variable_name.lower()
+
+
 def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
     return context.sdl_model.process_name + SEPARATOR + procedure_name
 
@@ -179,9 +183,16 @@ def __is_local_variable(context: Context, variable: str):
     return False
 
 
-def __get_variable_name(context: Context, variable: str):
+def __is_implicit_variable(context: Context, variable: str):
+    return variable in context.sdl_model.implicit_variables.keys()
 
-    if __is_local_variable(context, variable):
+
+def __get_variable_name(context: Context, variable: str):
+    if __is_implicit_variable(context, variable):
+        return VariableReferenceBuilder(
+            __get_implicit_variable_name(context, variable)
+        ).build()
+    elif __is_local_variable(context, variable):
         return VariableReferenceBuilder(variable.lower()).build()
     else:
         return (
@@ -1424,6 +1435,14 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
     return builder.build()
 
 
+def __generate_implicit_variable_definition(
+    context: Context, variable_name: str, variable_type: Tuple[object, object]
+) -> promelamodel.VariableDeclaration:
+    mangled_name = __get_implicit_variable_name(context, variable_name)
+    memberType = resolve_asn1_type(context.sdl_model.types, variable_type[0])
+    return VariableDeclarationBuilder(mangled_name, memberType.CName).build()
+
+
 def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     Translate an SDL model into a Promela model.
@@ -1432,7 +1451,14 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     builder = ModelBuilder()
     context = Context(sdl_model)
-    # Inlines for procedures must be first
+    # Variables must be first
+    for variable_name, variable_type in sdl_model.implicit_variables.items():
+        builder.withVariable(
+            __generate_implicit_variable_definition(
+                context, variable_name, variable_type
+            )
+        )
+    # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         builder.withInline(__generate_procedure_inline(context, procedure))
     builder.withInline(__generate_transition_function(context))
