@@ -73,7 +73,7 @@ optional arguments:
                         process,
   -o OUTPUT_FILENAME, --output OUTPUT_FILENAME
                         output file name
-  -oi OBSERVER_INFO,  --observer-info OBSERVER_INFO
+  -oi INFO_FILENAME,  --observer-info INFO_FILENAME
                         observer info output file name
   -v, --verbose         verbose output
   --version             show program's version number and exit

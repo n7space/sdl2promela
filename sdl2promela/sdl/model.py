@@ -223,6 +223,7 @@ class Parameter:
     """Target variable reference."""
 
     declared_type: object
+    """Type of the parameter."""
 
     def __init__(self, name: str):
         self.target_variable = VariableReference(name)
@@ -1157,7 +1158,10 @@ class Model:
     is initial variable value.
     """
     implicit_variables: Dict[str, Tuple[object, object]]
-    """TODO"""
+    """
+    Dictionary of implicitly defined variables, such as
+    arguments of observer signals.
+    """
     procedures: Dict[str, Procedure]
     """Dictionary of procedures."""
     observer_attachments: List[ObserverAttachmentInfo]
@@ -1203,6 +1207,8 @@ class Model:
         for state, signals in self.source.cs_mapping.items():
             for signal in signals:
                 if signal.observer_input is not None:
+                    # This is an artificial CS created by OpenGEODE
+                    # for an observer.
                     continue
                 cs = ContinuousSignal()
                 cs.trigger = convert(signal.trigger.question)
