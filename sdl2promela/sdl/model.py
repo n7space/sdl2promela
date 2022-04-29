@@ -1300,7 +1300,10 @@ class Model:
                 raise Exception(f"Too many parameters for {input.name}")
             self.__assign_input_parameter_type(input, inputSignal)
             input.transitions = {}
-            if inputSignal["renames"] is not None:
+            if (
+                input.name not in self.inputs.keys()
+                and inputSignal["renames"] is not None
+            ):
                 info = ObserverAttachmentInfo()
                 self.__extract_attachment_info(info, inputSignal["renames"])
                 info.observerSignalName = input.name
