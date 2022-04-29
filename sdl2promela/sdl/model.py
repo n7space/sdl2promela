@@ -1266,6 +1266,8 @@ class Model:
             self.__extract_attachment_info(info, child)
 
     def __assign_input_parameter_type(self, input: Input, signal: Dict):
+        if "type" not in signal.keys():
+            return
         declared_type = signal["type"]
         if declared_type is None:
             return
