@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	input_observer
 
-#.SILENT : \
-#	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \
@@ -42,13 +42,14 @@ input_observer:
 	cp ${RES_DIR}/InputObserver.pr ${TEST_DIR}
 	cp ${RES_DIR}/dataview-uniq.asn ${TEST_DIR}
 	cd  ${TEST_DIR} && opengeode --toAda system_structure.pr InputObserver.pr
-	${SDL2PROMELA} -v -o ${TEST_DIR}/inputobserver.pml -oi ${TEST_DIR}/inputobserver.info \
+	${SDL2PROMELA} -v -o ${TEST_DIR}/InputObserver.pml -oi ${TEST_DIR}/InputObserver.info \
 		--sdl ${TEST_DIR}/system_structure.pr ${TEST_DIR}/InputObserver.pr
+	diff  ${TEST_DIR}/InputObserver.info ${RES_DIR}/attachments.output
 	cp ${RES_DIR}/harness.pml ${TEST_DIR}/harness.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m harness.pml
 	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
-	./pan -a -f -n -m1000000 > system.output
+	./pan -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
 	${DELETE_TEST_DIR}
