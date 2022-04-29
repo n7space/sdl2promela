@@ -1,19 +1,37 @@
-/* CIF PROCESS (250, 150), (150, 75) */
+/* CIF PROCESS (248, 150), (150, 75) */
 process InputObserver;
-    /* CIF TEXT (421, 121), (267, 140) */
+    /* CIF TEXT (609, 97), (267, 140) */
     monitor st System_State;
     monitor event Observable_Event;
-    dcl y T_Int32;
+    dcl received_action T_Boolean;
+    dcl received_trigger T_Boolean;
     /* CIF ENDTEXT */
-    /* CIF START (22, 71), (70, 35) */
+    /* CIF START (49, 83), (70, 35) */
     START;
-        /* CIF NEXTSTATE (22, 126), (70, 35) */
-        NEXTSTATE Wait;
-    /* CIF state (221, 87), (70, 35) */
-    state Wait;
-        /* CIF input (206, 142), (95, 35) */
+        /* CIF task (0, 138), (169, 53) */
+        task received_action := False,
+received_trigger := False;
+        /* CIF NEXTSTATE (28, 221), (111, 35) */
+        NEXTSTATE WaitForTrigger;
+    /* CIF state (53, 309), (70, 35) */
+    state Done;
+    endstate;
+    /* CIF state (210, 87), (111, 35) */
+    state WaitForTrigger;
+        /* CIF input (214, 142), (95, 35) */
         input trigger_in(x);
-            /* CIF NEXTSTATE (219, 197), (70, 35) */
-            NEXTSTATE Wait;
+            /* CIF task (179, 197), (164, 35) */
+            task received_trigger := True;
+            /* CIF NEXTSTATE (208, 247), (107, 35) */
+            NEXTSTATE WaitForAction;
+    endstate;
+    /* CIF state (382, 87), (107, 35) */
+    state WaitForAction;
+        /* CIF input (390, 142), (91, 35) */
+        input action_in(y);
+            /* CIF task (355, 197), (160, 35) */
+            task received_action := True;
+            /* CIF NEXTSTATE (401, 252), (70, 35) */
+            NEXTSTATE Done;
     endstate;
 endprocess InputObserver;

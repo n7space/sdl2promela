@@ -376,6 +376,16 @@ class Action:
     pass
 
 
+class Actions(Action):
+    """Wrapper to return multiple actions as a single one."""
+
+    actions: List[Action]
+    """List of actions."""
+
+    def __init__(self):
+        self.actions = []
+
+
 class Task(Action):
     """Task action."""
 
@@ -766,14 +776,18 @@ def convert(source: ogAST.TaskForLoop):
 
 @dispatch(ogAST.TaskAssign)
 def convert(source: ogAST.TaskAssign):
-    if len(source.elems) != 1:
-        raise ValueError(
-            "Assignment with an unsupported number of elements: " + len(source.elems)
-        )
-    task = AssignmentTask()
-    task.assignment = convert(source.elems[0])
-    task.type = source.elems[0].left.exprType
-    return task
+    if len(source.elems) == 1:
+        task = AssignmentTask()
+        task.assignment = convert(source.elems[0])
+        task.type = source.elems[0].left.exprType
+        return task
+    actions = Actions()
+    for element in source.elems:
+        task = AssignmentTask()
+        task.assignment = convert(element)
+        task.type = element.left.exprType
+        actions.actions.append(task)
+    return actions
 
 
 @dispatch(ogAST.PrimVariable)
