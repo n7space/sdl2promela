@@ -1,0 +1,70 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (389, 364), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl check_param MyInteger;
+    dcl work_param MyInteger;
+    dcl reached MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (740, 167), (70, 35) */
+    START;
+        /* CIF task (725, 222), (100, 40) */
+        task reached := 0;
+        /* CIF task (712, 282), (124, 35) */
+        task check_param := 1;
+        /* CIF task (714, 337), (120, 35) */
+        task work_param := 3;
+        /* CIF output (668, 387), (213, 35) */
+        output test_simple_state(check_param);
+        /* CIF NEXTSTATE (710, 442), (129, 35) */
+        NEXTSTATE VerifySimpleState;
+    /* CIF state (1450, 191), (143, 35) */
+    state VerifyExcludedState;
+        /* CIF input (1491, 246), (70, 35) */
+        input result;
+            /* CIF output (1468, 301), (114, 35) */
+            output test_state_list2;
+            /* CIF NEXTSTATE (1467, 356), (117, 35) */
+            NEXTSTATE VerifyStateList2;
+    endstate;
+    /* CIF state (1735, 195), (117, 35) */
+    state VerifyStateList2;
+        /* CIF input (1764, 250), (70, 35) */
+        input result;
+            /* CIF task (1742, 305), (113, 35) */
+            task reached := 1;
+            /* CIF NEXTSTATE (1750, 360), (97, 35) */
+            NEXTSTATE VerifyDone;
+    endstate;
+    /* CIF state (2132, 216), (89, 35) */
+    state VerifyDone;
+    endstate;
+    /* CIF state (1078, 176), (110, 35) */
+    state VerifyStateList;
+        /* CIF input (1103, 231), (70, 35) */
+        input result;
+            /* CIF output (1100, 286), (75, 35) */
+            output test_star;
+            /* CIF NEXTSTATE (1096, 341), (82, 35) */
+            NEXTSTATE VerifyStar;
+    endstate;
+    /* CIF state (919, 318), (129, 35) */
+    state VerifySimpleState;
+        /* CIF input (954, 373), (70, 35) */
+        input result;
+            /* CIF output (894, 428), (188, 35) */
+            output test_state_list(work_param);
+            /* CIF NEXTSTATE (933, 483), (110, 35) */
+            NEXTSTATE VerifyStateList;
+    endstate;
+    /* CIF state (1233, 181), (82, 35) */
+    state VerifyStar;
+        /* CIF input (1245, 236), (70, 35) */
+        input result;
+            /* CIF output (1208, 291), (142, 35) */
+            output test_excluded_state;
+            /* CIF NEXTSTATE (1208, 346), (143, 35) */
+            NEXTSTATE VerifyExcludedState;
+    endstate;
+endprocess Controller;

@@ -514,7 +514,7 @@ def __generate_input_function(
     state_variable_name = __get_state_variable_name(context)
     transition_function_name = __get_transition_function_name(context)
 
-    for index, state in input.transitions.items():
+    for state, transition_id in input.transitions.items():
         switch_builder.withAlternative(
             AlternativeBuilder()
             .withCondition(
@@ -529,7 +529,7 @@ def __generate_input_function(
                 [
                     CallBuilder()
                     .withTarget(transition_function_name)
-                    .withParameter(VariableReferenceBuilder(str(index)).build())
+                    .withParameter(VariableReferenceBuilder(str(transition_id)).build())
                     .build()
                 ]
             )

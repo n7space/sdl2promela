@@ -239,8 +239,8 @@ class Input:
     """Signal name."""
     parameters: List[Parameter]
     """List of signal parameters."""
-    transitions: Dict[int, State]
-    """Map associating transition IDs with states."""
+    transitions: Dict[State, int]
+    """Map associating state with transition IDs"""
 
     def __init__(self):
         self.name = None
@@ -1312,7 +1312,7 @@ class Model:
         # Build transition list
         for state_name, input_list in self.source.mapping.items():
             target = self.states[state_name]
-            if not isinstance(input_list, List):
+            if not isinstance(input_list, List):  # Special START symbol
                 continue
             for input_block in input_list:
                 id = input_block.transition_id
@@ -1323,7 +1323,7 @@ class Model:
                 # and add transitions
                 for single_input in input_block.inputlist:
                     trigger = self.inputs[single_input]
-                    trigger.transitions[id] = target
+                    trigger.transitions[target] = id
 
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
