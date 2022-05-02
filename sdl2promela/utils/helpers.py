@@ -1,7 +1,7 @@
-from typing import Dict
+from typing import Dict, Any
 
 
-def resolve_asn1_type(allTypes: Dict[str, object], t) -> object:
+def resolve_asn1_type(allTypes: Dict[str, Any], t) -> object:
     """Find ASN.1 type object."""
     while t.kind == "ReferenceType":
         if t.ReferencedTypeName not in allTypes:

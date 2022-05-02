@@ -6,7 +6,7 @@ from sdl2promela.utils import resolve_asn1_type
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
-from typing import List, Dict
+from typing import List, Dict, Any
 import functools
 from opengeode import ogAST
 
@@ -316,8 +316,8 @@ def _generate(context: GenerateContext, expr: model.Selector):
 
 
 def _resolve_remaining_element_of_selector(
-    allTypes: Dict[str, object],
-    currentType: object,
+    allTypes: Dict[str, Any],
+    currentType: Any,
     selector: model.Selector,
     index: int,
 ):

@@ -1,4 +1,4 @@
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Any
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -72,14 +72,14 @@ class Context:
     sdl_model: sdlmodel.Model
     """Model that is being translated."""
 
-    parents: List[object]
+    parents: List[Any]
     """Stack of objects that are being translated."""
 
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
 
-    def push_parent(self, parent: object):
+    def push_parent(self, parent: Any):
         """
         Push parent onto the parent stack.
         :param parent: Parent to be pushed.
@@ -117,7 +117,7 @@ def __escapeIv(name: str) -> str:
     return name.capitalize()
 
 
-def __get_assign_value_inline_name(type: object) -> str:
+def __get_assign_value_inline_name(type: Any) -> str:
     return "{}_assign_value".format(type.CName)
 
 
@@ -772,7 +772,7 @@ def append_length_assignment_for_string_type(
     target: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
-    target_type: object,
+    target_type: Any,
     length: int,
 ):
     length_field = (
@@ -850,7 +850,7 @@ def __generate_assignment(
         raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
 
 
-def check_length_constraint(target_type: object, length: int):
+def check_length_constraint(target_type: Any, length: int):
     if length < int(target_type.Min) or length > int(target_type.Max):
         raise Exception(
             f"Invalid assignment: {target_type.CName} does not accept value with length {length}"
@@ -1455,7 +1455,7 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
 
 
 def __generate_implicit_variable_definition(
-    context: Context, variable_name: str, variable_type: Tuple[object, object]
+    context: Context, variable_name: str, variable_type: Tuple[Any, Any]
 ) -> promelamodel.VariableDeclaration:
     mangled_name = __get_implicit_variable_name(context, variable_name)
     memberType = resolve_asn1_type(context.sdl_model.types, variable_type[0])

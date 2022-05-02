@@ -1,5 +1,5 @@
 from ast import arguments
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict, Union, Tuple, Any
 from multipledispatch import dispatch
 from opengeode import ogAST
 from opengeode import Helper
@@ -47,7 +47,7 @@ class EnumValue(Expression):
     value: str
     """Name of enum value."""
 
-    type: object
+    type: Any
     """Type of enumerated."""
 
     def __init__(self, value, type):
@@ -173,10 +173,10 @@ class Sequence(Expression):
 
     elements: Dict[str, Expression]
     """Elements of SEQUENCE value."""
-    type: object
+    type: Any
     """Type of value."""
 
-    def __init__(self, elements: Dict[str, Expression], type: object):
+    def __init__(self, elements: Dict[str, Expression], type: Any):
         self.elements = elements
         self.type = type
 
@@ -189,10 +189,10 @@ class SequenceOf(Expression):
 
     elements: List[Expression]
     """Elements of SEQUENCE OF value."""
-    type: object
+    type: Any
     """Type of value."""
 
-    def __init__(self, elements: List[Expression], type: object):
+    def __init__(self, elements: List[Expression], type: Any):
         self.elements = elements
         self.type = type
 
@@ -222,7 +222,7 @@ class Parameter:
     target_variable: VariableReference
     """Target variable reference."""
 
-    declared_type: object
+    declared_type: Any
     """Type of the parameter."""
 
     def __init__(self, name: str):
@@ -399,7 +399,7 @@ class AssignmentTask(Task):
     assignment: BinaryExpression
     """Assignment expression."""
 
-    type: object
+    type: Any
     """Type of assignment destination."""
 
 
@@ -578,7 +578,7 @@ class ProcedureParameter:
     direction: ProcedureParameterDirection
     """Parameter direction."""
 
-    typeObject: object
+    typeObject: Any
     """Parameter type."""
 
     def __init__(self):
@@ -599,14 +599,14 @@ class Procedure:
     transition: Transition
     """Procedure actions."""
 
-    variables: Dict[str, Tuple[object, object]]
+    variables: Dict[str, Tuple[Any, Any]]
     """
     All variables defined in the procedure, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
 
-    returnType: object
+    returnType: Any
     """Procedure return type. Can be None."""
 
     def __init__(self):
@@ -648,7 +648,7 @@ class ObserverAttachmentInfo:
     def __init__(self):
         self.observerSignalName = ""
         self.originalSignalName = ""
-        self.kind = ObservedSignalKind.INPUT
+        self.kind = None
         self.senderName = None
         self.recipientName = None
 
@@ -1149,15 +1149,15 @@ class Model:
     """Map acociatting state with continuous signals."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
-    types: Dict[str, object]
+    types: Dict[str, Any]
     """All ASN.1 types available in process."""
-    variables: Dict[str, Tuple[object, object]]
+    variables: Dict[str, Tuple[Any, Any]]
     """
     All variables defined in the process, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
-    implicit_variables: Dict[str, Tuple[object, object]]
+    implicit_variables: Dict[str, Tuple[Any, Any]]
     """
     Dictionary of implicitly defined variables, such as
     arguments of observer signals.
@@ -1249,7 +1249,7 @@ class Model:
             result.append(parameter)
         return result
 
-    def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: object):
+    def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: Any):
         if astItem is None:
             return
         if astItem.type == lexer.INPUT_EXPRESSION:
