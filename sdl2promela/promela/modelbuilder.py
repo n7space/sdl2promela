@@ -78,6 +78,15 @@ class ModelBuilder:
         self.model.never = never
         return self
 
+    def withVariable(self, variable: VariableDeclaration) -> "ModelBuilder":
+        """
+        Add a variable declaration.
+        :param variable: Variable declaration to be added.
+        :returns: The builder itself (for call chaining).
+        """
+        self.model.variable_declarations.append(variable)
+        return self
+
 
 class InlineBuilder:
     """Inline function builder."""

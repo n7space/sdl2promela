@@ -1,5 +1,5 @@
 import typing
-from typing import List
+from typing import List, Any
 
 import opengeode
 from sdl2promela import translator

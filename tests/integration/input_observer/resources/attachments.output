@@ -1,0 +1,2 @@
+InputObserver:ObservedSignalKind.INPUT:trigger_in:trigger:>MODEL
+InputObserver:ObservedSignalKind.INPUT:action_in:action:>MMI

@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Tuple, Any
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -72,14 +72,14 @@ class Context:
     sdl_model: sdlmodel.Model
     """Model that is being translated."""
 
-    parents: List[object]
+    parents: List[Any]
     """Stack of objects that are being translated."""
 
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
 
-    def push_parent(self, parent: object):
+    def push_parent(self, parent: Any):
         """
         Push parent onto the parent stack.
         :param parent: Parent to be pushed.
@@ -113,7 +113,11 @@ class Context:
         return None
 
 
-def __get_assign_value_inline_name(type: object) -> str:
+def __escapeIv(name: str) -> str:
+    return name.capitalize()
+
+
+def __get_assign_value_inline_name(type: Any) -> str:
     return "{}_assign_value".format(type.CName)
 
 
@@ -125,6 +129,10 @@ def __get_promela_binary_operator(
             f"{str(op)} operator is not available in this context"
         )
     return __BINARY_OPERATOR_DICTIONARY[op]
+
+
+def __get_implicit_variable_name(context: Context, variable_name: str) -> str:
+    return context.sdl_model.process_name + SEPARATOR + variable_name.lower()
 
 
 def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
@@ -179,9 +187,16 @@ def __is_local_variable(context: Context, variable: str):
     return False
 
 
-def __get_variable_name(context: Context, variable: str):
+def __is_implicit_variable(context: Context, variable: str):
+    return variable in context.sdl_model.implicit_variables.keys()
 
-    if __is_local_variable(context, variable):
+
+def __get_variable_name(context: Context, variable: str):
+    if __is_implicit_variable(context, variable):
+        return VariableReferenceBuilder(
+            __get_implicit_variable_name(context, variable)
+        ).build()
+    elif __is_local_variable(context, variable):
         return VariableReferenceBuilder(variable.lower()).build()
     else:
         return (
@@ -394,7 +409,9 @@ def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
 
 def __get_state_name(context: Context, state: sdlmodel.State) -> str:
     return (
-        context.sdl_model.process_implementation_name + __STATES_SEPARATOR + state.name
+        __escapeIv(context.sdl_model.process_implementation_name)
+        + __STATES_SEPARATOR
+        + state.name
     )
 
 
@@ -694,6 +711,19 @@ def __generate_statement(
         )
 
 
+@dispatch(Context, sdlmodel.Transition, sdlmodel.Actions)
+def __generate_statement(
+    context: Context,
+    transition: sdlmodel.Transition,
+    actions: sdlmodel.Actions,
+) -> promelamodel.Statement:
+    block = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for action in actions.actions:
+        statement = __generate_statement(context, transition, action)
+        block.withStatement(statement)
+    return block.build()
+
+
 @dispatch(
     Context,
     (
@@ -742,7 +772,7 @@ def append_length_assignment_for_string_type(
     target: Union[
         sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
     ],
-    target_type: object,
+    target_type: Any,
     length: int,
 ):
     length_field = (
@@ -820,7 +850,7 @@ def __generate_assignment(
         raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
 
 
-def check_length_constraint(target_type: object, length: int):
+def check_length_constraint(target_type: Any, length: int):
     if length < int(target_type.Min) or length > int(target_type.Max):
         raise Exception(
             f"Invalid assignment: {target_type.CName} does not accept value with length {length}"
@@ -1424,6 +1454,14 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
     return builder.build()
 
 
+def __generate_implicit_variable_definition(
+    context: Context, variable_name: str, variable_type: Tuple[Any, Any]
+) -> promelamodel.VariableDeclaration:
+    mangled_name = __get_implicit_variable_name(context, variable_name)
+    memberType = resolve_asn1_type(context.sdl_model.types, variable_type[0])
+    return VariableDeclarationBuilder(mangled_name, memberType.CName).build()
+
+
 def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     Translate an SDL model into a Promela model.
@@ -1432,7 +1470,14 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     builder = ModelBuilder()
     context = Context(sdl_model)
-    # Inlines for procedures must be first
+    # Variables must be first
+    for variable_name, variable_type in sdl_model.implicit_variables.items():
+        builder.withVariable(
+            __generate_implicit_variable_definition(
+                context, variable_name, variable_type
+            )
+        )
+    # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         builder.withInline(__generate_procedure_inline(context, procedure))
     builder.withInline(__generate_transition_function(context))

@@ -21,6 +21,8 @@ class ProgramOptions:
 
     output_filname: str
     """Output file."""
+    observer_info_filename: str
+    """Name of the file containing the extracted observer information."""
     verbose: bool
     """Show verbose output."""
     sdl_files: List[List[str]]
@@ -30,6 +32,7 @@ class ProgramOptions:
 
     def __init__(self):
         self.output_filename = None
+        self.observer_info_filename = None
         self.verbose = False
         self.sdl_files = []
         self.scl_files = []
@@ -70,6 +73,8 @@ optional arguments:
                         process,
   -o OUTPUT_FILENAME, --output OUTPUT_FILENAME
                         output file name
+  -oi INFO_FILENAME,  --observer-info INFO_FILENAME
+                        observer info output file name
   -v, --verbose         verbose output
   --version             show program's version number and exit
   --scl SCL_FILE
@@ -109,6 +114,17 @@ def __parse_arguments_impl() -> ProgramOptions:
             if options.output_filename is not None:
                 raise ProgramOptionsParseException("Output file already specified.")
             options.output_filename = argv[index]
+        elif argv[index] == "-oi" or argv[index] == "--observer-info":
+            if index + 1 >= len(argv):
+                raise ProgramOptionsParseException(
+                    "{} requires filename".format(argv[index])
+                )
+            index = index + 1
+            if options.observer_info_filename is not None:
+                raise ProgramOptionsParseException(
+                    "Observer info output file already specified."
+                )
+            options.observer_info_filename = argv[index]
         elif argv[index] == "-v" or argv[index] == "--verbose":
             options.verbose = True
         elif argv[index] == "-h" or argv[index] == "--help":
@@ -152,6 +168,37 @@ def __parse_arguments() -> ProgramOptions:
         sys.exit(1)
 
 
+def __export_observer_attachment_infos(
+    process_name: str,
+    file_name: str,
+    attachments: List[sdlmodel.ObserverAttachmentInfo],
+):
+    try:
+        __log.info(f"Opening {file_name} for writing attachment infos")
+        with open(file_name, "w") as file:
+            for attachment in attachments:
+                print(
+                    process_name
+                    + ":"
+                    + str(attachment.kind)
+                    + ":"
+                    + attachment.observerSignalName
+                    + ":"
+                    + attachment.originalSignalName,
+                    file=file,
+                    end="",
+                )
+                if attachment.senderName is not None:
+                    print(":<" + attachment.senderName, file=file, end="")
+                if attachment.recipientName is not None:
+                    print(":>" + attachment.recipientName, file=file, end="")
+                print("\n", file=file, end="")
+        __log.info("Writing done")
+    except Exception:
+        __log.error("Attachment info export failed")
+        traceback.print_exc()
+
+
 def read_process(sdl_files: List[str]) -> ogAST.Process:
     """
     Read a single SDL process from a list of files.
@@ -193,11 +240,14 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
     return ast.processes[0]
 
 
-def translate(sdl_files: List[str], output_file_name: str) -> bool:
+def translate(
+    sdl_files: List[str], output_file_name: str, attachment_info_file_name: str
+) -> bool:
     """
     Translate a list of SDL files describing a single process into a Promela model.
     :param sdl_files: List of files describing a single SDL process.
     :param output_file_name: Name of the file to write the output Promela model to.
+    :param attachment_info_file_name: Name of the file to write the attachment info to.
     :returns: Whether the translation was succesful.
     """
     __log.info(f"Reading process from {sdl_files}")
@@ -231,6 +281,13 @@ def translate(sdl_files: List[str], output_file_name: str) -> bool:
         __log.error("Promela model generation failed")
         traceback.print_exc()
         return False
+
+    if attachment_info_file_name is not None:
+        __export_observer_attachment_infos(
+            sdl_model.process_name,
+            attachment_info_file_name,
+            sdl_model.observer_attachments,
+        )
     return True
 
 
@@ -283,7 +340,9 @@ def main():
             sys.exit(1)
     else:
         for group in arguments.sdl_files:
-            if not translate(group, arguments.output_filename):
+            if not translate(
+                group, arguments.output_filename, arguments.observer_info_filename
+            ):
                 sys.exit(1)
 
 

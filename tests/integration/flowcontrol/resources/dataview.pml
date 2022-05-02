@@ -10,7 +10,7 @@
 #define T_Int8 int
 #define T_UInt8 int
 #define T_Boolean bool
-#define FlowControl_States_wait 0
+#define Flowcontrol_States_wait 0
 
 typedef T_Null_Record {
     bit dummy;

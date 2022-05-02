@@ -1,4 +1,4 @@
-#define bare_outputs_States_state_1 1
+#define Bare_outputs_States_state_1 1
 
 typedef Bare_Outputs_Context {
   int state;

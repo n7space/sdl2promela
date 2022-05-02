@@ -1,9 +1,10 @@
 from ast import arguments
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict, Union, Tuple, Any
 from multipledispatch import dispatch
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
+from opengeode import sdl92Lexer as lexer
 from enum import Enum
 
 
@@ -46,7 +47,7 @@ class EnumValue(Expression):
     value: str
     """Name of enum value."""
 
-    type: object
+    type: Any
     """Type of enumerated."""
 
     def __init__(self, value, type):
@@ -172,10 +173,10 @@ class Sequence(Expression):
 
     elements: Dict[str, Expression]
     """Elements of SEQUENCE value."""
-    type: object
+    type: Any
     """Type of value."""
 
-    def __init__(self, elements: Dict[str, Expression], type: object):
+    def __init__(self, elements: Dict[str, Expression], type: Any):
         self.elements = elements
         self.type = type
 
@@ -188,10 +189,10 @@ class SequenceOf(Expression):
 
     elements: List[Expression]
     """Elements of SEQUENCE OF value."""
-    type: object
+    type: Any
     """Type of value."""
 
-    def __init__(self, elements: List[Expression], type: object):
+    def __init__(self, elements: List[Expression], type: Any):
         self.elements = elements
         self.type = type
 
@@ -221,8 +222,12 @@ class Parameter:
     target_variable: VariableReference
     """Target variable reference."""
 
+    declared_type: Any
+    """Type of the parameter."""
+
     def __init__(self, name: str):
         self.target_variable = VariableReference(name)
+        self.declared_type = None
 
     def __str__(self):
         return f"Parameter(target_variable={self.target_variable})"
@@ -372,6 +377,16 @@ class Action:
     pass
 
 
+class Actions(Action):
+    """Wrapper to return multiple actions as a single one."""
+
+    actions: List[Action]
+    """List of actions."""
+
+    def __init__(self):
+        self.actions = []
+
+
 class Task(Action):
     """Task action."""
 
@@ -384,7 +399,7 @@ class AssignmentTask(Task):
     assignment: BinaryExpression
     """Assignment expression."""
 
-    type: object
+    type: Any
     """Type of assignment destination."""
 
 
@@ -563,7 +578,7 @@ class ProcedureParameter:
     direction: ProcedureParameterDirection
     """Parameter direction."""
 
-    typeObject: object
+    typeObject: Any
     """Parameter type."""
 
     def __init__(self):
@@ -584,14 +599,14 @@ class Procedure:
     transition: Transition
     """Procedure actions."""
 
-    variables: Dict[str, Tuple[object, object]]
+    variables: Dict[str, Tuple[Any, Any]]
     """
     All variables defined in the procedure, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
 
-    returnType: object
+    returnType: Any
     """Procedure return type. Can be None."""
 
     def __init__(self):
@@ -600,6 +615,42 @@ class Procedure:
         self.variables = {}
         self.transition = None
         self.returnType = None
+
+
+class ObservedSignalKind(Enum):
+    """Kind of the observed signal."""
+
+    INPUT = 1
+    """Input Observer, inspecting input to a function."""
+
+    OUTPUT = 2
+    """Output Observer, inspecting and mutating output from a function."""
+
+
+class ObserverAttachmentInfo:
+    """Observer attachment info sourced from the Renames clause."""
+
+    observerSignalName: str
+    """Name of the signal within the Observer."""
+
+    originalSignalName: str
+    """Name of the signal in the model."""
+
+    kind: ObservedSignalKind
+    """Kind of the observerd signal."""
+
+    senderName: str
+    """Name of the Sender."""
+
+    recipientName: str
+    """Name of the Recipient."""
+
+    def __init__(self):
+        self.observerSignalName = ""
+        self.originalSignalName = ""
+        self.kind = None
+        self.senderName = None
+        self.recipientName = None
 
 
 def appendAllActions(destination, source):
@@ -726,14 +777,18 @@ def convert(source: ogAST.TaskForLoop):
 
 @dispatch(ogAST.TaskAssign)
 def convert(source: ogAST.TaskAssign):
-    if len(source.elems) != 1:
-        raise ValueError(
-            "Assignment with an unsupported number of elements: " + len(source.elems)
-        )
-    task = AssignmentTask()
-    task.assignment = convert(source.elems[0])
-    task.type = source.elems[0].left.exprType
-    return task
+    if len(source.elems) == 1:
+        task = AssignmentTask()
+        task.assignment = convert(source.elems[0])
+        task.type = source.elems[0].left.exprType
+        return task
+    actions = Actions()
+    for element in source.elems:
+        task = AssignmentTask()
+        task.assignment = convert(element)
+        task.type = element.left.exprType
+        actions.actions.append(task)
+    return actions
 
 
 @dispatch(ogAST.PrimVariable)
@@ -1094,16 +1149,23 @@ class Model:
     """Map acociatting state with continuous signals."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
-    types: Dict[str, object]
+    types: Dict[str, Any]
     """All ASN.1 types available in process."""
-    variables: Dict[str, Tuple[object, object]]
+    variables: Dict[str, Tuple[Any, Any]]
     """
     All variables defined in the process, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
+    implicit_variables: Dict[str, Tuple[Any, Any]]
+    """
+    Dictionary of implicitly defined variables, such as
+    arguments of observer signals.
+    """
     procedures: Dict[str, Procedure]
     """Dictionary of procedures."""
+    observer_attachments: List[ObserverAttachmentInfo]
+    """List of observer attachments."""
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1118,9 +1180,11 @@ class Model:
         self.inputs = {}
         self.continuous_signals = {}
         self.transitions = {}
+        self.observer_attachments = []
         self.types = getattr(self.source.DV, "types", {})
         self.variables = self.source.variables
         self.procedures = {}
+        self.implicit_variables = {}
 
         self.__gather_states()
         self.__gather_inputs()
@@ -1142,6 +1206,10 @@ class Model:
             self.continuous_signals[state] = []
         for state, signals in self.source.cs_mapping.items():
             for signal in signals:
+                if signal.observer_input is not None:
+                    # This is an artificial CS created by OpenGEODE
+                    # for an observer.
+                    continue
                 cs = ContinuousSignal()
                 cs.trigger = convert(signal.trigger.question)
                 cs.transition = signal.transition_id
@@ -1181,12 +1249,73 @@ class Model:
             result.append(parameter)
         return result
 
+    def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: Any):
+        if astItem is None:
+            return
+        if astItem.type == lexer.INPUT_EXPRESSION:
+            info.kind = ObservedSignalKind.INPUT
+        elif astItem.type == lexer.OUTPUT_EXPRESSION:
+            info.kind = ObservedSignalKind.OUTPUT
+        elif astItem.type == lexer.ID:
+            info.originalSignalName = astItem.text
+        elif astItem.type == lexer.TO:
+            # TO is assumed to be a simple function name
+            info.recipientName = astItem.children[0].text
+            return
+        elif astItem.type == lexer.FROM:
+            # FROM is assumed to be a simple function name
+            info.senderName = astItem.children[0].text
+            return
+        if astItem.children is None:
+            return
+        for child in astItem.children:
+            self.__extract_attachment_info(info, child)
+
+    def __assign_input_parameter_type(self, input: Input, signal: Dict):
+        if "type" not in signal.keys():
+            return
+        declared_type = signal["type"]
+        if declared_type is None:
+            return
+        if len(input.parameters) != 1:
+            raise Exception(f"Signal {input.name} has type, but no parameter")
+        input.parameters[0].declared_type = declared_type
+
+    def __handle_implicit_variable_declarations(self, input_block: ogAST.Input):
+        if len(input_block.parameters) == 0:
+            return
+        # It has already been checked that at most one parameter is allowed
+        parameter_name = input_block.parameters[0]
+        if parameter_name not in self.source.aliases.keys():
+            # OpenGEODE creates aliases for implicit parameters
+            return
+        declared_type = self.variables[parameter_name]
+        if parameter_name in self.implicit_variables:
+            if declared_type != self.implicit_variables[parameter_name]:
+                raise Exception(
+                    f"{parameter_name} parameter type is inconsistent with an implicit variable declared earlier"
+                )
+        else:
+            self.implicit_variables[parameter_name] = declared_type
+
     def __gather_inputs(self):
         # Gather all inputs and their parameters
         for inputSignal in self.source.input_signals:
             input = Input()
             input.name = inputSignal["name"]
             input.parameters = self.__get_input_parameters(input.name)
+            if len(input.parameters) > 1:
+                raise Exception(f"Too many parameters for {input.name}")
+            self.__assign_input_parameter_type(input, inputSignal)
+            input.transitions = {}
+            if (
+                input.name not in self.inputs.keys()
+                and inputSignal["renames"] is not None
+            ):
+                info = ObserverAttachmentInfo()
+                self.__extract_attachment_info(info, inputSignal["renames"])
+                info.observerSignalName = input.name
+                self.observer_attachments.append(info)
             self.inputs[input.name] = input
         # Build transition list
         for state_name, input_list in self.source.mapping.items():
@@ -1195,6 +1324,7 @@ class Model:
                 continue
             for input_block in input_list:
                 id = input_block.transition_id
+                self.__handle_implicit_variable_declarations(input_block)
                 # One Input block may refer to multiple signals,
                 # Using '*' or ','
                 # Iterate over all possible input signals

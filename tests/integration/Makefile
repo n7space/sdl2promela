@@ -22,7 +22,8 @@ TESTS= \
 	function_types \
 	context_variables \
 	context_variables_and_function_types \
-	state_symbols
+	state_symbols \
+	input_observer
 
 .PHONY: $(TESTS) check
 

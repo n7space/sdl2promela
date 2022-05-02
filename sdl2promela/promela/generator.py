@@ -340,6 +340,10 @@ def generate(context: Context, never: model.NeverClaim):
 @dispatch(Context, model.Model)
 def generate(context: Context, model: model.Model):
     context.output(model.prologue)
+    for variable_declaration in model.variable_declarations:
+        generate(context, variable_declaration)
+        # Declaration can be also used as left for an assignment, so it is not terminated
+        context.output(";\n")
     for inline in model.inlines:
         generate(context, inline)
     if model.never:
