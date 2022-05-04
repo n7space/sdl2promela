@@ -769,7 +769,6 @@ def __generate_assignment(
             for parameter in right.parameters:
                 parameters.append(__generate_expression(context, parameter))
             statements.append(builtins.translate_builtin(right, parameters))
-
         else:
             inlineCall = CallBuilder()
             inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
