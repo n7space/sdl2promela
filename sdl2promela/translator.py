@@ -1,8 +1,10 @@
+from inspect import isbuiltin
 from typing import List, Union, Tuple, Any
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
 
+from . import builtins
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
 from .promela.modelbuilder import (
@@ -253,6 +255,15 @@ def __generate_variable_name(
     ).build()
 
 
+@dispatch(Context, sdlmodel.Constant, bool)
+def __generate_variable_name(
+    context: Context,
+    constant: sdlmodel.Constant,
+    toplevel: bool,
+):
+    return VariableReferenceBuilder(constant.value).build()
+
+
 @dispatch(Context, sdlmodel.MemberAccess, bool)
 def __generate_variable_name(
     context: Context,
@@ -288,6 +299,11 @@ def __generate_variable_name(
         .withIndex(__generate_expression(context, array_access.element))
         .build()
     )
+
+
+@dispatch(Context, sdlmodel.StringValue)
+def __generate_expression(context: Context, value: sdlmodel.StringValue):
+    return VariableReferenceBuilder(f'"{value.value}"').build()
 
 
 @dispatch(Context, sdlmodel.Constant)
@@ -747,12 +763,20 @@ def __generate_assignment(
     if isinstance(right, sdlmodel.ProcedureCall):
         # Inlines cannot return a value, and so the return is handled via
         # the first parameter
-        inlineCall = CallBuilder()
-        inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
-        inlineCall.withParameter(__generate_variable_name(context, left, True))
-        for parameter in right.parameters:
-            inlineCall.withParameter(__generate_expression(context, parameter))
-        statements.append(inlineCall.build())
+        if builtins.is_builtin(right.name):
+            parameters = []
+            parameters.append(__generate_variable_name(context, left, True))
+            for parameter in right.parameters:
+                parameters.append(__generate_expression(context, parameter))
+            statements.append(builtins.translate_builtin(right, parameters))
+
+        else:
+            inlineCall = CallBuilder()
+            inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
+            inlineCall.withParameter(__generate_variable_name(context, left, True))
+            for parameter in right.parameters:
+                inlineCall.withParameter(__generate_expression(context, parameter))
+            statements.append(inlineCall.build())
     else:
         assignInlineName = __get_assign_value_inline_name(finalType)
         statements.append(
@@ -1262,6 +1286,11 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     call: sdlmodel.ProcedureCall,
 ) -> promelamodel.Statement:
+    if builtins.is_builtin(call.name):
+        parameters = []
+        for parameter in call.parameters:
+            parameters.append(__generate_expression(context, parameter))
+        return builtins.translate_builtin(call, parameters)
     inlineCall = CallBuilder()
     inlineCall.withTarget(__get_procedure_inline_name(context, call.name))
     for parameter in call.parameters:
