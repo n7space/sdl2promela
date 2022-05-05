@@ -23,7 +23,8 @@ TESTS= \
 	context_variables \
 	context_variables_and_function_types \
 	state_symbols \
-	input_observer
+	input_observer \
+	dekker
 
 .PHONY: $(TESTS) check
 
