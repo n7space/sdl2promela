@@ -218,7 +218,7 @@ def test_model_reads_join_based_loop():
 
 def test_model_reads_for_with_range():
     path = os.path.join(RESOURCE_DIR, "for_with_range.pr")
-     # There used to be 2 expected warnings regarding the range
+    # There used to be 2 expected warnings regarding the range
     # After OpenGEODE 3.9.4, no warnings are reported
     process = read_main_process(path, 0)
 

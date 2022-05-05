@@ -17,7 +17,8 @@ def __translate_writeln(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Statement]
 ) -> promelamodel.Statement:
     """
-    "writeln" does not make sense for a model checker, so it is quietly removed
+    "writeln" does not make sense for a model checker, so it is quietly removed.
+    As it is removed, the number and existence of parameters does not matter.
     """
     return None
 
@@ -28,6 +29,15 @@ def __translate_length(
     """
     Length assigns an integer scalar, so there is no need to pack it into assign_value call
     """
+    if len(parameters) != 2:
+        # Length requires 2 arguments: first one is the result, the second one is the queried entity
+        raise ValueError(
+            f"Length built-in function expected 2 arguments (1 out and 1 in), but received {len(parameters)}."
+        )
+    if parameters[0] is None:
+        raise ValueError(f"Length assignment target is missing.")
+    if parameters[1] is None:
+        raise ValueError(f"Length queried entity is missing.")
     return (
         AssignmentBuilder()
         .withTarget(parameters[0])
