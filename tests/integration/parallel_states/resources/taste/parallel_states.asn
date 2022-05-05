@@ -1,0 +1,15 @@
+PARALLEL-STATES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyStatus ::= ENUMERATED {
+       transition-top,
+       enter-parallel,
+       transition-left-parallel,
+       transition-right-parallel,
+       leave-parallel
+   }
+
+END
+

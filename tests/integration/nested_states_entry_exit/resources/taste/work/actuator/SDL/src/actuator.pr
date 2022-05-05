@@ -1,0 +1,100 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    state Nested;
+    substructure
+        out (finished);
+            /* CIF TEXT (987, 225), (267, 140) */
+            -- Text area for declarations and comments
+            
+            dcl result_param MyStatus;
+            /* CIF ENDTEXT */
+            /* CIF procedure (138, 307), (70, 35) */
+            procedure exit;
+                /* CIF TEXT (86, 218), (267, 140) */
+                -- Text area for declarations and comments
+                
+                dcl exit_result_param MyStatus;
+                /* CIF ENDTEXT */
+                /* CIF START (539, 104), (70, 35) */
+                START;
+                    /* CIF task (460, 159), (227, 35) */
+                    task exit_result_param := leave_nested;
+                    /* CIF output (487, 214), (172, 35) */
+                    output result(exit_result_param);
+                    /* CIF return (556, 269), (35, 35) */
+                    return ;
+            endprocedure;
+            /* CIF procedure (135, 180), (70, 35) */
+            procedure entry;
+                /* CIF TEXT (48, 232), (267, 140) */
+                -- Text area for declarations and comments
+                
+                dcl entry_result_param MyStatus;
+                /* CIF ENDTEXT */
+                /* CIF START (603, 108), (70, 35) */
+                START;
+                    /* CIF task (520, 163), (234, 35) */
+                    task entry_result_param := enter_nested;
+                    /* CIF output (547, 218), (181, 35) */
+                    output result(entry_result_param);
+                    /* CIF return (620, 273), (35, 35) */
+                    return ;
+            endprocedure;
+            /* CIF START (320, 74), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (320, 129), (70, 35) */
+                NEXTSTATE Red;
+            /* CIF state (798, 208), (70, 35) */
+            state Green;
+                /* CIF input (798, 263), (70, 35) */
+                input tick;
+                    /* CIF return (815, 318), (35, 35) */
+                    return finished;
+            endstate;
+            /* CIF state (516, 192), (70, 35) */
+            state Red;
+                /* CIF input (516, 247), (70, 35) */
+                input tick;
+                    /* CIF task (438, 302), (224, 35) */
+                    task result_param := transition_nested ;
+                    /* CIF output (479, 357), (143, 35) */
+                    output result(result_param);
+                    /* CIF NEXTSTATE (516, 412), (70, 35) */
+                    NEXTSTATE Green;
+            endstate;
+    endsubstructure;
+    /* CIF TEXT (376, 267), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl result_param MyStatus;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1443, 219), (70, 35) */
+    state Nested;
+        /* CIF connect (1443, 274), (70, 35) */
+        connect finished;
+            /* CIF NEXTSTATE (1443, 329), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (947, 184), (70, 35) */
+    state Wait;
+        /* CIF input (947, 239), (70, 35) */
+        input tick;
+            /* CIF task (881, 294), (201, 35) */
+            task result_param := transition_top;
+            /* CIF output (910, 349), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (947, 399), (70, 35) */
+            NEXTSTATE First;
+    endstate;
+    /* CIF state (1177, 187), (70, 35) */
+    state First;
+        /* CIF input (1177, 242), (70, 35) */
+        input tick;
+            /* CIF NEXTSTATE (1177, 297), (70, 35) */
+            NEXTSTATE Nested;
+    endstate;
+endprocess Actuator;

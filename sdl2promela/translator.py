@@ -1,4 +1,4 @@
-from typing import List, Union, Tuple, Any
+from typing import List, Union, Tuple, Any, Optional
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -75,9 +75,16 @@ class Context:
     parents: List[Any]
     """Stack of objects that are being translated."""
 
+    in_transition_chain: bool
+    """
+    Flag to specify if a chain of transitions is generated.
+    It is used for generation of entry inlines for parallel states.
+    """
+
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
+        self.in_transition_chain = False
 
     def push_parent(self, parent: Any):
         """
@@ -92,7 +99,7 @@ class Context:
         """
         self.parents.pop()
 
-    def get_parent_transition(self) -> sdlmodel.Transition:
+    def get_parent_transition(self) -> Optional[sdlmodel.Transition]:
         """
         Return the current parent transition.
         :returns: Current parent transition, or None if outside of any.
@@ -102,7 +109,7 @@ class Context:
                 return parent
         return None
 
-    def get_parent_procedure(self) -> sdlmodel.Procedure:
+    def get_parent_procedure(self) -> Optional[sdlmodel.Procedure]:
         """
         Return the current parent procedure.
         :returns: Current parent procedure, or None if outside of any.
@@ -1256,6 +1263,38 @@ def __generate_statement(
     )
 
 
+@dispatch(Context, sdlmodel.Transition, sdlmodel.NextTransition)
+def __generate_statement(
+    context: Context,
+    transition: sdlmodel.Transition,
+    next_transition: sdlmodel.NextTransition,
+) -> promelamodel.Statement:
+
+    if isinstance(next_transition.transition_id, str):
+        if next_transition.transition_id in context.sdl_model.aggregates:
+            # Next transition is a call to inline
+            # which executes transition for parallel state
+            inlineCall = CallBuilder()
+            inlineCall.withTarget(next_transition.transition_id)
+            return inlineCall.build()
+        elif next_transition.transition_id in context.sdl_model.constants:
+            transition_id = context.sdl_model.constants[next_transition.transition_id]
+        else:
+            raise Exception(
+                "Missing value for transition_id {}".format(
+                    next_transition.transition_id
+                )
+            )
+    else:
+        transition_id = next_transition.transition_id
+    return (
+        AssignmentBuilder()
+        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+        .withSource(VariableReferenceBuilder(str(transition_id)).build())
+        .build()
+    )
+
+
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureCall)
 def __generate_statement(
     context: Context,
@@ -1289,15 +1328,16 @@ def __generate_transition(
     for action in transition.actions:
         statements.append(__generate_statement(context, transition, action))
 
-    if not isinstance(transition.parent, sdlmodel.Procedure):
-        # Procedures do not change the current transition
-        # TODO - this should be conditional
-        statements.append(
-            AssignmentBuilder()
-            .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
-            .withSource(VariableReferenceBuilder(__INVALID_ID).build())
-            .build()
-        )
+    if not context.in_transition_chain:
+        if not isinstance(transition.parent, sdlmodel.Procedure):
+            # Procedures do not change the current transition
+            if not isinstance(transition.actions[-1], sdlmodel.NextTransition):
+                statements.append(
+                    AssignmentBuilder()
+                    .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                    .withSource(VariableReferenceBuilder(__INVALID_ID).build())
+                    .build()
+                )
 
     context.pop_parent()
     return statements
@@ -1462,6 +1502,27 @@ def __generate_implicit_variable_definition(
     return VariableDeclarationBuilder(mangled_name, memberType.CName).build()
 
 
+def __generate_aggregate_inline(
+    context: Context, aggregate_name: str, transitions: List[int]
+) -> promelamodel.Inline:
+    builder = InlineBuilder()
+    builder.withName(aggregate_name)
+    blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+
+    context.in_transition_chain = True
+    for transition_id in transitions:
+        if transition_id not in context.sdl_model.transitions:
+            raise Exception(f"Missing transition with id {transition_id}")
+        transition = context.sdl_model.transitions[transition_id]
+        blockBuilder.withStatements(__generate_transition(context, transition))
+
+    builder.withDefinition(blockBuilder.build())
+
+    context.in_transition_chain = False
+
+    return builder.build()
+
+
 def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     Translate an SDL model into a Promela model.
@@ -1480,6 +1541,10 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         builder.withInline(__generate_procedure_inline(context, procedure))
+    for aggregate_name, transitions in sdl_model.aggregates.items():
+        builder.withInline(
+            __generate_aggregate_inline(context, aggregate_name, transitions)
+        )
     builder.withInline(__generate_transition_function(context))
     builder.withInline(__generate_init_function(context))
     for name, input in sdl_model.inputs.items():

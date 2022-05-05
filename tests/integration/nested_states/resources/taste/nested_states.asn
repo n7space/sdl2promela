@@ -1,0 +1,14 @@
+NESTED-STATES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyStatus ::= ENUMERATED {
+       transition-top,
+       enter-nested,
+       transition-nested,
+       leave-nested
+   }
+
+END
+
