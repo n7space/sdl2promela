@@ -6,7 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/n7space/taste-dev-env:main
-      options: --user root
     name: Check
     steps:    
 
@@ -14,6 +13,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: recursive
+
+    - name: Debug hack
+      run: cp -r /.local/lib/python3.9/site-packages/* .
 
     - name: Functional check
       run: make check
