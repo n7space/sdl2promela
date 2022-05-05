@@ -1,3 +1,6 @@
+# Required by pushd/popd
+SHELL=/bin/bash
+
 SPIN?=spin
 CC=gcc
 CFLAGS=-O2
