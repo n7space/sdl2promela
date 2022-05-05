@@ -1,0 +1,134 @@
+/* CIF PROCESS (250, 149), (150, 75) */
+process type lock;
+    /* CIF TEXT (1596, 174), (473, 288) */
+    -- Text area for declarations and comments
+    
+    DCL remoteWantsToEnter T_Boolean;
+    DCL writeSize T_UInt8;
+    DCL myProcID T_ProcID;
+    DCL remoteProcID T_ProcID;
+    DCL turn T_ProcID;
+    DCL myWriteValue T_WriteAccess;
+    DCL writeCount T_UInt8;
+    DCL turnError T_Boolean;
+    DCL contentionError T_Boolean;
+    DCL writeRequest T_WriteRequest;
+    DCL startAddress T_UInt16;
+    /* CIF ENDTEXT */
+    /* CIF START (326, 20), (70, 35) */
+    START;
+        /* CIF task (253, 75), (216, 77) */
+        task remoteWantsToEnter := false,
+turn := 0,
+turnError := false;
+        /* CIF task (254, 172), (214, 36) */
+        task remoteProcID := 1 - myProcID;
+        /* CIF NEXTSTATE (324, 224), (74, 36) */
+        NEXTSTATE IDLE;
+    /* CIF state (1004, 697), (93, 36) */
+    state WRITING;
+        /* CIF provided (1134, 771), (176, 36) */
+        provided writeCount < writeSize;
+            /* CIF task (1080, 827), (283, 40) */
+            task myWriteValue.write_address := 
+writeRequest.start_address + writeCount;
+            /* CIF task (1027, 887), (390, 35) */
+            task myWriteValue.write_value := writeRequest.values(writeCount);
+            /* CIF output (1117, 942), (209, 36) */
+            output MemWrite(myWriteValue);
+            /* CIF task (1120, 998), (203, 36) */
+            task writeCount := (writeCount + 1);
+            /* CIF NEXTSTATE (1177, 1054), (89, 36) */
+            NEXTSTATE WRITING;
+        /* CIF provided (782, 770), (191, 36) */
+        provided writeCount >= writeSize;
+            /* CIF task (799, 826), (156, 36) */
+            task turn := remoteProcID;
+            /* CIF output (812, 882), (130, 36) */
+            output SetTurn(turn);
+            /* CIF output (801, 938), (152, 36) */
+            output WantToEnter(false);
+            /* CIF output (839, 994), (76, 35) */
+            output WriteAck;
+            /* CIF NEXTSTATE (841, 1044), (72, 36) */
+            NEXTSTATE IDLE;
+    endstate;
+    /* CIF state (512, 275), (72, 36) */
+    state IDLE;
+        /* CIF input (444, 331), (192, 37) */
+        input WriteRequest(writeRequest);
+            /* CIF PROCEDURECALL (405, 388), (270, 35) */
+            call writeln('proc ', myProcID, ' write request');
+            /* CIF task (484, 443), (113, 35) */
+            task writeCount := 0;
+            /* CIF task (407, 498), (268, 35) */
+            task writeSize := length(writeRequest.values);
+            /* CIF output (472, 548), (138, 36) */
+            output WantToEnter(true);
+            /* CIF decision (466, 604), (149, 50) */
+            decision remoteWantsToEnter;
+                /* CIF ANSWER (405, 674), (70, 24) */
+                (true):
+                    /* CIF NEXTSTATE (358, 718), (162, 35) */
+                    NEXTSTATE WAIT_NOCONTENTION;
+                /* CIF ANSWER (592, 674), (70, 24) */
+                (false):
+                    /* CIF NEXTSTATE (589, 718), (75, 35) */
+                    NEXTSTATE WRITING;
+            enddecision;
+    endstate;
+    /* CIF state (990, 62), (70, 36) */
+    state *;
+        /* CIF input (873, 118), (303, 36) */
+        input RemoteWantsToEnter(remoteWantsToEnter);
+            /* CIF NEXTSTATE (989, 174), (70, 36) */
+            NEXTSTATE -;
+    endstate;
+    /* CIF state (215, 808), (162, 36) */
+    state WAIT_NOCONTENTION;
+        /* CIF provided (196, 864), (207, 36) */
+        provided remoteWantsToEnter = false;
+            /* CIF decision (199, 923), (201, 50) */
+            decision turn = myProcID;
+                /* CIF ANSWER (128, 1014), (74, 36) */
+                (true):
+                    /* CIF output (94, 1070), (141, 36) */
+                    output WantToEnter(true);
+                    /* CIF task (107, 1126), (116, 36) */
+                    task writeCount := 0;
+                    /* CIF NEXTSTATE (106, 1177), (118, 36) */
+                    NEXTSTATE WRITING;
+                /* CIF ANSWER (489, 1013), (80, 36) */
+                (false):
+                    /* CIF output (449, 1069), (160, 36) */
+                    output WantToEnter(false);
+                    /* CIF NEXTSTATE (481, 1120), (94, 36) */
+                    NEXTSTATE WAIT_TURN;
+            enddecision;
+    endstate;
+    /* CIF state (965, 276), (117, 36) */
+    state WAIT_TURN;
+        /* CIF input (936, 332), (176, 36) */
+        input RemoteSetsTurn(turn);
+            /* CIF decision (923, 388), (201, 50) */
+            decision turn = myProcID;
+                /* CIF ANSWER (857, 458), (74, 36) */
+                (true):
+                    /* CIF output (821, 514), (146, 36) */
+                    output WantToEnter(true);
+                    /* CIF task (831, 566), (125, 36) */
+                    task writeCount := 0;
+                    /* CIF NEXTSTATE (851, 617), (85, 36) */
+                    NEXTSTATE WRITING;
+                /* CIF ANSWER (1195, 458), (80, 36) */
+                (false):
+                    /* CIF task (1172, 514), (125, 36) */
+                    task turnError := true
+                    /* CIF comment (1325, 500), (158, 64) */
+                    comment 'supposedly
+unreachable';
+                    /* CIF NEXTSTATE (1185, 566), (99, 36) */
+                    NEXTSTATE WAIT_TURN;
+            enddecision;
+    endstate;
+endprocess type lock;

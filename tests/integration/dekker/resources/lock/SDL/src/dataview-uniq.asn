@@ -1,0 +1,54 @@
+DEKKER1-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+--T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+--T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+--T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-UInt16 ::= INTEGER (0 .. 65535)
+
+T-Boolean ::= BOOLEAN
+
+T-WriteAccess ::= SEQUENCE {
+    write-address T-UInt16,
+    write-value   T-UInt8
+}
+
+T-ByteArray ::= SEQUENCE (SIZE(1 .. 64)) OF T-UInt8
+
+T-MemBuffer ::= T-ByteArray(SIZE (64))
+
+T-WriteRequest ::= SEQUENCE {
+    start-address T-UInt16,
+    values        T-ByteArray
+}
+
+T-ProcID ::= T-UInt8 (0 .. 1)
+
+END
+
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+--T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+--T-Int8 ::= INTEGER (-128 .. 127)
+
+--T-UInt8 ::= INTEGER (0 .. 255)
+
+--T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
