@@ -4,7 +4,9 @@ on: [pull_request]
 jobs:
   check:
     runs-on: ubuntu-latest
-    container: ghcr.io/n7space/taste-dev-env:main
+    container:
+      image: ghcr.io/n7space/taste-dev-env:main
+      options: --user root
     name: Check
     steps:    
 
