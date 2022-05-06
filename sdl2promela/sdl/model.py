@@ -1187,10 +1187,9 @@ class Model:
     """Dictionary of procedures."""
     observer_attachments: List[ObserverAttachmentInfo]
     """List of observer attachments."""
-    constants: Dict[str, int]
+    named_transition_ids: Dict[str, int]
     """
-    Dictionary with constants.
-    A constant is a named transition identifier.
+    Dictionary with named transition identifiers.
     """
     aggregates: Dict[str, List[int]]
     """
@@ -1217,7 +1216,7 @@ class Model:
         self.variables = self.source.variables
         self.procedures = {}
         self.implicit_variables = {}
-        self.constants = {}
+        self.named_transition_ids = {}
         self.aggregates = {}
 
         self.__gather_states()
@@ -1226,7 +1225,7 @@ class Model:
         self.__gather_transitions()
         self.__gather_floating_labels()
         self.__gather_procedures()
-        self.__gather_constants()
+        self.__gather_named_transition_ids()
         self.__gather_aggregates()
 
     def __gather_states(self):
@@ -1413,10 +1412,10 @@ class Model:
                 procedure.transition.parent = procedure
             self.procedures[procedure.name] = procedure
 
-    def __gather_constants(self):
+    def __gather_named_transition_ids(self):
         for name, val in self.source.mapping.items():
             if name.endswith("START") and name != "START" and val:
-                self.constants[name] = int(val)
+                self.named_transition_ids[name] = int(val)
 
     def __gather_aggregates(self):
         aggregates = Helper.state_aggregations(self.source)
@@ -1425,6 +1424,6 @@ class Model:
             transitions = []
             for substate in substates:
                 transition_name = f"{substate.statename}{SEPARATOR}START"
-                if transition_name in self.constants:
-                    transitions.append(self.constants[transition_name])
+                if transition_name in self.named_transition_ids:
+                    transitions.append(self.named_transition_ids[transition_name])
             self.aggregates[aggregate_name] = transitions

@@ -1300,8 +1300,10 @@ def __generate_statement(
             inlineCall = CallBuilder()
             inlineCall.withTarget(next_transition.transition_id)
             return inlineCall.build()
-        elif next_transition.transition_id in context.sdl_model.constants:
-            transition_id = context.sdl_model.constants[next_transition.transition_id]
+        elif next_transition.transition_id in context.sdl_model.named_transition_ids:
+            transition_id = context.sdl_model.named_transition_ids[
+                next_transition.transition_id
+            ]
         else:
             raise Exception(
                 "Missing value for transition_id {}".format(
@@ -1359,7 +1361,9 @@ def __generate_transition(
     if not context.in_transition_chain:
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
-            if not isinstance(transition.actions[-1], sdlmodel.NextTransition):
+            if len(transition.actions) > 0 and not isinstance(
+                transition.actions[-1], sdlmodel.NextTransition
+            ):
                 statements.append(
                     AssignmentBuilder()
                     .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
