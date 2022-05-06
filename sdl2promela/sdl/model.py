@@ -475,6 +475,16 @@ class NextState(Terminator):
         self.state_name = None
 
 
+class NextTransition(Terminator):
+    """Next transition."""
+
+    transition_id: Union[int, str]
+    """Transition identifier to execute."""
+
+    def __init__(self):
+        self.transition_id = None
+
+
 class Join(Terminator):
     """Join action."""
 
@@ -1072,6 +1082,12 @@ def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
         if source.inputString == "-":
             return None  # No state switch
+        if source.next_id != -1:
+            # Next State might lead to nested state,
+            # In such case the another transition shall be executed
+            next_transition = NextTransition()
+            next_transition.transition_id = source.next_id
+            return next_transition
         next_state = NextState()
         next_state.state_name = source.inputString
         return next_state
@@ -1080,6 +1096,11 @@ def convert(source: ogAST.Terminator) -> Action:
         join.label_name = source.inputString
         return join
     elif source.kind == "return":
+        if source.next_id != -1:
+            # Return can be used to exit from nested state
+            next_transition = NextTransition()
+            next_transition.transition_id = source.next_id
+            return next_transition
         r = ProcedureReturn()
         if source.return_expr is not None:
             r.expression = convert(source.return_expr)
@@ -1166,6 +1187,16 @@ class Model:
     """Dictionary of procedures."""
     observer_attachments: List[ObserverAttachmentInfo]
     """List of observer attachments."""
+    named_transition_ids: Dict[str, int]
+    """
+    Dictionary with named transition identifiers.
+    """
+    aggregates: Dict[str, List[int]]
+    """
+    Aggregates contain information necessary for parallel states.
+    Every item contains Name of parallel state and a list of
+    transition ids which shall be executed on entry to the parallel state.
+    """
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1185,6 +1216,8 @@ class Model:
         self.variables = self.source.variables
         self.procedures = {}
         self.implicit_variables = {}
+        self.named_transition_ids = {}
+        self.aggregates = {}
 
         self.__gather_states()
         self.__gather_inputs()
@@ -1192,6 +1225,8 @@ class Model:
         self.__gather_transitions()
         self.__gather_floating_labels()
         self.__gather_procedures()
+        self.__gather_named_transition_ids()
+        self.__gather_aggregates()
 
     def __gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -1376,3 +1411,19 @@ class Model:
                 )
                 procedure.transition.parent = procedure
             self.procedures[procedure.name] = procedure
+
+    def __gather_named_transition_ids(self):
+        for name, val in self.source.mapping.items():
+            if name.endswith("START") and name != "START" and val:
+                self.named_transition_ids[name] = int(val)
+
+    def __gather_aggregates(self):
+        aggregates = Helper.state_aggregations(self.source)
+        for name, substates in aggregates.items():
+            aggregate_name = f"{name}{SEPARATOR}START"
+            transitions = []
+            for substate in substates:
+                transition_name = f"{substate.statename}{SEPARATOR}START"
+                if transition_name in self.named_transition_ids:
+                    transitions.append(self.named_transition_ids[transition_name])
+            self.aggregates[aggregate_name] = transitions

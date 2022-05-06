@@ -24,7 +24,10 @@ TESTS= \
 	context_variables_and_function_types \
 	state_symbols \
 	input_observer \
-	dekker
+	dekker \
+	nested_states \
+	nested_states_entry_exit \
+	parallel_states
 
 .PHONY: $(TESTS) check
 

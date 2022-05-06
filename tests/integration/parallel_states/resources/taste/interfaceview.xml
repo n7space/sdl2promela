@@ -1,0 +1,86 @@
+<InterfaceView asn1file="parallel_states.acn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="8700 43300 52600 95300"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Input_Parameter name="p1" type="MyStatus" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="52600 86400"/>
+</Provided_Interface>
+
+<Required_Interface name="tick" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="52600 49700"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="tick_left" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="52600 60500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="tick_right" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="52600 71300"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="86200 44600 137200 97200"/>
+<Provided_Interface name="tick" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="86200 50400"/>
+</Provided_Interface>
+
+<Provided_Interface name="tick_left" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="86200 60800"/>
+</Provided_Interface>
+
+<Provided_Interface name="tick_right" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Property name="Taste::coordinates" value="86200 71600"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" wcet="0" priority="1">
+    <Input_Parameter name="p1" type="MyStatus" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="86200 86000"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="controller" ri_name="tick_right"/>
+    <Target func_name="actuator" pi_name="tick_right"/>
+    <Property name="Taste::coordinates" value="53200 71300 69500 71300 85900 71600"/>
+</Connection>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result"/>
+    <Target func_name="controller" pi_name="result"/>
+    <Property name="Taste::coordinates" value="85600 86000 69300 86000 52900 86400"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="tick"/>
+    <Target func_name="actuator" pi_name="tick"/>
+    <Property name="Taste::coordinates" value="53200 49700 69500 49700 85900 50400"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="tick_left"/>
+    <Target func_name="actuator" pi_name="tick_left"/>
+    <Property name="Taste::coordinates" value="53200 60500 69500 60500 85900 60800"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>

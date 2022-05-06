@@ -1,0 +1,54 @@
+<InterfaceView asn1file="nested_states_entry_exit.acn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="13500 33600 56600 93000"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" priority="1" wcet="0" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyStatus" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="56600 80600"/>
+</Provided_Interface>
+
+<Required_Interface name="tick" kind="Sporadic" layer="default" priority="1" wcet="0" queue_size="1" miat="0" stack_size="1024">
+    <Property name="Taste::coordinates" value="56600 42900"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="79400 34700 131800 93900"/>
+<Provided_Interface name="tick" kind="Sporadic" layer="default" priority="1" wcet="0" queue_size="1" miat="0" stack_size="1024">
+    <Property name="Taste::coordinates" value="79400 42700"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" priority="1" wcet="0" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyStatus" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="79400 80600"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result"/>
+    <Target func_name="controller" pi_name="result"/>
+    <Property name="Taste::coordinates" value="78800 80600 56900 80600"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="tick"/>
+    <Target func_name="actuator" pi_name="tick"/>
+    <Property name="Taste::coordinates" value="57200 42900 68100 42900 79100 42700"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>

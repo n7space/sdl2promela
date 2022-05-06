@@ -1,0 +1,102 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (416, 201), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl finished MyInteger := 0;
+    dcl error MyInteger := 0;
+    dcl result_param MyStatus;
+    /* CIF ENDTEXT */
+    /* CIF START (775, 79), (70, 35) */
+    START;
+        /* CIF output (775, 134), (70, 35) */
+        output tick;
+        /* CIF NEXTSTATE (734, 184), (150, 35) */
+        NEXTSTATE WaitForTransitionTop;
+    /* CIF state (2081, 227), (145, 35) */
+    state WaitForLeaveNested;
+        /* CIF input (2082, 282), (143, 35) */
+        input result(result_param);
+            /* CIF decision (2057, 337), (192, 50) */
+            decision result_param = leave_nested;
+                /* CIF ANSWER (2074, 407), (70, 24) */
+                (true):
+                    /* CIF task (2061, 451), (94, 35) */
+                    task finished := 1;
+                    /* CIF NEXTSTATE (2072, 501), (72, 35) */
+                    NEXTSTATE Finished;
+                /* CIF ANSWER (2164, 407), (70, 24) */
+                (false):
+                    /* CIF task (2158, 451), (81, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (2164, 506), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1216, 204), (144, 35) */
+    state WaitForEnterNested;
+        /* CIF input (1217, 259), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1192, 314), (193, 50) */
+            decision result_param = enter_nested;
+                /* CIF ANSWER (1209, 384), (70, 24) */
+                (true):
+                    /* CIF output (1209, 428), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (1158, 483), (170, 35) */
+                    NEXTSTATE WaitForTransitionNested;
+                /* CIF ANSWER (1343, 384), (70, 24) */
+                (false):
+                    /* CIF task (1340, 428), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1343, 483), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (903, 212), (150, 35) */
+    state WaitForTransitionTop;
+        /* CIF input (907, 267), (143, 35) */
+        input result(result_param);
+            /* CIF decision (879, 322), (198, 50) */
+            decision result_param = transition_top;
+                /* CIF ANSWER (899, 392), (70, 24) */
+                (true):
+                    /* CIF output (899, 436), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (861, 491), (144, 35) */
+                    NEXTSTATE WaitForEnterNested;
+                /* CIF ANSWER (1020, 392), (70, 24) */
+                (false):
+                    /* CIF task (1017, 436), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1020, 491), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1618, 218), (170, 35) */
+    state WaitForTransitionNested;
+        /* CIF input (1632, 273), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1594, 328), (218, 50) */
+            decision result_param = transition_nested;
+                /* CIF ANSWER (1624, 398), (70, 24) */
+                (true):
+                    /* CIF output (1624, 442), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (1586, 497), (145, 35) */
+                    NEXTSTATE WaitForLeaveNested;
+                /* CIF ANSWER (1746, 398), (70, 24) */
+                (false):
+                    /* CIF task (1742, 442), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1746, 497), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1469, 60), (79, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (1211, 54), (70, 35) */
+    state Error;
+    endstate;
+endprocess Controller;
