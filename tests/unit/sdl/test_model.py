@@ -191,8 +191,9 @@ def test_model_reads_joins():
 
 def test_model_reads_join_based_loop():
     path = os.path.join(RESOURCE_DIR, "loop.pr")
-    # There are 2 expected warning regarding the range
-    process = read_main_process(path, 2)
+    # There used to be 2 expected warnings regarding the range
+    # After OpenGEODE 3.9.4, no warnings are reported
+    process = read_main_process(path, 0)
 
     model = Model(process)
 
@@ -217,8 +218,9 @@ def test_model_reads_join_based_loop():
 
 def test_model_reads_for_with_range():
     path = os.path.join(RESOURCE_DIR, "for_with_range.pr")
-    # There are 2 expected warning regarding the range
-    process = read_main_process(path, 2)
+    # There used to be 2 expected warnings regarding the range
+    # After OpenGEODE 3.9.4, no warnings are reported
+    process = read_main_process(path, 0)
 
     model = Model(process)
 
@@ -237,8 +239,9 @@ def test_model_reads_for_with_range():
 
 def test_model_reads_procedure_calls():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
-    # There are 3 expected warning regarding the range
-    process = read_main_process(path, 3)
+    # There used to be 3 expected warnings regarding the range
+    # After OpenGEODE 3.9.4, no warnings are reported
+    process = read_main_process(path, 0)
 
     model = Model(process)
     assert len(model.transitions) == 2
@@ -265,8 +268,9 @@ def test_model_reads_procedure_calls():
 
 def test_model_reads_internal_procedures():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
-    # There are 3 expected warning regarding the range
-    process = read_main_process(path, 3)
+    # There used to be 3 expected warnings regarding the range
+    # After OpenGEODE 3.9.4, no warnings are reported
+    process = read_main_process(path, 0)
 
     model = Model(process)
 
