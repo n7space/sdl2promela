@@ -70,8 +70,8 @@ def test_model_reads_transitions():
     signal_1_tid = next(iter(model.inputs["signal_1"].transitions.values()))
     signal_2_tid = next(iter(model.inputs["signal_2"].transitions.values()))
     assert start_tid in model.transitions.keys()
-    assert signal_1_tid in model.transitions.keys()
-    assert signal_2_tid in model.transitions.keys()
+    assert signal_1_tid.transition_id in model.transitions.keys()
+    assert signal_2_tid.transition_id in model.transitions.keys()
 
 
 def test_model_reads_next_state_action():
@@ -82,8 +82,8 @@ def test_model_reads_next_state_action():
 
     signal_1_tid = next(iter(model.inputs["signal_1"].transitions.values()))
     signal_2_tid = next(iter(model.inputs["signal_2"].transitions.values()))
-    signal_1_transition = model.transitions[signal_1_tid]
-    signal_2_transition = model.transitions[signal_2_tid]
+    signal_1_transition = model.transitions[signal_1_tid.transition_id]
+    signal_2_transition = model.transitions[signal_2_tid.transition_id]
     assert len(signal_1_transition.actions) == 1
     assert len(signal_2_transition.actions) == 1
     action_1 = signal_1_transition.actions[0]
@@ -101,7 +101,7 @@ def test_model_reads_output():
     model = Model(process)
 
     tid = next(iter(model.inputs["signal_in"].transitions.values()))
-    transition = model.transitions[tid]
+    transition = model.transitions[tid.transition_id]
     assert len(transition.actions) == 2
     action = transition.actions[0]
     assert isinstance(action, Output)

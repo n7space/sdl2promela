@@ -1,0 +1,2 @@
+eventually controller.reached > 0;
+never controller.error > 0;

@@ -27,7 +27,8 @@ TESTS= \
 	dekker \
 	nested_states \
 	nested_states_entry_exit \
-	parallel_states
+	parallel_states \
+	signal_parameters
 
 .PHONY: $(TESTS) check
 
