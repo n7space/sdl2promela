@@ -1336,7 +1336,7 @@ class Model:
         for inputSignal in self.source.input_signals:
             input = Input()
             input.name = inputSignal["name"]
-            # If signal has property "type" is has a parameter
+            # If signal has property "type" it has a parameter
             # parameter name for signals is irrevelant for generation of promela
             if "type" in inputSignal:
                 param = Parameter("p1")
