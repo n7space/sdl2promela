@@ -34,7 +34,6 @@ __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
-__PARAMETER_POSTFIX = "_param_in"
 
 __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
@@ -427,7 +426,7 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
 
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
-    return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
+    return variable_reference.variableName.lower()
 
 
 def __get_state_name(context: Context, state: sdlmodel.State) -> str:

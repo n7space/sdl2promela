@@ -1339,7 +1339,7 @@ class Model:
             # If signal has property "type" it has a parameter
             # parameter name for signals is irrevelant for generation of promela
             if "type" in inputSignal:
-                param = Parameter("p1")
+                param = Parameter("input_param")
                 param.declared_type = inputSignal["type"]
                 input.parameters = [param]
                 self.__assign_input_parameter_type(input, inputSignal)
