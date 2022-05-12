@@ -74,11 +74,11 @@ inline Host_0_init()
 {
   Host_0_transition(0);
 }
-inline Host_0_PI_0_trigger(p1_param_in)
+inline Host_0_PI_0_trigger(input_param)
 {
   if
   ::(global_state.host.state == Host_States_wait)->
-	MyInteger_assign_value(global_state.host.x, p1_param_in);
+	MyInteger_assign_value(global_state.host.x, input_param);
     Host_0_transition(1);
   ::else->
     skip;

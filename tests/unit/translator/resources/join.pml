@@ -29,11 +29,11 @@ inline Complexsdl_0_init()
 {
   Complexsdl_0_transition(0);
 }
-inline Complexsdl_0_PI_0_impulse(p1_param_in)
+inline Complexsdl_0_PI_0_impulse(input_param)
 {
   if
   ::(global_state.complexsdl.state == Complexsdl_States_wait)->
-	MyInteger_assign_value(global_state.complexsdl.tmp, p1_param_in);
+	MyInteger_assign_value(global_state.complexsdl.tmp, input_param);
     Complexsdl_0_transition(1);
   ::else->
     skip;
