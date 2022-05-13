@@ -183,6 +183,18 @@ def __get_state_variable_name(context: Context) -> str:
     )
 
 
+def __get_substate_variable_name(context: Context, substate: str) -> str:
+    return (
+        __GLOBAL_STATE
+        + "."
+        + context.sdl_model.process_name.lower()
+        + "."
+        + substate
+        + SEPARATOR
+        + __STATE_VARIABLE
+    )
+
+
 def __is_local_variable(context: Context, variable: str):
     procedure = context.get_parent_procedure()
     if procedure is not None:
@@ -1274,7 +1286,11 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
-    state_variable = __get_state_variable_name(context)
+    if next_state.substate:
+        state_variable = __get_substate_variable_name(context, next_state.substate)
+    else:
+        state_variable = __get_state_variable_name(context)
+
     state = context.sdl_model.states[next_state.state_name.lower()]
     state_name = __get_state_name(context, state)
     return (

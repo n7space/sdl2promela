@@ -28,7 +28,8 @@ TESTS= \
 	nested_states \
 	nested_states_entry_exit \
 	parallel_states \
-	signal_parameters
+	signal_parameters \
+	parallel_states_recent
 
 .PHONY: $(TESTS) check
 

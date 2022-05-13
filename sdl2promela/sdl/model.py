@@ -485,8 +485,12 @@ class NextState(Terminator):
     state_name: str
     """Next state name."""
 
+    substate: str
+    """Substate."""
+
     def __init__(self):
         self.state_name = None
+        self.substate = None
 
 
 class NextTransition(Terminator):
@@ -1094,7 +1098,7 @@ def convert(source: ogAST.ProcedureCall):
 @dispatch(ogAST.Terminator)
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
-        if source.inputString == "-":
+        if source.inputString == "-" or source.inputString == "-*":
             return None  # No state switch
         if source.next_id != -1:
             # Next State might lead to nested state,
@@ -1104,6 +1108,7 @@ def convert(source: ogAST.Terminator) -> Action:
             return next_transition
         next_state = NextState()
         next_state.state_name = source.inputString
+        next_state.substate = source.substate
         return next_state
     elif source.kind == "join":
         join = Join()
@@ -1218,6 +1223,9 @@ class Model:
         else:
             self.source = process
         Helper.flatten(self.source, sep=SEPARATOR)
+        self.input_aggregates = Helper.state_aggregations(self.source)
+        self.input_parallel_states = Helper.parallel_states(self.input_aggregates)
+        self.input_mapping = Helper.map_input_state(self.source)
         self.process_name = process.processName
         self.process_implementation_name = self.source.processName
         self.floating_labels = {}
@@ -1423,7 +1431,7 @@ class Model:
                 self.named_transition_ids[name] = int(val)
 
     def __gather_aggregates(self):
-        aggregates = Helper.state_aggregations(self.source)
+        aggregates = self.input_aggregates
         for name, substates in aggregates.items():
             aggregate_name = f"{name}{SEPARATOR}START"
             transitions = []
