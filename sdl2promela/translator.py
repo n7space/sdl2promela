@@ -34,7 +34,6 @@ __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
-__PARAMETER_POSTFIX = "_param_in"
 
 __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
@@ -427,7 +426,7 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
 
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
-    return variable_reference.variableName.lower() + __PARAMETER_POSTFIX
+    return variable_reference.variableName.lower()
 
 
 def __get_state_name(context: Context, state: sdlmodel.State) -> str:
@@ -512,16 +511,22 @@ def __generate_input_function(
     for parameter in input.parameters:
         builder.withParameter(__get_parameter_name(parameter.target_variable))
 
-        variable = context.sdl_model.variables[parameter.target_variable.variableName]
-        variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
-        assignInlineName = __get_assign_value_inline_name(variableType)
+    switch_builder = SwitchBuilder()
 
-        blockBuilder.withStatements(
-            [
+    state_variable_name = __get_state_variable_name(context)
+    transition_function_name = __get_transition_function_name(context)
+
+    for state, input_block in input.transitions.items():
+        statements: List[promelamodel.Statement] = []
+        for target_variable_ref in input_block.target_variables:
+            variable = context.sdl_model.variables[target_variable_ref.variableName]
+            variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
+            assignInlineName = __get_assign_value_inline_name(variableType)
+            statements.append(
                 CallBuilder()
                 .withTarget(assignInlineName)
                 .withParameter(
-                    __generate_variable_name(context, parameter.target_variable, True)
+                    __generate_variable_name(context, target_variable_ref, True)
                 )
                 .withParameter(
                     VariableReferenceBuilder(
@@ -529,15 +534,16 @@ def __generate_input_function(
                     ).build()
                 )
                 .build()
-            ]
+            )
+
+        statements.append(
+            CallBuilder()
+            .withTarget(transition_function_name)
+            .withParameter(
+                VariableReferenceBuilder(str(input_block.transition_id)).build()
+            )
+            .build()
         )
-
-    switch_builder = SwitchBuilder()
-
-    state_variable_name = __get_state_variable_name(context)
-    transition_function_name = __get_transition_function_name(context)
-
-    for state, transition_id in input.transitions.items():
         switch_builder.withAlternative(
             AlternativeBuilder()
             .withCondition(
@@ -548,14 +554,7 @@ def __generate_input_function(
                 )
                 .build()
             )
-            .withStatements(
-                [
-                    CallBuilder()
-                    .withTarget(transition_function_name)
-                    .withParameter(VariableReferenceBuilder(str(transition_id)).build())
-                    .build()
-                ]
-            )
+            .withStatements(statements)
             .build()
         )
 

@@ -1,0 +1,9 @@
+SIGNAL-PARAMETERS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   TestInteger ::= INTEGER (0 .. 10)
+
+END
+

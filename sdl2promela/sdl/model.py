@@ -233,6 +233,20 @@ class Parameter:
         return f"Parameter(target_variable={self.target_variable})"
 
 
+class InputBlock:
+    """Input block from SDL."""
+
+    transition_id: int
+    """Transition identifier which shall be executed after input."""
+
+    target_variables: List[VariableReference]
+    """List of variable references which shall receive input parameters."""
+
+    def __init__(self, transition_id):
+        self.transition_id = transition_id
+        self.target_variables = []
+
+
 class Input:
     """Input signal for an SDL state machine."""
 
@@ -240,8 +254,8 @@ class Input:
     """Signal name."""
     parameters: List[Parameter]
     """List of signal parameters."""
-    transitions: Dict[State, int]
-    """Map associating state with transition IDs"""
+    transitions: Dict[State, InputBlock]
+    """Map associating state with Input block"""
 
     def __init__(self):
         self.name = None
@@ -1268,22 +1282,6 @@ class Model:
                         result.add(input)
         return list(result)
 
-    def __get_input_parameters(self, input_name: str) -> List[Parameter]:
-        inputs = self.__get_inputs_of_name(input_name)
-        if len(inputs) == 0:
-            return []
-        result = []
-        # TODO implement support for different target variables
-        # for input signals.
-        # The current implementation assumes that:
-        # all inputs of the same name should have the same parameters,
-        # so the first one should be good enough
-        input = inputs[0]
-        for parameterName in input.parameters:
-            parameter = Parameter(parameterName)
-            result.append(parameter)
-        return result
-
     def __extract_attachment_info(self, info: ObserverAttachmentInfo, astItem: Any):
         if astItem is None:
             return
@@ -1338,10 +1336,13 @@ class Model:
         for inputSignal in self.source.input_signals:
             input = Input()
             input.name = inputSignal["name"]
-            input.parameters = self.__get_input_parameters(input.name)
-            if len(input.parameters) > 1:
-                raise Exception(f"Too many parameters for {input.name}")
-            self.__assign_input_parameter_type(input, inputSignal)
+            # If signal has property "type" it has a parameter
+            # parameter name for signals is irrevelant for generation of promela
+            if "type" in inputSignal:
+                param = Parameter("input_param")
+                param.declared_type = inputSignal["type"]
+                input.parameters = [param]
+                self.__assign_input_parameter_type(input, inputSignal)
             input.transitions = {}
             if (
                 input.name not in self.inputs.keys()
@@ -1366,7 +1367,11 @@ class Model:
                 # and add transitions
                 for single_input in input_block.inputlist:
                     trigger = self.inputs[single_input]
-                    trigger.transitions[target] = id
+                    block = InputBlock(id)
+                    block.target_variables = [
+                        VariableReference(param) for param in input_block.parameters
+                    ]
+                    trigger.transitions[target] = block
 
     def __convert_transition(self, source: ogAST.Transition) -> Transition:
         transition = Transition()
