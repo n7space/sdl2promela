@@ -503,6 +503,16 @@ class NextTransition(Terminator):
         self.transition_id = None
 
 
+class TransitionChoice(Terminator):
+    """Next transiton depending on current state."""
+
+    candidates: Dict[State, Union[int, str]]
+    """Map from state to transition_id."""
+
+    def __init__(self):
+        self.candidates = {}
+
+
 class Join(Terminator):
     """Join action."""
 
@@ -1098,8 +1108,21 @@ def convert(source: ogAST.ProcedureCall):
 @dispatch(ogAST.Terminator)
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
-        if source.inputString == "-" or source.inputString == "-*":
-            return None  # No state switch
+        if source.inputString == "-":
+            if any(next_id for next_id in source.candidate_id.keys() if next_id != -1):
+                result = TransitionChoice()
+                for transition_id, states in source.candidate_id.items():
+                    if transition_id != -1:
+                        for state in states:
+                            key = State()
+                            key.name = state
+                            result.candidates[key] = transition_id
+
+                return result
+            else:
+                return None
+        if source.inputString == "-*":
+            return None
         if source.next_id != -1:
             # Next State might lead to nested state,
             # In such case the another transition shall be executed

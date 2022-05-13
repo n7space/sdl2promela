@@ -1335,6 +1335,58 @@ def __generate_statement(
     )
 
 
+@dispatch(Context, sdlmodel.Transition, sdlmodel.TransitionChoice)
+def __generate_statement(
+    context: Context,
+    transition: sdlmodel.Transition,
+    transition_choice: sdlmodel.TransitionChoice,
+) -> promelamodel.Statement:
+    builder = SwitchBuilder()
+    state_variable_name = __get_state_variable_name(context)
+
+    for state, transition_id in transition_choice.candidates.items():
+        if isinstance(transition_id, str):
+            if transition_id in context.sdl_model.named_transition_ids:
+                transition_id = context.sdl_model.named_transition_ids[transition_id]
+            else:
+                raise Exception(f"Missing value for transition_id {transition_id}")
+        builder.withAlternative(
+            AlternativeBuilder()
+            .withCondition(
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                .withLeft(VariableReferenceBuilder(state_variable_name).build())
+                .withRight(
+                    VariableReferenceBuilder(__get_state_name(context, state)).build()
+                )
+                .build()
+            )
+            .withStatements(
+                [
+                    AssignmentBuilder()
+                    .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                    .withSource(promelamodel.IntegerValue(transition_id))
+                    .build()
+                ]
+            )
+            .build()
+        )
+
+    builder.withAlternative(
+        AlternativeBuilder()
+        .withStatements(
+            [
+                AssignmentBuilder()
+                .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                .withSource(promelamodel.IntegerValue(int(__INVALID_ID)))
+                .build()
+            ]
+        )
+        .build()
+    )
+
+    return builder.build()
+
+
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureCall)
 def __generate_statement(
     context: Context,

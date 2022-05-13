@@ -1,0 +1,12 @@
+NESTED-STATES-RECENT-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyStatus ::= ENUMERATED {
+       on-entry,
+       on-exit
+   }
+
+END
+
