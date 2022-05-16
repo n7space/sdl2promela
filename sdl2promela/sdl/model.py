@@ -568,6 +568,9 @@ class Transition:
     parent: Union["Model", "Procedure"]
     """Parent of the transition"""
 
+    possible_states: List[str]
+    """List of possible states, which can lead do this transition."""
+
     def __init__(self):
         self.id = 0
         self.actions = []
@@ -1408,6 +1411,7 @@ class Model:
         transition = Transition()
         transition.actions = []
         transition.parent = self
+        transition.possible_states = source.possible_states
         appendAllActions(transition, source)
         return transition
 

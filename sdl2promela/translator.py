@@ -548,6 +548,30 @@ def __generate_input_function(
                 .build()
             )
 
+        # Generate exit procedure calls in case of composite state.
+        exitlist = []
+        current = ""
+        state_tree = state.name.split(SEPARATOR)
+
+        process = context.sdl_model.source
+        while state_tree:
+            current = current + state_tree.pop(0)
+            for comp in process.composite_states:
+                if current.lower() == comp.statename.lower():
+                    if comp.exit_procedure:
+                        exitlist.append(current)
+                    process = comp
+                    current = current + SEPARATOR
+                    break
+
+        trans = context.sdl_model.transitions[input_block.transition_id]
+        for each in reversed(exitlist):
+            if trans and all(each.startswith(st) for st in trans.possible_states):
+                exit_procedure_name = (
+                    f"{context.sdl_model.process_name}{SEPARATOR}{each}{SEPARATOR}exit"
+                )
+                statements.append(CallBuilder().withTarget(exit_procedure_name).build())
+
         statements.append(
             CallBuilder()
             .withTarget(transition_function_name)
@@ -1428,8 +1452,10 @@ def __generate_transition(
     if not context.in_transition_chain:
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
-            if len(transition.actions) > 0 and not isinstance(
-                transition.actions[-1], sdlmodel.NextTransition
+            if (
+                len(transition.actions) > 0
+                and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
+                and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
             ):
                 statements.append(
                     AssignmentBuilder()

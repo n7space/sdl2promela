@@ -1,4 +1,4 @@
-/* CIF PROCESS (250, 150), (150, 75) */
+/* CIF PROCESS (250, 149), (150, 75) */
 process Controller;
     /* CIF TEXT (716, 22), (267, 140) */
     -- Text area for declarations and comments
@@ -12,140 +12,11 @@ process Controller;
     START;
         /* CIF NEXTSTATE (438, 288), (102, 35) */
         NEXTSTATE WaitForEntry;
-    /* CIF state (2027, 663), (138, 35) */
-    state waitForResultAgain;
-        /* CIF input (2023, 718), (147, 35) */
-        input status(status_param);
-            /* CIF task (2058, 773), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (2062, 828), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (1599, 642), (117, 35) */
-    state WaitForReEntry;
-        /* CIF input (1586, 697), (143, 35) */
-        input result(result_param);
-            /* CIF task (1619, 752), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (1623, 807), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (1280, 636), (92, 35) */
-    state WaitForExit;
-        /* CIF input (1255, 691), (143, 35) */
-        input result(result_param);
-            /* CIF task (1286, 746), (81, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (1292, 801), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (911, 639), (106, 35) */
-    state WaitForResult;
-        /* CIF input (891, 694), (147, 35) */
-        input status(status_param);
-            /* CIF task (926, 749), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (930, 804), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (602, 649), (102, 35) */
-    state WaitForEntry;
-        /* CIF input (582, 704), (143, 35) */
-        input result(result_param);
-            /* CIF task (615, 759), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (619, 814), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (928, 231), (106, 35) */
-    state WaitForResult;
-        /* CIF input (911, 286), (143, 35) */
-        input result(result_param);
-            /* CIF decision (922, 341), (121, 50) */
-            decision result_param = 1;
-                /* CIF ANSWER (905, 411), (70, 23) */
-                (true):
-                    /* CIF output (905, 454), (70, 35) */
-                    output reset;
-                    /* CIF NEXTSTATE (893, 509), (92, 35) */
-                    NEXTSTATE WaitForExit;
-                /* CIF ANSWER (995, 411), (70, 23) */
-                (false):
-                    /* CIF task (991, 454), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (995, 509), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (570, 88), (72, 35) */
-    state Finished;
-    endstate;
-    /* CIF state (443, 67), (70, 35) */
-    state Error;
-    endstate;
-    /* CIF state (641, 234), (102, 35) */
-    state WaitForEntry;
-        /* CIF input (619, 289), (147, 35) */
-        input status(status_param);
-            /* CIF decision (608, 344), (170, 50) */
-            decision status_param = on_entry;
-                /* CIF ANSWER (605, 414), (70, 23) */
-                (true):
-                    /* CIF output (605, 457), (70, 35) */
-                    output tick;
-                    /* CIF NEXTSTATE (586, 512), (106, 35) */
-                    NEXTSTATE WaitForResult;
-                /* CIF ANSWER (706, 414), (70, 23) */
-                (false):
-                    /* CIF task (702, 457), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (706, 507), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (1634, 244), (117, 35) */
-    state WaitForReEntry;
-        /* CIF input (1619, 299), (147, 35) */
-        input status(status_param);
-            /* CIF decision (1608, 354), (170, 50) */
-            decision status_param = on_entry;
-                /* CIF ANSWER (1616, 424), (70, 23) */
-                (true):
-                    /* CIF output (1616, 467), (70, 35) */
-                    output tick;
-                    /* CIF NEXTSTATE (1580, 522), (140, 35) */
-                    NEXTSTATE WaitForResultAgain;
-                /* CIF ANSWER (1735, 424), (70, 23) */
-                (false):
-                    /* CIF task (1731, 467), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (1735, 522), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (1292, 235), (92, 35) */
-    state WaitForExit;
-        /* CIF input (1265, 290), (147, 35) */
-        input status(status_param);
-            /* CIF decision (1259, 345), (160, 50) */
-            decision status_param = on_exit;
-                /* CIF ANSWER (1262, 415), (70, 23) */
-                (true):
-                    /* CIF NEXTSTATE (1238, 458), (117, 35) */
-                    NEXTSTATE WaitForReEntry;
-                /* CIF ANSWER (1370, 415), (70, 23) */
-                (false):
-                    /* CIF task (1366, 458), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (1370, 513), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (2036, 237), (140, 38) */
+    /* CIF state (2035, 237), (140, 38) */
     state WaitForResultAgain;
-        /* CIF input (2036, 295), (143, 35) */
+        /* CIF input (2035, 295), (143, 35) */
         input result(result_param);
-            /* CIF decision (2047, 350), (121, 50) */
+            /* CIF decision (2046, 350), (121, 50) */
             decision result_param = 1;
                 /* CIF ANSWER (2030, 420), (70, 23) */
                 (true):
@@ -162,5 +33,134 @@ process Controller;
                     /* CIF NEXTSTATE (2145, 518), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
+    endstate;
+    /* CIF state (1291, 235), (92, 35) */
+    state WaitForExit;
+        /* CIF input (1264, 290), (147, 35) */
+        input status(status_param);
+            /* CIF decision (1258, 345), (160, 50) */
+            decision status_param = on_exit;
+                /* CIF ANSWER (1262, 415), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1238, 457), (117, 35) */
+                    NEXTSTATE WaitForReEntry;
+                /* CIF ANSWER (1370, 415), (70, 23) */
+                (false):
+                    /* CIF task (1366, 458), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1370, 513), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1633, 244), (117, 35) */
+    state WaitForReEntry;
+        /* CIF input (1618, 299), (147, 35) */
+        input status(status_param);
+            /* CIF decision (1607, 354), (170, 50) */
+            decision status_param = on_entry;
+                /* CIF ANSWER (1616, 424), (70, 23) */
+                (true):
+                    /* CIF output (1616, 467), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (1580, 522), (140, 35) */
+                    NEXTSTATE WaitForResultAgain;
+                /* CIF ANSWER (1735, 424), (70, 23) */
+                (false):
+                    /* CIF task (1731, 467), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1735, 522), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (640, 234), (102, 35) */
+    state WaitForEntry;
+        /* CIF input (618, 289), (147, 35) */
+        input status(status_param);
+            /* CIF decision (607, 344), (170, 50) */
+            decision status_param = on_entry;
+                /* CIF ANSWER (605, 414), (70, 23) */
+                (true):
+                    /* CIF output (605, 457), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (586, 512), (106, 35) */
+                    NEXTSTATE WaitForResult;
+                /* CIF ANSWER (706, 414), (70, 23) */
+                (false):
+                    /* CIF task (702, 457), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (706, 507), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (443, 67), (70, 35) */
+    state Error;
+    endstate;
+    /* CIF state (569, 88), (72, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (927, 231), (106, 35) */
+    state WaitForResult;
+        /* CIF input (910, 286), (143, 35) */
+        input result(result_param);
+            /* CIF decision (921, 341), (121, 50) */
+            decision result_param = 1;
+                /* CIF ANSWER (905, 411), (70, 23) */
+                (true):
+                    /* CIF output (905, 454), (70, 35) */
+                    output reset;
+                    /* CIF NEXTSTATE (893, 509), (92, 35) */
+                    NEXTSTATE WaitForExit;
+                /* CIF ANSWER (995, 411), (70, 23) */
+                (false):
+                    /* CIF task (991, 454), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (995, 509), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (601, 649), (102, 35) */
+    state WaitForEntry;
+        /* CIF input (581, 704), (143, 35) */
+        input result(result_param);
+            /* CIF task (615, 759), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (618, 814), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (910, 639), (106, 35) */
+    state WaitForResult;
+        /* CIF input (890, 694), (147, 35) */
+        input status(status_param);
+            /* CIF task (926, 749), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (929, 804), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1279, 636), (92, 35) */
+    state WaitForExit;
+        /* CIF input (1254, 691), (143, 35) */
+        input result(result_param);
+            /* CIF task (1286, 746), (81, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (1291, 801), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (1598, 642), (117, 35) */
+    state WaitForReEntry;
+        /* CIF input (1585, 697), (143, 35) */
+        input result(result_param);
+            /* CIF task (1619, 752), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (1622, 807), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+    /* CIF state (2026, 663), (138, 35) */
+    state waitForResultAgain;
+        /* CIF input (2022, 718), (147, 35) */
+        input status(status_param);
+            /* CIF task (2058, 773), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (2061, 828), (70, 35) */
+            NEXTSTATE Error;
     endstate;
 endprocess Controller;
