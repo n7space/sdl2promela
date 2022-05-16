@@ -1,0 +1,56 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (544, 88), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl pong_param MyInteger;
+    dcl error MyInteger;
+    dcl reached MyInteger;
+    dcl param MyInteger;
+    dcl pong_enum_param MyParam;
+    /* CIF ENDTEXT */
+    /* CIF START (435, 219), (70, 35) */
+    START;
+        /* CIF task (427, 274), (84, 35) */
+        task param := 1;
+        /* CIF output (408, 324), (122, 35) */
+        output ping(param + 11);
+        /* CIF NEXTSTATE (435, 374), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1380, 182), (83, 35) */
+    state WaitEnum;
+        /* CIF input (1314, 237), (214, 35) */
+        input pong_enum(pong_enum_param);
+            /* CIF decision (1335, 291), (172, 50) */
+            decision pong_enum_param = off;
+                /* CIF ANSWER (1342, 361), (70, 23) */
+                (true):
+                    /* CIF task (1329, 404), (94, 35) */
+                    task reached := 1;
+                /* CIF ANSWER (1432, 361), (70, 23) */
+                (false):
+                    /* CIF task (1428, 404), (76, 35) */
+                    task error := 1;
+            enddecision;
+            /* CIF NEXTSTATE (1380, 455), (83, 35) */
+            NEXTSTATE WaitEnum;
+    endstate;
+    /* CIF state (990, 213), (70, 35) */
+    state Wait;
+        /* CIF input (953, 268), (135, 35) */
+        input pong(pong_param);
+            /* CIF decision (957, 323), (129, 50) */
+            decision pong_param = 12;
+                /* CIF ANSWER (945, 393), (70, 23) */
+                (true):
+                    /* CIF output (920, 436), (119, 35) */
+                    output ping_enum(off);
+                /* CIF ANSWER (1054, 393), (70, 23) */
+                (false):
+                    /* CIF task (1050, 436), (76, 35) */
+                    task error := 1;
+            enddecision;
+            /* CIF NEXTSTATE (979, 487), (83, 35) */
+            NEXTSTATE WaitEnum;
+    endstate;
+endprocess Controller;
