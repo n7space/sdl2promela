@@ -514,6 +514,36 @@ def __generate_procedure_inline(
     return builder.build()
 
 
+def __get_exit_procedures(
+    context: Context, input_block: sdlmodel.InputBlock, state: sdlmodel.State
+) -> List[str]:
+    exitlist = []
+    current = ""
+    state_tree = state.name.split(SEPARATOR)
+
+    process = context.sdl_model.source
+    while state_tree:
+        current = current + state_tree.pop(0)
+        for comp in process.composite_states:
+            if current.lower() == comp.statename.lower():
+                if comp.exit_procedure:
+                    exitlist.append(current)
+                process = comp
+                current = current + SEPARATOR
+                break
+
+    transition = context.sdl_model.transitions[input_block.transition_id]
+    result = []
+    for each in reversed(exitlist):
+        if transition and all(each.startswith(st) for st in transition.possible_states):
+            exit_procedure_name = (
+                f"{context.sdl_model.process_name}{SEPARATOR}{each}{SEPARATOR}exit"
+            )
+            result.append(exit_procedure_name)
+
+    return list(reversed(result))
+
+
 def __generate_input_function(
     context: Context, input: sdlmodel.Input
 ) -> promelamodel.Inline:
@@ -549,28 +579,10 @@ def __generate_input_function(
             )
 
         # Generate exit procedure calls in case of composite state.
-        exitlist = []
-        current = ""
-        state_tree = state.name.split(SEPARATOR)
+        exit_procedures = __get_exit_procedures(context, input_block, state)
 
-        process = context.sdl_model.source
-        while state_tree:
-            current = current + state_tree.pop(0)
-            for comp in process.composite_states:
-                if current.lower() == comp.statename.lower():
-                    if comp.exit_procedure:
-                        exitlist.append(current)
-                    process = comp
-                    current = current + SEPARATOR
-                    break
-
-        trans = context.sdl_model.transitions[input_block.transition_id]
-        for each in reversed(exitlist):
-            if trans and all(each.startswith(st) for st in trans.possible_states):
-                exit_procedure_name = (
-                    f"{context.sdl_model.process_name}{SEPARATOR}{each}{SEPARATOR}exit"
-                )
-                statements.append(CallBuilder().withTarget(exit_procedure_name).build())
+        for procedure_name in exit_procedures:
+            statements.append(CallBuilder().withTarget(procedure_name).build())
 
         statements.append(
             CallBuilder()
@@ -1370,6 +1382,7 @@ def __generate_statement(
 
     for state, transition_id in transition_choice.candidates.items():
         if isinstance(transition_id, str):
+            # OpenGEODE might return string, in such case it should be named transition id
             if transition_id in context.sdl_model.named_transition_ids:
                 transition_id = context.sdl_model.named_transition_ids[transition_id]
             else:
@@ -1441,6 +1454,16 @@ def __generate_statement(
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
+def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
+    # If transition does not contain an explicit move to another transition
+    # Then it is necessary to generate an instruction to stop transition
+    return (
+        len(transition.actions) > 0
+        and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
+        and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
+    )
+
+
 def __generate_transition(
     context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
@@ -1452,11 +1475,7 @@ def __generate_transition(
     if not context.in_transition_chain:
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
-            if (
-                len(transition.actions) > 0
-                and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
-                and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
-            ):
+            if __should_generate_transition_stop(transition):
                 statements.append(
                     AssignmentBuilder()
                     .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())

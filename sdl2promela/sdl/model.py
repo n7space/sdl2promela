@@ -1111,15 +1111,14 @@ def convert(source: ogAST.ProcedureCall):
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
         if source.inputString == "-":
-            if any(next_id for next_id in source.candidate_id.keys() if next_id != -1):
-                result = TransitionChoice()
-                for transition_id, states in source.candidate_id.items():
-                    if transition_id != -1:
-                        for state in states:
-                            key = State()
-                            key.name = state
-                            result.candidates[key] = transition_id
-
+            result = TransitionChoice()
+            for transition_id, states in source.candidate_id.items():
+                if transition_id != -1:
+                    for state in states:
+                        key = State()
+                        key.name = state
+                        result.candidates[key] = transition_id
+            if len(result.candidates) > 0:
                 return result
             else:
                 return None
