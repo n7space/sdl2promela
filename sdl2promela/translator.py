@@ -1437,7 +1437,7 @@ def __generate_statement(
     if len(output.parameters) == 0:
         return CallBuilder().withTarget(name).build()
     else:
-        parameter_name = __generate_variable_name(context, output.parameters[0], True)
+        parameter_name = __generate_expression(context, output.parameters[0])
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 

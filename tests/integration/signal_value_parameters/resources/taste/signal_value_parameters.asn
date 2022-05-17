@@ -1,0 +1,9 @@
+SIGNAL-VALUE-PARAMETERS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyParam ::= ENUMERATED {on, off}
+
+END
+

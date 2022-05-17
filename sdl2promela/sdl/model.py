@@ -459,13 +459,12 @@ class ForLoopTask(Task):
         self.iteratorName = None
 
 
-# TODO Investigate whether the parameters should actually be Expressions
 class Output(Action):
     """Signal output action."""
 
     name: str
     """Signal name."""
-    parameters: List[Parameter]
+    parameters: List[Expression]
     """Output signal parameters."""
 
     def __init__(self):
