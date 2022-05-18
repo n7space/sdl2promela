@@ -518,18 +518,18 @@ def __get_exit_procedures(
     context: Context, input_block: sdlmodel.InputBlock, state: sdlmodel.State
 ) -> List[str]:
     exitlist = []
-    current = ""
+    current_state_name = ""
     state_tree = state.name.split(SEPARATOR)
 
     process = context.sdl_model.source
     while state_tree:
-        current = current + state_tree.pop(0)
-        for comp in process.composite_states:
-            if current.lower() == comp.statename.lower():
-                if comp.exit_procedure:
-                    exitlist.append(current)
-                process = comp
-                current = current + SEPARATOR
+        current_state_name = current_state_name + state_tree.pop(0)
+        for composite in process.composite_states:
+            if current_state_name.lower() == composite.statename.lower():
+                if composite.exit_procedure:
+                    exitlist.append(current_state_name)
+                process = composite
+                current_state_name = current_state_name + SEPARATOR
                 break
 
     transition = context.sdl_model.transitions[input_block.transition_id]
