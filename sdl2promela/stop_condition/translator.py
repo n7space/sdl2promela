@@ -6,9 +6,11 @@ from sdl2promela.utils import resolve_asn1_type
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Tuple
 import functools
 from opengeode import ogAST
+from opengeode import Helper
+from opengeode.AdaGenerator import SEPARATOR
 
 
 class TranslateException(Exception):
@@ -23,14 +25,23 @@ class GenerateContext:
     processes: Dict[str, ogAST.Process]
     """Dict of all processes"""
 
-    choice_selection: str
+    aggregates: Dict[str, Dict[str, List[Any]]]
+    """Aggregates created by Helper"""
+
+    choice_selection: Optional[str]
     """The name of the choice type, set when 'present' is used
     on left hand side of expression.
     It changes translation of right hand side of expression.
     """
+    choice_selection_alternatives: Optional[List[str]]
+    """List of all available choice alternatives, set when 'present is used
+    on left hand side of expression.
+    The alternatives are case-sensitive.
+    """
 
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
+        self.aggregates = {}
         self.choice_selection = None
 
     def clear(self):
@@ -38,6 +49,7 @@ class GenerateContext:
         Shall be called after translation of children nodes.
         """
         self.choice_selection = None
+        self.choice_selection_alternatives = None
 
 
 def _escape_asn1_typename(name: str) -> str:
@@ -278,33 +290,127 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
     It means that variable is a selector of CHOICE.
     """
     if context.choice_selection is not None:
+        # The list of available alternatives of CHOICE is case-sensitive
+        # Stop Condition Language is case-insensitive,
+        # so, the existing identifier should be generated.
+        selected_alternatives = [
+            alternative
+            for alternative in context.choice_selection_alternatives
+            if alternative.lower() == expr.name.lower()
+        ]
         return promelaBuilder.VariableReferenceBuilder(
-            context.choice_selection + "_" + expr.name + "_PRESENT"
+            context.choice_selection + "_" + selected_alternatives[0] + "_PRESENT"
         ).build()
     else:
         return promelaBuilder.VariableReferenceBuilder(expr.name).build()
 
 
+def _find_first_variable(
+    context: GenerateContext, selector: model.Selector
+) -> Tuple[str, str, Any, int]:
+    """
+    The first element is variable name,
+    The second element is variable type
+    Third element, index
+    """
+    index = 0
+
+    # Find top-level process
+    process_name = selector.elements[index].name.lower()
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+
+    process = context.processes[process_name]
+    aggregates = context.aggregates[process_name]
+    print(f"Found process with name {process_name}")
+    index = index + 1
+    composites = process.composite_states
+
+    print("Composites:")
+    for c in composites:
+        print("Comp {}".format(c.statename))
+
+    print("Variables:")
+    for c in process.variables.keys():
+        print("Car: {}".format(c))
+
+    variable_prefix = ""
+    # Check composite states
+    state_name = ""
+
+    while True:
+        if len(state_name) == 0:
+            state_name = selector.elements[index].name.lower()
+        else:
+            state_name = state_name + SEPARATOR + selector.elements[index].name.lower()
+        print(f"Checking {state_name}")
+        candidates = [
+            composite for composite in composites if composite.statename == state_name
+        ]
+        if len(candidates) > 0:
+            print(f"Found composite {state_name}")
+            process = candidates[0]
+            print("Composite variables: {}".format(process.variables))
+            if state_name in aggregates:
+                composites = aggregates[state_name]
+                print(f"Aggregates: {composites}")
+            else:
+                composites = process.composite_states
+                print(f"Composites: {composites}")
+            for a in composites:
+                print(f"  {a.statename}")
+            index = index + 1
+            variable_prefix = state_name + SEPARATOR
+        else:
+            print(f"Cannot find next state: {state_name}")
+            break
+
+    variable_name = variable_prefix + selector.elements[index].name.lower()
+    if variable_name not in process.variables:
+        raise TranslateException(
+            f"Cannot find variable '{selector.elements[index].name.lower()}' {variable_name}"
+        )
+
+    return (process_name, variable_name, process.variables[variable_name][0], index + 1)
+
+
 @dispatch(GenerateContext, model.Selector)
 def _generate(context: GenerateContext, expr: model.Selector):
+    # print(f"Selector {expr}")
+    # _find_process(context, expr)
+
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
 
+    result: promela.Expression = None
+    index = 0
+
     if isinstance(promelaObjects[0], promela.ArrayAccess):
         result = promelaObjects[0]
+        index = 1
     else:
-        result: promela.MemberAccess = (
+        process_name, variable_name, variable_type, index = _find_first_variable(
+            context, expr
+        )
+        result = (
             promelaBuilder.MemberAccessBuilder()
             .withUtypeReference(
-                promelaBuilder.VariableReferenceBuilder("global_state").build()
+                promelaBuilder.MemberAccessBuilder()
+                .withUtypeReference(
+                    promelaBuilder.VariableReferenceBuilder("global_state").build()
+                )
+                .withMember(
+                    promelaBuilder.VariableReferenceBuilder(process_name).build()
+                )
+                .build()
             )
-            .withMember(promelaObjects[0])
+            .withMember(promelaBuilder.VariableReferenceBuilder(variable_name).build())
             .build()
         )
 
-    promelaObjects.pop(0)
-
-    for element in promelaObjects:
+    for element in promelaObjects[index:]:
         result = (
             promelaBuilder.MemberAccessBuilder()
             .withUtypeReference(result)
@@ -326,7 +432,7 @@ def _resolve_remaining_element_of_selector(
             "Invalid datatype, expected 'SequenceType', got {}".format(currentType.kind)
         )
 
-    member_name = selector.elements[index].name
+    member_name = selector.elements[index].name.lower()
 
     if member_name not in currentType.Children:
         raise TranslateException(
@@ -361,7 +467,10 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         # and second element is variable
         # Find the process, all available datatypes in the process
         # Find type of first element in selector
-        process_name = selector.elements[0].name
+        process_name, variable_name, variable_type, index = _find_first_variable(
+            context, selector
+        )
+        # process_name = selector.elements[0].name
         if process_name not in context.processes:
             raise TranslateException(
                 "Cannot find process with name '{}'".format(process_name)
@@ -370,21 +479,21 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         process = context.processes[process_name]
         allTypes = getattr(process.DV, "types", {})
 
-        variable_name = selector.elements[1].name
+        # variable_name = selector.elements[1].name
 
-        if variable_name not in process.variables:
-            raise TranslateException(
-                "Cannot find variable '{}' in process '{}'".format(
-                    variable_name, process_name
-                )
-            )
-        variable = process.variables[variable_name]
+        # if variable_name not in process.variables:
+        #     raise TranslateException(
+        #         "Cannot find variable '{}' in process '{}'".format(
+        #             variable_name, process_name
+        #         )
+        #     )
+        # variable = process.variables[variable_name]
 
-        currentType = resolve_asn1_type(allTypes, variable[0])
+        currentType = resolve_asn1_type(allTypes, variable_type)
 
-        if len(selector.elements) > 2:
+        if len(selector.elements) > index:
             selectorType = _resolve_remaining_element_of_selector(
-                allTypes, currentType, selector, 2
+                allTypes, currentType, selector, index
             )
             return selectorType, allTypes
         else:
@@ -408,6 +517,7 @@ def _find_type(context: GenerateContext, selector: model.CallExpression):
 def _set_choice_selection(context: GenerateContext, selector: model.Expression):
     type, _ = _find_type(context, selector)
     context.choice_selection = _escape_asn1_typename(type.CName)
+    context.choice_selection_alternatives = type.Children.keys()
 
 
 def _generate_array_access(context: GenerateContext, expr: model.CallExpression):
@@ -506,8 +616,8 @@ def _construct_queue_variable_name_from_call(
         raise TranslateException("Invalid parameter for function '{}'".format(function))
     if not isinstance(selector.elements[1], model.VariableReference):
         raise TranslateException("Invalid parameter for function '{}'".format(function))
-    process_name = selector.elements[0].name
-    queue_name = selector.elements[1].name
+    process_name = selector.elements[0].name.lower()
+    queue_name = selector.elements[1].name.lower()
     if process_name not in context.processes:
         raise TranslateException(
             "Cannot find process with name '{}'".format(process_name)
@@ -785,7 +895,20 @@ def translate_model(
     :returns: Promela Model
     """
 
+    aggregates: Dict[str, Dict[str, List[Any]]] = {}
+
+    for name, process in processes.items():
+        print(f"Process: {name}")
+        Helper.flatten(process, sep=SEPARATOR)
+        input_aggregates = Helper.state_aggregations(process)
+        aggregates[name] = input_aggregates
+        print(f"Input aggr {input_aggregates}")
+        parallel_states = Helper.parallel_states(input_aggregates)
+        print(f"Parallel states {parallel_states}")
+        Helper.map_input_state(process)
+
     context = GenerateContext(processes)
+    context.aggregates = aggregates
 
     if input_model.eventually_statements:
         if len(input_model.eventually_statements) != 1:

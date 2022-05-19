@@ -44,7 +44,7 @@ test_stop_condition_eventually_error:
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -v -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	${SDL2PROMELA} -v -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/actuator/system_structure.pr ${RES_DIR}/actuator/actuator.pr
-	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt
+	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr --sdl ${RES_DIR}/actuator/system_structure.pr ${RES_DIR}/actuator/actuator.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
@@ -65,7 +65,7 @@ test_stop_condition_eventually_ok:
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -v -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	${SDL2PROMELA} -v -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/actuator_fixed/system_structure.pr ${RES_DIR}/actuator_fixed/actuator.pr
-	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt
+	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr --sdl ${RES_DIR}/actuator_fixed/system_structure.pr ${RES_DIR}/actuator_fixed/actuator.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
