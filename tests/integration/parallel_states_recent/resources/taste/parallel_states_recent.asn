@@ -1,0 +1,12 @@
+PARALLEL-STATES-RECENT-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   ResultStatus ::= ENUMERATED {
+       ok, -- continue investigation
+       work -- tick inside parallel state 'Working'
+   }
+
+END
+

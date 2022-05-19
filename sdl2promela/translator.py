@@ -183,6 +183,18 @@ def __get_state_variable_name(context: Context) -> str:
     )
 
 
+def __get_substate_variable_name(context: Context, substate: str) -> str:
+    return (
+        __GLOBAL_STATE
+        + "."
+        + context.sdl_model.process_name.lower()
+        + "."
+        + substate
+        + SEPARATOR
+        + __STATE_VARIABLE
+    )
+
+
 def __is_local_variable(context: Context, variable: str):
     procedure = context.get_parent_procedure()
     if procedure is not None:
@@ -502,6 +514,36 @@ def __generate_procedure_inline(
     return builder.build()
 
 
+def __get_exit_procedures(
+    context: Context, input_block: sdlmodel.InputBlock, state: sdlmodel.State
+) -> List[str]:
+    exitlist = []
+    current_state_name = ""
+    state_tree = state.name.split(SEPARATOR)
+
+    process = context.sdl_model.source
+    while state_tree:
+        current_state_name = current_state_name + state_tree.pop(0)
+        for composite in process.composite_states:
+            if current_state_name.lower() == composite.statename.lower():
+                if composite.exit_procedure:
+                    exitlist.append(current_state_name)
+                process = composite
+                current_state_name = current_state_name + SEPARATOR
+                break
+
+    transition = context.sdl_model.transitions[input_block.transition_id]
+    result = []
+    for each in reversed(exitlist):
+        if transition and all(each.startswith(st) for st in transition.possible_states):
+            exit_procedure_name = (
+                f"{context.sdl_model.process_name}{SEPARATOR}{each}{SEPARATOR}exit"
+            )
+            result.append(exit_procedure_name)
+
+    return list(reversed(result))
+
+
 def __generate_input_function(
     context: Context, input: sdlmodel.Input
 ) -> promelamodel.Inline:
@@ -535,6 +577,12 @@ def __generate_input_function(
                 )
                 .build()
             )
+
+        # Generate exit procedure calls in case of composite state.
+        exit_procedures = __get_exit_procedures(context, input_block, state)
+
+        for procedure_name in exit_procedures:
+            statements.append(CallBuilder().withTarget(procedure_name).build())
 
         statements.append(
             CallBuilder()
@@ -1274,7 +1322,11 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
-    state_variable = __get_state_variable_name(context)
+    if next_state.substate:
+        state_variable = __get_substate_variable_name(context, next_state.substate)
+    else:
+        state_variable = __get_state_variable_name(context)
+
     state = context.sdl_model.states[next_state.state_name.lower()]
     state_name = __get_state_name(context, state)
     return (
@@ -1319,6 +1371,59 @@ def __generate_statement(
     )
 
 
+@dispatch(Context, sdlmodel.Transition, sdlmodel.TransitionChoice)
+def __generate_statement(
+    context: Context,
+    transition: sdlmodel.Transition,
+    transition_choice: sdlmodel.TransitionChoice,
+) -> promelamodel.Statement:
+    builder = SwitchBuilder()
+    state_variable_name = __get_state_variable_name(context)
+
+    for state, transition_id in transition_choice.candidates.items():
+        if isinstance(transition_id, str):
+            # OpenGEODE might return string, in such case it should be named transition id
+            if transition_id in context.sdl_model.named_transition_ids:
+                transition_id = context.sdl_model.named_transition_ids[transition_id]
+            else:
+                raise Exception(f"Missing value for transition_id {transition_id}")
+        builder.withAlternative(
+            AlternativeBuilder()
+            .withCondition(
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                .withLeft(VariableReferenceBuilder(state_variable_name).build())
+                .withRight(
+                    VariableReferenceBuilder(__get_state_name(context, state)).build()
+                )
+                .build()
+            )
+            .withStatements(
+                [
+                    AssignmentBuilder()
+                    .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                    .withSource(promelamodel.IntegerValue(transition_id))
+                    .build()
+                ]
+            )
+            .build()
+        )
+
+    builder.withAlternative(
+        AlternativeBuilder()
+        .withStatements(
+            [
+                AssignmentBuilder()
+                .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                .withSource(promelamodel.IntegerValue(int(__INVALID_ID)))
+                .build()
+            ]
+        )
+        .build()
+    )
+
+    return builder.build()
+
+
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureCall)
 def __generate_statement(
     context: Context,
@@ -1349,6 +1454,16 @@ def __generate_statement(
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
+def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
+    # If transition does not contain an explicit move to another transition
+    # Then it is necessary to generate an instruction to stop transition
+    return (
+        len(transition.actions) > 0
+        and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
+        and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
+    )
+
+
 def __generate_transition(
     context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
@@ -1360,9 +1475,7 @@ def __generate_transition(
     if not context.in_transition_chain:
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
-            if len(transition.actions) > 0 and not isinstance(
-                transition.actions[-1], sdlmodel.NextTransition
-            ):
+            if __should_generate_transition_stop(transition):
                 statements.append(
                     AssignmentBuilder()
                     .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())

@@ -484,8 +484,12 @@ class NextState(Terminator):
     state_name: str
     """Next state name."""
 
+    substate: str
+    """Substate."""
+
     def __init__(self):
         self.state_name = None
+        self.substate = None
 
 
 class NextTransition(Terminator):
@@ -496,6 +500,16 @@ class NextTransition(Terminator):
 
     def __init__(self):
         self.transition_id = None
+
+
+class TransitionChoice(Terminator):
+    """Next transiton depending on current state."""
+
+    candidates: Dict[State, Union[int, str]]
+    """Map from state to transition_id."""
+
+    def __init__(self):
+        self.candidates = {}
 
 
 class Join(Terminator):
@@ -552,6 +566,9 @@ class Transition:
 
     parent: Union["Model", "Procedure"]
     """Parent of the transition"""
+
+    possible_states: List[str]
+    """List of possible states, which can lead do this transition."""
 
     def __init__(self):
         self.id = 0
@@ -1094,7 +1111,19 @@ def convert(source: ogAST.ProcedureCall):
 def convert(source: ogAST.Terminator) -> Action:
     if source.kind == "next_state":
         if source.inputString == "-":
-            return None  # No state switch
+            result = TransitionChoice()
+            for transition_id, states in source.candidate_id.items():
+                if transition_id != -1:
+                    for state in states:
+                        key = State()
+                        key.name = state
+                        result.candidates[key] = transition_id
+            if len(result.candidates) > 0:
+                return result
+            else:
+                return None
+        if source.inputString == "-*":
+            return None
         if source.next_id != -1:
             # Next State might lead to nested state,
             # In such case the another transition shall be executed
@@ -1103,6 +1132,7 @@ def convert(source: ogAST.Terminator) -> Action:
             return next_transition
         next_state = NextState()
         next_state.state_name = source.inputString
+        next_state.substate = source.substate
         return next_state
     elif source.kind == "join":
         join = Join()
@@ -1217,6 +1247,9 @@ class Model:
         else:
             self.source = process
         Helper.flatten(self.source, sep=SEPARATOR)
+        self.input_aggregates = Helper.state_aggregations(self.source)
+        self.input_parallel_states = Helper.parallel_states(self.input_aggregates)
+        self.input_mapping = Helper.map_input_state(self.source)
         self.process_name = process.processName
         self.process_implementation_name = self.source.processName
         self.floating_labels = {}
@@ -1376,6 +1409,7 @@ class Model:
         transition = Transition()
         transition.actions = []
         transition.parent = self
+        transition.possible_states = source.possible_states
         appendAllActions(transition, source)
         return transition
 
@@ -1422,7 +1456,7 @@ class Model:
                 self.named_transition_ids[name] = int(val)
 
     def __gather_aggregates(self):
-        aggregates = Helper.state_aggregations(self.source)
+        aggregates = self.input_aggregates
         for name, substates in aggregates.items():
             aggregate_name = f"{name}{SEPARATOR}START"
             transitions = []

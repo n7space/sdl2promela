@@ -1,0 +1,129 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    state aggregation Parallel;
+    substructure
+            state Left;
+            substructure
+                    /* CIF TEXT (188, 612), (267, 140) */
+                    -- Text area for declarations and comments
+                    
+                    dcl ok_result_param ResultStatus;
+                    dcl work_result_param ResultStatus;
+                    /* CIF ENDTEXT */
+                    /* CIF START (240, 355), (70, 35) */
+                    START;
+                        /* CIF task (198, 410), (152, 35) */
+                        task ok_result_param := ok;
+                        /* CIF task (181, 465), (186, 35) */
+                        task work_result_param := work;
+                        /* CIF NEXTSTATE (237, 515), (74, 35) */
+                        NEXTSTATE Disabled;
+                    /* CIF state (816, 342), (70, 35) */
+                    state Enabled;
+                        /* CIF input (816, 397), (71, 35) */
+                        input tick_left;
+                            /* CIF output (762, 452), (179, 35) */
+                            output result(work_result_param);
+                            /* CIF NEXTSTATE (816, 502), (72, 35) */
+                            NEXTSTATE Working;
+                    endstate;
+                    /* CIF state (556, 361), (74, 35) */
+                    state Disabled;
+                        /* CIF input (558, 416), (71, 35) */
+                        input tick_left;
+                            /* CIF output (512, 471), (164, 35) */
+                            output result(ok_result_param);
+                            /* CIF NEXTSTATE (559, 521), (70, 35) */
+                            NEXTSTATE Enabled;
+                    endstate;
+                    /* CIF state (1147, 187), (72, 35) */
+                    state Working;
+                        /* CIF input (1148, 242), (71, 35) */
+                        input tick_left;
+                            /* CIF output (1102, 297), (164, 35) */
+                            output result(ok_result_param);
+                            /* CIF NEXTSTATE (1149, 347), (70, 35) */
+                            NEXTSTATE Enabled;
+                    endstate;
+            endsubstructure;
+            state Right;
+            substructure
+                    /* CIF TEXT (1120, 352), (267, 140) */
+                    -- Text area for declarations and comments
+                    
+                    dcl result_param ResultStatus;
+                    /* CIF ENDTEXT */
+                    /* CIF START (359, 288), (70, 35) */
+                    START;
+                        /* CIF task (327, 343), (132, 35) */
+                        task result_param := ok;
+                        /* CIF NEXTSTATE (357, 393), (72, 35) */
+                        NEXTSTATE Working;
+                    /* CIF state (597, 188), (72, 35) */
+                    state Working;
+                        /* CIF input (594, 243), (79, 35) */
+                        input tick_right;
+                            /* CIF output (562, 298), (143, 35) */
+                            output result(result_param);
+                            /* CIF NEXTSTATE (598, 348), (72, 35) */
+                            NEXTSTATE Working;
+                    endstate;
+            endsubstructure;
+            /* CIF state (762, 212), (70, 35) */
+            state Right;
+            endstate;
+            /* CIF state (250, 202), (70, 35) */
+            state Left;
+            endstate;
+    endsubstructure;
+    /* CIF TEXT (389, 371), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl result_param ResultStatus;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF task (288, 65), (132, 35) */
+        task result_param := ok;
+        /* CIF NEXTSTATE (320, 115), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1560, 146), (70, 35) */
+    state Parallel;
+        /* CIF input (1560, 201), (70, 35) */
+        input tick;
+            /* CIF output (1523, 256), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1560, 306), (70, 35) */
+            NEXTSTATE -*;
+    endstate;
+    /* CIF state (1302, 144), (70, 35) */
+    state Parallel;
+        /* CIF input (1302, 199), (70, 35) */
+        input reset;
+            /* CIF output (1265, 254), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1302, 304), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1043, 145), (70, 35) */
+    state Wait;
+        /* CIF input (1043, 200), (70, 35) */
+        input reset;
+            /* CIF output (1006, 255), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1043, 305), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (779, 146), (70, 35) */
+    state Wait;
+        /* CIF input (779, 201), (70, 35) */
+        input tick;
+            /* CIF output (742, 256), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (779, 306), (70, 35) */
+            NEXTSTATE Parallel;
+    endstate;
+    /* CIF state (392, 169), (70, 35) */
+    state Parallel;
+    endstate;
+endprocess Actuator;
