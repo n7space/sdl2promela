@@ -298,6 +298,11 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
             for alternative in context.choice_selection_alternatives
             if alternative.lower() == expr.name.lower()
         ]
+        if len(selected_alternatives) != 1:
+            raise TranslateException(
+                f"The CHOICE datatype '{context.choice_selection}' has no alternative with name '{expr.name}'"
+            )
+
         return promelaBuilder.VariableReferenceBuilder(
             context.choice_selection + "_" + selected_alternatives[0] + "_PRESENT"
         ).build()
@@ -305,9 +310,33 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
         return promelaBuilder.VariableReferenceBuilder(expr.name).build()
 
 
+class FirstVariableInfo:
+    """
+    Information about first variable of selector.
+    """
+
+    process_name: str
+    """Name of process."""
+
+    variable_name: str
+    """Name of first variable."""
+
+    variable_type: Any
+    """Type of variable from OpenGEODE."""
+
+    consumed_elements: int
+    """Number of consumed elements of Selector."""
+
+    def __init__(self, process_name, variable_name, variable_type, consumed_elements):
+        self.process_name = process_name
+        self.variable_name = variable_name
+        self.variable_type = variable_type
+        self.consumed_elements = consumed_elements
+
+
 def _find_first_variable(
     context: GenerateContext, selector: model.Selector
-) -> Tuple[str, str, Any, int]:
+) -> FirstVariableInfo:
     """
     The first element is variable name,
     The second element is variable type
@@ -324,17 +353,8 @@ def _find_first_variable(
 
     process = context.processes[process_name]
     aggregates = context.aggregates[process_name]
-    print(f"Found process with name {process_name}")
     index = index + 1
     composites = process.composite_states
-
-    print("Composites:")
-    for c in composites:
-        print("Comp {}".format(c.statename))
-
-    print("Variables:")
-    for c in process.variables.keys():
-        print("Car: {}".format(c))
 
     variable_prefix = ""
     # Check composite states
@@ -345,26 +365,18 @@ def _find_first_variable(
             state_name = selector.elements[index].name.lower()
         else:
             state_name = state_name + SEPARATOR + selector.elements[index].name.lower()
-        print(f"Checking {state_name}")
         candidates = [
             composite for composite in composites if composite.statename == state_name
         ]
         if len(candidates) > 0:
-            print(f"Found composite {state_name}")
             process = candidates[0]
-            print("Composite variables: {}".format(process.variables))
             if state_name in aggregates:
                 composites = aggregates[state_name]
-                print(f"Aggregates: {composites}")
             else:
                 composites = process.composite_states
-                print(f"Composites: {composites}")
-            for a in composites:
-                print(f"  {a.statename}")
             index = index + 1
             variable_prefix = state_name + SEPARATOR
         else:
-            print(f"Cannot find next state: {state_name}")
             break
 
     variable_name = variable_prefix + selector.elements[index].name.lower()
@@ -373,13 +385,13 @@ def _find_first_variable(
             f"Cannot find variable '{selector.elements[index].name.lower()}' {variable_name}"
         )
 
-    return (process_name, variable_name, process.variables[variable_name][0], index + 1)
+    return FirstVariableInfo(
+        process_name, variable_name, process.variables[variable_name][0], index + 1
+    )
 
 
 @dispatch(GenerateContext, model.Selector)
 def _generate(context: GenerateContext, expr: model.Selector):
-    # print(f"Selector {expr}")
-    # _find_process(context, expr)
 
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
@@ -391,9 +403,9 @@ def _generate(context: GenerateContext, expr: model.Selector):
         result = promelaObjects[0]
         index = 1
     else:
-        process_name, variable_name, variable_type, index = _find_first_variable(
-            context, expr
-        )
+        variable_info = _find_first_variable(context, expr)
+        # process_name, variable_name, variable_type, index
+        index = variable_info.consumed_elements
         result = (
             promelaBuilder.MemberAccessBuilder()
             .withUtypeReference(
@@ -402,11 +414,17 @@ def _generate(context: GenerateContext, expr: model.Selector):
                     promelaBuilder.VariableReferenceBuilder("global_state").build()
                 )
                 .withMember(
-                    promelaBuilder.VariableReferenceBuilder(process_name).build()
+                    promelaBuilder.VariableReferenceBuilder(
+                        variable_info.process_name
+                    ).build()
                 )
                 .build()
             )
-            .withMember(promelaBuilder.VariableReferenceBuilder(variable_name).build())
+            .withMember(
+                promelaBuilder.VariableReferenceBuilder(
+                    variable_info.variable_name
+                ).build()
+            )
             .build()
         )
 
@@ -467,16 +485,16 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         # and second element is variable
         # Find the process, all available datatypes in the process
         # Find type of first element in selector
-        process_name, variable_name, variable_type, index = _find_first_variable(
-            context, selector
-        )
+        variable_info = _find_first_variable(context, selector)
+        index = variable_info.consumed_elements
+        # process_name, variable_name, variable_type, index
         # process_name = selector.elements[0].name
-        if process_name not in context.processes:
+        if variable_info.process_name not in context.processes:
             raise TranslateException(
-                "Cannot find process with name '{}'".format(process_name)
+                "Cannot find process with name '{}'".format(variable_info.process_name)
             )
 
-        process = context.processes[process_name]
+        process = context.processes[variable_info.process_name]
         allTypes = getattr(process.DV, "types", {})
 
         # variable_name = selector.elements[1].name
@@ -489,7 +507,7 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         #     )
         # variable = process.variables[variable_name]
 
-        currentType = resolve_asn1_type(allTypes, variable_type)
+        currentType = resolve_asn1_type(allTypes, variable_info.variable_type)
 
         if len(selector.elements) > index:
             selectorType = _resolve_remaining_element_of_selector(
@@ -898,13 +916,10 @@ def translate_model(
     aggregates: Dict[str, Dict[str, List[Any]]] = {}
 
     for name, process in processes.items():
-        print(f"Process: {name}")
         Helper.flatten(process, sep=SEPARATOR)
         input_aggregates = Helper.state_aggregations(process)
         aggregates[name] = input_aggregates
-        print(f"Input aggr {input_aggregates}")
-        parallel_states = Helper.parallel_states(input_aggregates)
-        print(f"Parallel states {parallel_states}")
+        Helper.parallel_states(input_aggregates)
         Helper.map_input_state(process)
 
     context = GenerateContext(processes)
