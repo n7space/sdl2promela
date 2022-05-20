@@ -233,7 +233,9 @@ class CallExpression(Expression):
     parameters: List[Expression]
     """List of parameters, or an array index."""
 
-    def __init__(self, function: Expression, parameters: List[Expression]):
+    def __init__(
+        self, function: Union[VariableReference, Selector], parameters: List[Expression]
+    ):
         self.function = function
         self.parameters = parameters
 

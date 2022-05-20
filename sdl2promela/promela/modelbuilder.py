@@ -344,7 +344,7 @@ class CallBuilder:
         self.call.target = target
         return self
 
-    def withParameter(self, parameter: Statement) -> "CallBuilder":
+    def withParameter(self, parameter: Expression) -> "CallBuilder":
         """
         Add a parameter.
         :param parameter: Parameter to be added.

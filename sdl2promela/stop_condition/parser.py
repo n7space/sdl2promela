@@ -3,8 +3,10 @@
 
 import antlr3
 import opengeode
+import typing
 
 from opengeode import sdl92Lexer as lexer
+from typing import Union, Optional
 from .model import StopConditionModel
 from .model import Expression
 from .model import Selector
@@ -80,7 +82,9 @@ def _parse_selector(selector: antlr3.tree.CommonTree) -> Selector:
         elements = elements + nested.elements
     elif selector.children[0].type == lexer.PRIMARY:
         variable_reference = _parse_primary_expression(selector.children[0].children[0])
-        elements.append(variable_reference)
+        elements.append(
+            typing.cast(Union[VariableReference, CallExpression], variable_reference)
+        )
     elif selector.children[0].type == lexer.CALL:
         call_expression = _parse_call_expression(selector.children[0])
         elements.append(call_expression)
@@ -122,7 +126,9 @@ def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
 
     parameters = [_parse_expression(e) for e in expr.children[1].children]
 
-    return CallExpression(function, parameters)
+    return CallExpression(
+        typing.cast(Union[VariableReference, Selector], function), parameters
+    )
 
 
 def _parse_expression(expr: antlr3.tree.CommonTree) -> Expression:
@@ -220,7 +226,7 @@ def _parse_filter_out_statement(
     return FilterOutStatement(_parse_expression(statement.children[0]))
 
 
-def parse_stop_condition(text: str) -> StopConditionModel:
+def parse_stop_condition(text: str) -> Optional[StopConditionModel]:
     """Parse Stop Condition from text.
     :param text: text to parse.
     :returns: StopConditionModel.
@@ -247,7 +253,7 @@ def parse_stop_condition(text: str) -> StopConditionModel:
     return model
 
 
-def parse_stop_condition_file(filepath: str) -> StopConditionModel:
+def parse_stop_condition_file(filepath: str) -> Optional[StopConditionModel]:
     """Parse Stop Condition from file.
     :param filepath: path to the text file.
     :returns: StopConditionModel.

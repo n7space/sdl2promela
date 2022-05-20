@@ -6,8 +6,9 @@ from sdl2promela.utils import resolve_asn1_type
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
 from multipledispatch import dispatch
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Union
 import functools
+import typing
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
@@ -338,14 +339,14 @@ def _find_first_variable(
     context: GenerateContext, selector: model.Selector
 ) -> FirstVariableInfo:
     """
-    The first element is variable name,
-    The second element is variable type
-    Third element, index
+    Find first variable referenced by selector.
     """
     index = 0
 
     # Find top-level process
-    process_name = selector.elements[index].name.lower()
+    process_name = typing.cast(
+        model.VariableReference, selector.elements[index]
+    ).name.lower()
     if process_name not in context.processes:
         raise TranslateException(
             "Cannot find process with name '{}'".format(process_name)
@@ -357,14 +358,18 @@ def _find_first_variable(
     composites = process.composite_states
 
     variable_prefix = ""
-    # Check composite states
     state_name = ""
 
+    # Check if composite (nested) or aggregate (parallel) states exist
+    # And construct variable prefix, which consist of state name.
     while True:
+        element_name = typing.cast(
+            model.VariableReference, selector.elements[index]
+        ).name.lower()
         if len(state_name) == 0:
-            state_name = selector.elements[index].name.lower()
+            state_name = element_name
         else:
-            state_name = state_name + SEPARATOR + selector.elements[index].name.lower()
+            state_name = state_name + SEPARATOR + element_name
         candidates = [
             composite for composite in composites if composite.statename == state_name
         ]
@@ -379,10 +384,13 @@ def _find_first_variable(
         else:
             break
 
-    variable_name = variable_prefix + selector.elements[index].name.lower()
+    element_name = typing.cast(
+        model.VariableReference, selector.elements[index]
+    ).name.lower()
+    variable_name = variable_prefix + element_name
     if variable_name not in process.variables:
         raise TranslateException(
-            f"Cannot find variable '{selector.elements[index].name.lower()}' {variable_name}"
+            f"Cannot find variable '{element_name}' ({variable_name})"
         )
 
     return FirstVariableInfo(
@@ -396,7 +404,9 @@ def _generate(context: GenerateContext, expr: model.Selector):
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
 
-    result: promela.Expression = None
+    result: Optional[
+        Union[promela.MemberAccess, promela.ArrayAccess, promela.VariableReference]
+    ] = None
     index = 0
 
     if isinstance(promelaObjects[0], promela.ArrayAccess):
@@ -404,7 +414,6 @@ def _generate(context: GenerateContext, expr: model.Selector):
         index = 1
     else:
         variable_info = _find_first_variable(context, expr)
-        # process_name, variable_name, variable_type, index
         index = variable_info.consumed_elements
         result = (
             promelaBuilder.MemberAccessBuilder()
@@ -431,7 +440,16 @@ def _generate(context: GenerateContext, expr: model.Selector):
     for element in promelaObjects[index:]:
         result = (
             promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(result)
+            .withUtypeReference(
+                typing.cast(
+                    Union[
+                        promela.MemberAccess,
+                        promela.ArrayAccess,
+                        promela.VariableReference,
+                    ],
+                    result,
+                )
+            )
             .withMember(element)
             .build()
         )
@@ -450,7 +468,9 @@ def _resolve_remaining_element_of_selector(
             "Invalid datatype, expected 'SequenceType', got {}".format(currentType.kind)
         )
 
-    member_name = selector.elements[index].name.lower()
+    member_name = typing.cast(
+        model.VariableReference, selector.elements[index]
+    ).name.lower()
 
     if member_name not in currentType.Children:
         raise TranslateException(
@@ -481,31 +501,19 @@ def _find_type(context: GenerateContext, selector: model.Selector):
         )
         return selectorType, allTypes
     else:
-        # Selector is in simple form, where first element refers to a process
-        # and second element is variable
-        # Find the process, all available datatypes in the process
-        # Find type of first element in selector
+        # Selector is in simple form, where first element refers to a process,
+        # optional nested or parallel states,
+        # and the next element is variable name
         variable_info = _find_first_variable(context, selector)
         index = variable_info.consumed_elements
-        # process_name, variable_name, variable_type, index
-        # process_name = selector.elements[0].name
         if variable_info.process_name not in context.processes:
             raise TranslateException(
                 "Cannot find process with name '{}'".format(variable_info.process_name)
             )
 
+        # Find the process, all available datatypes in the process
         process = context.processes[variable_info.process_name]
         allTypes = getattr(process.DV, "types", {})
-
-        # variable_name = selector.elements[1].name
-
-        # if variable_name not in process.variables:
-        #     raise TranslateException(
-        #         "Cannot find variable '{}' in process '{}'".format(
-        #             variable_name, process_name
-        #         )
-        #     )
-        # variable = process.variables[variable_name]
 
         currentType = resolve_asn1_type(allTypes, variable_info.variable_type)
 
@@ -721,7 +729,7 @@ def _generate_filter_out_alternative(
 
     expressions = [_generate(context, s.expression) for s in statements]
 
-    negate_expressions = [
+    negate_expressions: List[promela.Expression] = [
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
         .withExpression(e)
         .build()
@@ -736,7 +744,11 @@ def _generate_filter_out_alternative(
             .build()
         )
 
-    condition = functools.reduce(joiner, negate_expressions[1:], negate_expressions[0])
+    condition = functools.reduce(
+        joiner,
+        negate_expressions[1:],
+        negate_expressions[0],
+    )
 
     builder.withCondition(condition)
     builder.withStatements(
@@ -826,7 +838,7 @@ def _generate_entry_loop() -> promela.Do:
 
 def _translate_basic_statements(
     input_model: model.StopConditionModel,
-    builder: promelaBuilder.BlockBuilder,
+    builder: promelaBuilder.DoBuilder,
     context: GenerateContext,
 ):
     for always in input_model.always_statements:
