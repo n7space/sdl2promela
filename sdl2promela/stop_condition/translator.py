@@ -339,7 +339,16 @@ def _find_first_variable(
     context: GenerateContext, selector: model.Selector
 ) -> FirstVariableInfo:
     """
-    Find first variable referenced by selector.
+    Find first variable referenced by Selector.
+    The selector begins with the following elements:
+    process name and optional nested state names.
+    The variables defined inside nested states are placed directly
+    in the context of the process and the name of the variable
+    has a prefix, which consists of a name of nested state.
+
+    This function resolves selector and gives information about type
+    and real name of first referenced variable. The remaining
+    elements of selector refers to possible elements of SEQUENCE.
     """
     index = 0
 
@@ -370,17 +379,26 @@ def _find_first_variable(
             state_name = element_name
         else:
             state_name = state_name + SEPARATOR + element_name
+
+        # Check if current element refers to a nested/parallel state
         candidates = [
             composite for composite in composites if composite.statename == state_name
         ]
+
         if len(candidates) > 0:
+            # The current element of selector refers to a composite or aggregate state
+            # Modify variable prefix and go to next element
             process = candidates[0]
-            if state_name in aggregates:
-                composites = aggregates[state_name]
-            else:
-                composites = process.composite_states
             index = index + 1
             variable_prefix = state_name + SEPARATOR
+
+            # Choose candidates for the next possible nested states
+            if state_name in aggregates:
+                # If current element is an aggregate, use aggregates
+                composites = aggregates[state_name]
+            else:
+                # Else use composite stats
+                composites = process.composite_states
         else:
             break
 
