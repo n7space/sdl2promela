@@ -1,0 +1,3 @@
+eventually actuator.nestED.param > 0;
+never controller.error > 0;
+never present(actuator.nested.datA) = SECond;

@@ -41,7 +41,7 @@ test_stop_condition_never:
 	echo "Test stop_condition_never"
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
-	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_never.txt
+	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_never.txt --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
@@ -61,7 +61,7 @@ test_stop_condition_filter_out:
 	echo "Test stop_condition_filter_out"
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -o ${TEST_DIR}/controller.pml --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
-	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_filter_out.txt
+	${SDL2PROMELA} -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_filter_out.txt --sdl ${RES_DIR}/controller/system_structure.pr ${RES_DIR}/controller/controller.pr
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml

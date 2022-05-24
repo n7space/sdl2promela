@@ -1,0 +1,2 @@
+eventually actuator.parallel.left.data > 5;
+never present(actuator.parallel.left.selection) = second;

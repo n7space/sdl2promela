@@ -1,0 +1,12 @@
+STOP-CONDITION-PARALLEL-STATE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyChoice ::= CHOICE {
+       first MyInteger,
+       second MyInteger
+   }
+
+END
+

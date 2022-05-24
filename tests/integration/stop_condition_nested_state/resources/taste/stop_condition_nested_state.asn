@@ -1,0 +1,14 @@
+STOP-CONDITION-NESTED-STATE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= INTEGER (1 .. 8)
+
+   MyChoice ::= CHOICE {
+       first MyInteger,
+       secONd MyInteger
+   }
+
+END
+
