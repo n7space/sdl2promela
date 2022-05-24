@@ -299,9 +299,14 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
             for alternative in context.choice_selection_alternatives
             if alternative.lower() == expr.name.lower()
         ]
-        if len(selected_alternatives) != 1:
+        if len(selected_alternatives) == 0:
             raise TranslateException(
                 f"The CHOICE datatype '{context.choice_selection}' has no alternative with name '{expr.name}'"
+            )
+        elif len(selected_alternatives) > 1:
+            available_alternatives = ", ".join(selected_alternatives)
+            raise TranslateException(
+                f"Ambiguous CHOICE selector '{expr.name}', available alternatives: {available_alternatives}"
             )
 
         return promelaBuilder.VariableReferenceBuilder(
