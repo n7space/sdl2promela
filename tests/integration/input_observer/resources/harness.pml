@@ -112,11 +112,11 @@ init
 {
     MyInteger signal_parameter;
     signal_parameter = 0;
-    InputObserver_0_init()
+    Inputobserver_0_init()
     assert (!global_state.inputobserver.received_trigger);
     assert (!global_state.inputobserver.received_action);
-    InputObserver_0_PI_0_trigger_in(signal_parameter);
-    InputObserver_0_PI_0_action_in(signal_parameter);
+    Inputobserver_0_PI_0_trigger_in(signal_parameter);
+    Inputobserver_0_PI_0_action_in(signal_parameter);
     assert (global_state.inputobserver.received_trigger);
     assert (global_state.inputobserver.received_action);
 }

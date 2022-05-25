@@ -162,15 +162,21 @@ def __get_procedure_inline_return_name() -> str:
 
 
 def __get_transition_function_name(context: Context) -> str:
-    return context.sdl_model.process_name + SEPARATOR + "transition"
+    return context.sdl_model.process_name.capitalize() + SEPARATOR + "transition"
 
 
 def __get_input_function_name(context: Context, input: sdlmodel.Input) -> str:
-    return context.sdl_model.process_name + SEPARATOR + "PI" + SEPARATOR + input.name
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "PI"
+        + SEPARATOR
+        + input.name
+    )
 
 
 def __get_init_function_name(context: Context) -> str:
-    return context.sdl_model.process_name + SEPARATOR + __INIT
+    return context.sdl_model.process_name.capitalize() + SEPARATOR + __INIT
 
 
 def __get_state_variable_name(context: Context) -> str:

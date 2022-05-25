@@ -1,4 +1,4 @@
-inline bare_signals_0_transition(id)
+inline Bare_signals_0_transition(id)
 {
   int transition_id;
   transition_id = id;
@@ -18,24 +18,24 @@ inline bare_signals_0_transition(id)
     fi;
   od;
 }
-inline bare_signals_0_init()
+inline Bare_signals_0_init()
 {
-  bare_signals_0_transition(0);
+  Bare_signals_0_transition(0);
 }
-inline bare_signals_0_PI_0_signal_1()
+inline Bare_signals_0_PI_0_signal_1()
 {
   if
   ::(global_state.bare_signals.state == Bare_signals_States_state_1)->
-    bare_signals_0_transition(1);
+    Bare_signals_0_transition(1);
   ::else->
     skip;
   fi;
 }
-inline bare_signals_0_PI_0_signal_2()
+inline Bare_signals_0_PI_0_signal_2()
 {
   if
   ::(global_state.bare_signals.state == Bare_signals_States_state_2)->
-    bare_signals_0_transition(2);
+    Bare_signals_0_transition(2);
   ::else->
     skip;
   fi;
