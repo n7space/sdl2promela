@@ -1,0 +1,18 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF START (662, 243), (70, 35) */
+    START;
+        /* CIF output (662, 298), (70, 35) */
+        output ping;
+        /* CIF NEXTSTATE (662, 348), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (892, 228), (70, 35) */
+    state Wait;
+        /* CIF input (892, 283), (70, 35) */
+        input pong;
+            /* CIF output (892, 338), (70, 35) */
+            output ping;
+            /* CIF NEXTSTATE (892, 393), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Controller;

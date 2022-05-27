@@ -1,0 +1,87 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    state aggregation Parallel;
+    substructure
+            state Left;
+            substructure
+                    /* CIF START (262, 90), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (262, 145), (70, 35) */
+                        NEXTSTATE One;
+                    /* CIF state (1071, 124), (70, 35) */
+                    state Three;
+                        /* CIF input (1071, 179), (70, 35) */
+                        input ping;
+                            /* CIF output (1071, 234), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (1071, 289), (70, 35) */
+                            NEXTSTATE One;
+                    endstate;
+                    /* CIF state (758, 118), (70, 35) */
+                    state Two;
+                        /* CIF input (758, 173), (70, 35) */
+                        input ping;
+                            /* CIF output (758, 228), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (758, 283), (70, 35) */
+                            NEXTSTATE Three;
+                    endstate;
+                    /* CIF state (443, 99), (70, 35) */
+                    state One;
+                        /* CIF input (443, 154), (70, 35) */
+                        input ping;
+                            /* CIF output (443, 209), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (443, 264), (70, 35) */
+                            NEXTSTATE Two;
+                    endstate;
+            endsubstructure;
+            state Right;
+            substructure
+                    /* CIF START (204, 91), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (204, 146), (70, 35) */
+                        NEXTSTATE Red;
+                    /* CIF state (729, 129), (70, 35) */
+                    state Green;
+                        /* CIF input (729, 184), (70, 35) */
+                        input tick;
+                            /* CIF output (729, 239), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (729, 294), (70, 35) */
+                            NEXTSTATE Blue;
+                    endstate;
+                    /* CIF state (1072, 167), (70, 35) */
+                    state Blue;
+                        /* CIF input (1072, 222), (70, 35) */
+                        input tick;
+                            /* CIF output (1072, 277), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (1072, 332), (70, 35) */
+                            NEXTSTATE Red;
+                    endstate;
+                    /* CIF state (464, 103), (70, 35) */
+                    state Red;
+                        /* CIF input (464, 158), (70, 35) */
+                        input tick;
+                            /* CIF output (464, 213), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (464, 268), (70, 35) */
+                            NEXTSTATE Green;
+                    endstate;
+            endsubstructure;
+            /* CIF state (756, 373), (70, 35) */
+            state Right;
+            endstate;
+            /* CIF state (375, 355), (70, 35) */
+            state Left;
+            endstate;
+    endsubstructure;
+    /* CIF START (749, 262), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (749, 312), (70, 35) */
+        NEXTSTATE Parallel;
+    /* CIF state (1242, 283), (70, 35) */
+    state Parallel;
+    endstate;
+endprocess Actuator;

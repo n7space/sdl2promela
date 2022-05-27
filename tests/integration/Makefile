@@ -33,7 +33,9 @@ TESTS= \
 	parallel_states_recent \
 	nested_states_recent \
 	stop_condition_nested_state \
-	stop_condition_parallel_state
+	stop_condition_parallel_state \
+	stop_condition_get_state_nested \
+	stop_condition_get_state_parallel
 
 .PHONY: $(TESTS) check
 

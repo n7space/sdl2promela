@@ -1,6 +1,7 @@
 from ast import arguments
-from typing import List, Dict, Union, Tuple, Any
+from typing import List, Dict, Union, Tuple, Any, Optional
 from multipledispatch import dispatch
+from itertools import chain
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
@@ -19,6 +20,15 @@ class State:
 
     def __str__(self):
         return f"State(name={self.name})"
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __ne__(self, other):
+        return self.name != other.name
+
+    def __hash__(self):
+        return hash(self.name)
 
 
 class Expression:
@@ -498,8 +508,12 @@ class NextTransition(Terminator):
     transition_id: Union[int, str]
     """Transition identifier to execute."""
 
+    state_name: Optional[str]
+    """Next state name."""
+
     def __init__(self):
         self.transition_id = None
+        self.state_name = None
 
 
 class TransitionChoice(Terminator):
@@ -1129,6 +1143,7 @@ def convert(source: ogAST.Terminator) -> Action:
             # In such case the another transition shall be executed
             next_transition = NextTransition()
             next_transition.transition_id = source.next_id
+            next_transition.state_name = source.inputString
             return next_transition
         next_state = NextState()
         next_state.state_name = source.inputString
@@ -1264,6 +1279,21 @@ class Model:
         self.implicit_variables = {}
         self.named_transition_ids = {}
         self.aggregates = {}
+
+        self.full_statelist = set(
+            chain(
+                self.input_aggregates.keys(),
+                (
+                    name
+                    for name in self.source.mapping.keys()
+                    if not name.endswith("START")
+                ),
+            )
+        )
+
+        self.reduced_statelist = {
+            s for s in self.full_statelist if s not in self.input_parallel_states
+        }
 
         self.__gather_states()
         self.__gather_inputs()

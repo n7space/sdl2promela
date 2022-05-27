@@ -1,0 +1,1 @@
+eventually get_state(actuator.parallel.right) = blue;
