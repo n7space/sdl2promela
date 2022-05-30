@@ -322,7 +322,10 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
     If choice_selection is set in context, it is a special case.
     It means that variable is a selector of CHOICE.
     """
-    if context.choice_selection is not None:
+    if (
+        context.choice_selection is not None
+        and context.choice_selection_alternatives is not None
+    ):
         # The list of available alternatives of CHOICE is case-sensitive
         # Stop Condition Language is case-insensitive,
         # so, the existing identifier should be generated.
@@ -461,24 +464,32 @@ def _find_first_variable(
     )
 
 
+def _generate_state_reference(context: GenerateContext, expr: model.Selector):
+    if not isinstance(expr.elements[0], model.VariableReference):
+        raise TranslateException("Invalid nested state name.")
+
+    if context.process_state_selection is None:
+        raise TranslateException("Invalid state comparison.")
+
+    elements = [
+        typing.cast(model.VariableReference, element).name for element in expr.elements
+    ]
+    state_name = SEPARATOR.join(elements)
+
+    return promelaBuilder.VariableReferenceBuilder(
+        _get_process_state_name(
+            context.process_state_selection,
+            state_name,
+            context.process_state_selection_substate,
+        )
+    ).build()
+
+
 @dispatch(GenerateContext, model.Selector)
 def _generate(context: GenerateContext, expr: model.Selector):
 
     if context.process_state_selection is not None:
-        # a special case
-        if not isinstance(expr.elements[0], model.VariableReference):
-            raise TranslateException("Invalid state")
-
-        elements = [v.name for v in expr.elements]
-        state_name = SEPARATOR.join(elements)
-
-        return promelaBuilder.VariableReferenceBuilder(
-            _get_process_state_name(
-                context.process_state_selection,
-                state_name,
-                context.process_state_selection_substate,
-            )
-        ).build()
+        return _generate_state_reference(context, expr)
 
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
