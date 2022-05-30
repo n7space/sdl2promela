@@ -1280,21 +1280,6 @@ class Model:
         self.named_transition_ids = {}
         self.aggregates = {}
 
-        self.full_statelist = set(
-            chain(
-                self.input_aggregates.keys(),
-                (
-                    name
-                    for name in self.source.mapping.keys()
-                    if not name.endswith("START")
-                ),
-            )
-        )
-
-        self.reduced_statelist = {
-            s for s in self.full_statelist if s not in self.input_parallel_states
-        }
-
         self.__gather_states()
         self.__gather_inputs()
         self.__gather_continuous_signals()

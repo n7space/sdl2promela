@@ -566,7 +566,6 @@ def __generate_execute_transition(
     switch_builder: SwitchBuilder,
     substate: Optional[str],
 ):
-    print(f"__generate_execute_transition : {statename}")
     if substate is None:
         state_variable_name = __get_state_variable_name(context)
     else:
@@ -575,7 +574,6 @@ def __generate_execute_transition(
     key.name = statename
     transition_function_name = __get_transition_function_name(context)
     if key in input.transitions:
-        print("__generate_execute_transition : adding transition")
         input_block = input.transitions[key]
         statements: List[promelamodel.Statement] = []
         # Generate assignment of signal parameters into variables
@@ -630,7 +628,6 @@ def __generate_execute_transition(
         return False
 
 
-# FIXME substate variable
 def generate_something(
     context: Context,
     statename: str,
@@ -638,7 +635,6 @@ def generate_something(
     switch_builder: SwitchBuilder,
     substate_name: Optional[str],
 ) -> bool:
-    print(f"generate_something {statename}")
     if substate_name is None:
         state_variable_name = __get_state_variable_name(context)
     else:
@@ -677,10 +673,6 @@ def generate_something(
             )
             return True
         else:
-            # Here should be a fix
-            # FIXME
-            # If nothing was generated, then the possible transition should be generated
-            # I have no idea how to do it
             return __generate_execute_transition(
                 context, statename, input, switch_builder, substate_name
             )
@@ -702,81 +694,17 @@ def __generate_input_function(
 
     switch_builder = SwitchBuilder()
 
-    # state_variable_name = __get_state_variable_name(context)
-    # transition_function_name = __get_transition_function_name(context)
+    all_states = set(
+        name for name in context.sdl_model.states.keys() if not name.endswith("START")
+    )
+    top_level_states = {
+        name
+        for name in all_states
+        if name not in context.sdl_model.input_parallel_states
+    }
 
-    print("Input: ", input.name)
-    print("Transitions: ")
-    for k, v in input.transitions.items():
-        print(f"{k.name} -> {v.transition_id}")
-    print("END Transitions")
-
-    for statename in context.sdl_model.reduced_statelist:
-        print(f"Reduced state {statename}")
+    for statename in top_level_states:
         generate_something(context, statename, input, switch_builder, None)
-        # if statename in context.sdl_model.input_aggregates:
-        #     aggregate = context.sdl_model.input_aggregates[statename]
-        #     print("Aggregate")
-        #     for substate in aggregate:
-        #         print(f"Substate name {substate.statename}")
-        #         print(f"Substate {substate.mapping}")
-        #         for sub in substate.mapping.keys():
-        #             generate_something(context, sub, input, switch_builder)
-        # else:
-        #     print("Not aggregate")
-        #     __generate_execute_transition(context, statename, input, switch_builder)
-
-    # for state, input_block in input.transitions.items():
-    #     statements: List[promelamodel.Statement] = []
-
-    #     # Generate assignment of signal parameters into variables
-    #     for target_variable_ref in input_block.target_variables:
-    #         variable = context.sdl_model.variables[target_variable_ref.variableName]
-    #         variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
-    #         assignInlineName = __get_assign_value_inline_name(variableType)
-    #         statements.append(
-    #             CallBuilder()
-    #             .withTarget(assignInlineName)
-    #             .withParameter(
-    #                 __generate_variable_name(context, target_variable_ref, True)
-    #             )
-    #             .withParameter(
-    #                 VariableReferenceBuilder(
-    #                     __get_parameter_name(parameter.target_variable)
-    #                 ).build()
-    #             )
-    #             .build()
-    #         )
-
-    #     # Generate exit procedure calls in case of composite state.
-    #     exit_procedures = __get_exit_procedures(context, input_block, state)
-
-    #     for procedure_name in exit_procedures:
-    #         statements.append(CallBuilder().withTarget(procedure_name).build())
-
-    #     statements.append(
-    #         CallBuilder()
-    #         .withTarget(transition_function_name)
-    #         .withParameter(
-    #             VariableReferenceBuilder(str(input_block.transition_id)).build()
-    #         )
-    #         .build()
-    #     )
-    #     switch_builder.withAlternative(
-    #         AlternativeBuilder()
-    #         .withCondition(
-    #             BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
-    #             # FIXME Here is a pierdolony error,
-    #             # The state shall be dependant I guess
-    #             .withLeft(VariableReferenceBuilder(state_variable_name).build())
-    #             .withRight(
-    #                 VariableReferenceBuilder(__get_state_name(context, state)).build()
-    #             )
-    #             .build()
-    #         )
-    #         .withStatements(statements)
-    #         .build()
-    #     )
 
     switch_builder.withAlternative(
         AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
