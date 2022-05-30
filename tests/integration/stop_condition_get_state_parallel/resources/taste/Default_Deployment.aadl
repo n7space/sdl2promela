@@ -19,9 +19,9 @@ END deploymentview::DV::Node_Linux;
 PACKAGE deploymentview::DV
 PUBLIC
 
-WITH interfaceview::IV::controller;
-
 WITH interfaceview::IV::actuator;
+
+WITH interfaceview::IV::controller;
 
 
 WITH ocarina_processors_x86;
@@ -36,12 +36,12 @@ END Node_Linux;
 
 SYSTEM IMPLEMENTATION Node_Linux.others
 SUBCOMPONENTS
-   IV_controller : SYSTEM interfaceview::IV::controller::controller.others {
-      Taste::FunctionName => "controller";
-   };
-
    IV_actuator : SYSTEM interfaceview::IV::actuator::actuator.others {
       Taste::FunctionName => "actuator";
+   };
+
+   IV_controller : SYSTEM interfaceview::IV::controller::controller.others {
+      Taste::FunctionName => "controller";
    };
 
    demo : PROCESS deploymentview::DV::Node_Linux::demo.others {
@@ -53,13 +53,13 @@ SUBCOMPONENTS
    x86_linux : PROCESSOR ocarina_processors_x86::x86.linux;
 PROPERTIES
    
-   Taste::APLC_Binding => (reference (demo)) APPLIES TO IV_controller;
+   Taste::APLC_Binding => (reference (demo)) APPLIES TO IV_actuator;
    
    
    
 
    
-   Taste::APLC_Binding => (reference (demo)) APPLIES TO IV_actuator;
+   Taste::APLC_Binding => (reference (demo)) APPLIES TO IV_controller;
    
    
    

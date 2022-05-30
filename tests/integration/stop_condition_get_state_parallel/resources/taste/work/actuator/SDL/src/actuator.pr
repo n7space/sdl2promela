@@ -81,7 +81,7 @@ process Actuator;
     START;
         /* CIF NEXTSTATE (749, 312), (70, 35) */
         NEXTSTATE Parallel;
-    /* CIF state (1242, 283), (70, 35) */
+    /* CIF state (1242, 282), (70, 35) */
     state Parallel;
     endstate;
 endprocess Actuator;

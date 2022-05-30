@@ -26,9 +26,9 @@
 #define System_State_controller_queue Events_Ty
 #define System_State_actuator Actuator_Context
 #define System_State_controller Controller_Context
-#define Actuator_States_wait 0
-#define Actuator_States_nested_0_second 1
-#define Actuator_States_nested_0_first 2
+#define Actuator_States_nested_0_first 0
+#define Actuator_States_wait 1
+#define Actuator_States_nested_0_second 2
 #define Controller_States_wait 0
 #define PID_env 0
 #define PID_actuator 1

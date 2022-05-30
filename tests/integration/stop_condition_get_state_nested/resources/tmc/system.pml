@@ -11,8 +11,8 @@ int inited;
 chan Controller_pong_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
@@ -65,10 +65,10 @@ init
 {
     atomic {
         int init_token = 1;
-        Controller_0_init();
-        Controller_lock!init_token;
         Actuator_0_init();
         Actuator_lock!init_token;
+        Controller_0_init();
+        Controller_lock!init_token;
         inited = 1;
     }
 }
