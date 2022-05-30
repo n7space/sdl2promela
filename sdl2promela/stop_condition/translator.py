@@ -30,12 +30,14 @@ class GenerateContext:
     """Aggregates created by Helper"""
 
     choice_selection: Optional[str]
-    """The name of the choice type, set when 'present' is used
+    """
+    The name of the choice type, set when 'present' is used
     on left hand side of expression.
     It changes translation of right hand side of expression.
     """
     choice_selection_alternatives: Optional[List[str]]
-    """List of all available choice alternatives, set when 'present is used
+    """
+    List of all available choice alternatives, set when 'present is used
     on left hand side of expression.
     The alternatives are case-sensitive.
     """
@@ -50,7 +52,7 @@ class GenerateContext:
     process_state_selection_substate: Optional[str]
     """
     Optional substate name, set when 'get_state' is used
-    which reference to parallel state.
+    which references parallel state.
     This allows to generate valid reference to process state definition.
     """
 
@@ -762,6 +764,99 @@ def _generate_queue_length_call(context: GenerateContext, expr: model.CallExpres
     )
 
 
+def _generate_get_state_for_toplevel(
+    context: GenerateContext, process_reference: model.VariableReference
+):
+    process_name = process_reference.name.lower()
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+    context.process_state_selection = process_name
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(
+                promelaBuilder.VariableReferenceBuilder("global_state").build()
+            )
+            .withMember(promelaBuilder.VariableReferenceBuilder(process_name).build())
+            .build()
+        )
+        .withMember(promelaBuilder.VariableReferenceBuilder("state").build())
+        .build()
+    )
+
+
+def _generate_get_state_for_parallel(
+    context: GenerateContext, state_reference: model.Selector
+):
+    if not isinstance(state_reference.elements[0], model.VariableReference):
+        raise TranslateException("Invalid parameter for function 'get_state'")
+
+    process_name = typing.cast(
+        model.VariableReference, state_reference.elements[0]
+    ).name
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+
+    process = context.processes[process_name]
+    aggregates = context.aggregates[process_name]
+    composites = process.composite_states
+    state_name = ""
+    state_prefix = ""
+
+    # Construct name of the state variable
+
+    for index in range(1, len(state_reference.elements)):
+        element_name = typing.cast(
+            model.VariableReference, state_reference.elements[index]
+        ).name.lower()
+
+        if len(state_name) == 0:
+            state_name = element_name
+            state_prefix = element_name
+        else:
+            state_name = state_name + SEPARATOR + element_name
+            state_prefix = state_prefix + "_" + element_name
+
+        candidates = [
+            composite for composite in composites if composite.statename == state_name
+        ]
+
+        if len(candidates) > 0:
+            process = candidates[0]
+            index = index + 1
+
+            if state_name in aggregates:
+                composites = aggregates[state_name]
+            else:
+                composites = process.composite_states
+        else:
+            raise TranslateException(f"Cannot find state {element_name} {state_name}")
+
+    context.process_state_selection = process_name
+    context.process_state_selection_substate = state_name
+
+    state_name = state_name + SEPARATOR + "state"
+
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(
+                promelaBuilder.VariableReferenceBuilder("global_state").build()
+            )
+            .withMember(promelaBuilder.VariableReferenceBuilder(process_name).build())
+            .build()
+        )
+        .withMember(promelaBuilder.VariableReferenceBuilder(state_name).build())
+        .build()
+    )
+
+
 def _generate_get_state_call(context: GenerateContext, expr: model.CallExpression):
     if len(expr.parameters) != 1:
         raise TranslateException("Function 'get_state' requires one parameter")
@@ -769,106 +864,11 @@ def _generate_get_state_call(context: GenerateContext, expr: model.CallExpressio
     parameter = expr.parameters[0]
 
     if isinstance(parameter, model.VariableReference):
-        process_name = typing.cast(model.VariableReference, parameter).name.lower()
-        if process_name not in context.processes:
-            raise TranslateException(
-                "Cannot find process with name '{}'".format(process_name)
-            )
-        context.process_state_selection = process_name
-        return (
-            promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(
-                promelaBuilder.MemberAccessBuilder()
-                .withUtypeReference(
-                    promelaBuilder.VariableReferenceBuilder("global_state").build()
-                )
-                .withMember(
-                    promelaBuilder.VariableReferenceBuilder(process_name).build()
-                )
-                .build()
-            )
-            .withMember(promelaBuilder.VariableReferenceBuilder("state").build())
-            .build()
-        )
-
+        return _generate_get_state_for_toplevel(context, parameter)
     elif isinstance(parameter, model.Selector):
-        if not isinstance(
-            typing.cast(model.Selector, parameter).elements[0], model.VariableReference
-        ):
-            raise TranslateException("Invalid parameter for function 'get_state'")
-
-        selector = typing.cast(model.Selector, parameter)
-        process_name = typing.cast(model.VariableReference, selector.elements[0]).name
-        if process_name not in context.processes:
-            raise TranslateException(
-                "Cannot find process with name '{}'".format(process_name)
-            )
-
-        process = context.processes[process_name]
-        aggregates = context.aggregates[process_name]
-        composites = process.composite_states
-        state_name = ""
-        state_prefix = ""
-
-        print(f"Process {process_name}")
-
-        for index in range(1, len(selector.elements)):
-            element_name = typing.cast(
-                model.VariableReference, selector.elements[index]
-            ).name.lower()
-            print(f"element name {element_name}")
-
-            if len(state_name) == 0:
-                state_name = element_name
-                state_prefix = element_name
-                print(f"Init state name empty {state_name}")
-            else:
-                state_name = state_name + SEPARATOR + element_name
-                state_prefix = state_prefix + "_" + element_name
-                print(f"Init state name not empty {state_name}")
-
-            candidates = [
-                composite
-                for composite in composites
-                if composite.statename == state_name
-            ]
-
-            if len(candidates) > 0:
-                process = candidates[0]
-                index = index + 1
-
-                if state_name in aggregates:
-                    composites = aggregates[state_name]
-                else:
-                    composites = process.composite_states
-            else:
-                raise TranslateException(
-                    f"Cannot find state {element_name} {state_name}"
-                )
-
-        context.process_state_selection = process_name
-        context.process_state_selection_substate = state_name
-
-        state_name = state_name + SEPARATOR + "state"
-
-        return (
-            promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(
-                promelaBuilder.MemberAccessBuilder()
-                .withUtypeReference(
-                    promelaBuilder.VariableReferenceBuilder("global_state").build()
-                )
-                .withMember(
-                    promelaBuilder.VariableReferenceBuilder(process_name).build()
-                )
-                .build()
-            )
-            .withMember(promelaBuilder.VariableReferenceBuilder(state_name).build())
-            .build()
-        )
-
+        return _generate_get_state_for_parallel(context, parameter)
     else:
-        pass
+        raise TranslateException("Invalid parameter for function 'get_state'")
 
 
 @dispatch(GenerateContext, model.CallExpression)

@@ -1,7 +1,6 @@
 from ast import arguments
 from typing import List, Dict, Union, Tuple, Any, Optional
 from multipledispatch import dispatch
-from itertools import chain
 from opengeode import ogAST
 from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
