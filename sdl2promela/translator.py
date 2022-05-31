@@ -564,7 +564,7 @@ def __generate_execute_transition(
     statename: str,
     input: sdlmodel.Input,
     builder: SwitchBuilder,
-    parentstate: Optional[str],
+    parallel_parent: Optional[str],
 ) -> bool:
     """
     Generate conditional call to execute transition inline.
@@ -576,13 +576,13 @@ def __generate_execute_transition(
     :param statename: State name which determines transition id
     :param input: Input which contains a map from state to transition id
     :param builder: Builder to append a call
-    :param parentstate: Optional name of parent state for parallel states.
+    :param parallel_parent: Optional name of parent state for parallel states.
     :returns: True if inline call was generated, otherwise False
     """
-    if parentstate is None:
+    if parallel_parent is None:
         state_variable_name = __get_state_variable_name(context)
     else:
-        state_variable_name = __get_substate_variable_name(context, parentstate)
+        state_variable_name = __get_substate_variable_name(context, parallel_parent)
     key = sdlmodel.State()
     key.name = statename
     transition_function_name = __get_transition_function_name(context)
@@ -647,24 +647,24 @@ def generate_transition_state_switch(
     statename: str,
     input: sdlmodel.Input,
     builder: SwitchBuilder,
-    parentstate: Optional[str],
+    parallel_parent: Optional[str],
 ) -> bool:
     """
     Recursive function, responsible for generation of alternative for switch,
     which should finally call 'execute transition' with proper transition id.
-    In case of parallel states, the parameter 'substate_name' shall be not None,
+    In case of parallel states, the parameter 'parentstate' shall be not None,
 
     :param context: translator context
     :param statename: name of the state to check in the alternative
     :param input: The Input which contains a map from state to transition id
     :param builder: The builder to append alternative
-    :param parentstate: The optional parent state for parallel states
+    :param parallel_parent: The optional parent state for parallel states
     :returns: True if alternative was generated, otherwise False
     """
-    if parentstate is None:
+    if parallel_parent is None:
         state_variable_name = __get_state_variable_name(context)
     else:
-        state_variable_name = __get_substate_variable_name(context, parentstate)
+        state_variable_name = __get_substate_variable_name(context, parallel_parent)
     key = sdlmodel.State()
     key.name = statename
 
@@ -676,10 +676,10 @@ def generate_transition_state_switch(
 
         generated = False
 
-        for substate in aggregate:
-            for sub in substate.mapping.keys():
+        for parent in aggregate:
+            for child_state in parent.mapping.keys():
                 if generate_transition_state_switch(
-                    context, sub, input, nested_switch_builder, substate.statename
+                    context, child_state, input, nested_switch_builder, parent.statename
                 ):
                     generated = True
 
@@ -708,12 +708,12 @@ def generate_transition_state_switch(
             # If there's no transitions substates in aggregate
             # then check if there is a transition for aggregate
             return __generate_execute_transition(
-                context, statename, input, builder, parentstate
+                context, statename, input, builder, parallel_parent
             )
 
     else:
         return __generate_execute_transition(
-            context, statename, input, builder, parentstate
+            context, statename, input, builder, parallel_parent
         )
 
 
