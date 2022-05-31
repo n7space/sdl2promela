@@ -409,7 +409,7 @@ def _find_state(context: GenerateContext, selector: model.Selector, process_name
             composite for composite in composites if composite.statename == state_name
         ]
 
-        if len(candidates) > 0:
+        if len(candidates) == 1:
             result_state_name = state_name
             # The current element of selector refers to a composite or aggregate state
             # Modify variable prefix and go to next element
@@ -421,7 +421,10 @@ def _find_state(context: GenerateContext, selector: model.Selector, process_name
                 composites = aggregates[state_name]
             else:
                 composites = process.composite_states
+        elif len(candidates) > 1:
+            raise TranslateException(f"Ambiguous state name {element_name}")
         else:
+            # The element is not a state, possibly it is a variable
             break
 
     return result_state_name, index, process
