@@ -404,8 +404,6 @@ def _find_state(context: GenerateContext, selector: model.Selector, process_name
         else:
             state_name = state_name + SEPARATOR + element_name
 
-        print(f"check {element_name}, {state_name}")
-
         # Check if current element refers to a nested/parallel state
         candidates = [
             composite for composite in composites if composite.statename == state_name
