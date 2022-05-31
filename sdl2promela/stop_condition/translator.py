@@ -383,6 +383,52 @@ class FirstVariableInfo:
         self.consumed_elements = consumed_elements
 
 
+def _find_state(context: GenerateContext, selector: model.Selector, process_name: str):
+    process = context.processes[process_name]
+    aggregates = context.aggregates[process_name]
+    composites = process.composite_states
+
+    state_name = ""
+    result_state_name = ""
+
+    # Check if composite (nested) or aggregate (parallel) states exist
+    # And construct state_name
+    for index in range(1, len(selector.elements)):
+
+        element_name = typing.cast(
+            model.VariableReference, selector.elements[index]
+        ).name.lower()
+
+        if len(state_name) == 0:
+            state_name = element_name
+        else:
+            state_name = state_name + SEPARATOR + element_name
+
+        print(f"check {element_name}, {state_name}")
+
+        # Check if current element refers to a nested/parallel state
+        candidates = [
+            composite for composite in composites if composite.statename == state_name
+        ]
+
+        if len(candidates) > 0:
+            result_state_name = state_name
+            # The current element of selector refers to a composite or aggregate state
+            # Modify variable prefix and go to next element
+
+            process = candidates[0]
+
+            # Choose candidates for the next possible nested states
+            if state_name in aggregates:
+                composites = aggregates[state_name]
+            else:
+                composites = process.composite_states
+        else:
+            break
+
+    return result_state_name, index, process
+
+
 def _find_first_variable(
     context: GenerateContext, selector: model.Selector
 ) -> FirstVariableInfo:
@@ -409,46 +455,12 @@ def _find_first_variable(
             "Cannot find process with name '{}'".format(process_name)
         )
 
-    process = context.processes[process_name]
-    aggregates = context.aggregates[process_name]
-    index = index + 1
-    composites = process.composite_states
+    state_name, index, process = _find_state(context, selector, process_name)
 
-    variable_prefix = ""
-    state_name = ""
-
-    # Check if composite (nested) or aggregate (parallel) states exist
-    # And construct variable prefix, which consist of state name.
-    while True:
-        element_name = typing.cast(
-            model.VariableReference, selector.elements[index]
-        ).name.lower()
-        if len(state_name) == 0:
-            state_name = element_name
-        else:
-            state_name = state_name + SEPARATOR + element_name
-
-        # Check if current element refers to a nested/parallel state
-        candidates = [
-            composite for composite in composites if composite.statename == state_name
-        ]
-
-        if len(candidates) > 0:
-            # The current element of selector refers to a composite or aggregate state
-            # Modify variable prefix and go to next element
-            process = candidates[0]
-            index = index + 1
-            variable_prefix = state_name + SEPARATOR
-
-            # Choose candidates for the next possible nested states
-            if state_name in aggregates:
-                # If current element is an aggregate, use aggregates
-                composites = aggregates[state_name]
-            else:
-                # Else use composite stats
-                composites = process.composite_states
-        else:
-            break
+    if len(state_name) == 0:
+        variable_prefix = ""
+    else:
+        variable_prefix = state_name + SEPARATOR
 
     element_name = typing.cast(
         model.VariableReference, selector.elements[index]
@@ -752,7 +764,7 @@ def _construct_queue_variable_name_from_call(
             )
         )
 
-    return "{}_{}_channel".format(process_name.lower(), queue_name.lower())
+    return "{}_{}_channel".format(process_name.capitalize(), queue_name.lower())
 
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
@@ -813,40 +825,12 @@ def _generate_get_state_for_parallel(
             "Cannot find process with name '{}'".format(process_name)
         )
 
-    process = context.processes[process_name]
-    aggregates = context.aggregates[process_name]
-    composites = process.composite_states
-    state_name = ""
-    state_prefix = ""
-
     # Construct name of the state variable
-
-    for index in range(1, len(state_reference.elements)):
-        element_name = typing.cast(
-            model.VariableReference, state_reference.elements[index]
-        ).name.lower()
-
-        if len(state_name) == 0:
-            state_name = element_name
-            state_prefix = element_name
-        else:
-            state_name = state_name + SEPARATOR + element_name
-            state_prefix = state_prefix + "_" + element_name
-
-        candidates = [
-            composite for composite in composites if composite.statename == state_name
-        ]
-
-        if len(candidates) > 0:
-            process = candidates[0]
-            index = index + 1
-
-            if state_name in aggregates:
-                composites = aggregates[state_name]
-            else:
-                composites = process.composite_states
-        else:
-            raise TranslateException(f"Cannot find state {element_name} {state_name}")
+    state_name, index, _ = _find_state(context, state_reference, process_name)
+    if index != len(state_reference.elements) - 1:
+        raise TranslateException(
+            f"Cannot construct state name, len {len(state_reference.elements)}, {index}, {state_name}"
+        )
 
     context.process_state_selection = process_name
     context.process_state_selection_substate = state_name
