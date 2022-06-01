@@ -162,15 +162,21 @@ def __get_procedure_inline_return_name() -> str:
 
 
 def __get_transition_function_name(context: Context) -> str:
-    return context.sdl_model.process_name + SEPARATOR + "transition"
+    return context.sdl_model.process_name.capitalize() + SEPARATOR + "transition"
 
 
 def __get_input_function_name(context: Context, input: sdlmodel.Input) -> str:
-    return context.sdl_model.process_name + SEPARATOR + "PI" + SEPARATOR + input.name
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "PI"
+        + SEPARATOR
+        + input.name
+    )
 
 
 def __get_init_function_name(context: Context) -> str:
-    return context.sdl_model.process_name + SEPARATOR + __INIT
+    return context.sdl_model.process_name.capitalize() + SEPARATOR + __INIT
 
 
 def __get_state_variable_name(context: Context) -> str:
@@ -248,6 +254,15 @@ def __get_constant_name(
 
     else:
         return constant_reference.constantName.lower()
+
+
+def __terminate_transition_statement():
+    return (
+        AssignmentBuilder()
+        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+        .withSource(promelamodel.IntegerValue(int(__INVALID_ID)))
+        .build()
+    )
 
 
 @dispatch(Context, sdlmodel.VariableReference, bool)
@@ -544,6 +559,164 @@ def __get_exit_procedures(
     return list(reversed(result))
 
 
+def __generate_execute_transition(
+    context: Context,
+    statename: str,
+    input: sdlmodel.Input,
+    builder: SwitchBuilder,
+    parallel_parent: Optional[str],
+) -> bool:
+    """
+    Generate conditional call to execute transition inline.
+    This function checks if the Input contains a transition_id for the statename
+    and generates a call to the execute transition inline.
+    Also, the calls to exit procedures are generated if requires.
+
+    :param context: Global translator context
+    :param statename: State name which determines transition id
+    :param input: Input which contains a map from state to transition id
+    :param builder: Builder to append a call
+    :param parallel_parent: Optional name of parent state for parallel states.
+    :returns: True if inline call was generated, otherwise False
+    """
+    if parallel_parent is None:
+        state_variable_name = __get_state_variable_name(context)
+    else:
+        state_variable_name = __get_substate_variable_name(context, parallel_parent)
+    key = sdlmodel.State()
+    key.name = statename
+    transition_function_name = __get_transition_function_name(context)
+
+    if key not in input.transitions:
+        # The Input does not contains a transition for the statename
+        # Do not generate anything
+        return False
+
+    input_block = input.transitions[key]
+    statements: List[promelamodel.Statement] = []
+
+    # Generate assignment of signal parameters into variables
+    for target_variable_ref in input_block.target_variables:
+        variable = context.sdl_model.variables[target_variable_ref.variableName]
+        variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
+        assignInlineName = __get_assign_value_inline_name(variableType)
+        statements.append(
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(__generate_variable_name(context, target_variable_ref, True))
+            .withParameter(
+                VariableReferenceBuilder(
+                    __get_parameter_name(input.parameters[0].target_variable)
+                ).build()
+            )
+            .build()
+        )
+
+    # Generate exit procedure calls in case of composite state.
+    exit_procedures = __get_exit_procedures(context, input_block, key)
+
+    for procedure_name in exit_procedures:
+        statements.append(CallBuilder().withTarget(procedure_name).build())
+
+    # Generate an alternative for switch,
+    # which checks current state and executes transition
+    statements.append(
+        CallBuilder()
+        .withTarget(transition_function_name)
+        .withParameter(VariableReferenceBuilder(str(input_block.transition_id)).build())
+        .build()
+    )
+
+    builder.withAlternative(
+        AlternativeBuilder()
+        .withCondition(
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+            .withLeft(VariableReferenceBuilder(state_variable_name).build())
+            .withRight(VariableReferenceBuilder(__get_state_name(context, key)).build())
+            .build()
+        )
+        .withStatements(statements)
+        .build()
+    )
+
+    return True
+
+
+def generate_transition_state_switch(
+    context: Context,
+    statename: str,
+    input: sdlmodel.Input,
+    builder: SwitchBuilder,
+    parallel_parent: Optional[str],
+) -> bool:
+    """
+    Recursive function, responsible for generation of alternative for switch,
+    which should finally call 'execute transition' with proper transition id.
+    In case of parallel states, the parameter 'parentstate' shall be not None,
+
+    :param context: translator context
+    :param statename: name of the state to check in the alternative
+    :param input: The Input which contains a map from state to transition id
+    :param builder: The builder to append alternative
+    :param parallel_parent: The optional parent state for parallel states
+    :returns: True if alternative was generated, otherwise False
+    """
+    if parallel_parent is None:
+        state_variable_name = __get_state_variable_name(context)
+    else:
+        state_variable_name = __get_substate_variable_name(context, parallel_parent)
+    key = sdlmodel.State()
+    key.name = statename
+
+    if statename in context.sdl_model.input_aggregates:
+        # If the state is an aggregate state
+        # then generate another switch, which check parallel states
+        aggregate = context.sdl_model.input_aggregates[statename]
+        nested_switch_builder = SwitchBuilder()
+
+        generated = False
+
+        for parent in aggregate:
+            for child_state in parent.mapping.keys():
+                if generate_transition_state_switch(
+                    context, child_state, input, nested_switch_builder, parent.statename
+                ):
+                    generated = True
+
+        if generated:
+            # If the input contains at least one transition for substates in aggregate
+            # then append another switch, which checks parallel state
+            nested_switch_builder.withAlternative(
+                AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
+            )
+
+            builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                    .withLeft(VariableReferenceBuilder(state_variable_name).build())
+                    .withRight(
+                        VariableReferenceBuilder(__get_state_name(context, key)).build()
+                    )
+                    .build()
+                )
+                .withStatements([nested_switch_builder.build()])
+                .build()
+            )
+            return True
+        else:
+            # If there's no transitions substates in aggregate
+            # then check if there is a transition for aggregate
+            return __generate_execute_transition(
+                context, statename, input, builder, parallel_parent
+            )
+
+    else:
+        return __generate_execute_transition(
+            context, statename, input, builder, parallel_parent
+        )
+
+
 def __generate_input_function(
     context: Context, input: sdlmodel.Input
 ) -> promelamodel.Inline:
@@ -555,55 +728,23 @@ def __generate_input_function(
 
     switch_builder = SwitchBuilder()
 
-    state_variable_name = __get_state_variable_name(context)
-    transition_function_name = __get_transition_function_name(context)
+    # All state names
+    all_states = set(
+        name for name in context.sdl_model.states.keys() if not name.endswith("START")
+    )
+    # Top level States i.e. states, which are not inside 'parallel states'
+    top_level_states = {
+        name
+        for name in all_states
+        if name not in context.sdl_model.input_parallel_states
+    }
 
-    for state, input_block in input.transitions.items():
-        statements: List[promelamodel.Statement] = []
-        for target_variable_ref in input_block.target_variables:
-            variable = context.sdl_model.variables[target_variable_ref.variableName]
-            variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
-            assignInlineName = __get_assign_value_inline_name(variableType)
-            statements.append(
-                CallBuilder()
-                .withTarget(assignInlineName)
-                .withParameter(
-                    __generate_variable_name(context, target_variable_ref, True)
-                )
-                .withParameter(
-                    VariableReferenceBuilder(
-                        __get_parameter_name(parameter.target_variable)
-                    ).build()
-                )
-                .build()
-            )
-
-        # Generate exit procedure calls in case of composite state.
-        exit_procedures = __get_exit_procedures(context, input_block, state)
-
-        for procedure_name in exit_procedures:
-            statements.append(CallBuilder().withTarget(procedure_name).build())
-
-        statements.append(
-            CallBuilder()
-            .withTarget(transition_function_name)
-            .withParameter(
-                VariableReferenceBuilder(str(input_block.transition_id)).build()
-            )
-            .build()
-        )
-        switch_builder.withAlternative(
-            AlternativeBuilder()
-            .withCondition(
-                BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
-                .withLeft(VariableReferenceBuilder(state_variable_name).build())
-                .withRight(
-                    VariableReferenceBuilder(__get_state_name(context, state)).build()
-                )
-                .build()
-            )
-            .withStatements(statements)
-            .build()
+    # Generate a call to execute transition inline.
+    # The execution id depends on current state, which includes parallel states.
+    # Start from top_level state: i.e. the variable 'state' in process context.
+    for statename in top_level_states:
+        generate_transition_state_switch(
+            context, statename, input, switch_builder, None
         )
 
     switch_builder.withAlternative(
@@ -1350,7 +1491,25 @@ def __generate_statement(
             # which executes transition for parallel state
             inlineCall = CallBuilder()
             inlineCall.withTarget(next_transition.transition_id)
-            return inlineCall.build()
+            statements = []
+            if next_transition.state_name is not None:
+                state_variable = __get_state_variable_name(context)
+                state = context.sdl_model.states[next_transition.state_name.lower()]
+                state_name = __get_state_name(context, state)
+
+                statements.append(
+                    AssignmentBuilder()
+                    .withTarget(VariableReferenceBuilder(state_variable).build())
+                    .withSource(VariableReferenceBuilder(state_name).build())
+                    .build()
+                )
+            statements.append(inlineCall.build())
+            statements.append(__terminate_transition_statement())
+            return (
+                BlockBuilder(promelamodel.BlockType.BLOCK)
+                .withStatements(statements)
+                .build()
+            )
         elif next_transition.transition_id in context.sdl_model.named_transition_ids:
             transition_id = context.sdl_model.named_transition_ids[
                 next_transition.transition_id
@@ -1410,14 +1569,7 @@ def __generate_statement(
 
     builder.withAlternative(
         AlternativeBuilder()
-        .withStatements(
-            [
-                AssignmentBuilder()
-                .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
-                .withSource(promelamodel.IntegerValue(int(__INVALID_ID)))
-                .build()
-            ]
-        )
+        .withStatements([__terminate_transition_statement()])
         .build()
     )
 
@@ -1476,12 +1628,7 @@ def __generate_transition(
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
             if __should_generate_transition_stop(transition):
-                statements.append(
-                    AssignmentBuilder()
-                    .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
-                    .withSource(VariableReferenceBuilder(__INVALID_ID).build())
-                    .build()
-                )
+                statements.append(__terminate_transition_statement())
 
     context.pop_parent()
     return statements

@@ -1,0 +1,2 @@
+always get_state(actuator) = parallel;
+eventually get_state(actuator.parallel.right) = blue;

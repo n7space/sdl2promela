@@ -30,20 +30,39 @@ class GenerateContext:
     """Aggregates created by Helper"""
 
     choice_selection: Optional[str]
-    """The name of the choice type, set when 'present' is used
+    """
+    The name of the choice type, set when 'present' is used
     on left hand side of expression.
     It changes translation of right hand side of expression.
     """
     choice_selection_alternatives: Optional[List[str]]
-    """List of all available choice alternatives, set when 'present is used
+    """
+    List of all available choice alternatives, set when 'present is used
     on left hand side of expression.
     The alternatives are case-sensitive.
+    """
+
+    process_state_selection: Optional[str]
+    """
+    Optional process name, set when 'get_state' is used
+    on the left hand side of expression.
+    This allows to generate valid reference to process state definiton.
+    """
+
+    process_state_selection_substate: Optional[str]
+    """
+    Optional substate name, set when 'get_state' is used
+    which references parallel state.
+    This allows to generate valid reference to process state definition.
     """
 
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
         self.aggregates = {}
         self.choice_selection = None
+        self.choice_selection_alternatives = None
+        self.process_state_selection = None
+        self.process_state_selection_substate = None
 
     def clear(self):
         """Clear context.
@@ -51,6 +70,8 @@ class GenerateContext:
         """
         self.choice_selection = None
         self.choice_selection_alternatives = None
+        self.process_state_selection = None
+        self.process_state_selection_substate = None
 
 
 def _escape_asn1_typename(name: str) -> str:
@@ -283,6 +304,17 @@ def _generate(context: GenerateContext, expr: model.BooleanValue):
     return promela.BooleanValue(expr.value)
 
 
+def _get_process_state_name(
+    process_name: str, state_name: str, substate: Optional[str]
+) -> str:
+    if substate is not None:
+        return "{}_States_{}{}{}".format(
+            process_name.capitalize(), substate.lower(), SEPARATOR, state_name.lower()
+        )
+    else:
+        return "{}_States_{}".format(process_name.capitalize(), state_name.lower())
+
+
 @dispatch(GenerateContext, model.VariableReference)
 def _generate(context: GenerateContext, expr: model.VariableReference):
     """Translate StopCondition VariableReference
@@ -290,7 +322,10 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
     If choice_selection is set in context, it is a special case.
     It means that variable is a selector of CHOICE.
     """
-    if context.choice_selection is not None:
+    if (
+        context.choice_selection is not None
+        and context.choice_selection_alternatives is not None
+    ):
         # The list of available alternatives of CHOICE is case-sensitive
         # Stop Condition Language is case-insensitive,
         # so, the existing identifier should be generated.
@@ -311,6 +346,14 @@ def _generate(context: GenerateContext, expr: model.VariableReference):
 
         return promelaBuilder.VariableReferenceBuilder(
             context.choice_selection + "_" + selected_alternatives[0] + "_PRESENT"
+        ).build()
+    elif context.process_state_selection is not None:
+        return promelaBuilder.VariableReferenceBuilder(
+            _get_process_state_name(
+                context.process_state_selection,
+                expr.name,
+                context.process_state_selection_substate,
+            )
         ).build()
     else:
         return promelaBuilder.VariableReferenceBuilder(expr.name).build()
@@ -340,6 +383,53 @@ class FirstVariableInfo:
         self.consumed_elements = consumed_elements
 
 
+def _find_state(context: GenerateContext, selector: model.Selector, process_name: str):
+    process = context.processes[process_name]
+    aggregates = context.aggregates[process_name]
+    composites = process.composite_states
+
+    state_name = ""
+    result_state_name = ""
+
+    # Check if composite (nested) or aggregate (parallel) states exist
+    # And construct state_name
+    for index in range(1, len(selector.elements)):
+
+        element_name = typing.cast(
+            model.VariableReference, selector.elements[index]
+        ).name.lower()
+
+        if len(state_name) == 0:
+            state_name = element_name
+        else:
+            state_name = state_name + SEPARATOR + element_name
+
+        # Check if current element refers to a nested/parallel state
+        candidates = [
+            composite for composite in composites if composite.statename == state_name
+        ]
+
+        if len(candidates) == 1:
+            result_state_name = state_name
+            # The current element of selector refers to a composite or aggregate state
+            # Modify variable prefix and go to next element
+
+            process = candidates[0]
+
+            # Choose candidates for the next possible nested states
+            if state_name in aggregates:
+                composites = aggregates[state_name]
+            else:
+                composites = process.composite_states
+        elif len(candidates) > 1:
+            raise TranslateException(f"Ambiguous state name {element_name}")
+        else:
+            # The element is not a state, possibly it is a variable
+            break
+
+    return result_state_name, index, process
+
+
 def _find_first_variable(
     context: GenerateContext, selector: model.Selector
 ) -> FirstVariableInfo:
@@ -366,46 +456,12 @@ def _find_first_variable(
             "Cannot find process with name '{}'".format(process_name)
         )
 
-    process = context.processes[process_name]
-    aggregates = context.aggregates[process_name]
-    index = index + 1
-    composites = process.composite_states
+    state_name, index, process = _find_state(context, selector, process_name)
 
-    variable_prefix = ""
-    state_name = ""
-
-    # Check if composite (nested) or aggregate (parallel) states exist
-    # And construct variable prefix, which consist of state name.
-    while True:
-        element_name = typing.cast(
-            model.VariableReference, selector.elements[index]
-        ).name.lower()
-        if len(state_name) == 0:
-            state_name = element_name
-        else:
-            state_name = state_name + SEPARATOR + element_name
-
-        # Check if current element refers to a nested/parallel state
-        candidates = [
-            composite for composite in composites if composite.statename == state_name
-        ]
-
-        if len(candidates) > 0:
-            # The current element of selector refers to a composite or aggregate state
-            # Modify variable prefix and go to next element
-            process = candidates[0]
-            index = index + 1
-            variable_prefix = state_name + SEPARATOR
-
-            # Choose candidates for the next possible nested states
-            if state_name in aggregates:
-                # If current element is an aggregate, use aggregates
-                composites = aggregates[state_name]
-            else:
-                # Else use composite stats
-                composites = process.composite_states
-        else:
-            break
+    if len(state_name) == 0:
+        variable_prefix = ""
+    else:
+        variable_prefix = state_name + SEPARATOR
 
     element_name = typing.cast(
         model.VariableReference, selector.elements[index]
@@ -421,8 +477,32 @@ def _find_first_variable(
     )
 
 
+def _generate_state_reference(context: GenerateContext, expr: model.Selector):
+    if not isinstance(expr.elements[0], model.VariableReference):
+        raise TranslateException("Invalid nested state name.")
+
+    if context.process_state_selection is None:
+        raise TranslateException("Invalid state comparison.")
+
+    elements = [
+        typing.cast(model.VariableReference, element).name for element in expr.elements
+    ]
+    state_name = SEPARATOR.join(elements)
+
+    return promelaBuilder.VariableReferenceBuilder(
+        _get_process_state_name(
+            context.process_state_selection,
+            state_name,
+            context.process_state_selection_substate,
+        )
+    ).build()
+
+
 @dispatch(GenerateContext, model.Selector)
 def _generate(context: GenerateContext, expr: model.Selector):
+
+    if context.process_state_selection is not None:
+        return _generate_state_reference(context, expr)
 
     promelaObjects = [_generate(context, elem) for elem in expr.elements]
     context.clear()
@@ -685,7 +765,7 @@ def _construct_queue_variable_name_from_call(
             )
         )
 
-    return "{}_{}_channel".format(process_name.lower(), queue_name.lower())
+    return "{}_{}_channel".format(process_name.capitalize(), queue_name.lower())
 
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
@@ -708,13 +788,92 @@ def _generate_queue_length_call(context: GenerateContext, expr: model.CallExpres
     )
 
 
+def _generate_get_state_for_toplevel(
+    context: GenerateContext, process_reference: model.VariableReference
+):
+    process_name = process_reference.name.lower()
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+    context.process_state_selection = process_name
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(
+                promelaBuilder.VariableReferenceBuilder("global_state").build()
+            )
+            .withMember(promelaBuilder.VariableReferenceBuilder(process_name).build())
+            .build()
+        )
+        .withMember(promelaBuilder.VariableReferenceBuilder("state").build())
+        .build()
+    )
+
+
+def _generate_get_state_for_parallel(
+    context: GenerateContext, state_reference: model.Selector
+):
+    if not isinstance(state_reference.elements[0], model.VariableReference):
+        raise TranslateException("Invalid parameter for function 'get_state'")
+
+    process_name = typing.cast(
+        model.VariableReference, state_reference.elements[0]
+    ).name
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+
+    # Construct name of the state variable
+    state_name, index, _ = _find_state(context, state_reference, process_name)
+    if index != len(state_reference.elements) - 1:
+        raise TranslateException(
+            f"Cannot construct state name, len {len(state_reference.elements)}, {index}, {state_name}"
+        )
+
+    context.process_state_selection = process_name
+    context.process_state_selection_substate = state_name
+
+    state_name = state_name + SEPARATOR + "state"
+
+    return (
+        promelaBuilder.MemberAccessBuilder()
+        .withUtypeReference(
+            promelaBuilder.MemberAccessBuilder()
+            .withUtypeReference(
+                promelaBuilder.VariableReferenceBuilder("global_state").build()
+            )
+            .withMember(promelaBuilder.VariableReferenceBuilder(process_name).build())
+            .build()
+        )
+        .withMember(promelaBuilder.VariableReferenceBuilder(state_name).build())
+        .build()
+    )
+
+
+def _generate_get_state_call(context: GenerateContext, expr: model.CallExpression):
+    if len(expr.parameters) != 1:
+        raise TranslateException("Function 'get_state' requires one parameter")
+
+    parameter = expr.parameters[0]
+
+    if isinstance(parameter, model.VariableReference):
+        return _generate_get_state_for_toplevel(context, parameter)
+    elif isinstance(parameter, model.Selector):
+        return _generate_get_state_for_parallel(context, parameter)
+    else:
+        raise TranslateException("Invalid parameter for function 'get_state'")
+
+
 @dispatch(GenerateContext, model.CallExpression)
 def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
         return _generate_array_access(context, expr)
     elif isinstance(expr.function, model.VariableReference):
         if expr.function.name == "get_state":
-            raise TranslateException("Not implemented.")
+            return _generate_get_state_call(context, expr)
         elif expr.function.name == "length":
             return _generate_length(context, expr)
         elif expr.function.name == "present":

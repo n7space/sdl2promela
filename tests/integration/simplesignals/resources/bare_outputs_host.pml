@@ -41,7 +41,7 @@ active proctype proc_bare_outputs_singnal_in()
     end: do
     ::signal_in_channel?var1 ->
         printf("Received signal in\n")
-        bare_outputs_0_PI_0_signal_in()
+        Bare_outputs_0_PI_0_signal_in()
     od;
 }
 
@@ -67,7 +67,7 @@ active proctype proc_environment()
 
 init {
     printf("Initializing the system\n")
-    bare_outputs_0_init();
+    Bare_outputs_0_init();
     printf("Starting the system\n")
     inited = 1
 }

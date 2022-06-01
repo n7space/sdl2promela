@@ -1,0 +1,48 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    state Nested;
+    substructure
+            /* CIF START (710, 140), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (710, 195), (70, 35) */
+                NEXTSTATE First;
+            /* CIF state (102, 100), (70, 35) */
+            state First;
+                /* CIF input (102, 155), (70, 35) */
+                input ping;
+                    /* CIF output (102, 210), (70, 35) */
+                    output pong;
+                    /* CIF NEXTSTATE (102, 265), (70, 35) */
+                    NEXTSTATE First;
+            endstate;
+            /* CIF state (322, 102), (70, 35) */
+            state Second;
+                /* CIF input (322, 157), (70, 35) */
+                input ping;
+                    /* CIF output (322, 212), (70, 35) */
+                    output pong;
+                    /* CIF return (339, 267), (35, 35) */
+                    return ;
+            endstate;
+    endsubstructure;
+    /* CIF START (639, 184), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (639, 234), (70, 35) */
+        NEXTSTATE NesteD;
+    /* CIF state (790, 226), (70, 35) */
+    state Nested;
+        /* CIF connect (790, 281), (70, 35) */
+        connect ;
+            /* CIF NEXTSTATE (790, 336), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1011, 250), (70, 35) */
+    state Wait;
+        /* CIF input (1011, 305), (70, 35) */
+        input ping;
+            /* CIF output (1011, 360), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1011, 415), (70, 35) */
+            NEXTSTATE Nested;
+    endstate;
+endprocess Actuator;
