@@ -11,18 +11,15 @@ inline Complexsdl_0_transition(id)
       transition_id = -1;
     ::(transition_id == 1)->
       goto jump;
-      ;
       transition_id = -1;
     fi;
     goto next_transition;
-    ;
-    jump: ;
+    jump:
     Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
     global_state.complexsdl.state = Complexsdl_States_wait;
     transition_id = -1;
     goto next_transition;
-    ;
-    next_transition: ;
+    next_transition:
   od;
 }
 inline Complexsdl_0_init()

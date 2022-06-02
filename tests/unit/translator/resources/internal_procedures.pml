@@ -8,19 +8,17 @@ inline Host_0_multireturn(param_returns, param_a)
     MyInteger_assign_value(r, (a * 2));
     MyInteger_assign_value(param_returns, r);
     goto Host_0_multireturn_0_end;
-    ;
   ::(a <= 10)->
     MyInteger_assign_value(r, (a + 1));
     MyInteger_assign_value(param_returns, (a * r));
     goto Host_0_multireturn_0_end;
-    ;
   fi;
-  Host_0_multireturn_0_end: ;
+  Host_0_multireturn_0_end:
 }
 inline Host_0_proc()
 {
   MyInteger_assign_value(global_state.host.y, (global_state.host.a + global_state.host.b));
-  Host_0_proc_0_end: ;
+  Host_0_proc_0_end:
 }
 inline Host_0_procWithArguments(param_returns, param_p1, param_p2, r)
 {
@@ -31,8 +29,7 @@ inline Host_0_procWithArguments(param_returns, param_p1, param_p2, r)
   MyInteger_assign_value(r, (p1 + p2));
   MyInteger_assign_value(param_returns, r);
   goto Host_0_procWithArguments_0_end;
-  ;
-  Host_0_procWithArguments_0_end: ;
+  Host_0_procWithArguments_0_end:
 }
 inline Host_0_procWithLocalVariables()
 {
@@ -41,12 +38,12 @@ inline Host_0_procWithLocalVariables()
   MyInteger_assign_value(l1, global_state.host.a);
   MyInteger_assign_value(l2, global_state.host.b);
   MyInteger_assign_value(global_state.host.y, (l1 + l2));
-  Host_0_procWithLocalVariables_0_end: ;
+  Host_0_procWithLocalVariables_0_end:
 }
 inline Host_0_procWithOutput()
 {
   Host_0_RI_0_action(global_state.host.y);
-  Host_0_procWithOutput_0_end: ;
+  Host_0_procWithOutput_0_end:
 }
 inline Host_0_transition(id)
 {

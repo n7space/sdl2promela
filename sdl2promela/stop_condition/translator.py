@@ -56,6 +56,13 @@ class GenerateContext:
     This allows to generate valid reference to process state definition.
     """
 
+    negated_empty: bool
+    """
+    Generate 'nempty' instead of 'empty'.
+    This is required because spin does not accept expression: (! empty(channel)).
+    Instead, the accepted code shall be: nempty(channel).
+    """
+
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
         self.aggregates = {}
@@ -63,6 +70,7 @@ class GenerateContext:
         self.choice_selection_alternatives = None
         self.process_state_selection = None
         self.process_state_selection_substate = None
+        self.negated_empty = False
 
     def clear(self):
         """Clear context.
@@ -209,6 +217,22 @@ def _generate(context: GenerateContext, expr: model.GreaterEqualExpression):
 
 @dispatch(GenerateContext, model.NotExpression)
 def _generate(context: GenerateContext, expr: model.NotExpression):
+    # TODO special case for the 'empty' function
+    # The spin does not accept negation of empty function
+    # The workaround here is to generate 'nempty':
+    # This is done by setting a flag in the context
+    if isinstance(expr.expression, model.CallExpression):
+        call_expression = typing.cast(model.CallExpression, expr.expression)
+        if isinstance(call_expression.function, model.VariableReference):
+            function_ref = typing.cast(
+                model.VariableReference, call_expression.function
+            )
+            if function_ref.name.lower() == "empty":
+                context.negated_empty = True
+                result = _generate(context, expr.expression)
+                context.negated_empty = False
+                return result
+
     result = (
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
         .withExpression(_generate(context, expr.expression))
@@ -769,10 +793,11 @@ def _construct_queue_variable_name_from_call(
 
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
+    function_name = "nempty" if context.negated_empty else "empty"
     queue_variable = _construct_queue_variable_name_from_call(context, expr, "empty")
     return (
         promelaBuilder.CallBuilder()
-        .withTarget("empty")
+        .withTarget(function_name)
         .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
         .build()
     )
@@ -894,7 +919,7 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
 
 def _generate_true_alternative(label: str) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(promela.GoTo(label))
@@ -907,7 +932,7 @@ def _generate_true_alternative(label: str) -> promela.Alternative:
 def _generate_filter_out_alternative(
     statements: List[model.FilterOutStatement], context: GenerateContext
 ) -> promela.Alternative:
-    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
 
     expressions = [_generate(context, s.expression) for s in statements]
 
@@ -944,11 +969,7 @@ def _generate_always_alternative(
 ) -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(
-            promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-            .withExpression(_generate(context, always.expression))
-            .build()
-        )
+        .withCondition(_generate(context, model.NotExpression(always.expression)))
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
@@ -973,9 +994,7 @@ def _generate_never_alternative(
             .withStatement(
                 promelaBuilder.AssertBuilder()
                 .withExpression(
-                    promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                    .withExpression(_generate(context, never.expression))
-                    .build()
+                    _generate(context, model.NotExpression(never.expression))
                 )
                 .build()
             )
@@ -989,7 +1008,7 @@ def _generate_eventually_alternative(
     eventually: model.EventuallyStatement, context: GenerateContext
 ) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
         .withCondition(_generate(context, eventually.expression))
         .withStatements(
             promelaBuilder.StatementsBuilder()
@@ -1004,7 +1023,7 @@ def _generate_entry_loop() -> promela.Do:
     return (
         promelaBuilder.DoBuilder()
         .withAlternative(
-            promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+            promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
             .withCondition(promelaBuilder.VariableReferenceBuilder("inited").build())
             .withStatements(
                 promelaBuilder.StatementsBuilder()
@@ -1016,6 +1035,45 @@ def _generate_entry_loop() -> promela.Do:
         .withAlternative(_generate_true_alternative("start"))
         .build()
     )
+
+
+def _generate_else_alternative(
+    input_model: model.StopConditionModel, context: GenerateContext
+) -> promela.Alternative:
+    expressions = []
+
+    # Collect all expressions
+    for always in input_model.always_statements:
+        expressions.append(_generate(context, always.expression))
+
+    for never in input_model.never_statements:
+        # never needs not
+        expressions.append(
+            promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+            .withExpression(_generate(context, never.expression))
+            .build()
+        )
+
+    expression = expressions[0]
+    expressions.pop(0)
+    while len(expressions) > 0:
+        expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(expression)
+            .withRight(expressions[0])
+            .build()
+        )
+        expressions.pop(0)
+
+    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
+    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
+    builder.withCondition(expression)
+    builder.withStatements(
+        promelaBuilder.StatementsBuilder()
+        .withStatement(promela.GoTo("system_inited"))
+        .build()
+    )
+    return builder.build()
 
 
 def _translate_basic_statements(
@@ -1042,12 +1100,16 @@ def _build_simple_never_claim(
             _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
-        do_loop_builder.withAlternative(_generate_true_alternative("start"))
+        do_loop_builder.withAlternative(
+            _generate_else_alternative(input_model, context)
+        )
+        # do_loop_builder.withAlternative(_generate_true_alternative("system_inited"))
 
     main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
 
     main_block_builder.withStatement(promela.Label("start"))
     main_block_builder.withStatement(_generate_entry_loop())
+    main_block_builder.withStatement(promela.Label("system_inited"))
     main_block_builder.withStatement(do_loop_builder.build())
 
     return (
