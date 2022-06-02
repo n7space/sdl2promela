@@ -1047,12 +1047,7 @@ def _generate_else_alternative(
         expressions.append(_generate(context, always.expression))
 
     for never in input_model.never_statements:
-        # never needs not
-        expressions.append(
-            promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-            .withExpression(_generate(context, never.expression))
-            .build()
-        )
+        expressions.append(_generate(context, model.NotExpression(never.expression)))
 
     expression = expressions[0]
     expressions.pop(0)
