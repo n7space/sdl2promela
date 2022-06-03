@@ -56,13 +56,6 @@ class GenerateContext:
     This allows to generate valid reference to process state definition.
     """
 
-    negated_empty: bool
-    """
-    Generate 'nempty' instead of 'empty'.
-    This is required because spin does not accept expression: (! empty(channel)).
-    Instead, the accepted code shall be: nempty(channel).
-    """
-
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
         self.aggregates = {}
@@ -70,7 +63,6 @@ class GenerateContext:
         self.choice_selection_alternatives = None
         self.process_state_selection = None
         self.process_state_selection_substate = None
-        self.negated_empty = False
 
     def clear(self):
         """Clear context.
@@ -217,22 +209,6 @@ def _generate(context: GenerateContext, expr: model.GreaterEqualExpression):
 
 @dispatch(GenerateContext, model.NotExpression)
 def _generate(context: GenerateContext, expr: model.NotExpression):
-    # TODO special case for the 'empty' function
-    # The spin does not accept negation of empty function
-    # The workaround here is to generate 'nempty':
-    # This is done by setting a flag in the context
-    if isinstance(expr.expression, model.CallExpression):
-        call_expression = typing.cast(model.CallExpression, expr.expression)
-        if isinstance(call_expression.function, model.VariableReference):
-            function_ref = typing.cast(
-                model.VariableReference, call_expression.function
-            )
-            if function_ref.name.lower() == "empty":
-                context.negated_empty = True
-                result = _generate(context, expr.expression)
-                context.negated_empty = False
-                return result
-
     result = (
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
         .withExpression(_generate(context, expr.expression))
@@ -793,12 +769,21 @@ def _construct_queue_variable_name_from_call(
 
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
-    function_name = "nempty" if context.negated_empty else "empty"
     queue_variable = _construct_queue_variable_name_from_call(context, expr, "empty")
+    # direct usage of promela 'empty' is a cause
+    # of issues, when it is used together with unary negation
+    # 'empty(chan)' is translated to 'len(chan) == 0'
     return (
-        promelaBuilder.CallBuilder()
-        .withTarget(function_name)
-        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
+        .withLeft(
+            promelaBuilder.CallBuilder()
+            .withTarget("len")
+            .withParameter(
+                promelaBuilder.VariableReferenceBuilder(queue_variable).build()
+            )
+            .build()
+        )
+        .withRight(promela.IntegerValue(0))
         .build()
     )
 
