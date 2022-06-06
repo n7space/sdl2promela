@@ -1022,40 +1022,6 @@ def _generate_entry_loop() -> promela.Do:
     )
 
 
-def _generate_else_alternative(
-    input_model: model.StopConditionModel, context: GenerateContext
-) -> promela.Alternative:
-    expressions = []
-
-    # Collect all expressions
-    for always in input_model.always_statements:
-        expressions.append(_generate(context, always.expression))
-
-    for never in input_model.never_statements:
-        expressions.append(_generate(context, model.NotExpression(never.expression)))
-
-    expression = expressions[0]
-    expressions.pop(0)
-    while len(expressions) > 0:
-        expression = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(expression)
-            .withRight(expressions[0])
-            .build()
-        )
-        expressions.pop(0)
-
-    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
-    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
-    builder.withCondition(expression)
-    builder.withStatements(
-        promelaBuilder.StatementsBuilder()
-        .withStatement(promela.GoTo("system_inited"))
-        .build()
-    )
-    return builder.build()
-
-
 def _translate_basic_statements(
     input_model: model.StopConditionModel,
     builder: promelaBuilder.DoBuilder,
@@ -1080,10 +1046,7 @@ def _build_simple_never_claim(
             _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
-        do_loop_builder.withAlternative(
-            _generate_else_alternative(input_model, context)
-        )
-        # do_loop_builder.withAlternative(_generate_true_alternative("system_inited"))
+        do_loop_builder.withAlternative(_generate_true_alternative("system_inited"))
 
     main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
 
