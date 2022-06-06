@@ -770,10 +770,20 @@ def _construct_queue_variable_name_from_call(
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
     queue_variable = _construct_queue_variable_name_from_call(context, expr, "empty")
+    # direct usage of promela 'empty' is a cause
+    # of issues, when it is used together with unary negation
+    # 'empty(chan)' is translated to 'len(chan) == 0'
     return (
-        promelaBuilder.CallBuilder()
-        .withTarget("empty")
-        .withParameter(promelaBuilder.VariableReferenceBuilder(queue_variable).build())
+        promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
+        .withLeft(
+            promelaBuilder.CallBuilder()
+            .withTarget("len")
+            .withParameter(
+                promelaBuilder.VariableReferenceBuilder(queue_variable).build()
+            )
+            .build()
+        )
+        .withRight(promela.IntegerValue(0))
         .build()
     )
 
@@ -894,7 +904,7 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
 
 def _generate_true_alternative(label: str) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(promela.GoTo(label))
@@ -907,7 +917,7 @@ def _generate_true_alternative(label: str) -> promela.Alternative:
 def _generate_filter_out_alternative(
     statements: List[model.FilterOutStatement], context: GenerateContext
 ) -> promela.Alternative:
-    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+    builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
 
     expressions = [_generate(context, s.expression) for s in statements]
 
@@ -944,11 +954,7 @@ def _generate_always_alternative(
 ) -> promela.Alternative:
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(
-            promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-            .withExpression(_generate(context, always.expression))
-            .build()
-        )
+        .withCondition(_generate(context, model.NotExpression(always.expression)))
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
@@ -973,9 +979,7 @@ def _generate_never_alternative(
             .withStatement(
                 promelaBuilder.AssertBuilder()
                 .withExpression(
-                    promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-                    .withExpression(_generate(context, never.expression))
-                    .build()
+                    _generate(context, model.NotExpression(never.expression))
                 )
                 .build()
             )
@@ -989,7 +993,7 @@ def _generate_eventually_alternative(
     eventually: model.EventuallyStatement, context: GenerateContext
 ) -> promela.Alternative:
     return (
-        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
         .withCondition(_generate(context, eventually.expression))
         .withStatements(
             promelaBuilder.StatementsBuilder()
@@ -1004,7 +1008,7 @@ def _generate_entry_loop() -> promela.Do:
     return (
         promelaBuilder.DoBuilder()
         .withAlternative(
-            promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+            promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
             .withCondition(promelaBuilder.VariableReferenceBuilder("inited").build())
             .withStatements(
                 promelaBuilder.StatementsBuilder()
@@ -1042,12 +1046,13 @@ def _build_simple_never_claim(
             _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
     else:
-        do_loop_builder.withAlternative(_generate_true_alternative("start"))
+        do_loop_builder.withAlternative(_generate_true_alternative("system_inited"))
 
     main_block_builder = promelaBuilder.BlockBuilder(promela.BlockType.BLOCK)
 
     main_block_builder.withStatement(promela.Label("start"))
     main_block_builder.withStatement(_generate_entry_loop())
+    main_block_builder.withStatement(promela.Label("system_inited"))
     main_block_builder.withStatement(do_loop_builder.build())
 
     return (

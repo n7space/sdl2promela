@@ -133,12 +133,12 @@ def generate(context: Context, expression: model.BinaryExpression):
 
 @dispatch(Context, model.Label)
 def generate(context: Context, label: model.Label):
-    context.output(f"{label.name}: ")
+    context.output(f"{label.name}: \n")
 
 
 @dispatch(Context, model.GoTo)
 def generate(context: Context, goto: model.GoTo):
-    context.output(f"goto {goto.target};\n")
+    context.output(f"goto {goto.target}")
 
 
 @dispatch(Context, model.UnaryExpression)
@@ -251,7 +251,9 @@ def generate(context: Context, wrapper: model.StatementsWrapper):
         if statement is not None:
             generate(context, statement)
             # Avoid multiple ";" for nested statement wrappers
-            if not isinstance(statement, model.StatementsWrapper):
+            if not isinstance(statement, model.StatementsWrapper) and not isinstance(
+                statement, model.Label
+            ):
                 context.output(";\n")
 
 

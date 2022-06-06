@@ -12,7 +12,7 @@ inline Complexsdl_0_transition(id)
     ::(transition_id == 1)->
       MyInteger_assign_value(global_state.complexsdl.x, 0);
       MyInteger_assign_value(global_state.complexsdl.y, 1);
-      loop_start: ;
+      loop_start:
       if
       ::((global_state.complexsdl.x < global_state.complexsdl.tmp) == false)->
         skip;
@@ -20,7 +20,6 @@ inline Complexsdl_0_transition(id)
         MyInteger_assign_value(global_state.complexsdl.y, (global_state.complexsdl.y * global_state.complexsdl.x));
         MyInteger_assign_value(global_state.complexsdl.x, (global_state.complexsdl.x + 1));
         goto loop_start;
-        ;
       fi;
       Complexsdl_0_RI_0_response(global_state.complexsdl.y);
       global_state.complexsdl.state = Complexsdl_States_wait;
