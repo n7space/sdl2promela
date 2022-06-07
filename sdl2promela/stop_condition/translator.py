@@ -376,11 +376,22 @@ class FirstVariableInfo:
     consumed_elements: int
     """Number of consumed elements of Selector."""
 
-    def __init__(self, process_name, variable_name, variable_type, consumed_elements):
+    is_global_state: bool
+    """Variable refers member in global_state."""
+
+    def __init__(
+        self,
+        process_name: str,
+        variable_name: str,
+        variable_type: Any,
+        consumed_elements: int,
+        is_global_state: bool,
+    ):
         self.process_name = process_name
         self.variable_name = variable_name
         self.variable_type = variable_type
         self.consumed_elements = consumed_elements
+        self.is_global_state = is_global_state
 
 
 def _find_state(context: GenerateContext, selector: model.Selector, process_name: str):
@@ -447,6 +458,50 @@ def _find_first_variable(
     """
     index = 0
 
+    if isinstance(selector.elements[0], model.CallExpression):
+        call_expression: model.CallExpression = selector.elements[0]
+        if len(call_expression.parameters) == 1 and isinstance(
+            call_expression.parameters[0], model.Selector
+        ):
+            nested_selector: model.Selector = call_expression.parameters[0]
+            if len(nested_selector.elements) == 2:
+                if isinstance(nested_selector.elements[0], model.VariableReference):
+                    process_name = nested_selector.elements[0].name.lower()
+                    if process_name not in context.processes:
+                        raise TranslateException(
+                            "Cannot find process with name '{}'".format(process_name)
+                        )
+                    signal_name = nested_selector.elements[1].name
+                    queue_name = _construct_signal_parameter_variable_name_from_call(
+                        context, call_expression, "queue_last"
+                    )
+                    queue_type = None
+                    process = context.processes[process_name]
+
+                    found_signals = [
+                        signal["type"]
+                        for signal in process.input_signals
+                        if signal["name"] == signal_name
+                    ]
+
+                    if len(found_signals) == 0:
+                        raise TranslateException(
+                            f"Cannot find singal '{signal_name}' in process '{process_name}'"
+                        )
+                    elif len(found_signals) > 1:
+                        raise TranslateException(
+                            f"Ambiguous signal name '{signal_name}' in process '{process_name}'"
+                        )
+
+                    queue_type = found_signals[0]
+
+                    return FirstVariableInfo(
+                        process_name, queue_name, queue_type, 1, False
+                    )
+
+        else:
+            raise TranslateException("Invalid parameters")
+
     # Find top-level process
     process_name = typing.cast(
         model.VariableReference, selector.elements[index]
@@ -473,7 +528,11 @@ def _find_first_variable(
         )
 
     return FirstVariableInfo(
-        process_name, variable_name, process.variables[variable_name][0], index + 1
+        process_name,
+        variable_name,
+        process.variables[variable_name][0],
+        index + 1,
+        True,
     )
 
 
@@ -518,27 +577,32 @@ def _generate(context: GenerateContext, expr: model.Selector):
     else:
         variable_info = _find_first_variable(context, expr)
         index = variable_info.consumed_elements
-        result = (
-            promelaBuilder.MemberAccessBuilder()
-            .withUtypeReference(
+        if variable_info.is_global_state:
+            result = (
                 promelaBuilder.MemberAccessBuilder()
                 .withUtypeReference(
-                    promelaBuilder.VariableReferenceBuilder("global_state").build()
+                    promelaBuilder.MemberAccessBuilder()
+                    .withUtypeReference(
+                        promelaBuilder.VariableReferenceBuilder("global_state").build()
+                    )
+                    .withMember(
+                        promelaBuilder.VariableReferenceBuilder(
+                            variable_info.process_name
+                        ).build()
+                    )
+                    .build()
                 )
                 .withMember(
                     promelaBuilder.VariableReferenceBuilder(
-                        variable_info.process_name
+                        variable_info.variable_name
                     ).build()
                 )
                 .build()
             )
-            .withMember(
-                promelaBuilder.VariableReferenceBuilder(
-                    variable_info.variable_name
-                ).build()
-            )
-            .build()
-        )
+        else:
+            result = promelaBuilder.VariableReferenceBuilder(
+                variable_info.variable_name
+            ).build()
 
     for element in promelaObjects[index:]:
         result = (
@@ -590,6 +654,52 @@ def _resolve_remaining_element_of_selector(
         return memberType
 
 
+def _find_type_of_queue_last_call(context: GenerateContext, call: model.CallExpression):
+    if len(call.parameters) != 1:
+        raise TranslateException("Invalid parameters for 'queue_last'")
+    if not isinstance(call.parameters[0], model.Selector):
+        raise TranslateException(
+            "Invalid parameter for 'queue_last', required <process>.<signal>"
+        )
+    selector = call.parameters[0]
+    if not isinstance(selector.elements[0], model.VariableReference):
+        raise TranslateException(
+            "Invalid parameter for 'queue_last', required <process>.<signal>"
+        )
+    if not isinstance(selector.elements[1], model.VariableReference):
+        raise TranslateException(
+            "Invalid parameter for 'queue_last', required <process>.<signal>"
+        )
+
+    process_name = selector.elements[0].name.lower()
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+    process = context.processes[process_name]
+    signal_name = selector.elements[1].name.lower()
+    found_signal_types = [
+        signal["type"]
+        for signal in process.input_signals
+        if signal["name"] == signal_name
+    ]
+
+    if len(found_signal_types) == 0:
+        raise TranslateException(
+            f"Cannot find singal '{signal_name}' in process '{process_name}'"
+        )
+    elif len(found_signal_types) > 1:
+        raise TranslateException(
+            f"Ambiguous signal name '{signal_name}' in process '{process_name}'"
+        )
+
+    allTypes = getattr(process.DV, "types", {})
+
+    finalType = resolve_asn1_type(allTypes, found_signal_types[0])
+
+    return finalType, allTypes
+
+
 @dispatch(GenerateContext, model.Selector)
 def _find_type(context: GenerateContext, selector: model.Selector):
     if isinstance(selector.elements[0], model.CallExpression):
@@ -631,6 +741,12 @@ def _find_type(context: GenerateContext, selector: model.Selector):
 
 @dispatch(GenerateContext, model.CallExpression)
 def _find_type(context: GenerateContext, selector: model.CallExpression):
+    if isinstance(selector.function, model.VariableReference):
+        if selector.function.name.lower() == "queue_last":
+            return _find_type_of_queue_last_call(context, selector)
+        else:
+            raise TranslateException("Invalid function call")
+
     sequenceOfType, allTypes = _find_type(context, selector.function)
 
     sequenceOfType = resolve_asn1_type(allTypes, sequenceOfType)
@@ -686,14 +802,6 @@ def _generate_present_call(context: GenerateContext, expr: model.CallExpression)
     if len(expr.parameters) != 1:
         raise TranslateException("Function 'present' requires one parameter")
     result = _generate(context, expr.parameters[0])
-
-    if not isinstance(result, promela.MemberAccess) and not isinstance(
-        result, promela.ArrayAccess
-    ):
-        raise TranslateException(
-            "Invalid parameter for present function: {}".format(result)
-        )
-
     _set_choice_selection(context, expr.parameters[0])
 
     return (
@@ -729,7 +837,7 @@ def _generate_exist_call(context: GenerateContext, expr: model.CallExpression):
     )
 
 
-def _construct_queue_variable_name_from_call(
+def _construct_interface_name_from_call(
     context: GenerateContext, expr: model.CallExpression, function: str
 ):
     if len(expr.parameters) != 1:
@@ -765,7 +873,31 @@ def _construct_queue_variable_name_from_call(
             )
         )
 
-    return "{}_{}_channel".format(process_name.capitalize(), queue_name.lower())
+    return "{}_{}".format(process_name.capitalize(), queue_name.lower())
+
+
+def _construct_queue_variable_name_from_call(
+    context: GenerateContext, expr: model.CallExpression, function: str
+):
+    return "{}_channel".format(
+        _construct_interface_name_from_call(context, expr, function)
+    )
+
+
+def _construct_signal_parameter_variable_name_from_call(
+    context: GenerateContext, expr: model.CallExpression, function: str
+):
+    return "{}_signal_parameter".format(
+        _construct_interface_name_from_call(context, expr, function)
+    )
+
+
+def _construct_channel_used_variable_name_from_call(
+    context: GenerateContext, expr: model.CallExpression, function: str
+):
+    return "{}_channel_used".format(
+        _construct_interface_name_from_call(context, expr, function)
+    )
 
 
 def _generate_empty_call(context: GenerateContext, expr: model.CallExpression):
@@ -877,9 +1009,19 @@ def _generate_get_state_call(context: GenerateContext, expr: model.CallExpressio
         raise TranslateException("Invalid parameter for function 'get_state'")
 
 
+def _generate_queue_last_call(context: GenerateContext, expr: model.CallExpression):
+    queue_name = _construct_signal_parameter_variable_name_from_call(
+        context, expr, "queue_last"
+    )
+
+    return promelaBuilder.VariableReferenceBuilder(queue_name).build()
+
+
 @dispatch(GenerateContext, model.CallExpression)
 def _generate(context: GenerateContext, expr: model.CallExpression):
     if isinstance(expr.function, model.Selector):
+        return _generate_array_access(context, expr)
+    elif isinstance(expr.function, model.CallExpression):
         return _generate_array_access(context, expr)
     elif isinstance(expr.function, model.VariableReference):
         if expr.function.name == "get_state":
@@ -894,6 +1036,8 @@ def _generate(context: GenerateContext, expr: model.CallExpression):
             return _generate_empty_call(context, expr)
         elif expr.function.name == "queue_length":
             return _generate_queue_length_call(context, expr)
+        elif expr.function.name == "queue_last":
+            return _generate_queue_last_call(context, expr)
 
         raise TranslateException(
             "Function '{}' is not supported.".format(expr.function.name)

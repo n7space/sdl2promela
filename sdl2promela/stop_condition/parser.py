@@ -105,6 +105,8 @@ def _parse_call_expression(expr: antlr3.tree.CommonTree) -> CallExpression:
         function = _parse_primary_expression(expr.children[0].children[0])
     elif expr.children[0].type == lexer.SELECTOR:
         function = _parse_selector(expr.children[0])
+    elif expr.children[0].type == lexer.CALL:
+        function = _parse_call_expression(expr.children[0])
     else:
         raise TranslationException(
             "Unexpected tree type {}".format(expr.children[0].type)

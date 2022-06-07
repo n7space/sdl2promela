@@ -228,13 +228,15 @@ class CallExpression(Expression):
     Call Expression represents a call to predefined function or,
     an access to element of array."""
 
-    function: Union[VariableReference, Selector]
+    function: Union[VariableReference, Selector, "CallExpression"]
     """Funcion or the selector to the array."""
     parameters: List[Expression]
     """List of parameters, or an array index."""
 
     def __init__(
-        self, function: Union[VariableReference, Selector], parameters: List[Expression]
+        self,
+        function: Union[VariableReference, Selector, "CallExpression"],
+        parameters: List[Expression],
     ):
         self.function = function
         self.parameters = parameters
