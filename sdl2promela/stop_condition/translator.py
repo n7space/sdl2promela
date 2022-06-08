@@ -871,7 +871,7 @@ def _generate_exist_call(context: GenerateContext, expr: model.CallExpression):
 
     member = result.member
 
-    return (
+    result = (
         promelaBuilder.MemberAccessBuilder()
         .withMember(member)
         .withUtypeReference(
@@ -882,6 +882,8 @@ def _generate_exist_call(context: GenerateContext, expr: model.CallExpression):
         )
         .build()
     )
+
+    return _append_additional_expression_if_required(context, result)
 
 
 def _construct_interface_name_from_call(
