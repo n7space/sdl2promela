@@ -56,6 +56,8 @@ class GenerateContext:
     This allows to generate valid reference to process state definition.
     """
 
+    additional_expression: Optional[promela.Expression]
+
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
         self.aggregates = {}
@@ -63,6 +65,7 @@ class GenerateContext:
         self.choice_selection_alternatives = None
         self.process_state_selection = None
         self.process_state_selection_substate = None
+        self.additional_expression = None
 
     def clear(self):
         """Clear context.
@@ -76,6 +79,22 @@ class GenerateContext:
 
 def _escape_asn1_typename(name: str) -> str:
     return name.replace("-", "_")
+
+
+def _append_additional_expression_if_required(
+    context: GenerateContext, expression: promela.Expression
+):
+    if context.additional_expression is not None:
+        result = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(expression)
+            .withRight(context.additional_expression)
+            .build()
+        )
+        context.additional_expression = None
+        return result
+    else:
+        return expression
 
 
 @dispatch(GenerateContext, model.OrExpression)
@@ -143,6 +162,7 @@ def _generate(context: GenerateContext, expr: model.EqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -155,6 +175,7 @@ def _generate(context: GenerateContext, expr: model.NotEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -167,6 +188,7 @@ def _generate(context: GenerateContext, expr: model.LessExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -179,6 +201,7 @@ def _generate(context: GenerateContext, expr: model.LessEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -191,6 +214,7 @@ def _generate(context: GenerateContext, expr: model.GreaterExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -203,6 +227,7 @@ def _generate(context: GenerateContext, expr: model.GreaterEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
+    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -379,6 +404,12 @@ class FirstVariableInfo:
     is_global_state: bool
     """Variable refers member in global_state."""
 
+    additional_expression: Optional[promela.Expression]
+    """
+    Access to variable requires additional expression,
+    which should be added using 'and' operator.
+    """
+
     def __init__(
         self,
         process_name: str,
@@ -386,12 +417,14 @@ class FirstVariableInfo:
         variable_type: Any,
         consumed_elements: int,
         is_global_state: bool,
+        additional_expression: Optional[promela.Expression],
     ):
         self.process_name = process_name
         self.variable_name = variable_name
         self.variable_type = variable_type
         self.consumed_elements = consumed_elements
         self.is_global_state = is_global_state
+        self.additional_expression = additional_expression
 
 
 def _find_state(context: GenerateContext, selector: model.Selector, process_name: str):
@@ -475,6 +508,9 @@ def _find_first_variable(
                     queue_name = _construct_signal_parameter_variable_name_from_call(
                         context, call_expression, "queue_last"
                     )
+                    channel_used = _construct_channel_used_variable_name_from_call(
+                        context, call_expression, "queue_last"
+                    )
                     queue_type = None
                     process = context.processes[process_name]
 
@@ -495,8 +531,17 @@ def _find_first_variable(
 
                     queue_type = found_signals[0]
 
+                    additional_expression = promelaBuilder.VariableReferenceBuilder(
+                        channel_used
+                    ).build()
+
                     return FirstVariableInfo(
-                        process_name, queue_name, queue_type, 1, False
+                        process_name,
+                        queue_name,
+                        queue_type,
+                        1,
+                        False,
+                        additional_expression,
                     )
 
         else:
@@ -533,6 +578,7 @@ def _find_first_variable(
         process.variables[variable_name][0],
         index + 1,
         True,
+        None,
     )
 
 
@@ -576,6 +622,7 @@ def _generate(context: GenerateContext, expr: model.Selector):
         index = 1
     else:
         variable_info = _find_first_variable(context, expr)
+        context.additional_expression = variable_info.additional_expression
         index = variable_info.consumed_elements
         if variable_info.is_global_state:
             result = (
@@ -1010,11 +1057,18 @@ def _generate_get_state_call(context: GenerateContext, expr: model.CallExpressio
 
 
 def _generate_queue_last_call(context: GenerateContext, expr: model.CallExpression):
-    queue_name = _construct_signal_parameter_variable_name_from_call(
+    signal_param_variable_name = _construct_signal_parameter_variable_name_from_call(
+        context, expr, "queue_last"
+    )
+    channel_used_variable_name = _construct_channel_used_variable_name_from_call(
         context, expr, "queue_last"
     )
 
-    return promelaBuilder.VariableReferenceBuilder(queue_name).build()
+    context.additional_expression = promelaBuilder.VariableReferenceBuilder(
+        channel_used_variable_name
+    ).build()
+
+    return promelaBuilder.VariableReferenceBuilder(signal_param_variable_name).build()
 
 
 @dispatch(GenerateContext, model.CallExpression)
