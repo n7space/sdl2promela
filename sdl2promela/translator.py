@@ -1032,6 +1032,7 @@ def __generate_assignment(
     if (
         finalType.kind == OCTET_STRING_TYPE_NAME
         or finalType.kind == IA5_STRING_TYPE_NAME
+        or finalType.kind == SEQUENCEOF_TYPE_NAME
     ):
         if int(finalType.Min) != 0:
             raise Exception(f"Invalid assignment to type{finalType.CName}")
@@ -1046,19 +1047,23 @@ def __generate_assignment(
             context, statements, left, finalType, 0
         )
 
-        for index in range(int(finalType.Max)):
-            element = (
-                ArrayAccessBuilder()
-                .withArray(__generate_variable_name(context, data_field, True))
-                .withIndex(promelamodel.IntegerValue(index))
-                .build()
-            )
-            statements.append(
-                AssignmentBuilder()
-                .withTarget(element)
-                .withSource(promelamodel.IntegerValue(0))
-                .build()
-            )
+        if (
+            finalType.kind == OCTET_STRING_TYPE_NAME
+            or finalType.kind == IA5_STRING_TYPE_NAME
+        ):
+            for index in range(int(finalType.Max)):
+                element = (
+                    ArrayAccessBuilder()
+                    .withArray(__generate_variable_name(context, data_field, True))
+                    .withIndex(promelamodel.IntegerValue(index))
+                    .build()
+                )
+                statements.append(
+                    AssignmentBuilder()
+                    .withTarget(element)
+                    .withSource(promelamodel.IntegerValue(0))
+                    .build()
+                )
 
         return statements
 
