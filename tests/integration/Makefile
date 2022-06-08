@@ -36,7 +36,8 @@ TESTS= \
 	stop_condition_parallel_state \
 	stop_condition_get_state_nested \
 	stop_condition_get_state_parallel \
-	stop_condition_empty_len
+	stop_condition_empty_len \
+	stop_condition_queue_last
 
 .PHONY: $(TESTS) check
 

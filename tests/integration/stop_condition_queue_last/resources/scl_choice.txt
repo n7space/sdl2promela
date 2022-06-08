@@ -1,0 +1,3 @@
+eventually controller.reached > 0;
+
+always present(queue_last(actuator.test_choice)) = second;
