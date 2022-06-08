@@ -56,7 +56,12 @@ class GenerateContext:
     This allows to generate valid reference to process state definition.
     """
 
-    additional_expression: Optional[promela.Expression]
+    precheck_expressions: List[promela.Expression]
+    """
+    List of promela expressions, which should be checked before checking
+    actual evaluation of stop condition expression.
+    Usually this contains checks if variables are initialized.
+    """
 
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
@@ -65,7 +70,7 @@ class GenerateContext:
         self.choice_selection_alternatives = None
         self.process_state_selection = None
         self.process_state_selection_substate = None
-        self.additional_expression = None
+        self.precheck_expressions = []
 
     def clear(self):
         """Clear context.
@@ -79,22 +84,6 @@ class GenerateContext:
 
 def _escape_asn1_typename(name: str) -> str:
     return name.replace("-", "_")
-
-
-def _append_additional_expression_if_required(
-    context: GenerateContext, expression: promela.Expression
-):
-    if context.additional_expression is not None:
-        result = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(expression)
-            .withRight(context.additional_expression)
-            .build()
-        )
-        context.additional_expression = None
-        return result
-    else:
-        return expression
 
 
 @dispatch(GenerateContext, model.OrExpression)
@@ -162,7 +151,6 @@ def _generate(context: GenerateContext, expr: model.EqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -175,7 +163,6 @@ def _generate(context: GenerateContext, expr: model.NotEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -188,7 +175,6 @@ def _generate(context: GenerateContext, expr: model.LessExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -201,7 +187,6 @@ def _generate(context: GenerateContext, expr: model.LessEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -214,7 +199,6 @@ def _generate(context: GenerateContext, expr: model.GreaterExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -227,7 +211,6 @@ def _generate(context: GenerateContext, expr: model.GreaterEqualExpression):
         .withRight(_generate(context, expr.rhs))
         .build()
     )
-    result = _append_additional_expression_if_required(context, result)
     context.clear()
     return result
 
@@ -407,7 +390,7 @@ class FirstVariableInfo:
     additional_expression: Optional[promela.Expression]
     """
     Access to variable requires additional expression,
-    which should be added using 'and' operator.
+    which checks if variable is initialized.
     """
 
     def __init__(
@@ -622,7 +605,8 @@ def _generate(context: GenerateContext, expr: model.Selector):
         index = 1
     else:
         variable_info = _find_first_variable(context, expr)
-        context.additional_expression = variable_info.additional_expression
+        if variable_info.additional_expression is not None:
+            context.precheck_expressions.append(variable_info.additional_expression)
         index = variable_info.consumed_elements
         if variable_info.is_global_state:
             result = (
@@ -883,7 +867,7 @@ def _generate_exist_call(context: GenerateContext, expr: model.CallExpression):
         .build()
     )
 
-    return _append_additional_expression_if_required(context, result)
+    return result
 
 
 def _construct_interface_name_from_call(
@@ -1066,9 +1050,9 @@ def _generate_queue_last_call(context: GenerateContext, expr: model.CallExpressi
         context, expr, "queue_last"
     )
 
-    context.additional_expression = promelaBuilder.VariableReferenceBuilder(
-        channel_used_variable_name
-    ).build()
+    context.precheck_expressions.append(
+        promelaBuilder.VariableReferenceBuilder(channel_used_variable_name).build()
+    )
 
     return promelaBuilder.VariableReferenceBuilder(signal_param_variable_name).build()
 
@@ -1119,7 +1103,19 @@ def _generate_filter_out_alternative(
 ) -> promela.Alternative:
     builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
 
-    expressions = [_generate(context, s.expression) for s in statements]
+    expressions = []
+    for index in range(len(statements)):
+        context.precheck_expressions = []
+        expression = _generate(context, statements[index].expression)
+        while context.precheck_expressions:
+            expression = (
+                promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+                .withLeft(context.precheck_expressions[0])
+                .withRight(expression)
+                .build()
+            )
+            context.precheck_expressions.pop(0)
+        expressions.append(expression)
 
     negate_expressions: List[promela.Expression] = [
         promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
@@ -1152,15 +1148,26 @@ def _generate_filter_out_alternative(
 def _generate_always_alternative(
     always: model.AlwaysStatement, context: GenerateContext
 ) -> promela.Alternative:
+    context.precheck_expressions = []
+    assert_expression = _generate(context, always.expression)
+    context.precheck_expressions = []
+    entry_expression = _generate(context, model.NotExpression(always.expression))
+
+    while context.precheck_expressions:
+        entry_expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(context.precheck_expressions[0])
+            .withRight(entry_expression)
+            .build()
+        )
+        context.precheck_expressions.pop(0)
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(_generate(context, model.NotExpression(always.expression)))
+        .withCondition(entry_expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
-                promelaBuilder.AssertBuilder()
-                .withExpression(_generate(context, always.expression))
-                .build()
+                promelaBuilder.AssertBuilder().withExpression(assert_expression).build()
             )
             .build()
         )
@@ -1171,17 +1178,26 @@ def _generate_always_alternative(
 def _generate_never_alternative(
     never: model.NeverStatement, context: GenerateContext
 ) -> promela.Alternative:
+    context.precheck_expressions = []
+    entry_expression = _generate(context, never.expression)
+    context.precheck_expressions = []
+    assert_expression = _generate(context, model.NotExpression(never.expression))
+    while context.precheck_expressions:
+        entry_expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(context.precheck_expressions[0])
+            .withRight(entry_expression)
+            .build()
+        )
+        context.precheck_expressions.pop(0)
+
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(_generate(context, never.expression))
+        .withCondition(entry_expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
-                promelaBuilder.AssertBuilder()
-                .withExpression(
-                    _generate(context, model.NotExpression(never.expression))
-                )
-                .build()
+                promelaBuilder.AssertBuilder().withExpression(assert_expression).build()
             )
             .build()
         )
@@ -1192,9 +1208,19 @@ def _generate_never_alternative(
 def _generate_eventually_alternative(
     eventually: model.EventuallyStatement, context: GenerateContext
 ) -> promela.Alternative:
+    context.precheck_expressions = []
+    entry_expression = _generate(context, eventually.expression)
+    while context.precheck_expressions:
+        entry_expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(context.precheck_expressions[0])
+            .withRight(entry_expression)
+            .build()
+        )
+        context.precheck_expressions.pop(0)
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
-        .withCondition(_generate(context, eventually.expression))
+        .withCondition(entry_expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(promela.GoTo("state_0"))
