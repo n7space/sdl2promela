@@ -1,0 +1,2 @@
+filter_out queue_last(actuator.ping) = 0;
+never get_state(actuator) = error;
