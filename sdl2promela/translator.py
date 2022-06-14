@@ -742,7 +742,7 @@ def __generate_input_function(
     # Generate a call to execute transition inline.
     # The execution id depends on current state, which includes parallel states.
     # Start from top_level state: i.e. the variable 'state' in process context.
-    for statename in top_level_states:
+    for statename in sorted(top_level_states):
         generate_transition_state_switch(
             context, statename, input, switch_builder, None
         )
@@ -1638,6 +1638,13 @@ def __generate_init_function(context: Context) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(__get_init_function_name(context))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for name, info in context.sdl_model.variables.items():
+        if info[1] is not None:
+            variable_ref = sdlmodel.VariableReference(name)
+            blockBuilder.withStatements(
+                __generate_assignment(context, variable_ref, info[1], info[0])
+            )
+
     transition_function_name = __get_transition_function_name(context)
     blockBuilder.withStatements(
         [
