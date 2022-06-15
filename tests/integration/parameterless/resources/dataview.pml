@@ -31,3 +31,7 @@ typedef T_Null_Record {
     bit dummy;
 }
 
+inline CustomInteger_assign_value(dst, src)
+{
+  dst = src;
+}

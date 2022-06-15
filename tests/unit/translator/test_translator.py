@@ -70,3 +70,7 @@ def test_translates_join():
 
 def test_translates_internal_procedures():
     translate_and_verify("internal_procedures.pr", "internal_procedures.pml")
+
+
+def test_translates_variable_init():
+    translate_and_verify("variable_init.pr", "variable_init.pml")

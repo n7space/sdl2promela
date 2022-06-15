@@ -23,9 +23,14 @@ BEGIN
 
    MyInteger ::= INTEGER (0 .. 10000)
 
+   MySeq ::= SEQUENCE {
+      x  MyInteger,
+      y MyInteger
+   }
+
 -- ASN.1 Type definitions must start with an uppercase
 -- Field names in records (SEQUENCE) must start with a lowercase
--- Underscores are not allowed: use dash (hyphen) 
+-- Underscores are not allowed: use dash (hyphen)
 -- For integers do not assume that small ranges will be translated to small
 -- types in C or Ada (expect unsigned or signed 64 bits types with subtypes
 -- for the range in Ada)
@@ -59,5 +64,3 @@ BEGIN
 --  myVar       MySeqOf     ::= { hello, world }
 
 END
-
-

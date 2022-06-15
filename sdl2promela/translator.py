@@ -598,7 +598,7 @@ def __generate_execute_transition(
     # Generate assignment of signal parameters into variables
     for target_variable_ref in input_block.target_variables:
         variable = context.sdl_model.variables[target_variable_ref.variableName]
-        variableType = resolve_asn1_type(context.sdl_model.types, variable[0])
+        variableType = resolve_asn1_type(context.sdl_model.types, variable.type)
         assignInlineName = __get_assign_value_inline_name(variableType)
         statements.append(
             CallBuilder()
@@ -742,7 +742,7 @@ def __generate_input_function(
     # Generate a call to execute transition inline.
     # The execution id depends on current state, which includes parallel states.
     # Start from top_level state: i.e. the variable 'state' in process context.
-    for statename in top_level_states:
+    for statename in sorted(top_level_states):
         generate_transition_state_switch(
             context, statename, input, switch_builder, None
         )
@@ -1643,6 +1643,13 @@ def __generate_init_function(context: Context) -> promelamodel.Inline:
     builder = InlineBuilder()
     builder.withName(__get_init_function_name(context))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+    for name, info in context.sdl_model.variables.items():
+        if info.value is not None:
+            variable_ref = sdlmodel.VariableReference(name)
+            blockBuilder.withStatements(
+                __generate_assignment(context, variable_ref, info.value, info.type)
+            )
+
     transition_function_name = __get_transition_function_name(context)
     blockBuilder.withStatements(
         [
@@ -1791,10 +1798,10 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
 
 
 def __generate_implicit_variable_definition(
-    context: Context, variable_name: str, variable_type: Tuple[Any, Any]
+    context: Context, variable_name: str, variable_info: sdlmodel.VariableInfo
 ) -> promelamodel.VariableDeclaration:
     mangled_name = __get_implicit_variable_name(context, variable_name)
-    memberType = resolve_asn1_type(context.sdl_model.types, variable_type[0])
+    memberType = resolve_asn1_type(context.sdl_model.types, variable_info.type)
     return VariableDeclarationBuilder(mangled_name, memberType.CName).build()
 
 
