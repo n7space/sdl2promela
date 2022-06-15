@@ -4,6 +4,8 @@ from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
 
+import copy
+
 from . import builtins
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -759,18 +761,23 @@ def __generate_input_function(
 def __translate_answer_condition(
     context: Context,
     transition: sdlmodel.Transition,
-    left: sdlmodel.Expression,
-    right: sdlmodel.Expression,
+    value: sdlmodel.Expression,
+    expression: sdlmodel.Expression,
 ) -> promelamodel.Statement:
-    if right.left is None:
-        expression = sdlmodel.BinaryExpression()
-        expression.left = left
-        expression.operator = right.operator
-        expression.right = right.right
-        return __generate_expression(context, expression)
-    raise NotImplementedError(
-        "translate_answer_condition not implemented for " + left + " and " + right
-    )
+    def fill_expression(expression):
+        if isinstance(expression, sdlmodel.BinaryExpression):
+            if expression.left is None:
+                expression.left = copy.deepcopy(value)
+            else:
+                fill_expression(expression.left)
+            if expression.right is None:
+                expression.right = copy.deepcopy(value)
+            else:
+                fill_expression(expression.right)
+
+    fill_expression(expression)
+
+    return __generate_expression(context, expression)
 
 
 @dispatch
@@ -1448,12 +1455,18 @@ def __generate_statement(
             statements.append(__generate_statement(context, transition, action))
         if len(statements) == 0:
             statements.append(promelamodel.Skip())
-        for condition in answer.conditions:
+
+        if answer.condition is None:
+            # If there's no condition, generate 'else'
+            builder.withAlternative(
+                AlternativeBuilder().withStatements(statements).build()
+            )
+        else:
             builder.withAlternative(
                 AlternativeBuilder()
                 .withCondition(
                     __translate_answer_condition(
-                        context, transition, decision.condition, condition
+                        context, transition, decision.condition, answer.condition
                     )
                 )
                 .withStatements(statements)

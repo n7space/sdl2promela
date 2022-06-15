@@ -545,15 +545,15 @@ class Label(Action):
 class Answer(Action):
     """Answer to a Decision."""
 
-    conditions: List[Expression]
-    """Guard condition."""
+    condition: Optional[Expression]
+    """Guard condition. If empty, the Answer represents 'else'"""
 
     actions: List[Action]
     """Sequence of actions to be performed if the answer is applicable"""
 
     def __init__(self):
         self.actions = []
-        self.conditions = []
+        self.condition = None
 
 
 class Decision(Action):
@@ -1186,19 +1186,48 @@ def convert(source: ogAST.Terminator) -> Action:
 @dispatch(ogAST.Answer)
 def convert(source: ogAST.Answer) -> Action:
     answer = Answer()
+    expressions: List[Expression] = []
     for item in source.answers:
         if item["kind"] == "open_range":
             expression = BinaryExpression()
             expression.operator = getBinaryOperatorEnum(item["content"][0])
             expression.right = convert(item["content"][1])
-            answer.conditions.append(expression)
+            expressions.append(expression)
+        elif item["kind"] == "closed_range":
+            expression = BinaryExpression()
+            expression.operator = BinaryOperator.AND
+            lhs = BinaryExpression()
+            lhs.operator = BinaryOperator.GEQUAL
+            lhs.right = convert(item["content"][0])
+            expression.left = lhs
+            rhs = BinaryExpression()
+            rhs.operator = BinaryOperator.LEQUAL
+            rhs.right = convert(item["content"][1])
+            expression.right = rhs
+            expressions.append(expression)
         elif item["kind"] == "constant":
             expression = BinaryExpression()
             expression.operator = BinaryOperator.EQUAL
             expression.right = convert(item["content"][1])
-            answer.conditions.append(expression)
+            expressions.append(expression)
+        elif item["kind"] == "else":
+            # In this case the Answer with empty conditions will be returned
+            continue
         else:
             raise ValueError("Unsupported answer kind: " + item["kind"])
+
+    if expressions:
+        # Join all conditions using 'OR' operator
+        condition = expressions[-1]
+        expressions.pop(-1)
+        while expressions:
+            aux = BinaryExpression()
+            aux.operator = BinaryOperator.OR
+            aux.left = expressions[-1]
+            aux.right = condition
+            condition = aux
+            expressions.pop(-1)
+        answer.condition = condition
 
     transition = source.transition
     if transition is not None:
