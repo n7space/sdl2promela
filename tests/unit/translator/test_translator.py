@@ -74,3 +74,7 @@ def test_translates_internal_procedures():
 
 def test_translates_variable_init():
     translate_and_verify("variable_init.pr", "variable_init.pml")
+
+
+def test_translates_decision():
+    translate_and_verify("decision.pr", "decision.pml")

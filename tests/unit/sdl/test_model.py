@@ -121,17 +121,15 @@ def test_model_reads_value_based_decision():
     assert decision.condition.variableName == "tmp"
     assert len(decision.answers) == 2
 
-    assert len(decision.answers[0].conditions) == 1
-    assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
-    assert decision.answers[0].conditions[0].operator == BinaryOperator.GREATER
-    assert decision.answers[0].conditions[0].right.value == "0"
+    assert isinstance(decision.answers[0].condition, BinaryExpression)
+    assert decision.answers[0].condition.operator == BinaryOperator.GREATER
+    assert decision.answers[0].condition.right.value == "0"
     assert len(decision.answers[0].actions) == 1
     assert isinstance(decision.answers[0].actions[0], NextState)
 
-    assert len(decision.answers[1].conditions) == 1
-    assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
-    assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
-    assert decision.answers[1].conditions[0].right.value == "0"
+    assert isinstance(decision.answers[1].condition, BinaryExpression)
+    assert decision.answers[1].condition.operator == BinaryOperator.EQUAL
+    assert decision.answers[1].condition.right.value == "0"
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 
@@ -153,17 +151,15 @@ def test_model_reads_expression_based_decision():
     assert decision.condition.right.value == "0"
     assert len(decision.answers) == 2
 
-    assert len(decision.answers[0].conditions) == 1
-    assert isinstance(decision.answers[0].conditions[0], BinaryExpression)
-    assert decision.answers[0].conditions[0].operator == BinaryOperator.EQUAL
-    assert decision.answers[0].conditions[0].right.value == "true"
+    assert isinstance(decision.answers[0].condition, BinaryExpression)
+    assert decision.answers[0].condition.operator == BinaryOperator.EQUAL
+    assert decision.answers[0].condition.right.value == "true"
     assert len(decision.answers[0].actions) == 1
     assert isinstance(decision.answers[0].actions[0], NextState)
 
-    assert len(decision.answers[1].conditions) == 1
-    assert isinstance(decision.answers[1].conditions[0], BinaryExpression)
-    assert decision.answers[1].conditions[0].operator == BinaryOperator.EQUAL
-    assert decision.answers[1].conditions[0].right.value == "false"
+    assert isinstance(decision.answers[1].condition, BinaryExpression)
+    assert decision.answers[1].condition.operator == BinaryOperator.EQUAL
+    assert decision.answers[1].condition.right.value == "false"
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 
