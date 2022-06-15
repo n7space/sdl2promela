@@ -706,6 +706,22 @@ class ObserverAttachmentInfo:
         self.recipientName = None
 
 
+class VariableInfo:
+    """
+    Holds information about type and initial value of variable.
+    """
+
+    type: Any
+    """Type of variable from opengeode."""
+
+    value: Optional[Expression]
+    """Optional initial value of variable."""
+
+    def __init__(self, type, value):
+        self.type = type
+        self.value = value
+
+
 def appendAllActions(destination, source):
     """
     Append all actions (and terminators) from the source to the destination.
@@ -1229,13 +1245,13 @@ class Model:
     """The source (complex, as retrieved from the parser) SDL model."""
     types: Dict[str, Any]
     """All ASN.1 types available in process."""
-    variables: Dict[str, Tuple[Any, Expression]]
+    variables: Dict[str, VariableInfo]
     """
     All variables defined in the process, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
-    implicit_variables: Dict[str, Tuple[Any, Expression]]
+    implicit_variables: Dict[str, VariableInfo]
     """
     Dictionary of implicitly defined variables, such as
     arguments of observer signals.
@@ -1483,13 +1499,16 @@ class Model:
 
     def __gather_variables(self):
         for name, info in self.source.variables.items():
+            # In opengeode the info is a tuple with two elements.
+            # The first element is variable type
+            # The second element is initial value or None
             if info[1] is None:
-                self.variables[name] = (
+                self.variables[name] = VariableInfo(
                     info[0],
                     None,
                 )
             else:
-                self.variables[name] = (
+                self.variables[name] = VariableInfo(
                     info[0],
                     convert(info[1]),
                 )
