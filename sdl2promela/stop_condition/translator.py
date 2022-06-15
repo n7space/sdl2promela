@@ -385,7 +385,7 @@ class FirstVariableInfo:
     """Number of consumed elements of Selector."""
 
     is_global_state: bool
-    """Variable refers member in global_state."""
+    """Variable references a member in global_state."""
 
     additional_expression: Optional[promela.Expression]
     """
@@ -474,61 +474,40 @@ def _find_first_variable(
     """
     index = 0
 
-    if isinstance(selector.elements[0], model.CallExpression):
+    if isinstance(selector.elements[0], model.CallExpression) and isinstance(
+        selector.elements[0].function, model.VariableReference
+    ):
         call_expression: model.CallExpression = selector.elements[0]
-        if len(call_expression.parameters) == 1 and isinstance(
-            call_expression.parameters[0], model.Selector
-        ):
-            nested_selector: model.Selector = call_expression.parameters[0]
-            if len(nested_selector.elements) == 2:
-                if isinstance(nested_selector.elements[0], model.VariableReference):
-                    process_name = nested_selector.elements[0].name.lower()
-                    if process_name not in context.processes:
-                        raise TranslateException(
-                            "Cannot find process with name '{}'".format(process_name)
-                        )
-                    signal_name = nested_selector.elements[1].name
-                    queue_name = _construct_signal_parameter_variable_name_from_call(
-                        context, call_expression, "queue_last"
-                    )
-                    channel_used = _construct_channel_used_variable_name_from_call(
-                        context, call_expression, "queue_last"
-                    )
-                    queue_type = None
-                    process = context.processes[process_name]
+        function = typing.cast(model.VariableReference, call_expression.function)
+        if function.name.lower() == "queue_last":
+            queue_type = _find_type_of_queue_last_call(context, call_expression)
+            nested_selector = typing.cast(model.Selector, call_expression.parameters[0])
+            process_name = typing.cast(
+                model.VariableReference, nested_selector.elements[0]
+            ).name.lower()
+            if process_name not in context.processes:
+                raise TranslateException(
+                    "Cannot find process with name '{}'".format(process_name)
+                )
+            queue_name = _construct_signal_parameter_variable_name_from_call(
+                context, call_expression, "queue_last"
+            )
+            channel_used = _construct_channel_used_variable_name_from_call(
+                context, call_expression, "queue_last"
+            )
 
-                    found_signals = [
-                        signal["type"]
-                        for signal in process.input_signals
-                        if signal["name"] == signal_name
-                    ]
+            additional_expression = promelaBuilder.VariableReferenceBuilder(
+                channel_used
+            ).build()
 
-                    if len(found_signals) == 0:
-                        raise TranslateException(
-                            f"Cannot find singal '{signal_name}' in process '{process_name}'"
-                        )
-                    elif len(found_signals) > 1:
-                        raise TranslateException(
-                            f"Ambiguous signal name '{signal_name}' in process '{process_name}'"
-                        )
-
-                    queue_type = found_signals[0]
-
-                    additional_expression = promelaBuilder.VariableReferenceBuilder(
-                        channel_used
-                    ).build()
-
-                    return FirstVariableInfo(
-                        process_name,
-                        queue_name,
-                        queue_type,
-                        1,
-                        False,
-                        additional_expression,
-                    )
-
-        else:
-            raise TranslateException("Invalid parameters")
+            return FirstVariableInfo(
+                process_name,
+                queue_name,
+                queue_type,
+                1,
+                False,
+                additional_expression,
+            )
 
     # Find top-level process
     process_name = typing.cast(
@@ -1098,23 +1077,36 @@ def _generate_true_alternative(label: str) -> promela.Alternative:
     )
 
 
+def _add_precheck_expressions(
+    context: GenerateContext, expression: promela.Expression
+) -> promela.Expression:
+    """
+    Adds optional precheck expressions to expressions connecting them using
+    logical AND operator.
+    """
+    while context.precheck_expressions:
+        expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
+            .withLeft(context.precheck_expressions[0])
+            .withRight(expression)
+            .build()
+        )
+        context.precheck_expressions.pop(0)
+    return expression
+
+
 def _generate_filter_out_alternative(
     statements: List[model.FilterOutStatement], context: GenerateContext
 ) -> promela.Alternative:
     builder = promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
 
     expressions = []
+    # For all 'filter_out' clauses generate list of expressions together with
+    # precheck expressions
     for index in range(len(statements)):
         context.precheck_expressions = []
         expression = _generate(context, statements[index].expression)
-        while context.precheck_expressions:
-            expression = (
-                promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-                .withLeft(context.precheck_expressions[0])
-                .withRight(expression)
-                .build()
-            )
-            context.precheck_expressions.pop(0)
+        expression = _add_precheck_expressions(context, expression)
         expressions.append(expression)
 
     negate_expressions: List[promela.Expression] = [
@@ -1153,14 +1145,7 @@ def _generate_always_alternative(
     context.precheck_expressions = []
     entry_expression = _generate(context, model.NotExpression(always.expression))
 
-    while context.precheck_expressions:
-        entry_expression = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(context.precheck_expressions[0])
-            .withRight(entry_expression)
-            .build()
-        )
-        context.precheck_expressions.pop(0)
+    entry_expression = _add_precheck_expressions(context, entry_expression)
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(entry_expression)
@@ -1182,14 +1167,7 @@ def _generate_never_alternative(
     entry_expression = _generate(context, never.expression)
     context.precheck_expressions = []
     assert_expression = _generate(context, model.NotExpression(never.expression))
-    while context.precheck_expressions:
-        entry_expression = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(context.precheck_expressions[0])
-            .withRight(entry_expression)
-            .build()
-        )
-        context.precheck_expressions.pop(0)
+    entry_expression = _add_precheck_expressions(context, entry_expression)
 
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
@@ -1210,14 +1188,7 @@ def _generate_eventually_alternative(
 ) -> promela.Alternative:
     context.precheck_expressions = []
     entry_expression = _generate(context, eventually.expression)
-    while context.precheck_expressions:
-        entry_expression = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(context.precheck_expressions[0])
-            .withRight(entry_expression)
-            .build()
-        )
-        context.precheck_expressions.pop(0)
+    entry_expression = _add_precheck_expressions(context, entry_expression)
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
         .withCondition(entry_expression)
