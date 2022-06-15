@@ -1,0 +1,1 @@
+eventually queue_last(actuator.ping) = 10;

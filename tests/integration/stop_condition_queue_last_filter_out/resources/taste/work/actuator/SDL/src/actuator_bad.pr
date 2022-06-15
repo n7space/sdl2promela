@@ -1,0 +1,44 @@
+/* CIF PROCESS (250, 149), (150, 75) */
+process Actuator;
+    /* CIF TEXT (377, 139), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl ping_param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (884, 175), (70, 35) */
+    state Wait;
+        /* CIF input (852, 230), (126, 35) */
+        input ping(ping_param);
+            /* CIF decision (804, 285), (223, 50) */
+            decision ping_param = 0 or ping_param = 1;
+                /* CIF ANSWER (816, 355), (114, 23) */
+                (true):
+                    /* CIF output (838, 398), (70, 35) */
+                    output pong;
+                    /* CIF NEXTSTATE (836, 453), (73, 35) */
+                    NEXTSTATE Special;
+                /* CIF ANSWER (942, 355), (70, 23) */
+                (false):
+                    /* CIF output (942, 398), (70, 35) */
+                    output pong;
+                    /* CIF NEXTSTATE (942, 453), (70, 35) */
+                    NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (1469, 179), (70, 35) */
+    state Error;
+    endstate;
+    /* CIF state (1196, 172), (73, 35) */
+    state Special;
+        /* CIF input (1169, 227), (126, 35) */
+        input ping(ping_param);
+            /* CIF output (1198, 282), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1198, 337), (70, 35) */
+            NEXTSTATE Error;
+    endstate;
+endprocess Actuator;

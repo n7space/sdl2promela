@@ -1,0 +1,75 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (344, 240), (360, 143) */
+    -- Text area for declarations and comments
+    
+    dcl param_integer MyInteger;
+    dcl param_sequence MySequenceDataType;
+    dcl param_choice MyChoiceDataType;
+    dcl param_array MyArrayDataType;
+    dcl param_optional MySequenceWithOptionalsDataType;
+    
+    dcl reached MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (775, 133), (70, 35) */
+    START;
+        /* CIF task (743, 188), (133, 35) */
+        task param_integer := 2;
+        /* CIF output (714, 243), (190, 35) */
+        output test_integer(param_integer);
+        /* CIF NEXTSTATE (762, 293), (95, 35) */
+        NEXTSTATE afterInteger;
+    /* CIF state (2238, 143), (105, 35) */
+    state AfterOptional;
+        /* CIF input (2259, 198), (70, 35) */
+        input result;
+            /* CIF task (2246, 253), (94, 35) */
+            task reached := 1;
+            /* CIF NEXTSTATE (2241, 308), (105, 35) */
+            NEXTSTATE AfterOptional;
+    endstate;
+    /* CIF state (1323, 126), (111, 35) */
+    state AfterSequence;
+        /* CIF input (1347, 181), (70, 35) */
+        input result;
+            /* CIF task (1292, 236), (179, 35) */
+            task param_choice := second : 2;
+            /* CIF output (1291, 291), (180, 35) */
+            output test_choice(param_choice);
+            /* CIF NEXTSTATE (1335, 346), (93, 35) */
+            NEXTSTATE AfterChoice;
+    endstate;
+    /* CIF state (1607, 127), (93, 35) */
+    state AfterChoice;
+        /* CIF input (1622, 182), (70, 35) */
+        input result;
+            /* CIF task (1573, 237), (168, 35) */
+            task param_array := { 1, 0 , 0 };
+            /* CIF output (1574, 292), (164, 35) */
+            output test_array(param_array);
+            /* CIF NEXTSTATE (1613, 347), (86, 35) */
+            NEXTSTATE AfterArray;
+    endstate;
+    /* CIF state (1893, 136), (86, 35) */
+    state AfterArray;
+        /* CIF input (1905, 191), (70, 35) */
+        input result;
+            /* CIF task (1834, 246), (211, 35) */
+            task param_optional := { a 1, b 2, c 3 };
+            /* CIF output (1838, 301), (203, 35) */
+            output test_optional(param_optional);
+            /* CIF NEXTSTATE (1887, 356), (105, 35) */
+            NEXTSTATE AfterOptional;
+    endstate;
+    /* CIF state (997, 124), (95, 35) */
+    state afterInteger;
+        /* CIF input (1013, 179), (70, 29) */
+        input result;
+            /* CIF task (942, 228), (210, 35) */
+            task param_sequence := {x 2, y {1, 1}};
+            /* CIF output (939, 283), (217, 35) */
+            output test_sequence(param_sequence);
+            /* CIF NEXTSTATE (992, 338), (111, 35) */
+            NEXTSTATE AfterSequence;
+    endstate;
+endprocess Controller;

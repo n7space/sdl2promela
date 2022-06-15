@@ -1,0 +1,25 @@
+STOP-CONDITION-QUEUE-LAST-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MySequenceDataType ::= SEQUENCE {
+       x MyInteger,
+       y SEQUENCE (SIZE(0..4)) OF MyInteger
+   }
+
+   MyChoiceDataType ::= CHOICE {
+       first MyInteger,
+       second MyInteger
+   }
+
+   MyArrayDataType ::= SEQUENCE (SIZE(1..3)) OF MyInteger
+
+   MySequenceWithOptionalsDataType ::= SEQUENCE {
+       a MyInteger,
+       b MyInteger OPTIONAL,
+       c MyInteger OPTIONAL
+   }
+
+END
+

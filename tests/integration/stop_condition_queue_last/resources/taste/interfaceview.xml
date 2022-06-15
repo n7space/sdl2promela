@@ -1,0 +1,126 @@
+<InterfaceView asn1file="stop_condition_queue_last.acn">
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="83000 29600 130300 67300"/>
+<Provided_Interface name="test_integer" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="83000 34000"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_sequence" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MySequenceDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="83000 39200"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_choice" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyChoiceDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="83000 45100"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_array" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyArrayDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="83000 50500"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_optional" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MySequenceWithOptionalsDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="83000 55800"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Property name="Taste::coordinates" value="83000 62400"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="12100 29300 54600 67700"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Property name="Taste::coordinates" value="54600 62400"/>
+</Provided_Interface>
+
+<Required_Interface name="test_integer" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="54600 34000"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_sequence" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MySequenceDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="54600 39000"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_choice" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyChoiceDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="54600 44800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_array" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyArrayDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="54600 50500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_optional" kind="Sporadic" layer="default" priority="1" queue_size="1" miat="0" wcet="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MySequenceWithOptionalsDataType" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="54600 55700"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result"/>
+    <Target func_name="controller" pi_name="result"/>
+    <Property name="Taste::coordinates" value="82400 62400 54900 62400"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_optional"/>
+    <Target func_name="actuator" pi_name="test_optional"/>
+    <Property name="Taste::coordinates" value="55200 55700 68900 55700 82700 55800"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_array"/>
+    <Target func_name="actuator" pi_name="test_array"/>
+    <Property name="Taste::coordinates" value="55200 50500 82700 50500"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_choice"/>
+    <Target func_name="actuator" pi_name="test_choice"/>
+    <Property name="Taste::coordinates" value="55200 44800 68900 44800 82700 45100"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_sequence"/>
+    <Target func_name="actuator" pi_name="test_sequence"/>
+    <Property name="Taste::coordinates" value="55200 39000 68900 39000 82700 39200"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_integer"/>
+    <Target func_name="actuator" pi_name="test_integer"/>
+    <Property name="Taste::coordinates" value="55200 34000 82700 34000"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5000 46100 20600"/>
+</Comment>
+
+</InterfaceView>
