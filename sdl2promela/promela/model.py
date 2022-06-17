@@ -286,6 +286,30 @@ class Do(Statement):
         self.alternatives = []
 
 
+class ForLoop(Statement):
+    """For loop."""
+
+    iterator: VariableReference
+
+    first: Union[int, VariableReference, MemberAccess]
+
+    last: Union[int, VariableReference, MemberAccess]
+
+    body: List[Statement]
+
+    def __init__(
+        self,
+        iterator: VariableReference,
+        first: Union[int, VariableReference, MemberAccess],
+        last: Union[int, VariableReference, MemberAccess],
+        body: List[Statement],
+    ):
+        self.iterator = iterator
+        self.first = first
+        self.last = last
+        self.body = body
+
+
 class Switch(Statement):
     """Switch statement."""
 

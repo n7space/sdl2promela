@@ -3,6 +3,7 @@ from typing import List, Union, Tuple, Any, Optional
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
+from opengeode.Helper import find_basic_type
 
 import copy
 
@@ -25,6 +26,7 @@ from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
 from .promela.modelbuilder import MemberAccessBuilder
 from .promela.modelbuilder import ArrayAccessBuilder
+from .promela.modelbuilder import ForLoopBuilder
 from .utils import resolve_asn1_type
 
 __TRANSITION_TYPE_NAME = "int"
@@ -792,7 +794,13 @@ def __generate_for_over_a_numeric_range(
     inner_statements: List[promelamodel.Statement],
 ) -> promelamodel.Statement:
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    iteratorReference = __generate_variable_name(context, task.iteratorName, True)
+    # iteratorReference = VariableReferenceBuilder(task.iteratorName, True)
+    block_builder.withStatement(
+        VariableDeclarationBuilder(task.iteratorName.variableName, "int").build()
+    )
+
+    iteratorReference = VariableReferenceBuilder(task.iteratorName.variableName).build()
+
     block_builder.withStatements(
         [
             AssignmentBuilder()
@@ -837,6 +845,69 @@ def __generate_for_over_a_numeric_range(
     return block_builder.build()
 
 
+def __generate_for_over_sequenceof(
+    context: Context,
+    transition: sdlmodel.Transition,
+    task: sdlmodel.ForLoopTask,
+    statements: List[promelamodel.Statement],
+):
+    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
+
+    basic_type = find_basic_type(
+        context.sdl_model.source.dataview, task.range.variableType
+    )
+
+    block_builder.withStatement(
+        VariableDeclarationBuilder(
+            task.iteratorName.variableName, task.range.type.CName
+        ).build()
+    )
+
+    block_builder.withStatement(VariableDeclarationBuilder("i", "int").build())
+
+    for_loop_builder = ForLoopBuilder()
+    for_loop_builder.withIterator(VariableReferenceBuilder("i").build())
+    for_loop_builder.withFirst(0)
+
+    arrayReference = __generate_variable_name(context, task.range.variable, True)
+
+    if basic_type.Min != basic_type.Max:
+        for_loop_builder.withLast(
+            MemberAccessBuilder()
+            .withUtypeReference(arrayReference)
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
+
+    else:
+        for_loop_builder.withLast(int(basic_type.Max))
+
+    all_statements: List[promelamodel.Statement] = []
+    all_statements.append(
+        AssignmentBuilder()
+        .withTarget(VariableReferenceBuilder(task.iteratorName.variableName).build())
+        .withSource(
+            ArrayAccessBuilder()
+            .withArray(
+                MemberAccessBuilder()
+                .withUtypeReference(arrayReference)
+                .withMember(VariableReferenceBuilder("data").build())
+                .build()
+            )
+            .withIndex(VariableReferenceBuilder("i").build())
+            .build()
+        )
+        .build()
+    )
+    all_statements.extend(statements)
+    for_loop_builder.withBody(all_statements)
+
+    block_builder.withStatement(for_loop_builder.build())
+    # task.iteratorName
+
+    return block_builder.build()
+
+
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ForLoopTask)
 def __generate_statement(
     context: Context,
@@ -850,6 +921,10 @@ def __generate_statement(
 
     if isinstance(task.range, sdlmodel.NumericForLoopRange):
         return __generate_for_over_a_numeric_range(
+            context, transition, task, inner_statements
+        )
+    if isinstance(task.range, sdlmodel.ForEachLoopRange):
+        return __generate_for_over_sequenceof(
             context, transition, task, inner_statements
         )
     else:

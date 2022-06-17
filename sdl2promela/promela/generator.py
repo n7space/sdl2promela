@@ -267,6 +267,28 @@ def generate(context: Context, do: model.Do):
     context.output("od")
 
 
+@dispatch(Context, model.ForLoop)
+def generate(context: Context, loop: model.ForLoop):
+    iterator = generate(context, loop.iterator)
+    if isinstance(loop.first, int):
+        first = str(loop.first)
+    else:
+        first = generate(context, loop.first)
+    if isinstance(loop.last, int):
+        last = str(loop.last)
+    else:
+        last = generate(context, loop.last)
+
+    context.output(f"xfor({iterator} : {first} .. {last})\n")
+    context.output("{\n")
+    context.push_indent(INDENT)
+    context.push_parent(loop)
+    generate(context, model.StatementsWrapper(loop.body))
+    context.pop_parent()
+    context.pop_indent()
+    context.output("}")
+
+
 @dispatch(Context, model.Switch)
 def generate(context: Context, switch: model.Switch):
     context.output("if\n")
