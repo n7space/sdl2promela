@@ -798,9 +798,7 @@ def __generate_for_over_a_numeric_range(
     inner_statements: List[promelamodel.Statement],
 ) -> promelamodel.Statement:
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-
     range = typing.cast(sdlmodel.NumericForLoopRange, task.range)
-
     block_builder.withStatement(
         VariableDeclarationBuilder(task.iteratorName.variableName, "int").build()
     )
@@ -858,9 +856,7 @@ def __generate_for_over_sequenceof(
     statements: List[promelamodel.Statement],
 ):
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-
     range = typing.cast(sdlmodel.ForEachLoopRange, task.range)
-
     basic_type = find_basic_type(context.sdl_model.source.dataview, range.variableType)
 
     block_builder.withStatement(
@@ -895,9 +891,10 @@ def __generate_for_over_sequenceof(
 
     all_statements: List[promelamodel.Statement] = []
     all_statements.append(
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(task.iteratorName.variableName).build())
-        .withSource(
+        CallBuilder()
+        .withTarget(__get_assign_value_inline_name(range.type))
+        .withParameter(VariableReferenceBuilder(task.iteratorName.variableName).build())
+        .withParameter(
             ArrayAccessBuilder()
             .withArray(
                 MemberAccessBuilder()
