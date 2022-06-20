@@ -214,7 +214,7 @@ def __is_local_variable(context: Context, variable: str):
             for parameter in procedure.parameters:
                 if parameter.name == variable:
                     return True
-    if variable in context.sdl_model.variables:
+    if variable.lower() in context.sdl_model.variables:
         return False
     else:
         return True
@@ -876,14 +876,19 @@ def __generate_for_over_sequenceof(
 
     if basic_type.Min != basic_type.Max:
         for_loop_builder.withLast(
-            MemberAccessBuilder()
-            .withUtypeReference(arrayReference)
-            .withMember(VariableReferenceBuilder("length").build())
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
+            .withLeft(
+                MemberAccessBuilder()
+                .withUtypeReference(arrayReference)
+                .withMember(VariableReferenceBuilder("length").build())
+                .build()
+            )
+            .withRight(promelamodel.IntegerValue(1))
             .build()
         )
 
     else:
-        for_loop_builder.withLast(int(basic_type.Max))
+        for_loop_builder.withLast(int(basic_type.Max) - 1)
 
     all_statements: List[promelamodel.Statement] = []
     all_statements.append(

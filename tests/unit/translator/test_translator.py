@@ -60,6 +60,10 @@ def test_translates_for_with_range():
     translate_and_verify("for_with_range.pr", "for_with_range.pml")
 
 
+def test_translates_for_each():
+    translate_and_verify("for_each.pr", "for_each.pml")
+
+
 def test_translates_loop():
     translate_and_verify("loop.pr", "loop.pml")
 
