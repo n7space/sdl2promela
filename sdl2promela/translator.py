@@ -949,7 +949,7 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     label: sdlmodel.Label,
 ) -> promelamodel.Statement:
-    return promelamodel.Label(label.name)
+    return promelamodel.Label(label.name.lower())
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.Join)
@@ -958,7 +958,7 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     join: sdlmodel.Join,
 ) -> promelamodel.Statement:
-    return promelamodel.GoTo(join.label_name)
+    return promelamodel.GoTo(join.label_name.lower())
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ProcedureReturn)
