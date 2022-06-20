@@ -214,7 +214,10 @@ def __is_local_variable(context: Context, variable: str):
             for parameter in procedure.parameters:
                 if parameter.name == variable:
                     return True
-    return False
+    if variable in context.sdl_model.variables:
+        return False
+    else:
+        return True
 
 
 def __is_implicit_variable(context: Context, variable: str):
