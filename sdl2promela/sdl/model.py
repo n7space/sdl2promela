@@ -453,14 +453,14 @@ class NumericForLoopRange(ForLoopRange):
 class ForEachLoopRange(ForLoopRange):
     """Range over elements of sequenceof"""
 
-    variable: VariableReference
-    """reference to variable"""
+    variable: Union[VariableReference, MemberAccess, ArrayAccess]
+    """Reference to object to iterate, i.e. sequence of."""
 
     variableType: Any
-    """Type of variable"""
+    """Type of variable."""
 
     type: Any
-    """Type of iterator"""
+    """Type of iterator variable."""
 
     def __init__(self):
         self.variable = None

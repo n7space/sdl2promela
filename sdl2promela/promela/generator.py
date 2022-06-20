@@ -269,17 +269,20 @@ def generate(context: Context, do: model.Do):
 
 @dispatch(Context, model.ForLoop)
 def generate(context: Context, loop: model.ForLoop):
-    iterator = generate(context, loop.iterator)
+    context.output("for(")
+    generate(context, loop.iterator)
+    context.output(" : ")
     if isinstance(loop.first, int):
-        first = str(loop.first)
+        context.output(str(loop.first))
     else:
-        first = generate(context, loop.first)
+        generate(context, loop.first)
+    context.output(" .. ")
     if isinstance(loop.last, int):
-        last = str(loop.last)
+        context.output(str(loop.last))
     else:
-        last = generate(context, loop.last)
+        generate(context, loop.last)
+    context.output(")\n")
 
-    context.output(f"xfor({iterator} : {first} .. {last})\n")
     context.output("{\n")
     context.push_indent(INDENT)
     context.push_parent(loop)
