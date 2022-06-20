@@ -6,6 +6,7 @@ from opengeode.AdaGenerator import SEPARATOR
 from opengeode.Helper import find_basic_type
 
 import copy
+import typing
 
 from . import builtins
 from .sdl import model as sdlmodel
@@ -797,7 +798,9 @@ def __generate_for_over_a_numeric_range(
     inner_statements: List[promelamodel.Statement],
 ) -> promelamodel.Statement:
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    # iteratorReference = VariableReferenceBuilder(task.iteratorName, True)
+
+    range = typing.cast(sdlmodel.NumericForLoopRange, task.range)
+
     block_builder.withStatement(
         VariableDeclarationBuilder(task.iteratorName.variableName, "int").build()
     )
@@ -808,7 +811,7 @@ def __generate_for_over_a_numeric_range(
         [
             AssignmentBuilder()
             .withTarget(iteratorReference)
-            .withSource(__generate_expression(context, task.range.start))
+            .withSource(__generate_expression(context, range.start))
             .build()
         ]
     )
@@ -820,7 +823,7 @@ def __generate_for_over_a_numeric_range(
                 .withCondition(
                     BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
                     .withLeft(iteratorReference)
-                    .withRight(__generate_expression(context, task.range.stop))
+                    .withRight(__generate_expression(context, range.stop))
                     .build()
                 )
                 .withStatements(inner_statements)
@@ -831,7 +834,7 @@ def __generate_for_over_a_numeric_range(
                         .withSource(
                             BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
                             .withLeft(iteratorReference)
-                            .withRight(__generate_expression(context, task.range.step))
+                            .withRight(__generate_expression(context, range.step))
                             .build()
                         )
                         .build()
@@ -856,13 +859,13 @@ def __generate_for_over_sequenceof(
 ):
     block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
 
-    basic_type = find_basic_type(
-        context.sdl_model.source.dataview, task.range.variableType
-    )
+    range = typing.cast(sdlmodel.ForEachLoopRange, task.range)
+
+    basic_type = find_basic_type(context.sdl_model.source.dataview, range.variableType)
 
     block_builder.withStatement(
         VariableDeclarationBuilder(
-            task.iteratorName.variableName, task.range.type.CName
+            task.iteratorName.variableName, range.type.CName
         ).build()
     )
 
@@ -872,7 +875,7 @@ def __generate_for_over_sequenceof(
     for_loop_builder.withIterator(VariableReferenceBuilder("i").build())
     for_loop_builder.withFirst(0)
 
-    arrayReference = __generate_variable_name(context, task.range.variable, True)
+    arrayReference = __generate_variable_name(context, range.variable, True)
 
     if basic_type.Min != basic_type.Max:
         for_loop_builder.withLast(
@@ -911,7 +914,6 @@ def __generate_for_over_sequenceof(
     for_loop_builder.withBody(all_statements)
 
     block_builder.withStatement(for_loop_builder.build())
-    # task.iteratorName
 
     return block_builder.build()
 
