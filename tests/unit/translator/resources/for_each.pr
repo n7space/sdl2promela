@@ -17,17 +17,18 @@ system Taskwithloop;
    signal check_variable(MyData);
    signal check_fixed(MyArray);
    signal check_child(MyRecord);
+   signal nested;
    signal result(MyInteger);
 
    channel c
-      from env to Taskwithloop with check_variable, check_fixed, check_child;
+      from env to Taskwithloop with check_variable, check_fixed, check_child, nested;
 	  from Taskwithloop to env with result;
    endchannel;
 
    block Taskwithloop;
 
       signalroute r
-          from env to Taskwithloop with check_variable, check_fixed, check_child;
+          from env to Taskwithloop with check_variable, check_fixed, check_child, nested;
 	      from Taskwithloop to env with result;
       connect c and r;
 
@@ -38,6 +39,7 @@ process Taskwithloop;
 	DCL variable_param MyData;
 	DCL fixed_param MyArray;
 	DCL child_param MyRecord;
+	DCL nested_param MyNested;
     /* CIF ENDTEXT */
     /* CIF START (320, 10), (70, 35) */
     START;
@@ -85,6 +87,27 @@ endfor;
             /* CIF NEXTSTATE (450, 273), (70, 35) */
             NEXTSTATE Wait;
 	endstate;
+    state Wait;
+        /* CIF input (450, 65), (70, 35) */
+        input nested;
+            /* CIF task (450, 120), (70, 35) */
+            task result_param := 0;
+            /* CIF task (2231, 420), (136, 68) */
+            task nested_param := {
+{2,2,2,2,2,2,2,2,2,2},
+{3,3,3,3,3,3,3,3,3,3}
+};
+            /* CIF task (2195, 536), (208, 83) */
+            task for a in nested_param:
+for b in a:
+result_param := result_param + b
+endfor
+endfor;
+		    output result(result_param);
+            /* CIF NEXTSTATE (450, 273), (70, 35) */
+            NEXTSTATE Wait;
+	endstate;
+
 endprocess Taskwithloop;
    endblock;
 endsystem;

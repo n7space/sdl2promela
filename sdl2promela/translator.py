@@ -87,10 +87,16 @@ class Context:
     It is used for generation of entry inlines for parallel states.
     """
 
+    loop_level: int
+    """
+    Level for nested loops.
+    """
+
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
         self.in_transition_chain = False
+        self.loop_level = 0
 
     def push_parent(self, parent: Any):
         """
@@ -124,6 +130,18 @@ class Context:
             if isinstance(parent, sdlmodel.Procedure):
                 return parent
         return None
+
+    def enter_loop(self):
+        """
+        Increment loop_level counter.
+        """
+        self.loop_level = self.loop_level + 1
+
+    def leave_loop(self):
+        """
+        Decrement loop_level counter.
+        """
+        self.loop_level = self.loop_level - 1
 
 
 def __escapeIv(name: str) -> str:
@@ -865,10 +883,14 @@ def __generate_for_over_sequenceof(
         ).build()
     )
 
-    block_builder.withStatement(VariableDeclarationBuilder("i", "int").build())
+    iterator_name = "i" + str(context.loop_level)
+
+    block_builder.withStatement(
+        VariableDeclarationBuilder(iterator_name, "int").build()
+    )
 
     for_loop_builder = ForLoopBuilder()
-    for_loop_builder.withIterator(VariableReferenceBuilder("i").build())
+    for_loop_builder.withIterator(VariableReferenceBuilder(iterator_name).build())
     for_loop_builder.withFirst(0)
 
     arrayReference = __generate_variable_name(context, range.variable, True)
@@ -902,7 +924,7 @@ def __generate_for_over_sequenceof(
                 .withMember(VariableReferenceBuilder("data").build())
                 .build()
             )
-            .withIndex(VariableReferenceBuilder("i").build())
+            .withIndex(VariableReferenceBuilder(iterator_name).build())
             .build()
         )
         .build()
@@ -922,10 +944,12 @@ def __generate_statement(
     task: sdlmodel.ForLoopTask,
 ) -> promelamodel.Statement:
     inner_statements = []
+    context.enter_loop()
     for action in task.actions:
         statement = __generate_statement(context, transition, action)
         inner_statements.append(statement)
 
+    context.leave_loop()
     if isinstance(task.range, sdlmodel.NumericForLoopRange):
         return __generate_for_over_a_numeric_range(
             context, transition, task, inner_statements
