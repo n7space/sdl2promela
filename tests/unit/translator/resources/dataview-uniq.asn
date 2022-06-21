@@ -28,6 +28,17 @@ BEGIN
       y MyInteger
    }
 
+   MyData ::= SEQUENCE (SIZE(0..10)) OF MyInteger
+
+   MyArray ::= SEQUENCE (SIZE(10)) OF MyInteger
+
+   MyRecord ::= SEQUENCE {
+       x MyInteger,
+       data MyArray
+   }
+
+   MyNested ::= SEQUENCE (SIZE(2)) OF MyArray
+
 -- ASN.1 Type definitions must start with an uppercase
 -- Field names in records (SEQUENCE) must start with a lowercase
 -- Underscores are not allowed: use dash (hyphen)

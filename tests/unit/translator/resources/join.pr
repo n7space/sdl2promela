@@ -57,7 +57,7 @@ process Complexsdl;
         /* CIF input (596, 79), (101, 35) */
         input impulse(tmp);
             /* CIF join (629, 134), (35, 35) */
-            join jump;
+            join Jump;
     endstate;
 endprocess Complexsdl;
 endblock;

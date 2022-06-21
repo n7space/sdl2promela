@@ -8,6 +8,7 @@ from sdl2promela.promela.model import (
     Block,
     Switch,
     Do,
+    ForLoop,
     Statement,
     Call,
     VariableDeclaration,
@@ -317,6 +318,67 @@ class DoBuilder:
         """
         self.do.alternatives.append(alternative)
         return self
+
+
+class ForLoopBuilder:
+    """For loop builder."""
+
+    _iterator: VariableReference
+
+    _first: Union[int, Expression]
+
+    _last: Union[int, Expression]
+
+    _body: List[Statement]
+
+    def __init__(self):
+        self._iterator = None
+        self._first = None
+        self._last = None
+        self._body = []
+
+    def withIterator(self, iterator: VariableReference):
+        """
+        Add Iterator name.
+        :param iterator: Reference to iterator variable.
+        :returns: The builder itself (for call chaining).
+        """
+        self._iterator = iterator
+        return self
+
+    def withFirst(self, first: Union[int, Expression]):
+        """
+        Add First value.
+        :param first: Value for first.
+        :returns: The builder itself (for call chaining).
+        """
+        self._first = first
+        return self
+
+    def withLast(self, last: Union[int, Expression]):
+        """
+        Add Last value.
+        :param last: Value for last
+        :returns: The builder itself (for call chaining).
+        """
+        self._last = last
+        return self
+
+    def withBody(self, body: List[Statement]):
+        """
+        Add Body.
+        :param body: Body of for loop.
+        :returns: The builder itself (for call chaining).
+        """
+        self._body = body
+        return self
+
+    def build(self):
+        """
+        Retrieve the built for loop.
+        :returns: The built for loop.
+        """
+        return ForLoop(self._iterator, self._first, self._last, self._body)
 
 
 class CallBuilder:

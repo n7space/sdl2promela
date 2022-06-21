@@ -450,6 +450,24 @@ class NumericForLoopRange(ForLoopRange):
         self.step = Constant("1")
 
 
+class ForEachLoopRange(ForLoopRange):
+    """Range over elements of sequenceof"""
+
+    variable: Union[VariableReference, MemberAccess, ArrayAccess]
+    """Reference to object to iterate, i.e. sequence of."""
+
+    variableType: Any
+    """Type of variable."""
+
+    type: Any
+    """Type of iterator variable."""
+
+    def __init__(self):
+        self.variable = None
+        self.variableType = None
+        self.type = None
+
+
 class ForLoopTask(Task):
     """Task with a for loop."""
 
@@ -839,6 +857,13 @@ def convert(source: ogAST.TaskForLoop):
         range.stop = convert(for_loop["range"]["stop"])
         range.step = convert(for_loop["range"]["step"])
         task.range = range
+    else:
+        range = ForEachLoopRange()
+        range.variable = convert(for_loop["list"])
+        range.variableType = for_loop["list"].exprType
+        range.type = for_loop["type"]
+        task.range = range
+
     appendAllActions(task, for_loop["transition"])
 
     return task
