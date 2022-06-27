@@ -1,5 +1,4 @@
-from inspect import isbuiltin
-from typing import List, Union, Tuple, Any, Optional
+from typing import List, Union, Any, Optional
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -29,6 +28,7 @@ from .promela.modelbuilder import MemberAccessBuilder
 from .promela.modelbuilder import ArrayAccessBuilder
 from .promela.modelbuilder import ForLoopBuilder
 from .utils import resolve_asn1_type
+from .utils import Asn1Type
 
 __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
@@ -92,6 +92,8 @@ class Context:
     Level for nested loops.
     """
 
+    missing_type: Optional[Asn1Type]
+
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.parents = []
@@ -148,8 +150,19 @@ def __escapeIv(name: str) -> str:
     return name.capitalize()
 
 
+def __type_name(datatype: Any) -> str:
+    if datatype.kind == "ReferenceType":
+        return datatype.ReferencedTypeName.replace("-", "_")
+    if datatype.kind == "IntegerType":
+        return "int"
+    if datatype.kind == "EnumeratedType":
+        return datatype.value.replace("-", "_")
+
+    raise NotImplementedError(f"__type_name is not implemented for {datatype.kind}")
+
+
 def __get_assign_value_inline_name(type: Any) -> str:
-    return "{}_assign_value".format(type.CName)
+    return "{}_assign_value".format(__type_name(type))
 
 
 def __get_promela_binary_operator(
@@ -377,8 +390,13 @@ def __generate_expression(context: Context, variable: sdlmodel.VariableReference
 
 @dispatch(Context, sdlmodel.EnumValue)
 def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
-    finalType = resolve_asn1_type(context.sdl_model.types, enumValue.type)
-    value = "{}_{}".format(finalType.CName, enumValue.value)
+    basic_type = find_basic_type(context.sdl_model.source.dataview, enumValue.type)
+    if enumValue.type.kind == "EnumeratedType":
+        value = "{}_{}_PRESENT".format(
+            __type_name(context.missing_type), enumValue.value
+        )
+    else:
+        value = "{}_{}".format(__type_name(enumValue.type), enumValue.value)
     return VariableReferenceBuilder(value).build()
 
 
@@ -473,9 +491,35 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
     # into separate expressions for the calls, assigning results to intermediate values
     # and then using this values in the actual expression
     # TODO
-    raise NotImplementedError(
-        f"Call to {str(expression.name)} cannot be made within an expression"
-    )
+
+    if expression.name.lower() == "present":
+        # A special case when context shall be changed
+        if len(expression.parameters) != 1:
+            raise ValueError(
+                f"Present built-in function expected 1 arguments, but received {len(expression.parameters)}."
+            )
+        if expression.parameters[0] is None:
+            raise ValueError("Present queried entity is missing.")
+        context.missing_type = expression.parameters[0].type
+        return (
+            MemberAccessBuilder()
+            .withUtypeReference(
+                __generate_expression(context, expression.parameters[0])
+            )
+            .withMember(VariableReferenceBuilder(CHOICE_SELECTION_MEMBER_NAME).build())
+            .build()
+        )
+
+    elif builtins.is_builtin(expression.name):
+        parameters = [
+            __generate_expression(context, parameter)
+            for parameter in expression.parameters
+        ]
+        return builtins.translate_builtin(expression, parameters)
+    else:
+        raise NotImplementedError(
+            f"Call to {str(expression.name)} cannot be made within an expression"
+        )
 
 
 def __get_parameter_name(variable_reference: sdlmodel.VariableReference) -> str:
@@ -502,11 +546,13 @@ def __generate_procedure_inline(
     builder.withName(__get_procedure_inline_name(context, procedure.name))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
     for localVariable, localVariableTypeObject in procedure.variables.items():
-        localVariableType = resolve_asn1_type(
-            context.sdl_model.types, localVariableTypeObject[0]
-        )
+        # localVariableType = resolve_asn1_type(
+        #     context.sdl_model.types, localVariableTypeObject[0]
+        # )
         blockBuilder.withStatement(
-            VariableDeclarationBuilder(localVariable, localVariableType.CName).build()
+            VariableDeclarationBuilder(
+                localVariable, __type_name(localVariableTypeObject[0])
+            ).build()
         )
     # Procedure return, if any, is handled via the first parameter
     if procedure.returnType is not None:
@@ -522,13 +568,15 @@ def __generate_procedure_inline(
                 parameter.name
             )
             builder.withParameter(intermediateParameterName)
-            parameterType = resolve_asn1_type(
-                context.sdl_model.types, parameter.typeObject
-            )
+            # parameterType = resolve_asn1_type(
+            #     context.sdl_model.types, parameter.typeObject
+            # )
             blockBuilder.withStatement(
-                VariableDeclarationBuilder(parameter.name, parameterType.CName).build()
+                VariableDeclarationBuilder(
+                    parameter.name, __type_name(parameter.typeObject)
+                ).build()
             )
-            assignInlineName = __get_assign_value_inline_name(parameterType)
+            assignInlineName = __get_assign_value_inline_name(parameter.typeObject)
             blockBuilder.withStatements(
                 [
                     CallBuilder()
@@ -624,8 +672,8 @@ def __generate_execute_transition(
     # Generate assignment of signal parameters into variables
     for target_variable_ref in input_block.target_variables:
         variable = context.sdl_model.variables[target_variable_ref.variableName]
-        variableType = resolve_asn1_type(context.sdl_model.types, variable.type)
-        assignInlineName = __get_assign_value_inline_name(variableType)
+        # variableType = resolve_asn1_type(context.sdl_model.types, variable.type)
+        assignInlineName = __get_assign_value_inline_name(variable.type)
         statements.append(
             CallBuilder()
             .withTarget(assignInlineName)
@@ -879,7 +927,7 @@ def __generate_for_over_sequenceof(
 
     block_builder.withStatement(
         VariableDeclarationBuilder(
-            task.iteratorName.variableName, range.type.CName
+            task.iteratorName.variableName, __type_name(range.type)
         ).build()
     )
 
@@ -991,10 +1039,10 @@ def __generate_statement(
     assert isinstance(transition.parent, sdlmodel.Procedure)
     if procedureReturn.expression is None:
         return None
-    resolvedType = resolve_asn1_type(
-        context.sdl_model.types, transition.parent.returnType
-    )
-    assignInlineName = __get_assign_value_inline_name(resolvedType)
+    # resolvedType = resolve_asn1_type(
+    #     context.sdl_model.types, transition.parent.returnType
+    # )
+    assignInlineName = __get_assign_value_inline_name(transition.parent.returnType)
     statements = []
     statements.append(
         CallBuilder()
@@ -1066,17 +1114,25 @@ def __generate_assignment(
     right: sdlmodel.Expression,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    finalType = resolve_asn1_type(context.sdl_model.types, left_type)
+    # finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
     if isinstance(right, sdlmodel.ProcedureCall):
         # Inlines cannot return a value, and so the return is handled via
         # the first parameter
         if builtins.is_builtin(right.name):
-            parameters = []
-            parameters.append(__generate_variable_name(context, left, True))
-            for parameter in right.parameters:
-                parameters.append(__generate_expression(context, parameter))
-            statements.append(builtins.translate_builtin(right, parameters))
+            assignInlineName = __get_assign_value_inline_name(left_type)
+            left_side = __generate_variable_name(context, left, True)
+
+            parameters = [
+                __generate_expression(context, parameter)
+                for parameter in right.parameters
+            ]
+
+            statements.append(
+                builtins.translate_assignment(
+                    assignInlineName, right, left_side, parameters
+                )
+            )
         else:
             inlineCall = CallBuilder()
             inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
@@ -1085,7 +1141,7 @@ def __generate_assignment(
                 inlineCall.withParameter(__generate_expression(context, parameter))
             statements.append(inlineCall.build())
     else:
-        assignInlineName = __get_assign_value_inline_name(finalType)
+        assignInlineName = __get_assign_value_inline_name(left_type)
         statements.append(
             CallBuilder()
             .withTarget(assignInlineName)
@@ -1518,7 +1574,8 @@ def __generate_assignment(
 
     valueType = finalType.Children[right.choice].type
 
-    selection = finalType.CName + "_" + right.choice + "_PRESENT"
+    # selection = finalType.CName + "_" + right.choice + "_PRESENT"
+    selection = __type_name(left_type) + "_" + right.choice + "_PRESENT"
 
     selection_field = (
         MemberAccessBuilder()
@@ -1920,8 +1977,10 @@ def __generate_implicit_variable_definition(
     context: Context, variable_name: str, variable_info: sdlmodel.VariableInfo
 ) -> promelamodel.VariableDeclaration:
     mangled_name = __get_implicit_variable_name(context, variable_name)
-    memberType = resolve_asn1_type(context.sdl_model.types, variable_info.type)
-    return VariableDeclarationBuilder(mangled_name, memberType.CName).build()
+    # memberType = resolve_asn1_type(context.sdl_model.types, variable_info.type)
+    return VariableDeclarationBuilder(
+        mangled_name, __type_name(variable_info.type)
+    ).build()
 
 
 def __generate_aggregate_inline(
