@@ -120,6 +120,33 @@ def __translate_val(
     return parameters[0]
 
 
+def __translate_exist(
+    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+):
+    if len(parameters) != 1:
+        raise ValueError(
+            f"Exist built-in function expected 1 arguments, but received {len(parameters)}."
+        )
+    if parameters[0] is None:
+        raise ValueError("Exist queried entity is missing.")
+    if not isinstance(parameters[0], promelamodel.MemberAccess):
+        raise ValueError("Invalid type of parameter for Exist")
+
+    field_name = parameters[0].member.name
+
+    return (
+        MemberAccessBuilder()
+        .withUtypeReference(
+            MemberAccessBuilder()
+            .withUtypeReference(parameters[0].utype)
+            .withMember(VariableReferenceBuilder("exist").build())
+            .build()
+        )
+        .withMember(VariableReferenceBuilder(field_name).build())
+        .build()
+    )
+
+
 def is_builtin(call_name: str) -> bool:
     """
     Is the given call referring to a built-in function?
@@ -152,6 +179,8 @@ def translate_builtin(
         return __translate_val(call, parameters)
     elif call.name.lower() == "num":
         return __translate_num(call, parameters)
+    elif call.name.lower() == "exist":
+        return __translate_exist(call, parameters)
     raise NotImplementedError(f"Built in {call.name} is not yet implemented")
 
 
@@ -207,6 +236,14 @@ def translate_assignment(
             .withTarget(inlineName)
             .withParameter(left)
             .withParameter(__translate_num(call, parameters))
+            .build()
+        )
+    if call.name.lower() == "exist":
+        return (
+            CallBuilder()
+            .withTarget(inlineName)
+            .withParameter(left)
+            .withParameter(__translate_exist(call, parameters))
             .build()
         )
     else:
