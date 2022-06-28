@@ -2,12 +2,10 @@ from typing import List
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
 from .promela.modelbuilder import (
-    AssignmentBuilder,
     CallBuilder,
-    InlineBuilder,
     MemberAccessBuilder,
     VariableReferenceBuilder,
-    VariableDeclarationBuilder,
+    BinaryExpressionBuilder,
 )
 
 __BUILTIN_NAMES = [
@@ -87,17 +85,28 @@ def __translate_to_enum(
         raise ValueError(
             f"to_enum built-in function expected 2 arguments, but received {len(parameters)}."
         )
-    return parameters[0]
+    return (
+        BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
+        .withLeft(parameters[0])
+        .withRight(promelamodel.IntegerValue(1))
+        .build()
+    )
 
 
 def __translate_to_selector(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
+    print(f"To selector: call={call} parameters={parameters}")
     if len(parameters) != 2:
         raise ValueError(
             f"to_selector built-in function expected 2 arguments, but received {len(parameters)}."
         )
-    return parameters[0]
+    return (
+        BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+        .withLeft(parameters[0])
+        .withRight(promelamodel.IntegerValue(1))
+        .build()
+    )
 
 
 def __translate_num(
