@@ -99,6 +99,7 @@ class Context:
         self.parents = []
         self.in_transition_chain = False
         self.loop_level = 0
+        self.missing_type = None
 
     def push_parent(self, parent: Any):
         """
@@ -392,11 +393,14 @@ def __generate_expression(context: Context, variable: sdlmodel.VariableReference
 def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
     basic_type = find_basic_type(context.sdl_model.source.dataview, enumValue.type)
     if enumValue.type.kind == "EnumeratedType":
-        value = "{}_{}_PRESENT".format(
-            __type_name(context.missing_type), enumValue.value
-        )
+        type_name = __type_name(context.missing_type)
     else:
-        value = "{}_{}".format(__type_name(enumValue.type), enumValue.value)
+        type_name = __type_name(enumValue.type)
+    enumerant = enumValue.value.replace("_", "-").lower()
+    candidates = [v for k, v in basic_type.EnumValues.items() if k.lower() == enumerant]
+    if len(candidates) != 1:
+        raise Exception(f"Invalid enum value {enumValue.value}")
+    value = "{}_{}".format(type_name, candidates[0].EnumID)
     return VariableReferenceBuilder(value).build()
 
 
