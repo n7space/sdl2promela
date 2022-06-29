@@ -1711,11 +1711,32 @@ def __generate_statement(
         for parameter in call.parameters:
             parameters.append(__generate_expression(context, parameter))
         return builtins.translate_builtin(call, parameters)
-    inlineCall = CallBuilder()
-    inlineCall.withTarget(__get_procedure_inline_name(context, call.name))
-    for parameter in call.parameters:
-        inlineCall.withParameter(__generate_expression(context, parameter))
-    return inlineCall.build()
+    elif call.name.lower() == "set_timer":
+        if len(call.parameters) != 2:
+            raise Exception("Invalid parameters for 'set_timer' procedure.")
+        if not isinstance(call.parameters[1], sdlmodel.VariableReference):
+            raise Exception("Invalid parameters for 'set_timer' procedure.")
+        timer_name = call.parameters[1].variableName.lower()
+        if timer_name not in context.sdl_model.timers:
+            raise Exception(f"Timer '{timer_name}' does not exist.")
+        procedure_name = __get_procedure_inline_name(context, f"{timer_name}_set")
+        return CallBuilder().withTarget(procedure_name).build()
+    elif call.name.lower() == "reset_timer":
+        if len(call.parameters) != 1:
+            raise Exception("Invalid parameters for 'reset_timer' procedure.")
+        if not isinstance(call.parameters[0], sdlmodel.VariableReference):
+            raise Exception("Invalid parameters for 'set_timer' procedure.")
+        timer_name = call.parameters[0].variableName.lower()
+        if timer_name not in context.sdl_model.timers:
+            raise Exception(f"Timer '{timer_name}' does not exist.")
+        procedure_name = __get_procedure_inline_name(context, f"{timer_name}_reset")
+        return CallBuilder().withTarget(procedure_name).build()
+    else:
+        inlineCall = CallBuilder()
+        inlineCall.withTarget(__get_procedure_inline_name(context, call.name))
+        for parameter in call.parameters:
+            inlineCall.withParameter(__generate_expression(context, parameter))
+        return inlineCall.build()
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.Output)

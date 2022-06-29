@@ -1324,6 +1324,10 @@ class Model:
     Every item contains Name of parallel state and a list of
     transition ids which shall be executed on entry to the parallel state.
     """
+    timers: List[str]
+    """
+    Names of declared timers.
+    """
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1348,6 +1352,7 @@ class Model:
         self.implicit_variables = {}
         self.named_transition_ids = {}
         self.aggregates = {}
+        self.timers = self.source.timers
 
         self.__gather_states()
         self.__gather_variables()
@@ -1470,6 +1475,11 @@ class Model:
                 info.observerSignalName = input.name
                 self.observer_attachments.append(info)
             self.inputs[input.name] = input
+        for timer in self.source.timers:
+            input = Input()
+            input.name = timer
+            input.transitions = {}
+            self.inputs[timer] = input
         # Build transition list
         for state_name, input_list in self.source.mapping.items():
             target = self.states[state_name]
