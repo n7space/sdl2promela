@@ -550,9 +550,6 @@ def __generate_procedure_inline(
     builder.withName(__get_procedure_inline_name(context, procedure.name))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
     for localVariable, localVariableTypeObject in procedure.variables.items():
-        # localVariableType = resolve_asn1_type(
-        #     context.sdl_model.types, localVariableTypeObject[0]
-        # )
         blockBuilder.withStatement(
             VariableDeclarationBuilder(
                 localVariable, __type_name(localVariableTypeObject[0])
@@ -572,9 +569,6 @@ def __generate_procedure_inline(
                 parameter.name
             )
             builder.withParameter(intermediateParameterName)
-            # parameterType = resolve_asn1_type(
-            #     context.sdl_model.types, parameter.typeObject
-            # )
             blockBuilder.withStatement(
                 VariableDeclarationBuilder(
                     parameter.name, __type_name(parameter.typeObject)
@@ -676,7 +670,6 @@ def __generate_execute_transition(
     # Generate assignment of signal parameters into variables
     for target_variable_ref in input_block.target_variables:
         variable = context.sdl_model.variables[target_variable_ref.variableName]
-        # variableType = resolve_asn1_type(context.sdl_model.types, variable.type)
         assignInlineName = __get_assign_value_inline_name(variable.type)
         statements.append(
             CallBuilder()
@@ -1043,9 +1036,6 @@ def __generate_statement(
     assert isinstance(transition.parent, sdlmodel.Procedure)
     if procedureReturn.expression is None:
         return None
-    # resolvedType = resolve_asn1_type(
-    #     context.sdl_model.types, transition.parent.returnType
-    # )
     assignInlineName = __get_assign_value_inline_name(transition.parent.returnType)
     statements = []
     statements.append(
@@ -1118,7 +1108,6 @@ def __generate_assignment(
     right: sdlmodel.Expression,
     left_type: type,
 ) -> List[promelamodel.Statement]:
-    # finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
     if isinstance(right, sdlmodel.ProcedureCall):
         # Inlines cannot return a value, and so the return is handled via
@@ -1981,7 +1970,6 @@ def __generate_implicit_variable_definition(
     context: Context, variable_name: str, variable_info: sdlmodel.VariableInfo
 ) -> promelamodel.VariableDeclaration:
     mangled_name = __get_implicit_variable_name(context, variable_name)
-    # memberType = resolve_asn1_type(context.sdl_model.types, variable_info.type)
     return VariableDeclarationBuilder(
         mangled_name, __type_name(variable_info.type)
     ).build()

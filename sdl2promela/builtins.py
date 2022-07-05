@@ -20,6 +20,18 @@ __BUILTIN_NAMES = [
 ]
 
 
+def __check_parameters(
+    parameters: List[promelamodel.Expression], count: int, function: str
+):
+    if len(parameters) != count:
+        raise ValueError(
+            f"{function} built-in function expected {count} arguments, but received {len(parameters)}."
+        )
+    for i in range(count):
+        if parameters[i] is None:
+            raise ValueError(f"{function} received None parameter.")
+
+
 def __translate_writeln(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ) -> promelamodel.Statement:
@@ -33,12 +45,7 @@ def __translate_writeln(
 def __translate_length(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ) -> promelamodel.Expression:
-    if len(parameters) != 1:
-        raise ValueError(
-            f"Length built-in function expected 1 arguments, but received {len(parameters)}."
-        )
-    if parameters[0] is None:
-        raise ValueError("Length queried entity is missing.")
+    __check_parameters(parameters, 1, "length")
     if (
         not isinstance(parameters[0], promelamodel.VariableReference)
         and not isinstance(parameters[0], promelamodel.MemberAccess)
@@ -57,12 +64,7 @@ def __translate_length(
 def __translate_present(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    if len(parameters) != 1:
-        raise ValueError(
-            f"Present built-in function expected 1 argument, but received {len(parameters)}."
-        )
-    if parameters[0] is None:
-        raise ValueError("Present queried entity is missing.")
+    __check_parameters(parameters, 1, "present")
     if (
         not isinstance(parameters[0], promelamodel.VariableReference)
         and not isinstance(parameters[0], promelamodel.MemberAccess)
@@ -81,10 +83,7 @@ def __translate_present(
 def __translate_to_enum(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    if len(parameters) != 2:
-        raise ValueError(
-            f"to_enum built-in function expected 2 arguments, but received {len(parameters)}."
-        )
+    __check_parameters(parameters, 2, "to_enum")
     return (
         BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
         .withLeft(parameters[0])
@@ -96,11 +95,7 @@ def __translate_to_enum(
 def __translate_to_selector(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    print(f"To selector: call={call} parameters={parameters}")
-    if len(parameters) != 2:
-        raise ValueError(
-            f"to_selector built-in function expected 2 arguments, but received {len(parameters)}."
-        )
+    __check_parameters(parameters, 2, "to_selector")
     return (
         BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
         .withLeft(parameters[0])
@@ -112,32 +107,21 @@ def __translate_to_selector(
 def __translate_num(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    if len(parameters) != 1:
-        raise ValueError(
-            f"num built-in function expected 2 arguments, but received {len(parameters)}."
-        )
+    __check_parameters(parameters, 1, "num")
     return parameters[0]
 
 
 def __translate_val(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    if len(parameters) != 2:
-        raise ValueError(
-            f"val built-in function expected 2 arguments, but received {len(parameters)}."
-        )
+    __check_parameters(parameters, 2, "val")
     return parameters[0]
 
 
 def __translate_exist(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
-    if len(parameters) != 1:
-        raise ValueError(
-            f"Exist built-in function expected 1 arguments, but received {len(parameters)}."
-        )
-    if parameters[0] is None:
-        raise ValueError("Exist queried entity is missing.")
+    __check_parameters(parameters, 1, "exist")
     if not isinstance(parameters[0], promelamodel.MemberAccess):
         raise ValueError("Invalid type of parameter for Exist")
 
