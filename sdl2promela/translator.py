@@ -1567,7 +1567,6 @@ def __generate_assignment(
 
     valueType = finalType.Children[right.choice].type
 
-    # selection = finalType.CName + "_" + right.choice + "_PRESENT"
     selection = __type_name(left_type) + "_" + right.choice + "_PRESENT"
 
     selection_field = (
