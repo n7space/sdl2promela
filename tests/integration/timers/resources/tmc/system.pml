@@ -8,7 +8,6 @@ typedef system_state {
 }
 
 int inited;
-chan timer_manager_channel = [1] of {int, bool};
 bool timer_manager_data[1];
 chan Actuator_ping_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
@@ -17,11 +16,11 @@ chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
 inline Actuator_0_watchdog_set()
 {
-    timer_manager_channel!0, true;
+    timer_manager_data[0] = true;
 }
 inline Actuator_0_watchdog_reset()
 {
-    timer_manager_channel!0, false;
+    timer_manager_data[0] = false;
 }
 inline Controller_0_RI_0_ping()
 {
@@ -48,19 +47,13 @@ inline Controller_check_queue()
 active proctype timer_manager_proc() priority 1
 {
     inited;
-    int timer_id;
-    bool timer_enabled;
     do
     ::  atomic {
-        nempty(timer_manager_channel);
-        timer_manager_channel?timer_id,timer_enabled;
-        timer_manager_data[timer_id] = timer_enabled;
-    }
-    ::  atomic {
-        empty(timer_manager_channel);
+        true;
         if
         ::  timer_manager_data[0];
             Actuator_0_PI_0_watchdog();
+            timer_manager_data[0] = false;
         ::  else;
             skip;
         fi;
