@@ -1,4 +1,3 @@
-from ast import arguments
 from typing import List, Dict, Union, Tuple, Any, Optional
 from multipledispatch import dispatch
 from opengeode import ogAST
@@ -6,6 +5,7 @@ from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
 from opengeode import sdl92Lexer as lexer
 from enum import Enum
+from sdl2promela.utils import Asn1Type
 
 
 class State:
@@ -33,7 +33,11 @@ class State:
 class Expression:
     """Base class for expressions."""
 
-    pass
+    """Expression type."""
+    type: Asn1Type
+
+    def __init__(self):
+        self.type = None
 
 
 class Constant(Expression):
@@ -56,7 +60,7 @@ class EnumValue(Expression):
     value: str
     """Name of enum value."""
 
-    type: Any
+    type: Asn1Type
     """Type of enumerated."""
 
     def __init__(self, value, type):
@@ -136,7 +140,7 @@ class ConstantReference(Expression):
         self.constantName = name
 
     def __str__(self):
-        return f"ConstantReference(name={self.variableName})"
+        return f"ConstantReference(name={self.constantName})"
 
 
 class ArrayAccess(Expression):
@@ -182,10 +186,10 @@ class Sequence(Expression):
 
     elements: Dict[str, Expression]
     """Elements of SEQUENCE value."""
-    type: Any
+    type: Asn1Type
     """Type of value."""
 
-    def __init__(self, elements: Dict[str, Expression], type: Any):
+    def __init__(self, elements: Dict[str, Expression], type: Asn1Type):
         self.elements = elements
         self.type = type
 
@@ -198,10 +202,10 @@ class SequenceOf(Expression):
 
     elements: List[Expression]
     """Elements of SEQUENCE OF value."""
-    type: Any
+    type: Asn1Type
     """Type of value."""
 
-    def __init__(self, elements: List[Expression], type: Any):
+    def __init__(self, elements: List[Expression], type: Asn1Type):
         self.elements = elements
         self.type = type
 
@@ -231,7 +235,7 @@ class Parameter:
     target_variable: VariableReference
     """Target variable reference."""
 
-    declared_type: Any
+    declared_type: Optional[Asn1Type]
     """Type of the parameter."""
 
     def __init__(self, name: str):
@@ -389,7 +393,8 @@ class ProcedureCall(Expression):
 
     def __str__(self) -> str:
         result = f"ProcedureCall(name={self.name},parameters="
-        result += ",".join(self.parameters)
+        parameters = [str(param) for param in self.parameters]
+        result += "[" + (", ".join(parameters)) + "]"
         result += ")"
         return result
 
@@ -422,7 +427,7 @@ class AssignmentTask(Task):
     assignment: BinaryExpression
     """Assignment expression."""
 
-    type: Any
+    type: Asn1Type
     """Type of assignment destination."""
 
 
@@ -456,10 +461,10 @@ class ForEachLoopRange(ForLoopRange):
     variable: Union[VariableReference, MemberAccess, ArrayAccess]
     """Reference to object to iterate, i.e. sequence of."""
 
-    variableType: Any
+    variableType: Optional[Asn1Type]
     """Type of variable."""
 
-    type: Any
+    type: Optional[Asn1Type]
     """Type of iterator variable."""
 
     def __init__(self):
@@ -649,7 +654,7 @@ class ProcedureParameter:
     direction: ProcedureParameterDirection
     """Parameter direction."""
 
-    typeObject: Any
+    typeObject: Asn1Type
     """Parameter type."""
 
     def __init__(self):
@@ -670,14 +675,14 @@ class Procedure:
     transition: Transition
     """Procedure actions."""
 
-    variables: Dict[str, Tuple[Any, Any]]
+    variables: Dict[str, Tuple[Asn1Type, Any]]
     """
     All variables defined in the procedure, the key is a variable name,
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
 
-    returnType: Any
+    returnType: Asn1Type
     """Procedure return type. Can be None."""
 
     def __init__(self):
@@ -729,7 +734,7 @@ class VariableInfo:
     Holds information about type and initial value of variable.
     """
 
-    type: Any
+    type: Asn1Type
     """Type of variable from opengeode."""
 
     value: Optional[Expression]
@@ -851,6 +856,7 @@ def convert(source: ogAST.TaskForLoop):
     for_loop = source.elems[0]
     task = ForLoopTask()
     task.iteratorName = VariableReference(for_loop["var"])
+    task.iteratorName.type = for_loop["type"]
     if for_loop["range"]:
         range = NumericForLoopRange()
         range.start = convert(for_loop["range"]["start"])
@@ -889,6 +895,8 @@ def convert(source: ogAST.TaskAssign):
 def convert(source: ogAST.PrimVariable):
     variableReference = VariableReference(source.value[0])
 
+    variableReference.type = source.exprType
+
     return variableReference
 
 
@@ -898,7 +906,9 @@ def convert(source: ogAST.PrimSequence):
     for elem, value in source.value.items():
         elements[elem] = convert(value)
 
-    return Sequence(elements, source.exprType)
+    sequence = Sequence(elements, source.exprType)
+    sequence.type = source.exprType
+    return sequence
 
 
 @dispatch(ogAST.PrimSequenceOf)
@@ -907,17 +917,23 @@ def convert(source: ogAST.PrimSequenceOf):
     for elem in source.value:
         elements.append(convert(elem))
 
-    return SequenceOf(elements, source.exprType)
+    sequenceof = SequenceOf(elements, source.exprType)
+    sequenceof.type = source.exprType
+    return sequenceof
 
 
 @dispatch(ogAST.PrimEmptyString)
 def convert(source: ogAST.PrimEmptyString):
-    return EmptyStringValue()
+    string = EmptyStringValue()
+    string.type = source.exprType
+    return string
 
 
 @dispatch(ogAST.PrimStringLiteral)
 def convert(source: ogAST.PrimStringLiteral):
-    return StringValue(source.value[1:-1])
+    string = StringValue(source.value[1:-1])
+    string.type = source.exprType
+    return string
 
 
 def decode_hex_bytes(characters) -> List[int]:
@@ -935,21 +951,26 @@ def decode_hex_bytes(characters) -> List[int]:
 @dispatch(ogAST.PrimOctetStringLiteral)
 def convert(source: ogAST.PrimOctetStringLiteral):
     characters = list(source.value[1:-1])
-
-    return OctetStringValue(decode_hex_bytes(characters))
+    string = OctetStringValue(decode_hex_bytes(characters))
+    string.type = source.exprType
+    return string
 
 
 @dispatch(ogAST.PrimBitStringLiteral)
 def convert(source: ogAST.PrimBitStringLiteral):
     characters = list(source.value[1:-1])
 
-    return OctetStringValue(decode_hex_bytes(characters))
+    string = OctetStringValue(decode_hex_bytes(characters))
+    string.type = source.exprType
+    return string
 
 
 @dispatch(ogAST.PrimChoiceItem)
 def convert(source: ogAST.PrimChoiceItem):
     value = convert(source.value["value"])
-    return Choice(source.value["choice"], value)
+    choice = Choice(source.value["choice"], value)
+    choice.type = source.exprType
+    return choice
 
 
 @dispatch(ogAST.PrimConstant)
@@ -961,7 +982,9 @@ def convert(source: ogAST.PrimConstant):
 
 @dispatch(int)
 def convert(source: int):
-    return Constant(str(source))
+    constant = Constant(str(source))
+    constant.type = int
+    return constant
 
 
 @dispatch(ogAST.PrimInteger)
@@ -972,9 +995,12 @@ def convert(source: ogAST.PrimInteger):
                 "Source value is an array with an unsupported number of elements: "
                 + len(source.value)
             )
-        return Constant(source.value[0])
+        constant = Constant(source.value[0])
     else:
-        return Constant(source.value)
+        constant = Constant(source.value)
+
+    constant.type = source.exprType
+    return constant
 
 
 @dispatch(ogAST.PrimBoolean)
@@ -985,14 +1011,19 @@ def convert(source: ogAST.PrimBoolean):
                 "Source value is an array with an unsupported number of elements: "
                 + len(source.value)
             )
-        return Constant(source.value[0])
+        constant = Constant(source.value[0])
     else:
-        return Constant(source.value)
+        constant = Constant(source.value)
+
+    constant.type = source.exprType
+    return constant
 
 
 @dispatch(ogAST.PrimEnumeratedValue)
 def convert(source: ogAST.PrimEnumeratedValue):
-    return EnumValue(source.value[0], source.exprType)
+    value = EnumValue(source.value[0], source.exprType)
+    value.type = source.exprType
+    return value
 
 
 def __make_binary_expression(source: ogAST.Expression):
@@ -1000,6 +1031,7 @@ def __make_binary_expression(source: ogAST.Expression):
     expression.left = convert(source.left)
     expression.operator = getBinaryOperatorEnum(source.operand)
     expression.right = convert(source.right)
+    expression.type = source.exprType
     return expression
 
 
@@ -1091,6 +1123,7 @@ def convert(source: ogAST.ExprImplies):
     expression.left = convert(source.left)
     expression.operator = BinaryOperator.IMPLIES
     expression.right = convert(source.right)
+    expression.type = source.exprType
     return expression
 
 
@@ -1099,6 +1132,7 @@ def convert(source: ogAST.ExprNeg):
     expression = UnaryExpression()
     expression.operator = UnaryOperator.NEG
     expression.expression = convert(source.expr)
+    expression.type = source.exprType
     return expression
 
 
@@ -1107,6 +1141,7 @@ def convert(source: ogAST.ExprNot):
     expression = UnaryExpression()
     expression.operator = UnaryOperator.NOT
     expression.expression = convert(source.expr)
+    expression.type = source.exprType
     return expression
 
 
@@ -1128,6 +1163,7 @@ def convert(source: ogAST.Output):
     for elem in source.value[1:]:
         result = MemberAccess(result, VariableReference(elem))
 
+    result.type = source.exprType
     return result
 
 
@@ -1139,6 +1175,8 @@ def convert(source: ogAST.PrimIndex):
 
     result = ArrayAccess(variable, index)
 
+    result.type = source.exprType
+
     return result
 
 
@@ -1149,6 +1187,7 @@ def convert(source: ogAST.PrimCall):
     call.parameters = [
         convert(expression) for expression in source.value[1]["procParams"]
     ]
+    call.type = source.exprType
     return call
 
 
@@ -1158,6 +1197,7 @@ def convert(source: ogAST.ProcedureCall):
     call.name = source.output[0]["outputName"]
     call.parameters = [convert(expression) for expression in source.output[0]["params"]]
 
+    call.type = source.exprType
     return call
 
 
@@ -1297,7 +1337,7 @@ class Model:
     """Map acociatting state with continuous signals."""
     source: ogAST.Process
     """The source (complex, as retrieved from the parser) SDL model."""
-    types: Dict[str, Any]
+    types: Dict[str, Asn1Type]
     """All ASN.1 types available in process."""
     variables: Dict[str, VariableInfo]
     """

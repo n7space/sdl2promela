@@ -1,0 +1,26 @@
+BUILTIN-FUNCTIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyBoolean ::= BOOLEAN
+
+   MyArray ::= SEQUENCE (SIZE(1..6)) OF MyInteger
+
+   MyUnion ::= CHOICE {
+       speed MyInteger,
+       accel MyInteger
+   }
+
+   MyEnum ::= ENUMERATED {
+       speed,
+       accel
+   }
+
+   MyStruct ::= SEQUENCE {
+       mass MyInteger,
+       charge MyInteger OPTIONAL
+   }
+
+END
+
