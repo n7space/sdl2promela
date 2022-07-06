@@ -39,7 +39,8 @@ TESTS= \
 	stop_condition_empty_len \
 	stop_condition_queue_last \
 	stop_condition_queue_last_eventually \
-	stop_condition_queue_last_filter_out
+	stop_condition_queue_last_filter_out \
+	builtin_functions
 
 .PHONY: $(TESTS) check
 

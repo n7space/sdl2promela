@@ -1,0 +1,117 @@
+/* CIF PROCESS (250, 148), (150, 75) */
+process Actuator;
+    /* CIF TEXT (419, 272), (267, 143) */
+    -- Text area for declarations and comments
+    
+    dcl my_union MyUnion;
+    dcl my_union_det Myunion_selection;
+    dcl my_bool MyBoolean;
+    dcl my_array MyArray;
+    dcl my_int MyInteger;
+    dcl my_struct MyStruct;
+    dcl my_enum MyEnum;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1122, 450), (70, 35) */
+    state Wait;
+        /* CIF input (1062, 505), (184, 35) */
+        input test_to_selector(my_enum);
+            /* CIF task (998, 560), (313, 35) */
+            task my_union_det := to_selector(my_enum, MyUnion);
+            /* CIF decision (1101, 615), (106, 50) */
+            decision my_union_det;
+                /* CIF ANSWER (1037, 685), (70, 23) */
+                (speed):
+                    /* CIF task (1013, 728), (116, 35) */
+                    task my_bool := true;
+                /* CIF ANSWER (1167, 685), (70, 23) */
+                (accel):
+                    /* CIF task (1141, 728), (120, 35) */
+                    task my_bool := false;
+            enddecision;
+            /* CIF output (1096, 779), (116, 35) */
+            output result(my_bool);
+            /* CIF NEXTSTATE (1120, 834), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1706, 61), (70, 35) */
+    state Wait;
+        /* CIF input (1618, 116), (243, 35) */
+        input test_to_enum(my_union);
+            /* CIF task (1621, 172), (236, 35) */
+            task my_union_det := present(my_union);
+            /* CIF task (1590, 227), (298, 35) */
+            task my_enum := to_enum(my_union_det, MyEnum);
+            /* CIF output (1658, 282), (162, 35) */
+            output result_enum(my_enum);
+            /* CIF NEXTSTATE (1704, 337), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1146, 62), (70, 35) */
+    state Wait;
+        /* CIF input (1098, 117), (153, 35) */
+        input test_length(my_array);
+            /* CIF task (1084, 172), (181, 35) */
+            task my_int := length(my_array);
+            /* CIF output (1098, 227), (154, 35) */
+            output result_int(my_int);
+            /* CIF NEXTSTATE (1140, 282), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (890, 63), (70, 35) */
+    state Wait;
+        /* CIF input (836, 118), (163, 35) */
+        input test_present(my_union);
+            /* CIF decision (850, 173), (136, 50) */
+            decision present(my_union);
+                /* CIF ANSWER (821, 243), (70, 23) */
+                (speed):
+                    /* CIF task (795, 286), (120, 35) */
+                    task my_bool := false;
+                /* CIF ANSWER (951, 243), (70, 23) */
+                (accel):
+                    /* CIF task (927, 286), (116, 35) */
+                    task my_bool := true;
+            enddecision;
+            /* CIF output (860, 337), (116, 35) */
+            output result(my_bool);
+            /* CIF NEXTSTATE (883, 392), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1398, 55), (70, 35) */
+    state Wait;
+        /* CIF input (1354, 110), (147, 35) */
+        input test_exist(my_struct);
+            /* CIF task (1314, 165), (228, 35) */
+            task my_bool := exist(my_struct.charge);
+            /* CIF output (1370, 220), (116, 35) */
+            output result(my_bool);
+            /* CIF NEXTSTATE (1393, 275), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1612, 481), (70, 35) */
+    state Wait;
+        /* CIF input (1573, 536), (144, 35) */
+        input test_num(my_enum);
+            /* CIF task (1560, 591), (170, 35) */
+            task my_int := num(my_enum);
+            /* CIF output (1581, 646), (129, 35) */
+            output result_int(my_int);
+            /* CIF NEXTSTATE (1611, 701), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (2074, 487), (70, 35) */
+    state Wait;
+        /* CIF input (2049, 542), (117, 35) */
+        input test_val(my_int);
+            /* CIF task (1999, 597), (218, 35) */
+            task my_enum := val(my_int, MyEnum);
+            /* CIF output (2027, 652), (162, 35) */
+            output result_enum(my_enum);
+            /* CIF NEXTSTATE (2073, 707), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
