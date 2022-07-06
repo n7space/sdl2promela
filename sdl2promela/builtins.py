@@ -84,6 +84,10 @@ def __translate_to_enum(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
     __check_parameters(parameters, 2, "to_enum")
+    # The first argument is a choice determinant, the second is enum type
+    # which is ignored.
+    # The current implementation does not support enumerated with
+    # explicit declared values.
     return (
         BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
         .withLeft(parameters[0])
@@ -96,6 +100,10 @@ def __translate_to_selector(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
 ):
     __check_parameters(parameters, 2, "to_selector")
+    # The first argument is an enum , the second is choice type
+    # which is ignored.
+    # The current implementation does not support enumerated with
+    # explicit declared values.
     return (
         BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
         .withLeft(parameters[0])
