@@ -1803,8 +1803,6 @@ def __generate_statement(
 def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
     # If transition does not contain an explicit move to another transition
     # Then it is necessary to generate an instruction to stop transition
-    if len(transition.actions) == 0:
-        return True
     return (
         len(transition.actions) > 0
         and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
