@@ -29,6 +29,9 @@ bool Actuator_test_num_channel_used = 0;
 chan Actuator_test_val_channel = [1] of {MyInteger};
 MyInteger Actuator_test_val_signal_parameter;
 bool Actuator_test_val_channel_used = 0;
+chan Actuator_test_length_fixed_channel = [1] of {MyFixed};
+MyFixed Actuator_test_length_fixed_signal_parameter;
+bool Actuator_test_length_fixed_channel_used = 0;
 chan Controller_result_channel = [1] of {MyBoolean};
 MyBoolean Controller_result_signal_parameter;
 bool Controller_result_channel_used = 0;
@@ -39,8 +42,8 @@ chan Controller_result_enum_channel = [1] of {MyEnum};
 MyEnum Controller_result_enum_signal_parameter;
 bool Controller_result_enum_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_test_present(actuator_test_present_p1)
 {
     Actuator_test_present_channel!actuator_test_present_p1;
@@ -69,10 +72,14 @@ inline Controller_0_RI_0_test_val(actuator_test_val_p1)
 {
     Actuator_test_val_channel!actuator_test_val_p1;
 }
+inline Controller_0_RI_0_test_length_fixed(actuator_test_length_fixed_p1)
+{
+    Actuator_test_length_fixed_channel!actuator_test_length_fixed_p1;
+}
 inline Actuator_check_queue()
 {
     atomic {
-        (empty(Actuator_test_present_channel) && (empty(Actuator_test_length_channel) && (empty(Actuator_test_exist_channel) && (empty(Actuator_test_to_enum_channel) && (empty(Actuator_test_to_selector_channel) && (empty(Actuator_test_num_channel) && empty(Actuator_test_val_channel)))))));
+        (empty(Actuator_test_present_channel) && (empty(Actuator_test_length_channel) && (empty(Actuator_test_exist_channel) && (empty(Actuator_test_to_enum_channel) && (empty(Actuator_test_to_selector_channel) && (empty(Actuator_test_num_channel) && (empty(Actuator_test_val_channel) && empty(Actuator_test_length_fixed_channel))))))));
     }
 }
 inline Actuator_0_RI_0_result(controller_result_p1)
@@ -191,6 +198,20 @@ active proctype Actuator_test_val() priority 1
     }
     od;
 }
+active proctype Actuator_test_length_fixed() priority 1
+{
+    inited;
+    int token;
+    do
+    ::  atomic {
+        Actuator_test_length_fixed_channel?Actuator_test_length_fixed_signal_parameter;
+        Actuator_test_length_fixed_channel_used = 1;
+        Actuator_lock?token;
+        Actuator_0_PI_0_test_length_fixed(Actuator_test_length_fixed_signal_parameter);
+        Actuator_lock!token;
+    }
+    od;
+}
 active proctype Controller_result() priority 1
 {
     inited;
@@ -237,10 +258,10 @@ init
 {
     atomic {
         int init_token = 1;
-        Actuator_0_init();
-        Actuator_lock!init_token;
         Controller_0_init();
         Controller_lock!init_token;
+        Actuator_0_init();
+        Actuator_lock!init_token;
         inited = 1;
     }
 }

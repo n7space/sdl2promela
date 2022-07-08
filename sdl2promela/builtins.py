@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Dict
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
+from .utils import Asn1Type, resolve_asn1_type
 from .promela.modelbuilder import (
     CallBuilder,
     MemberAccessBuilder,
@@ -43,7 +44,10 @@ def __translate_writeln(
 
 
 def __translate_length(
-    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+    call: sdlmodel.ProcedureCall,
+    parameters: List[promelamodel.Expression],
+    types: List[Asn1Type],
+    allTypes: Dict[str, Asn1Type],
 ) -> promelamodel.Expression:
     __check_parameters(parameters, 1, "length")
     if (
@@ -53,12 +57,26 @@ def __translate_length(
     ):
         raise ValueError("Invalid type of parameter for length")
 
-    return (
-        MemberAccessBuilder()
-        .withUtypeReference(parameters[0])
-        .withMember(VariableReferenceBuilder("length").build())
-        .build()
-    )
+    realType = resolve_asn1_type(allTypes, types[0])
+
+    if realType.kind != "SequenceOfType":
+        err = f"Invalid parameter for length call, expected SequenceOfType, got {types[0].kind}"
+        raise ValueError(err)
+
+    if realType.Min == realType.Max:
+        # If Min == Max then the SEQUENCE OF has fixed size
+        # If the SEQUENCE OF has fixed size, then the usage
+        # of length is valid, but the datatype in promela
+        # has no field, which determines actual number of elements
+        # In such case integer value is returned
+        return promelamodel.IntegerValue(int(realType.Max))
+    else:
+        return (
+            MemberAccessBuilder()
+            .withUtypeReference(parameters[0])
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
 
 
 def __translate_present(
@@ -158,18 +176,23 @@ def is_builtin(call_name: str) -> bool:
 
 
 def translate_builtin(
-    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+    call: sdlmodel.ProcedureCall,
+    parameters: List[promelamodel.Expression],
+    types: List[Asn1Type],
+    allTypes: Dict[str, Asn1Type],
 ) -> promelamodel.Statement:
     """
     Translate a built-in function.
     :param call: Call to be translated.
     :param parameters: List of translated call parameters.
+    :param types: List of types of parameters.
+    :param allTypes: All available asn1 datatypes
     :returns: Translation of the call, might be None.
     """
     if call.name.lower() == "writeln":
         return __translate_writeln(call, parameters)
     elif call.name.lower() == "length":
-        return __translate_length(call, parameters)
+        return __translate_length(call, parameters, types, allTypes)
     elif call.name.lower() == "present":
         return __translate_present(call, parameters)
     elif call.name.lower() == "to_enum":
@@ -190,13 +213,24 @@ def translate_assignment(
     call: sdlmodel.ProcedureCall,
     left: promelamodel.Expression,
     parameters: List[promelamodel.Expression],
+    types: List[Asn1Type],
+    allTypes: Dict[str, Asn1Type],
 ):
+    """
+    Translate an assignment, where right side is built-in function.
+    :param inlineName: name of inline, which assigns value
+    :param call: Call to be translated.
+    :param parameters: List of translated call parameters.
+    :param types: List of types of parameters.
+    :param allTypes: All available asn1 datatypes
+    :returns: Translation of the assignment.
+    """
     if call.name.lower() == "length":
         return (
             CallBuilder()
             .withTarget(inlineName)
             .withParameter(left)
-            .withParameter(__translate_length(call, parameters))
+            .withParameter(__translate_length(call, parameters, types, allTypes))
             .build()
         )
     if call.name.lower() == "present":

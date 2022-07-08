@@ -22,5 +22,7 @@ BEGIN
        charge MyInteger OPTIONAL
    }
 
+   MyFixed ::= SEQUENCE (SIZE(2)) OF MyInteger
+
 END
 
