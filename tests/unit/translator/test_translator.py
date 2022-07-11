@@ -84,5 +84,9 @@ def test_translates_decision():
     translate_and_verify("decision.pr", "decision.pml")
 
 
+def test_translates_empty_transition():
+    translate_and_verify("empty_transition.pr", "empty_transition.pml")
+
+
 def test_translates_simple_choice_access():
     translate_and_verify("simple_choice_access.pr", "simple_choice_access.pml")
