@@ -82,3 +82,7 @@ def test_translates_variable_init():
 
 def test_translates_decision():
     translate_and_verify("decision.pr", "decision.pml")
+
+
+def test_translates_simple_choice_access():
+    translate_and_verify("simple_choice_access.pr", "simple_choice_access.pml")
