@@ -343,14 +343,32 @@ def __generate_variable_name(
     member_access: sdlmodel.MemberAccess,
     toplevel: bool,
 ):
-    return (
-        MemberAccessBuilder()
-        .withUtypeReference(
-            __generate_variable_name(context, member_access.sequence, toplevel)
+    # In case when the left side has type of CHOICE
+    # then result shall be like: 'container.data.field'
+    left_type = resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
+    if left_type.kind == "ChoiceType":
+        return (
+            MemberAccessBuilder()
+            .withUtypeReference(
+                MemberAccessBuilder()
+                .withUtypeReference(
+                    __generate_variable_name(context, member_access.sequence, toplevel)
+                )
+                .withMember(VariableReferenceBuilder("data").build())
+                .build()
+            )
+            .withMember(__generate_variable_name(context, member_access.member, False))
+            .build()
         )
-        .withMember(__generate_variable_name(context, member_access.member, False))
-        .build()
-    )
+    else:
+        return (
+            MemberAccessBuilder()
+            .withUtypeReference(
+                __generate_variable_name(context, member_access.sequence, toplevel)
+            )
+            .withMember(__generate_variable_name(context, member_access.member, False))
+            .build()
+        )
 
 
 @dispatch(Context, sdlmodel.ArrayAccess, bool)
@@ -1586,11 +1604,11 @@ def __generate_assignment(
     )
 
     data_field = sdlmodel.MemberAccess(
-        sdlmodel.MemberAccess(
-            left, sdlmodel.VariableReference(CHOICE_DATA_MEMBER_NAME)
-        ),
+        left,
         sdlmodel.VariableReference(right.choice),
     )
+
+    data_field.type = right.type
 
     statements.append(
         AssignmentBuilder()
@@ -1850,6 +1868,7 @@ def __generate_init_function(context: Context) -> promelamodel.Inline:
     for name, info in context.sdl_model.variables.items():
         if info.value is not None:
             variable_ref = sdlmodel.VariableReference(name)
+            variable_ref.type = info.type
             blockBuilder.withStatements(
                 __generate_assignment(context, variable_ref, info.value, info.type)
             )
