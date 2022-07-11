@@ -3,7 +3,7 @@
 --------------------------------------------------------
 --! MadeInFastMode:True:
 --! InputASN1FileChecksum:0c215f83ef673c1ec11108dc5f065d83:builtin_functions.acn:
---! InputASN1FileChecksum:a628a7c0b91f44e302820734f2b1d458:builtin_functions.asn:
+--! InputASN1FileChecksum:8615b965b9d5552cbb8044e905e7be4a:builtin_functions.asn:
 --! InputASN1FileChecksum:ff35cd78b1e82f09b63b209ab7cf7c34:/home/taste/tool-inst/share/taste-types/taste-types.asn:
 --------------------------------------------------------
 
@@ -122,6 +122,86 @@ PROPERTIES
     Data_Model::Data_Representation => Struct;
 END MyBoolean_Buffer.impl;
 
+DATA MyDerivedArray
+PROPERTIES
+    -- name of the ASN.1 source file:
+    Source_Text => ("builtin_functions.asn");
+    TASTE::EncodingDefinitionFile => classifier(DataView::ACN_BUILTIN_FUNCTIONS_DATAVIEW);
+    TASTE::Ada_Package_Name => "BUILTIN_FUNCTIONS_DATAVIEW";
+    Deployment::ASN1_Module_Name => "BUILTIN-FUNCTIONS-DATAVIEW";
+    Source_Language => (ASN1);
+    -- name of the corresponding data type in the source file:
+    Type_Source_Name => "MyDerivedArray";
+    TASTE::Position_In_File => [ line => 8 ; column => 1 ; ];
+    -- what kind of type is this?
+    TASTE::ASN1_Basic_Type =>aSEQUENCEOF;
+END MyDerivedArray;
+
+DATA IMPLEMENTATION MyDerivedArray.impl
+END MyDerivedArray.impl;
+
+DATA MyDerivedArray_Buffer_Max
+END MyDerivedArray_Buffer_Max;
+
+DATA IMPLEMENTATION MyDerivedArray_Buffer_Max.impl
+    -- Buffer to hold a marshalled data of type MyDerivedArray
+PROPERTIES
+    Data_Model::Data_Representation => array;
+    Data_Model::Base_Type => (classifier (DataView::Stream_Element_Buffer));
+END MyDerivedArray_Buffer_Max.impl;
+
+DATA MyDerivedArray_Buffer
+END MyDerivedArray_Buffer;
+
+DATA IMPLEMENTATION MyDerivedArray_Buffer.impl
+    -- Buffer to hold a marshalled data of type MyDerivedArray
+SUBCOMPONENTS
+    Buffer : data MyDerivedArray_Buffer_Max.impl;
+    Length : data Base_Types::Unsigned_32;
+PROPERTIES
+    Data_Model::Data_Representation => Struct;
+END MyDerivedArray_Buffer.impl;
+
+DATA MyDerivedFixed
+PROPERTIES
+    -- name of the ASN.1 source file:
+    Source_Text => ("builtin_functions.asn");
+    TASTE::EncodingDefinitionFile => classifier(DataView::ACN_BUILTIN_FUNCTIONS_DATAVIEW);
+    TASTE::Ada_Package_Name => "BUILTIN_FUNCTIONS_DATAVIEW";
+    Deployment::ASN1_Module_Name => "BUILTIN-FUNCTIONS-DATAVIEW";
+    Source_Language => (ASN1);
+    -- name of the corresponding data type in the source file:
+    Type_Source_Name => "MyDerivedFixed";
+    TASTE::Position_In_File => [ line => 27 ; column => 1 ; ];
+    -- what kind of type is this?
+    TASTE::ASN1_Basic_Type =>aSEQUENCEOF;
+END MyDerivedFixed;
+
+DATA IMPLEMENTATION MyDerivedFixed.impl
+END MyDerivedFixed.impl;
+
+DATA MyDerivedFixed_Buffer_Max
+END MyDerivedFixed_Buffer_Max;
+
+DATA IMPLEMENTATION MyDerivedFixed_Buffer_Max.impl
+    -- Buffer to hold a marshalled data of type MyDerivedFixed
+PROPERTIES
+    Data_Model::Data_Representation => array;
+    Data_Model::Base_Type => (classifier (DataView::Stream_Element_Buffer));
+END MyDerivedFixed_Buffer_Max.impl;
+
+DATA MyDerivedFixed_Buffer
+END MyDerivedFixed_Buffer;
+
+DATA IMPLEMENTATION MyDerivedFixed_Buffer.impl
+    -- Buffer to hold a marshalled data of type MyDerivedFixed
+SUBCOMPONENTS
+    Buffer : data MyDerivedFixed_Buffer_Max.impl;
+    Length : data Base_Types::Unsigned_32;
+PROPERTIES
+    Data_Model::Data_Representation => Struct;
+END MyDerivedFixed_Buffer.impl;
+
 DATA MyEnum
 PROPERTIES
     -- name of the ASN.1 source file:
@@ -132,7 +212,7 @@ PROPERTIES
     Source_Language => (ASN1);
     -- name of the corresponding data type in the source file:
     Type_Source_Name => "MyEnum";
-    TASTE::Position_In_File => [ line => 15 ; column => 1 ; ];
+    TASTE::Position_In_File => [ line => 17 ; column => 1 ; ];
     -- what kind of type is this?
     TASTE::ASN1_Basic_Type =>aENUMERATED;
 END MyEnum;
@@ -172,7 +252,7 @@ PROPERTIES
     Source_Language => (ASN1);
     -- name of the corresponding data type in the source file:
     Type_Source_Name => "MyFixed";
-    TASTE::Position_In_File => [ line => 25 ; column => 1 ; ];
+    TASTE::Position_In_File => [ line => 27 ; column => 1 ; ];
     -- what kind of type is this?
     TASTE::ASN1_Basic_Type =>aSEQUENCEOF;
 END MyFixed;
@@ -252,7 +332,7 @@ PROPERTIES
     Source_Language => (ASN1);
     -- name of the corresponding data type in the source file:
     Type_Source_Name => "MyStruct";
-    TASTE::Position_In_File => [ line => 20 ; column => 1 ; ];
+    TASTE::Position_In_File => [ line => 22 ; column => 1 ; ];
     -- what kind of type is this?
     TASTE::ASN1_Basic_Type =>aSEQUENCE;
 END MyStruct;
@@ -292,7 +372,7 @@ PROPERTIES
     Source_Language => (ASN1);
     -- name of the corresponding data type in the source file:
     Type_Source_Name => "MyUnion";
-    TASTE::Position_In_File => [ line => 10 ; column => 1 ; ];
+    TASTE::Position_In_File => [ line => 12 ; column => 1 ; ];
     -- what kind of type is this?
     TASTE::ASN1_Basic_Type =>aCHOICE;
 END MyUnion;
@@ -563,6 +643,8 @@ SYSTEM IMPLEMENTATION Taste_DataView.others
 SUBCOMPONENTS
    MyArray : DATA MyArray.impl;
    MyBoolean : DATA MyBoolean.impl;
+   MyDerivedArray : DATA MyDerivedArray.impl;
+   MyDerivedFixed : DATA MyDerivedFixed.impl;
    MyEnum : DATA MyEnum.impl;
    MyFixed : DATA MyFixed.impl;
    MyInteger : DATA MyInteger.impl;
