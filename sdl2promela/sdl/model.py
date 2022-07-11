@@ -976,7 +976,7 @@ def convert(source: ogAST.PrimChoiceItem):
 @dispatch(ogAST.PrimConstant)
 def convert(source: ogAST.PrimConstant):
     constantReference = ConstantReference(source.value[0])
-
+    constantReference.type = source.exprType
     return constantReference
 
 

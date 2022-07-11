@@ -1595,11 +1595,11 @@ def __generate_assignment(
     )
 
     data_field = sdlmodel.MemberAccess(
-        sdlmodel.MemberAccess(
-            left, sdlmodel.VariableReference(CHOICE_DATA_MEMBER_NAME)
-        ),
+        left,
         sdlmodel.VariableReference(right.choice),
     )
+
+    data_field.type = right.type
 
     statements.append(
         AssignmentBuilder()
