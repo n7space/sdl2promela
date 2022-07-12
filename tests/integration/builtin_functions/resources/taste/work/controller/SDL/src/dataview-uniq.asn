@@ -7,6 +7,8 @@ BEGIN
 
    MyArray ::= SEQUENCE (SIZE(1..6)) OF MyInteger
 
+   MyDerivedArray ::= MyArray (SIZE(1..3))
+
    MyUnion ::= CHOICE {
        speed MyInteger,
        accel MyInteger
@@ -21,6 +23,10 @@ BEGIN
        mass MyInteger,
        charge MyInteger OPTIONAL
    }
+
+   MyFixed ::= SEQUENCE (SIZE(2)) OF MyInteger
+
+   MyDerivedFixed ::= MyFixed
 
 END
 

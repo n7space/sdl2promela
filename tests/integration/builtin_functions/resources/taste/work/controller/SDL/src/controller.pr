@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (331, 250), (267, 158) */
+    /* CIF TEXT (331, 250), (267, 203) */
     -- Text area for declarations and comments
     
     dcl error MyInteger := 0;
@@ -11,6 +11,9 @@ process Controller;
     dcl my_int MyInteger;
     dcl my_struct MyStruct;
     dcl my_enum MyEnum;
+    dcl my_fixed MyFixed;
+    dcl my_derived_array MyDerivedArray;
+    dcl my_derived_fixed MyDerivedFixed;
     /* CIF ENDTEXT */
     /* CIF START (656, 46), (70, 35) */
     START;
@@ -20,11 +23,75 @@ process Controller;
         output test_present(my_union);
         /* CIF NEXTSTATE (634, 206), (113, 35) */
         NEXTSTATE CheckPresentA;
-    /* CIF state (733, 1604), (85, 35) */
+    /* CIF state (1885, 1565), (178, 35) */
+    state CheckLengthDerivedArray;
+        /* CIF input (1911, 1620), (127, 35) */
+        input result_int(my_int);
+            /* CIF decision (1940, 1675), (70, 50) */
+            decision my_int;
+                /* CIF ANSWER (1895, 1745), (70, 23) */
+                (2):
+                    /* CIF task (1843, 1788), (173, 35) */
+                    task my_derived_fixed := {1, 2};
+                    /* CIF output (1784, 1843), (290, 35) */
+                    output test_length_derived_fixed(my_derived_fixed);
+                    /* CIF NEXTSTATE (1841, 1898), (177, 35) */
+                    NEXTSTATE CheckLengthDerivedFixed;
+                /* CIF ANSWER (2089, 1745), (70, 23) */
+                else:
+                    /* CIF task (2086, 1788), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (2089, 1843), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (2290, 1570), (177, 35) */
+    state CheckLengthDerivedFixed;
+        /* CIF input (2315, 1625), (127, 35) */
+        input result_int(my_int);
+            /* CIF decision (2344, 1680), (70, 50) */
+            decision my_int;
+                /* CIF ANSWER (2299, 1750), (70, 23) */
+                (2):
+                    /* CIF task (2286, 1793), (94, 35) */
+                    task reached := 1;
+                    /* CIF NEXTSTATE (2297, 1848), (73, 35) */
+                    NEXTSTATE Reached;
+                /* CIF ANSWER (2389, 1750), (70, 23) */
+                else:
+                    /* CIF task (2385, 1793), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (2389, 1848), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1503, 1546), (131, 35) */
+    state CheckLengthFixed;
+        /* CIF input (1505, 1601), (127, 35) */
+        input result_int(my_int);
+            /* CIF decision (1534, 1656), (70, 50) */
+            decision my_int;
+                /* CIF ANSWER (1490, 1726), (70, 23) */
+                (2):
+                    /* CIF task (1438, 1769), (173, 35) */
+                    task my_derived_array := {1, 2};
+                    /* CIF output (1397, 1824), (254, 35) */
+                    output test_derived_length(my_derived_array);
+                    /* CIF NEXTSTATE (1435, 1874), (178, 35) */
+                    NEXTSTATE CheckLengthDerivedArray;
+                /* CIF ANSWER (1666, 1726), (70, 23) */
+                else:
+                    /* CIF task (1663, 1769), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1666, 1824), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (731, 1604), (85, 35) */
     state CheckValA;
-        /* CIF input (694, 1659), (162, 35) */
+        /* CIF input (692, 1659), (162, 35) */
         input result_enum(my_enum);
-            /* CIF decision (735, 1714), (80, 50) */
+            /* CIF decision (733, 1714), (80, 50) */
             decision my_enum;
                 /* CIF ANSWER (696, 1784), (70, 23) */
                 (speed):
@@ -36,37 +103,17 @@ process Controller;
                     NEXTSTATE CheckValB;
                 /* CIF ANSWER (798, 1784), (70, 23) */
                 else:
-                    /* CIF task (795, 1827), (76, 35) */
+                    /* CIF task (794, 1827), (76, 35) */
                     task error := 1;
                     /* CIF NEXTSTATE (798, 1882), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1177, 1548), (85, 35) */
-    state CheckValB;
-        /* CIF input (1138, 1603), (162, 35) */
-        input result_enum(my_enum);
-            /* CIF decision (1176, 1658), (86, 50) */
-            decision my_enum;
-                /* CIF ANSWER (1140, 1728), (70, 23) */
-                (accel):
-                    /* CIF task (1127, 1771), (94, 35) */
-                    task reached := 1;
-                    /* CIF NEXTSTATE (1138, 1826), (73, 35) */
-                    NEXTSTATE Reached;
-                /* CIF ANSWER (1230, 1728), (70, 23) */
-                else:
-                    /* CIF task (1226, 1771), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (1230, 1826), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (1971, 1164), (94, 35) */
+    /* CIF state (1969, 1164), (94, 35) */
     state CheckNumB;
-        /* CIF input (1955, 1219), (127, 35) */
+        /* CIF input (1953, 1219), (127, 35) */
         input result_int(my_int);
-            /* CIF decision (1984, 1274), (70, 50) */
+            /* CIF decision (1982, 1274), (70, 50) */
             decision my_int;
                 /* CIF ANSWER (1939, 1344), (70, 23) */
                 (1):
@@ -78,25 +125,25 @@ process Controller;
                     NEXTSTATE CheckValA;
                 /* CIF ANSWER (2043, 1344), (70, 23) */
                 else:
-                    /* CIF task (2040, 1387), (76, 35) */
+                    /* CIF task (2039, 1387), (76, 35) */
                     task error := 1;
                     /* CIF NEXTSTATE (2043, 1437), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1512, 1146), (95, 35) */
+    /* CIF state (1510, 1146), (95, 35) */
     state CheckNumA;
-        /* CIF input (1496, 1201), (127, 35) */
+        /* CIF input (1494, 1201), (127, 35) */
         input result_int(my_int);
-            /* CIF decision (1525, 1256), (70, 50) */
+            /* CIF decision (1523, 1256), (70, 50) */
             decision my_int;
                 /* CIF ANSWER (1467, 1326), (70, 23) */
                 (0):
-                    /* CIF task (1439, 1369), (126, 35) */
+                    /* CIF task (1438, 1369), (126, 35) */
                     task my_enum := accel;
-                    /* CIF output (1430, 1424), (144, 35) */
+                    /* CIF output (1429, 1424), (144, 35) */
                     output test_num(my_enum);
-                    /* CIF NEXTSTATE (1455, 1479), (94, 35) */
+                    /* CIF NEXTSTATE (1454, 1479), (94, 35) */
                     NEXTSTATE CheckNumB;
                 /* CIF ANSWER (1589, 1326), (70, 23) */
                 else:
@@ -106,11 +153,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1172, 1120), (129, 28) */
+    /* CIF state (1170, 1120), (129, 28) */
     state CheckToSelectorB;
-        /* CIF input (1178, 1168), (116, 35) */
+        /* CIF input (1176, 1168), (116, 35) */
         input result(my_bool);
-            /* CIF decision (1200, 1223), (73, 50) */
+            /* CIF decision (1198, 1223), (73, 50) */
             decision my_bool;
                 /* CIF ANSWER (1158, 1293), (70, 23) */
                 (false):
@@ -122,17 +169,17 @@ process Controller;
                     NEXTSTATE CheckNumA;
                 /* CIF ANSWER (1273, 1293), (70, 23) */
                 (true):
-                    /* CIF task (1270, 1336), (76, 35) */
+                    /* CIF task (1269, 1336), (76, 35) */
                     task error := 1;
                     /* CIF NEXTSTATE (1273, 1391), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1562, 718), (114, 35) */
+    /* CIF state (1560, 718), (114, 35) */
     state CheckToEnumA;
-        /* CIF input (1538, 773), (162, 35) */
+        /* CIF input (1536, 773), (162, 35) */
         input result_enum(my_enum);
-            /* CIF decision (1579, 828), (80, 50) */
+            /* CIF decision (1577, 828), (80, 50) */
             decision my_enum;
                 /* CIF ANSWER (1542, 898), (70, 23) */
                 (speed):
@@ -150,11 +197,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1250, 697), (95, 35) */
+    /* CIF state (1248, 697), (95, 35) */
     state CheckExistB;
-        /* CIF input (1239, 752), (116, 35) */
+        /* CIF input (1237, 752), (116, 35) */
         input result(my_bool);
-            /* CIF decision (1261, 807), (73, 50) */
+            /* CIF decision (1259, 807), (73, 50) */
             decision my_bool;
                 /* CIF ANSWER (1221, 877), (70, 23) */
                 (false):
@@ -172,11 +219,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1611, 279), (108, 35) */
+    /* CIF state (1609, 279), (108, 35) */
     state CheckLengthA;
-        /* CIF input (1602, 334), (127, 35) */
+        /* CIF input (1600, 334), (127, 35) */
         input result_int(my_int);
-            /* CIF decision (1631, 389), (70, 50) */
+            /* CIF decision (1629, 389), (70, 50) */
             decision my_int;
                 /* CIF ANSWER (1590, 459), (70, 23) */
                 (1):
@@ -194,11 +241,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1249, 264), (112, 35) */
+    /* CIF state (1247, 264), (112, 35) */
     state CheckPresentB;
-        /* CIF input (1247, 319), (116, 35) */
+        /* CIF input (1245, 319), (116, 35) */
         input result(my_bool);
-            /* CIF decision (1269, 374), (73, 50) */
+            /* CIF decision (1267, 374), (73, 50) */
             decision my_bool;
                 /* CIF ANSWER (1231, 444), (70, 23) */
                 (true):
@@ -219,36 +266,36 @@ process Controller;
     /* CIF state (880, 58), (70, 35) */
     state Error;
     endstate;
-    /* CIF state (1205, 62), (73, 35) */
+    /* CIF state (1203, 62), (73, 35) */
     state Reached;
     endstate;
-    /* CIF state (817, 259), (113, 35) */
+    /* CIF state (822, 238), (113, 35) */
     state CheckPresentA;
-        /* CIF input (815, 314), (116, 35) */
+        /* CIF input (820, 293), (116, 35) */
         input result(my_bool);
-            /* CIF decision (828, 369), (91, 50) */
+            /* CIF decision (833, 348), (91, 50) */
             decision my_bool;
-                /* CIF ANSWER (799, 439), (70, 23) */
+                /* CIF ANSWER (806, 418), (70, 23) */
                 (false):
-                    /* CIF task (762, 482), (142, 35) */
+                    /* CIF task (769, 461), (142, 35) */
                     task my_union := accel : 2;
-                    /* CIF output (749, 537), (170, 35) */
+                    /* CIF output (756, 516), (170, 35) */
                     output test_present(my_union);
-                    /* CIF NEXTSTATE (777, 592), (112, 35) */
+                    /* CIF NEXTSTATE (784, 571), (112, 35) */
                     NEXTSTATE CheckPresentB;
-                /* CIF ANSWER (933, 439), (70, 23) */
+                /* CIF ANSWER (940, 418), (70, 23) */
                 (true):
-                    /* CIF task (929, 482), (76, 35) */
+                    /* CIF task (936, 461), (76, 35) */
                     task error := 1;
-                    /* CIF NEXTSTATE (933, 537), (70, 35) */
+                    /* CIF NEXTSTATE (940, 516), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (2011, 233), (108, 35) */
+    /* CIF state (2009, 233), (108, 35) */
     state CheckLengthB;
-        /* CIF input (2002, 288), (127, 35) */
+        /* CIF input (2000, 288), (127, 35) */
         input result_int(my_int);
-            /* CIF decision (2031, 343), (70, 50) */
+            /* CIF decision (2029, 343), (70, 50) */
             decision my_int;
                 /* CIF ANSWER (1990, 413), (70, 23) */
                 (3):
@@ -266,11 +313,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (793, 694), (95, 35) */
+    /* CIF state (791, 694), (95, 35) */
     state CheckExistA;
-        /* CIF input (782, 749), (116, 35) */
+        /* CIF input (780, 749), (116, 35) */
         input result(my_bool);
-            /* CIF decision (804, 804), (73, 50) */
+            /* CIF decision (802, 804), (73, 50) */
             decision my_bool;
                 /* CIF ANSWER (764, 874), (70, 23) */
                 (true):
@@ -288,11 +335,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (738, 1141), (130, 35) */
+    /* CIF state (736, 1141), (130, 35) */
     state CheckToSelectorA;
-        /* CIF input (745, 1196), (116, 35) */
+        /* CIF input (743, 1196), (116, 35) */
         input result(my_bool);
-            /* CIF decision (767, 1251), (73, 50) */
+            /* CIF decision (765, 1251), (73, 50) */
             decision my_bool;
                 /* CIF ANSWER (725, 1321), (70, 23) */
                 (true):
@@ -310,11 +357,11 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1964, 719), (114, 35) */
+    /* CIF state (1962, 719), (114, 35) */
     state CheckToEnumB;
-        /* CIF input (1940, 774), (162, 35) */
+        /* CIF input (1938, 774), (162, 35) */
         input result_enum(my_enum);
-            /* CIF decision (1981, 829), (80, 50) */
+            /* CIF decision (1979, 829), (80, 50) */
             decision my_enum;
                 /* CIF ANSWER (1944, 899), (70, 23) */
                 (accel):
@@ -329,6 +376,28 @@ process Controller;
                     /* CIF task (2081, 942), (76, 35) */
                     task error := 1;
                     /* CIF NEXTSTATE (2085, 997), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1126, 1536), (85, 35) */
+    state CheckValB;
+        /* CIF input (1087, 1591), (162, 35) */
+        input result_enum(my_enum);
+            /* CIF decision (1126, 1646), (86, 50) */
+            decision my_enum;
+                /* CIF ANSWER (1091, 1716), (70, 23) */
+                (accel):
+                    /* CIF task (1063, 1759), (125, 35) */
+                    task my_fixed := {1, 2};
+                    /* CIF output (1031, 1814), (189, 35) */
+                    output test_length_fixed(my_fixed);
+                    /* CIF NEXTSTATE (1060, 1864), (131, 35) */
+                    NEXTSTATE CheckLengthFixed;
+                /* CIF ANSWER (1206, 1716), (70, 23) */
+                else:
+                    /* CIF task (1202, 1759), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1206, 1814), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;

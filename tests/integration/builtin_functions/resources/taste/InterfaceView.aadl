@@ -124,6 +124,39 @@ SUBPROGRAM IMPLEMENTATION RI_test_val.others
 END RI_test_val.others;
 
 
+SUBPROGRAM RI_test_length_fixed
+FEATURES
+    p1 : IN PARAMETER DataView::MyFixed {
+       Taste::encoding => NATIVE;
+    };
+END RI_test_length_fixed;
+
+SUBPROGRAM IMPLEMENTATION RI_test_length_fixed.others
+END RI_test_length_fixed.others;
+
+
+SUBPROGRAM RI_test_length_derived_fixed
+FEATURES
+    p1 : IN PARAMETER DataView::MyDerivedFixed {
+       Taste::encoding => NATIVE;
+    };
+END RI_test_length_derived_fixed;
+
+SUBPROGRAM IMPLEMENTATION RI_test_length_derived_fixed.others
+END RI_test_length_derived_fixed.others;
+
+
+SUBPROGRAM RI_test_derived_length
+FEATURES
+    p1 : IN PARAMETER DataView::MyDerivedArray {
+       Taste::encoding => NATIVE;
+    };
+END RI_test_derived_length;
+
+SUBPROGRAM IMPLEMENTATION RI_test_derived_length.others
+END RI_test_derived_length.others;
+
+
 
 SYSTEM controller
 FEATURES
@@ -132,8 +165,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -143,8 +176,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -154,8 +187,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -166,8 +199,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -178,8 +211,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -190,8 +223,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -202,8 +235,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -214,8 +247,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -226,8 +259,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -238,8 +271,44 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   RI_test_length_fixed : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_length_fixed.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "test_length_fixed";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   RI_test_length_derived_fixed : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_length_derived_fixed.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "test_length_derived_fixed";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   RI_test_derived_length : REQUIRES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_derived_length.others {
+      Taste::labelInheritance        => "true";
+      Taste::InterfaceName           => "test_derived_length";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -344,6 +413,39 @@ SUBPROGRAM IMPLEMENTATION PI_test_val.others
 END PI_test_val.others;
 
 
+SUBPROGRAM PI_test_length_fixed
+FEATURES
+    p1 : IN PARAMETER DataView::MyFixed {
+       Taste::encoding => NATIVE;
+    };
+END PI_test_length_fixed;
+
+SUBPROGRAM IMPLEMENTATION PI_test_length_fixed.others
+END PI_test_length_fixed.others;
+
+
+SUBPROGRAM PI_test_length_derived_fixed
+FEATURES
+    p1 : IN PARAMETER DataView::MyDerivedFixed {
+       Taste::encoding => NATIVE;
+    };
+END PI_test_length_derived_fixed;
+
+SUBPROGRAM IMPLEMENTATION PI_test_length_derived_fixed.others
+END PI_test_length_derived_fixed.others;
+
+
+SUBPROGRAM PI_test_derived_length
+FEATURES
+    p1 : IN PARAMETER DataView::MyDerivedArray {
+       Taste::encoding => NATIVE;
+    };
+END PI_test_derived_length;
+
+SUBPROGRAM IMPLEMENTATION PI_test_derived_length.others
+END PI_test_derived_length.others;
+
+
 SUBPROGRAM RI_result
 FEATURES
     p1 : IN PARAMETER DataView::MyBoolean {
@@ -385,8 +487,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -396,8 +498,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -407,8 +509,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -418,8 +520,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -429,8 +531,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -440,8 +542,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -451,8 +553,41 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   PI_test_length_fixed : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_length_fixed.others {
+      Taste::InterfaceName           => "test_length_fixed";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   PI_test_length_derived_fixed : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_length_derived_fixed.others {
+      Taste::InterfaceName           => "test_length_derived_fixed";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
+      Taste::RCMperiod               => 0 ms;      
+      Taste::Interface_Priority      => 1;      
+      Compute_Execution_Time => 0 ms .. 0 ms;      
+   };
+   PI_test_derived_length : PROVIDES SUBPROGRAM ACCESS interfaceview::IV:: actuator:: PI_test_derived_length.others {
+      Taste::InterfaceName           => "test_derived_length";            
+      Taste::RCMoperationKind        => sporadic;      
+      -- Unrecognized property: enable_multicast => false      
+      -- Unrecognized property: layer => default      
+      Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -463,8 +598,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -475,8 +610,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -487,8 +622,8 @@ FEATURES
       Taste::RCMoperationKind        => sporadic;      
       -- Unrecognized property: enable_multicast => false      
       -- Unrecognized property: layer => default      
-      Taste::Associated_Queue_Size   => 1;      
       Taste::Interface_Stack_Size    => 1024;      
+      Taste::Associated_Queue_Size   => 1;      
       Taste::RCMperiod               => 0 ms;      
       Taste::Interface_Priority      => 1;      
       Compute_Execution_Time => 0 ms .. 0 ms;      
@@ -527,16 +662,19 @@ SUBCOMPONENTS
   controller : SYSTEM interfaceview::IV::controller::controller.others;
   actuator : SYSTEM interfaceview::IV::actuator::actuator.others;
 CONNECTIONS
+   controller_RI_test_to_selector : SUBPROGRAM ACCESS actuator.PI_test_to_selector -> controller.RI_test_to_selector;
+   controller_RI_test_present : SUBPROGRAM ACCESS actuator.PI_test_present -> controller.RI_test_present;
    actuator_RI_result_enum : SUBPROGRAM ACCESS controller.PI_result_enum -> actuator.RI_result_enum;
    actuator_RI_result_int : SUBPROGRAM ACCESS controller.PI_result_int -> actuator.RI_result_int;
-   controller_RI_test_length : SUBPROGRAM ACCESS actuator.PI_test_length -> controller.RI_test_length;
+   controller_RI_test_length_derived_fixed : SUBPROGRAM ACCESS actuator.PI_test_length_derived_fixed -> controller.RI_test_length_derived_fixed;
    controller_RI_test_val : SUBPROGRAM ACCESS actuator.PI_test_val -> controller.RI_test_val;
-   controller_RI_test_present : SUBPROGRAM ACCESS actuator.PI_test_present -> controller.RI_test_present;
-   actuator_RI_result : SUBPROGRAM ACCESS controller.PI_result -> actuator.RI_result;
-   controller_RI_test_exist : SUBPROGRAM ACCESS actuator.PI_test_exist -> controller.RI_test_exist;
-   controller_RI_test_to_enum : SUBPROGRAM ACCESS actuator.PI_test_to_enum -> controller.RI_test_to_enum;
+   controller_RI_test_length : SUBPROGRAM ACCESS actuator.PI_test_length -> controller.RI_test_length;
+   controller_RI_test_length_fixed : SUBPROGRAM ACCESS actuator.PI_test_length_fixed -> controller.RI_test_length_fixed;
    controller_RI_test_num : SUBPROGRAM ACCESS actuator.PI_test_num -> controller.RI_test_num;
-   controller_RI_test_to_selector : SUBPROGRAM ACCESS actuator.PI_test_to_selector -> controller.RI_test_to_selector;
+   controller_RI_test_to_enum : SUBPROGRAM ACCESS actuator.PI_test_to_enum -> controller.RI_test_to_enum;
+   controller_RI_test_exist : SUBPROGRAM ACCESS actuator.PI_test_exist -> controller.RI_test_exist;
+   actuator_RI_result : SUBPROGRAM ACCESS controller.PI_result -> actuator.RI_result;
+   controller_RI_test_derived_length : SUBPROGRAM ACCESS actuator.PI_test_derived_length -> controller.RI_test_derived_length;
 END interfaceview.others;
 
 PROPERTIES

@@ -533,11 +533,14 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
         )
 
     elif builtins.is_builtin(expression.name):
-        parameters = [
-            __generate_expression(context, parameter)
-            for parameter in expression.parameters
-        ]
-        return builtins.translate_builtin(expression, parameters)
+        parameters = []
+        types = []
+        for parameter in expression.parameters:
+            parameters.append(__generate_expression(context, parameter))
+            types.append(parameter.type)
+        return builtins.translate_builtin(
+            expression, parameters, types, context.sdl_model.types
+        )
     else:
         raise NotImplementedError(
             f"Call to {str(expression.name)} cannot be made within an expression"
@@ -1134,14 +1137,20 @@ def __generate_assignment(
             assignInlineName = __get_assign_value_inline_name(left_type)
             left_side = __generate_variable_name(context, left, True)
 
-            parameters = [
-                __generate_expression(context, parameter)
-                for parameter in right.parameters
-            ]
+            parameters = []
+            types: List[Asn1Type] = []
+            for parameter in right.parameters:
+                parameters.append(__generate_expression(context, parameter))
+                types.append(parameter.type)
 
             statements.append(
                 builtins.translate_assignment(
-                    assignInlineName, right, left_side, parameters
+                    assignInlineName,
+                    right,
+                    left_side,
+                    parameters,
+                    types,
+                    context.sdl_model.types,
                 )
             )
         else:
@@ -1775,9 +1784,13 @@ def __generate_statement(
 ) -> promelamodel.Statement:
     if builtins.is_builtin(call.name):
         parameters = []
+        types = []
         for parameter in call.parameters:
             parameters.append(__generate_expression(context, parameter))
-        return builtins.translate_builtin(call, parameters)
+            types.append(parameter.type)
+        return builtins.translate_builtin(
+            call, parameters, types, context.sdl_model.types
+        )
     elif call.name.lower() == "set_timer":
         if len(call.parameters) != 2:
             raise Exception("Invalid parameters for 'set_timer' procedure.")

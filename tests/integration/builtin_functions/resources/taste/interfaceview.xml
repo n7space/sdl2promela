@@ -1,56 +1,163 @@
 <InterfaceView asn1file="builtin_functions.asn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="9100 27300 49000 112400"/>
+<Provided_Interface name="result" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyBoolean" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 40300"/>
+</Provided_Interface>
+
+<Provided_Interface name="result_int" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 54600"/>
+</Provided_Interface>
+
+<Provided_Interface name="result_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 72400"/>
+</Provided_Interface>
+
+<Required_Interface name="test_present" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 31500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_length" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyArray" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 45900"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_exist" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyStruct" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 62000"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_to_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 67800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_to_selector" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 76800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_num" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 80400"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_val" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 85300"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_length_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyFixed" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 92600"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_length_derived_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyDerivedFixed" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 98300"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="test_derived_length" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyDerivedArray" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="49000 105700"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
 <Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="93200 27900 133700 90300"/>
-<Provided_Interface name="test_present" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+    <Property name="Taste::coordinates" value="93200 27900 133700 113400"/>
+<Provided_Interface name="test_present" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 31800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_length" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_length" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyArray" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 46800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_exist" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_exist" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyStruct" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 61500"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_to_enum" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_to_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 67800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_to_selector" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_to_selector" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 76900"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_num" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_num" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 81100"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_val" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_val" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 85300"/>
 </Provided_Interface>
 
-<Required_Interface name="result" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Provided_Interface name="test_length_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+    <Input_Parameter name="p1" type="MyFixed" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="93200 92600"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_length_derived_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyDerivedFixed" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="93200 98300"/>
+</Provided_Interface>
+
+<Provided_Interface name="test_derived_length" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+    <Input_Parameter name="p1" type="MyDerivedArray" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="93200 105500"/>
+</Provided_Interface>
+
+<Required_Interface name="result" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyBoolean" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 40500"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="result_int" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Required_Interface name="result_int" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 54700"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="result_enum" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
+<Required_Interface name="result_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
     <Property name="Taste::coordinates" value="93200 72200"/>
     <Property name="Taste::InheritPI" value="true"/>
@@ -62,81 +169,22 @@
     </Implementations>
 </Function>
 
-<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="9100 27300 49000 90400"/>
-<Provided_Interface name="result" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyBoolean" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 40300"/>
-</Provided_Interface>
-
-<Provided_Interface name="result_int" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 54600"/>
-</Provided_Interface>
-
-<Provided_Interface name="result_enum" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 72400"/>
-</Provided_Interface>
-
-<Required_Interface name="test_present" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 31500"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_length" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyArray" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 45900"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_exist" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyStruct" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 62000"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_to_enum" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 67800"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_to_selector" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 76800"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_num" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 80400"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-<Required_Interface name="test_val" kind="Sporadic" layer="default" wcet="0" queue_size="1" priority="1" stack_size="1024" miat="0">
-    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 85300"/>
-    <Property name="Taste::InheritPI" value="true"/>
-    <Property name="Taste::Autonamed" value="true"/>
-</Required_Interface>
-
-    <Implementations>
-        <Implementation name="default" language="SDL"/>
-    </Implementations>
-</Function>
+<Connection >
+    <Source func_name="controller" ri_name="test_num"/>
+    <Target func_name="actuator" pi_name="test_num"/>
+    <Property name="Taste::coordinates" value="49600 80400 92900 81100"/>
+</Connection>
 
 <Connection >
-    <Source func_name="controller" ri_name="test_to_enum"/>
-    <Target func_name="actuator" pi_name="test_to_enum"/>
-    <Property name="Taste::coordinates" value="49600 67800 92900 67800"/>
+    <Source func_name="controller" ri_name="test_derived_length"/>
+    <Target func_name="actuator" pi_name="test_derived_length"/>
+    <Property name="Taste::coordinates" value="49600 105700 71200 105700 92900 105500"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_length_fixed"/>
+    <Target func_name="actuator" pi_name="test_length_fixed"/>
+    <Property name="Taste::coordinates" value="49600 92600 92900 92600"/>
 </Connection>
 
 <Connection >
@@ -146,27 +194,27 @@
 </Connection>
 
 <Connection >
-    <Source func_name="actuator" ri_name="result_int"/>
-    <Target func_name="controller" pi_name="result_int"/>
-    <Property name="Taste::coordinates" value="92600 54700 49300 54600"/>
-</Connection>
-
-<Connection >
-    <Source func_name="actuator" ri_name="result_enum"/>
-    <Target func_name="controller" pi_name="result_enum"/>
-    <Property name="Taste::coordinates" value="92600 72200 49300 72400"/>
-</Connection>
-
-<Connection >
     <Source func_name="controller" ri_name="test_val"/>
     <Target func_name="actuator" pi_name="test_val"/>
     <Property name="Taste::coordinates" value="49600 85300 92900 85300"/>
 </Connection>
 
 <Connection >
-    <Source func_name="controller" ri_name="test_num"/>
-    <Target func_name="actuator" pi_name="test_num"/>
-    <Property name="Taste::coordinates" value="49600 80400 71200 80400 92900 81100"/>
+    <Source func_name="controller" ri_name="test_exist"/>
+    <Target func_name="actuator" pi_name="test_exist"/>
+    <Property name="Taste::coordinates" value="49600 62000 92900 61500"/>
+</Connection>
+
+<Connection >
+    <Source func_name="actuator" ri_name="result_int"/>
+    <Target func_name="controller" pi_name="result_int"/>
+    <Property name="Taste::coordinates" value="92600 54700 49300 54600"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_to_enum"/>
+    <Target func_name="actuator" pi_name="test_to_enum"/>
+    <Property name="Taste::coordinates" value="49600 67800 92900 67800"/>
 </Connection>
 
 <Connection >
@@ -182,9 +230,15 @@
 </Connection>
 
 <Connection >
-    <Source func_name="controller" ri_name="test_exist"/>
-    <Target func_name="actuator" pi_name="test_exist"/>
-    <Property name="Taste::coordinates" value="49600 62000 92900 61500"/>
+    <Source func_name="actuator" ri_name="result_enum"/>
+    <Target func_name="controller" pi_name="result_enum"/>
+    <Property name="Taste::coordinates" value="92600 72200 49300 72400"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="test_length_derived_fixed"/>
+    <Target func_name="actuator" pi_name="test_length_derived_fixed"/>
+    <Property name="Taste::coordinates" value="49600 98300 92900 98300"/>
 </Connection>
 
 <Connection >
