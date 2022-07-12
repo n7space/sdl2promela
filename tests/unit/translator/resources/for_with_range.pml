@@ -24,6 +24,30 @@ inline Taskwithloop_0_transition(id)
         od;
       }
       ;
+      {
+        int x;
+        x = 1;
+        do
+        ::(x < 3)->
+          MyInteger_assign_value(global_state.taskwithloop.y, (global_state.taskwithloop.y + x));
+          x = (x + 1);
+        ::else->
+          break;
+        od;
+      }
+      ;
+      {
+        int x;
+        x = 0;
+        do
+        ::(x < 4)->
+          MyInteger_assign_value(global_state.taskwithloop.y, (global_state.taskwithloop.y + x));
+          x = (x + 1);
+        ::else->
+          break;
+        od;
+      }
+      ;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
       transition_id = -1;
     fi;

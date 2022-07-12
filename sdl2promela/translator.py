@@ -889,11 +889,16 @@ def __generate_for_over_a_numeric_range(
 
     iteratorReference = VariableReferenceBuilder(task.iteratorName.variableName).build()
 
+    if range.start is not None:
+        start_expression = __generate_expression(context, range.start)
+    else:
+        start_expression = promelamodel.IntegerValue(0)
+
     block_builder.withStatements(
         [
             AssignmentBuilder()
             .withTarget(iteratorReference)
-            .withSource(__generate_expression(context, range.start))
+            .withSource(start_expression)
             .build()
         ]
     )
