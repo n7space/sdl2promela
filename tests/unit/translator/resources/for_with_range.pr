@@ -33,6 +33,8 @@ system Taskwithloop;
 process Taskwithloop;
     /* CIF TEXT (664, 109), (267, 140) */
     DCL y MyInteger;
+    DCL my_arr MyArray;
+    DCL my_data MyData;
     /* CIF ENDTEXT */
     /* CIF START (320, 10), (70, 35) */
     START;
@@ -53,6 +55,13 @@ endfor;
 y := y + x
 endfor;
             task for x in RANGE(4):
+y := y + x
+endfor;
+            task for x in RANGE(length(my_arr)):
+my_arr(x) := y
+endfor;
+            task my_data := {1, 2, 1, 2};
+            task for x in RANGE(length(my_data)):
 y := y + x
 endfor;
             /* CIF NEXTSTATE (450, 273), (70, 35) */
