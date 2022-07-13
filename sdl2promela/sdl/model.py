@@ -859,7 +859,10 @@ def convert(source: ogAST.TaskForLoop):
     task.iteratorName.type = for_loop["type"]
     if for_loop["range"]:
         range = NumericForLoopRange()
-        range.start = convert(for_loop["range"]["start"])
+        if for_loop["range"]["start"] is None:
+            range.start = None
+        else:
+            range.start = convert(for_loop["range"]["start"])
         range.stop = convert(for_loop["range"]["stop"])
         range.step = convert(for_loop["range"]["step"])
         task.range = range
