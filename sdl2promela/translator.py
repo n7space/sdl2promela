@@ -560,7 +560,13 @@ def __get_state_name(context: Context, state: sdlmodel.State) -> str:
 
 
 def __get_remote_function_name(context: Context, output: sdlmodel.Output) -> str:
-    return context.sdl_model.process_name + SEPARATOR + "RI" + SEPARATOR + output.name
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "RI"
+        + SEPARATOR
+        + output.name
+    )
 
 
 def __generate_procedure_inline(
