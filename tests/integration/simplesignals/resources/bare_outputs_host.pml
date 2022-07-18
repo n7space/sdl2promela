@@ -27,7 +27,7 @@ int inited;
 chan signal_in_channel = [1] of {signal_in_data};
 chan signal_out_channel = [1] of {signal_out_data};
 
-inline bare_outputs_0_RI_0_signal_out()
+inline Bare_outputs_0_RI_0_signal_out()
 {
     signal_out_data var0;
     signal_out_channel!var0;

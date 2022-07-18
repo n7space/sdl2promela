@@ -10,7 +10,7 @@ chan environment_result_channel = [2] of {TestInteger};
 chan flowcontrol_work_channel = [2] of {TestInteger};
 system_state global_state;
 
-inline FlowControl_0_RI_0_result(controller_result_p1)
+inline Flowcontrol_0_RI_0_result(controller_result_p1)
 {
     environment_result_channel!controller_result_p1;
 }
