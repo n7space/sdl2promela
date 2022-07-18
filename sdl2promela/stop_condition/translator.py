@@ -528,8 +528,12 @@ def _find_first_variable(
     element_name = typing.cast(
         model.VariableReference, selector.elements[index]
     ).name.lower()
+    if process.instance_of_ref:
+        process_variables = process.instance_of_ref.variables
+    else:
+        process_variables = process.variables
     variable_name = variable_prefix + element_name
-    if variable_name not in process.variables:
+    if variable_name not in process_variables:
         raise TranslateException(
             f"Cannot find variable '{element_name}' ({variable_name})"
         )
@@ -537,7 +541,7 @@ def _find_first_variable(
     return FirstVariableInfo(
         process_name,
         variable_name,
-        process.variables[variable_name][0],
+        process_variables[variable_name][0],
         index + 1,
         True,
         None,
