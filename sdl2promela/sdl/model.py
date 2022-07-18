@@ -1567,6 +1567,8 @@ class Model:
 
     def __gather_procedures(self):
         for src_procedure in self.source.procedures:
+            if src_procedure.external:
+                continue
             procedure = Procedure()
             procedure.name = src_procedure.inputString
             procedure.variables = src_procedure.variables
