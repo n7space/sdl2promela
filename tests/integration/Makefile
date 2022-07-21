@@ -42,7 +42,8 @@ TESTS= \
 	stop_condition_queue_last_filter_out \
 	builtin_functions \
 	timers \
-	stop_condition_function_type
+	stop_condition_function_type \
+    output_observer
 
 .PHONY: $(TESTS) check
 
