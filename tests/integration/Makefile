@@ -43,7 +43,8 @@ TESTS= \
 	builtin_functions \
 	timers \
 	stop_condition_function_type \
-    output_observer
+    output_observer \
+	output_observer_env
 
 .PHONY: $(TESTS) check
 
