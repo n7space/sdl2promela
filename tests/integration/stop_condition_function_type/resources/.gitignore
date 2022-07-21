@@ -1,5 +1,6 @@
 default_attributes.xml
 
+taste/*.aadl
 taste/.cache/
 taste/*.pro.user
 
