@@ -30,6 +30,12 @@ taste/work/actuator/SDL/src/*
 !taste/work/actuator/SDL/src/dataview-uniq.asn
 
 # Except observer
+!taste/work/modelchecking/
+taste/work/modelchecking/*
+!taste/work/modelchecking/properties
+taste/work/modelchecking/properties/*
+!taste/work/modelchecking/properties/observer
+taste/work/modelchecking/properties/observer/*
 !taste/work/modelchecking/properties/observer/observer.asn
 !taste/work/modelchecking/properties/observer/observer_datamodel.asn
 !taste/work/modelchecking/properties/observer/observer.pr
