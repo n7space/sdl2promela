@@ -1,0 +1,57 @@
+system zero_observer;
+    /* CIF TEXT (144, 214), (507, 136) */
+    use datamodel comment 'observer.asn';
+    
+    signal f1_in (MyInteger) renames output f1 from controller to actuator;
+    signal f2_in (MyInteger) renames output f2 from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to zero_observer with f1_in,
+f2_in;
+        from zero_observer to env with f1_in,
+f2_in;
+    endchannel;
+    block zero_observer;
+        signalroute r
+            from env to zero_observer with f1_in,
+f2_in;
+            from zero_observer to env with f1_in,
+f2_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process zero_observer;
+            /* CIF TEXT (0, 57), (256, 112) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            /* CIF ENDTEXT */
+            /* CIF START (61, 203), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (61, 258), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (511, 214), (70, 35) */
+            state Wait;
+                /* CIF input (511, 269), (70, 35) */
+                input f2_in(y);
+                    /* CIF task (511, 324), (70, 35) */
+                    task y := 0;
+                    /* CIF output (511, 379), (70, 35) */
+                    output f2_in(y);
+                    /* CIF NEXTSTATE (511, 434), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+            /* CIF state (324, 204), (70, 35) */
+            state Wait;
+                /* CIF input (324, 259), (70, 35) */
+                input f1_in(x);
+                    /* CIF task (324, 314), (70, 35) */
+                    task x := 0;
+                    /* CIF output (324, 369), (70, 35) */
+                    output f1_in(x);
+                    /* CIF NEXTSTATE (324, 424), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+        endprocess zero_observer;
+    endblock;
+endsystem;

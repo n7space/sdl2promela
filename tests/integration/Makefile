@@ -44,7 +44,8 @@ TESTS= \
 	timers \
 	stop_condition_function_type \
     output_observer \
-	output_observer_env
+	output_observer_env \
+	multi_output_observer
 
 .PHONY: $(TESTS) check
 
