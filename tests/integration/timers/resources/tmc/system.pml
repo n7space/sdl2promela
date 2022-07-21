@@ -12,8 +12,8 @@ bool timer_manager_data[1];
 chan Actuator_ping_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Actuator_0_watchdog_set()
 {
     timer_manager_data[0] = true;
@@ -63,37 +63,46 @@ active proctype timer_manager_proc() priority 1
 active proctype Actuator_ping() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Actuator_ping_channel?_;
-        Actuator_lock?token;
-        Actuator_0_PI_0_ping();
-        Actuator_lock!token;
+        nempty(Actuator_ping_channel);
+        Actuator_lock?_;
+        if
+        ::  nempty(Actuator_ping_channel);
+            Actuator_ping_channel?_;
+            Actuator_0_PI_0_ping();
+        ::  empty(Actuator_ping_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
     }
     od;
 }
 active proctype Controller_pong() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Controller_pong_channel?_;
-        Controller_lock?token;
-        Controller_0_PI_0_pong();
-        Controller_lock!token;
+        nempty(Controller_pong_channel);
+        Controller_lock?_;
+        if
+        ::  nempty(Controller_pong_channel);
+            Controller_pong_channel?_;
+            Controller_0_PI_0_pong();
+        ::  empty(Controller_pong_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
 init
 {
     atomic {
-        int init_token = 1;
-        Controller_0_init();
-        Controller_lock!init_token;
         Actuator_0_init();
-        Actuator_lock!init_token;
+        Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

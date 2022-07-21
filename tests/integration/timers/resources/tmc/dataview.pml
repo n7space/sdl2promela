@@ -3900,12 +3900,20 @@ inline Demo_Timer_Manager_Periodic_Events_elem_assign_value(dst, src)
     Demo_Timer_Manager_Periodic_Events_elem_period_assign_value(dst.period, src.period);
     Demo_Timer_Manager_Periodic_Events_elem_event_assign_value(dst.event, src.event);
 }
+inline Demo_Timer_Manager_Periodic_Events_elem_init_value(dst)
+{
+    skip;
+}
 inline Demo_Timer_Manager_Periodic_Events_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 0)
+    for(i : 0 .. (src.length - 1))
     {
         Demo_Timer_Manager_Periodic_Events_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 0)
+    {
+        Demo_Timer_Manager_Periodic_Events_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -5947,6 +5955,10 @@ inline Events_Ty_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline Events_Ty_elem_init_value(dst)
+{
+    skip;
+}
 inline Events_ty_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -5954,9 +5966,13 @@ inline Events_ty_elem_selection_assign_value(dst, src)
 inline Events_Ty_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 9)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 9)
+    {
+        Events_Ty_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -6656,6 +6672,10 @@ inline System_State_actuator_queue_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline System_State_actuator_queue_elem_init_value(dst)
+{
+    skip;
+}
 inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -6663,9 +6683,13 @@ inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 inline System_State_actuator_queue_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 1)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 1)
+    {
+        System_State_actuator_queue_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -7365,6 +7389,10 @@ inline System_State_controller_queue_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline System_State_controller_queue_elem_init_value(dst)
+{
+    skip;
+}
 inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -7372,9 +7400,13 @@ inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 inline System_State_controller_queue_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 1)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 1)
+    {
+        System_State_controller_queue_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
