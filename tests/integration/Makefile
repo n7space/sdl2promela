@@ -46,7 +46,8 @@ TESTS= \
 	output_observer \
 	output_observer_env \
 	multi_output_observer \
-	observer_partial_specification
+	observer_partial_specification \
+	output_observer_duplicate
 
 .PHONY: $(TESTS) check
 
