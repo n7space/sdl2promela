@@ -378,6 +378,27 @@ class UnaryExpression(Expression):
         )
 
 
+class ConditionalExpression(Expression):
+    """Conditional ternary expression."""
+
+    condition: Expression
+    """Condition expression."""
+
+    trueExpression: Expression
+    """Expression evaluated when condition is true."""
+
+    falseExpression: Expression
+    """Expression evaluated when condition is false."""
+
+    def __init__(self):
+        self.condition = None
+        self.trueExpression = None
+        self.falseExpression = None
+
+    def __str__(self):
+        return f"ConditionalExpression(condition={self.condition}, trueExpression={self.trueExpression}, falseExpression={self.falseExpression})"
+
+
 class ProcedureCall(Expression):
     """Procedure call."""
 
@@ -1180,6 +1201,18 @@ def convert(source: ogAST.PrimIndex):
 
     result.type = source.exprType
 
+    return result
+
+
+@dispatch(ogAST.PrimConditional)
+def convert(source: ogAST.PrimConditional):
+    result = ConditionalExpression()
+
+    result.condition = convert(source.value["if"])
+    result.trueExpression = convert(source.value["then"])
+    result.falseExpression = convert(source.value["else"])
+
+    result.type = source.exprType
     return result
 
 
