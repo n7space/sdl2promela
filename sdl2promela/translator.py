@@ -27,6 +27,7 @@ from .promela.modelbuilder import SwitchBuilder
 from .promela.modelbuilder import MemberAccessBuilder
 from .promela.modelbuilder import ArrayAccessBuilder
 from .promela.modelbuilder import ForLoopBuilder
+from .promela.modelbuilder import ConditionalExpressionBuilder
 from .utils import resolve_asn1_type
 from .utils import Asn1Type
 
@@ -501,6 +502,17 @@ def __generate_expression(context: Context, expression: sdlmodel.UnaryExpression
     return (
         UnaryExpressionBuilder(operator)
         .withExpression(__generate_expression(context, expression.expression))
+        .build()
+    )
+
+
+@dispatch(Context, sdlmodel.ConditionalExpression)
+def __generate_expression(context: Context, expression: sdlmodel.ConditionalExpression):
+    return (
+        ConditionalExpressionBuilder()
+        .withCondition(__generate_expression(context, expression.condition))
+        .withTrueExpression(__generate_expression(context, expression.trueExpression))
+        .withFalseExpression(__generate_expression(context, expression.falseExpression))
         .build()
     )
 

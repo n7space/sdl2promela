@@ -152,6 +152,17 @@ def generate(context: Context, expression: model.UnaryExpression):
     context.output(")")
 
 
+@dispatch(Context, model.ConditionalExpression)
+def generate(context: Context, expression: model.ConditionalExpression):
+    context.output("(")
+    generate(context, expression.condition)
+    context.output(" -> ")
+    generate(context, expression.trueExpression)
+    context.output(" : ")
+    generate(context, expression.falseExpression)
+    context.output(")")
+
+
 @dispatch(Context, model.Call)
 def generate(context: Context, call: model.Call):
     context.output(call.target)
