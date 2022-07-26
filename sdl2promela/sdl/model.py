@@ -894,6 +894,12 @@ def convert(source: ogAST.TaskAssign):
     return actions
 
 
+@dispatch(ogAST.TaskInformalText)
+def convert(source: ogAST.TaskInformalText):
+    # Ignore informal text
+    return None
+
+
 @dispatch(ogAST.PrimVariable)
 def convert(source: ogAST.PrimVariable):
     variableReference = VariableReference(source.value[0])
