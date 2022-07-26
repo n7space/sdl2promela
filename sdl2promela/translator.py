@@ -22,7 +22,6 @@ from .promela.modelbuilder import ModelBuilder
 from .promela.modelbuilder import DoBuilder
 from .promela.modelbuilder import BinaryExpressionBuilder
 from .promela.modelbuilder import UnaryExpressionBuilder
-from .promela.modelbuilder import ConditionalExpressionBuilder
 from .promela.modelbuilder import AlternativeBuilder
 from .promela.modelbuilder import SwitchBuilder
 from .promela.modelbuilder import MemberAccessBuilder
@@ -502,17 +501,6 @@ def __generate_expression(context: Context, expression: sdlmodel.UnaryExpression
     return (
         UnaryExpressionBuilder(operator)
         .withExpression(__generate_expression(context, expression.expression))
-        .build()
-    )
-
-
-@dispatch(Context, sdlmodel.ConditionalExpression)
-def __generate_expression(context: Context, expression: sdlmodel.ConditionalExpression):
-    return (
-        ConditionalExpressionBuilder()
-        .withCondition(__generate_expression(context, expression.condition))
-        .withTrueExpression(__generate_expression(context, expression.trueExpression))
-        .withFalseExpression(__generate_expression(context, expression.falseExpression))
         .build()
     )
 

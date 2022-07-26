@@ -85,24 +85,6 @@ class UnaryExpression(Expression):
         self.expr = None
 
 
-class ConditionalExpression(Expression):
-    """Conditional expression."""
-
-    condition: Expression
-    """Condition expression."""
-
-    trueExpression: Expression
-    """Expression evaluated when condition is true."""
-
-    falseExpression: Expression
-    """Expression evaluated when condition is false."""
-
-    def __init__(self):
-        self.condition = None
-        self.trueExpression = None
-        self.falseExpression = None
-
-
 class PrimaryExpression(Expression):
     """Base class for primary expressions"""
 

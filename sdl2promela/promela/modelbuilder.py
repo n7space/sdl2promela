@@ -24,7 +24,6 @@ from sdl2promela.promela.model import (
     MemberAccess,
     Assert,
     NeverClaim,
-    ConditionalExpression,
 )
 
 
@@ -527,54 +526,6 @@ class UnaryExpressionBuilder:
         :returns: The buider itself (for call chaining).
         """
         self.expression.expression = expression
-        return self
-
-
-class ConditionalExpressionBuilder:
-    """Conditional expression builder."""
-
-    expression: ConditionalExpression
-    """Build conditional expression."""
-
-    def __init__(self):
-        self.expression = ConditionalExpression()
-
-    def build(self) -> ConditionalExpression:
-        """
-        Retrieve the built conditional expression.
-        :returns: The built expression.
-        """
-        return self.expression
-
-    def withCondition(self, condition: Expression) -> "ConditionalExpressionBuilder":
-        """
-        Set the condition expression.
-        :param expression: the condition expression.
-        :returns: The builder itself (for call chaining).
-        """
-        self.expression.condition = condition
-        return self
-
-    def withTrueExpression(
-        self, expression: Expression
-    ) -> "ConditionalExpressionBuilder":
-        """
-        Set the true expression.
-        :param expression: the true expression.
-        :returns: The builder itself (for call chaining).
-        """
-        self.expression.trueExpression = expression
-        return self
-
-    def withFalseExpression(
-        self, expression: Expression
-    ) -> "ConditionalExpressionBuilder":
-        """
-        Set the false expression.
-        :param expression: the false expression.
-        :returns: The builder itself (for call chaining).
-        """
-        self.expression.falseExpression = expression
         return self
 
 
