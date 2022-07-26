@@ -92,5 +92,9 @@ def test_translates_simple_choice_access():
     translate_and_verify("simple_choice_access.pr", "simple_choice_access.pml")
 
 
+def test_translates_informal_text():
+    translate_and_verify("informal_text.pr", "informal_text.pml")
+
+
 def test_translates_conditional_expression():
     translate_and_verify("conditional_expression.pr", "conditional_expression.pml")
