@@ -1,0 +1,35 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (378, 420), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    dcl reached MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (549, 128), (70, 35) */
+    START;
+        /* CIF task (541, 183), (84, 35) */
+        task param := 3;
+        /* CIF task (536, 238), (94, 35) */
+        task reached := 0;
+        /* CIF output (536, 293), (94, 35) */
+        output ping(param);
+        /* CIF NEXTSTATE (549, 343), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (901, 167), (70, 35) */
+    state Wait;
+        /* CIF input (886, 222), (98, 35) */
+        input pong(param);
+            /* CIF decision (901, 277), (70, 50) */
+            decision param;
+                /* CIF ANSWER (856, 347), (70, 23) */
+                (0):
+                    /* CIF task (843, 390), (94, 35) */
+                    task reached := 1;
+                /* CIF ANSWER (946, 347), (70, 23) */
+                else:
+            enddecision;
+            /* CIF NEXTSTATE (901, 441), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Controller;

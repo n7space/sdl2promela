@@ -7852,12 +7852,20 @@ inline Actuator_Context_my_array_elem_range_check(Actuator_Context_my_array_elem
 {
     assert(((Actuator_Context_my_array_elem_vc >= 0) && (Actuator_Context_my_array_elem_vc <= 10000)));
 }
+inline Actuator_Context_my_array_elem_init_value(dst)
+{
+    Actuator_Context_my_array_elem_assign_value(dst, 0);
+}
 inline Actuator_Context_my_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Actuator_Context_my_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Actuator_Context_my_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -7874,12 +7882,20 @@ inline Actuator_Context_my_derived_array_elem_range_check(Actuator_Context_my_de
 {
     assert(((Actuator_Context_my_derived_array_elem_vc >= 0) && (Actuator_Context_my_derived_array_elem_vc <= 10000)));
 }
+inline Actuator_Context_my_derived_array_elem_init_value(dst)
+{
+    Actuator_Context_my_derived_array_elem_assign_value(dst, 0);
+}
 inline Actuator_Context_my_derived_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Actuator_Context_my_derived_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Actuator_Context_my_derived_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -7938,6 +7954,10 @@ inline Actuator_Context_my_fixed_elem_range_check(Actuator_Context_my_fixed_elem
 {
     assert(((Actuator_Context_my_fixed_elem_vc >= 0) && (Actuator_Context_my_fixed_elem_vc <= 10000)));
 }
+inline Actuator_Context_my_fixed_elem_init_value(dst)
+{
+    Actuator_Context_my_fixed_elem_assign_value(dst, 0);
+}
 inline Actuator_Context_my_fixed_assign_value(dst, src)
 {
     int i;
@@ -7954,6 +7974,10 @@ inline Actuator_Context_my_derived_fixed_elem_assign_value(dst, src)
 inline Actuator_Context_my_derived_fixed_elem_range_check(Actuator_Context_my_derived_fixed_elem_vc)
 {
     assert(((Actuator_Context_my_derived_fixed_elem_vc >= 0) && (Actuator_Context_my_derived_fixed_elem_vc <= 10000)));
+}
+inline Actuator_Context_my_derived_fixed_elem_init_value(dst)
+{
+    Actuator_Context_my_derived_fixed_elem_assign_value(dst, 0);
 }
 inline Actuator_Context_my_derived_fixed_assign_value(dst, src)
 {
@@ -8084,12 +8108,20 @@ inline Controller_Context_my_arr_elem_range_check(Controller_Context_my_arr_elem
 {
     assert(((Controller_Context_my_arr_elem_vc >= 0) && (Controller_Context_my_arr_elem_vc <= 10000)));
 }
+inline Controller_Context_my_arr_elem_init_value(dst)
+{
+    Controller_Context_my_arr_elem_assign_value(dst, 0);
+}
 inline Controller_Context_my_arr_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Controller_Context_my_arr_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Controller_Context_my_arr_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8148,6 +8180,10 @@ inline Controller_Context_my_fixed_elem_range_check(Controller_Context_my_fixed_
 {
     assert(((Controller_Context_my_fixed_elem_vc >= 0) && (Controller_Context_my_fixed_elem_vc <= 10000)));
 }
+inline Controller_Context_my_fixed_elem_init_value(dst)
+{
+    Controller_Context_my_fixed_elem_assign_value(dst, 0);
+}
 inline Controller_Context_my_fixed_assign_value(dst, src)
 {
     int i;
@@ -8165,12 +8201,20 @@ inline Controller_Context_my_derived_array_elem_range_check(Controller_Context_m
 {
     assert(((Controller_Context_my_derived_array_elem_vc >= 0) && (Controller_Context_my_derived_array_elem_vc <= 10000)));
 }
+inline Controller_Context_my_derived_array_elem_init_value(dst)
+{
+    Controller_Context_my_derived_array_elem_assign_value(dst, 0);
+}
 inline Controller_Context_my_derived_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Controller_Context_my_derived_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Controller_Context_my_derived_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8186,6 +8230,10 @@ inline Controller_Context_my_derived_fixed_elem_assign_value(dst, src)
 inline Controller_Context_my_derived_fixed_elem_range_check(Controller_Context_my_derived_fixed_elem_vc)
 {
     assert(((Controller_Context_my_derived_fixed_elem_vc >= 0) && (Controller_Context_my_derived_fixed_elem_vc <= 10000)));
+}
+inline Controller_Context_my_derived_fixed_elem_init_value(dst)
+{
+    Controller_Context_my_derived_fixed_elem_assign_value(dst, 0);
 }
 inline Controller_Context_my_derived_fixed_assign_value(dst, src)
 {
@@ -8247,12 +8295,20 @@ inline MyArray_elem_range_check(MyArray_elem_vc)
 {
     assert(((MyArray_elem_vc >= 0) && (MyArray_elem_vc <= 10000)));
 }
+inline MyArray_elem_init_value(dst)
+{
+    MyArray_elem_assign_value(dst, 0);
+}
 inline MyArray_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         MyArray_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        MyArray_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8269,12 +8325,20 @@ inline MyDerivedArray_elem_range_check(MyDerivedArray_elem_vc)
 {
     assert(((MyDerivedArray_elem_vc >= 0) && (MyDerivedArray_elem_vc <= 10000)));
 }
+inline MyDerivedArray_elem_init_value(dst)
+{
+    MyDerivedArray_elem_assign_value(dst, 0);
+}
 inline MyDerivedArray_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         MyDerivedArray_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        MyDerivedArray_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8358,6 +8422,10 @@ inline MyFixed_elem_range_check(MyFixed_elem_vc)
 {
     assert(((MyFixed_elem_vc >= 0) && (MyFixed_elem_vc <= 10000)));
 }
+inline MyFixed_elem_init_value(dst)
+{
+    MyFixed_elem_assign_value(dst, 0);
+}
 inline MyFixed_assign_value(dst, src)
 {
     int i;
@@ -8374,6 +8442,10 @@ inline MyDerivedFixed_elem_assign_value(dst, src)
 inline MyDerivedFixed_elem_range_check(MyDerivedFixed_elem_vc)
 {
     assert(((MyDerivedFixed_elem_vc >= 0) && (MyDerivedFixed_elem_vc <= 10000)));
+}
+inline MyDerivedFixed_elem_init_value(dst)
+{
+    MyDerivedFixed_elem_assign_value(dst, 0);
 }
 inline MyDerivedFixed_assign_value(dst, src)
 {
@@ -8454,12 +8526,20 @@ inline Actuator_Event_msg_in_test_derived_length_p1_elem_range_check(Actuator_Ev
 {
     assert(((Actuator_Event_msg_in_test_derived_length_p1_elem_vc >= 0) && (Actuator_Event_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Actuator_Event_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Actuator_Event_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Actuator_Event_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Actuator_Event_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Actuator_Event_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8508,12 +8588,20 @@ inline Actuator_Event_msg_in_test_length_p1_elem_range_check(Actuator_Event_msg_
 {
     assert(((Actuator_Event_msg_in_test_length_p1_elem_vc >= 0) && (Actuator_Event_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Actuator_Event_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Actuator_Event_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Actuator_Event_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Actuator_Event_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Actuator_Event_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8533,6 +8621,10 @@ inline Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst,
 inline Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_range_check(Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Actuator_Event_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Actuator_Event_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -8554,6 +8646,10 @@ inline Actuator_Event_msg_in_test_length_fixed_p1_elem_assign_value(dst, src)
 inline Actuator_Event_msg_in_test_length_fixed_p1_elem_range_check(Actuator_Event_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Actuator_Event_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Actuator_Event_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Actuator_Event_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Actuator_Event_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Actuator_Event_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -8861,12 +8957,20 @@ inline Controller_Event_msg_out_test_derived_length_p1_elem_range_check(Controll
 {
     assert(((Controller_Event_msg_out_test_derived_length_p1_elem_vc >= 0) && (Controller_Event_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Controller_Event_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Controller_Event_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Controller_Event_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Controller_Event_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Controller_Event_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8915,12 +9019,20 @@ inline Controller_Event_msg_out_test_length_p1_elem_range_check(Controller_Event
 {
     assert(((Controller_Event_msg_out_test_length_p1_elem_vc >= 0) && (Controller_Event_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Controller_Event_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Controller_Event_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Controller_Event_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Controller_Event_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Controller_Event_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -8940,6 +9052,10 @@ inline Controller_Event_msg_out_test_length_derived_fixed_p1_elem_assign_value(d
 inline Controller_Event_msg_out_test_length_derived_fixed_p1_elem_range_check(Controller_Event_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Controller_Event_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Controller_Event_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Controller_Event_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Controller_Event_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Controller_Event_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -8961,6 +9077,10 @@ inline Controller_Event_msg_out_test_length_fixed_p1_elem_assign_value(dst, src)
 inline Controller_Event_msg_out_test_length_fixed_p1_elem_range_check(Controller_Event_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Controller_Event_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Controller_Event_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Controller_Event_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Controller_Event_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Controller_Event_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -9159,12 +9279,20 @@ inline Function_Event_actuator_msg_in_test_derived_length_p1_elem_range_check(Fu
 {
     assert(((Function_Event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Function_Event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Function_Event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Function_Event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Function_Event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Function_Event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Function_Event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9213,12 +9341,20 @@ inline Function_Event_actuator_msg_in_test_length_p1_elem_range_check(Function_E
 {
     assert(((Function_Event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Function_Event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Function_Event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Function_Event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Function_Event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Function_Event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Function_Event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9238,6 +9374,10 @@ inline Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_v
 inline Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Function_Event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Function_Event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -9259,6 +9399,10 @@ inline Function_Event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst
 inline Function_Event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Function_Event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Function_Event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Function_Event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Function_Event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Function_Event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Function_Event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -9566,12 +9710,20 @@ inline Function_Event_controller_msg_out_test_derived_length_p1_elem_range_check
 {
     assert(((Function_Event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Function_Event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Function_Event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Function_Event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Function_Event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Function_Event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Function_Event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9620,12 +9772,20 @@ inline Function_Event_controller_msg_out_test_length_p1_elem_range_check(Functio
 {
     assert(((Function_Event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Function_Event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Function_Event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Function_Event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Function_Event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Function_Event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Function_Event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9645,6 +9805,10 @@ inline Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_assig
 inline Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Function_Event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Function_Event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -9666,6 +9830,10 @@ inline Function_Event_controller_msg_out_test_length_fixed_p1_elem_assign_value(
 inline Function_Event_controller_msg_out_test_length_fixed_p1_elem_range_check(Function_Event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Function_Event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Function_Event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Function_Event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Function_Event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Function_Event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -9885,12 +10053,20 @@ inline Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_ra
 {
     assert(((Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Named_Function_Event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9939,12 +10115,20 @@ inline Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_range_chec
 {
     assert(((Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Named_Function_Event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Named_Function_Event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -9964,6 +10148,10 @@ inline Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_e
 inline Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Named_Function_Event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -9985,6 +10173,10 @@ inline Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_assi
 inline Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Named_Function_Event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -10292,12 +10484,20 @@ inline Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem
 {
     assert(((Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Named_Function_Event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Named_Function_Event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -10346,12 +10546,20 @@ inline Named_Function_Event_event_controller_msg_out_test_length_p1_elem_range_c
 {
     assert(((Named_Function_Event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Named_Function_Event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Named_Function_Event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Named_Function_Event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Named_Function_Event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Named_Function_Event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -10371,6 +10579,10 @@ inline Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p
 inline Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Named_Function_Event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -10392,6 +10604,10 @@ inline Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_a
 inline Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Named_Function_Event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -10620,12 +10836,20 @@ inline Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_range_c
 {
     assert(((Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Interface_Event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Interface_Event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -10674,12 +10898,20 @@ inline Interface_Event_event_actuator_msg_in_test_length_p1_elem_range_check(Int
 {
     assert(((Interface_Event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Interface_Event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Interface_Event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Interface_Event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Interface_Event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Interface_Event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Interface_Event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -10699,6 +10931,10 @@ inline Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_a
 inline Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Interface_Event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -10720,6 +10956,10 @@ inline Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_va
 inline Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Interface_Event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Interface_Event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -11027,12 +11267,20 @@ inline Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_rang
 {
     assert(((Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Interface_Event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Interface_Event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11081,12 +11329,20 @@ inline Interface_Event_event_controller_msg_out_test_length_p1_elem_range_check(
 {
     assert(((Interface_Event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Interface_Event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Interface_Event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Interface_Event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Interface_Event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Interface_Event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Interface_Event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11106,6 +11362,10 @@ inline Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_ele
 inline Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Interface_Event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -11127,6 +11387,10 @@ inline Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_assign
 inline Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Interface_Event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Interface_Event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -11364,12 +11628,20 @@ inline Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1
 {
     assert(((Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11418,12 +11690,20 @@ inline Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_ra
 {
     assert(((Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_input_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11443,6 +11723,10 @@ inline Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fi
 inline Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -11464,6 +11748,10 @@ inline Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_e
 inline Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_input_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -11771,12 +12059,20 @@ inline Observable_Event_input_event_event_controller_msg_out_test_derived_length
 {
     assert(((Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11825,12 +12121,20 @@ inline Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem
 {
     assert(((Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_input_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -11850,6 +12154,10 @@ inline Observable_Event_input_event_event_controller_msg_out_test_length_derived
 inline Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_input_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -11871,6 +12179,10 @@ inline Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p
 inline Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_input_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -12100,12 +12412,20 @@ inline Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p
 {
     assert(((Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12154,12 +12474,20 @@ inline Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_r
 {
     assert(((Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_output_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12179,6 +12507,10 @@ inline Observable_Event_output_event_event_actuator_msg_in_test_length_derived_f
 inline Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -12200,6 +12532,10 @@ inline Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_
 inline Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_output_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -12507,12 +12843,20 @@ inline Observable_Event_output_event_event_controller_msg_out_test_derived_lengt
 {
     assert(((Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12561,12 +12905,20 @@ inline Observable_Event_output_event_event_controller_msg_out_test_length_p1_ele
 {
     assert(((Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_output_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12586,6 +12938,10 @@ inline Observable_Event_output_event_event_controller_msg_out_test_length_derive
 inline Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_output_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -12607,6 +12963,10 @@ inline Observable_Event_output_event_event_controller_msg_out_test_length_fixed_
 inline Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_output_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -12836,12 +13196,20 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_lengt
 {
     assert(((Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12890,12 +13258,20 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_ele
 {
     assert(((Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -12915,6 +13291,10 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derive
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -12936,6 +13316,10 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -13243,12 +13627,20 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_test_derived_le
 {
     assert(((Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Observable_Event_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -13297,12 +13689,20 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_
 {
     assert(((Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Observable_Event_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -13322,6 +13722,10 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_der
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -13343,6 +13747,10 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_fix
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Observable_Event_unhandled_input_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -13602,12 +14010,20 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_e
 {
     assert(((Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -13656,12 +14072,20 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_rang
 {
     assert(((Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -13681,6 +14105,10 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixe
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -13702,6 +14130,10 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_ele
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -14009,12 +14441,20 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p
 {
     assert(((Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14063,12 +14503,20 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_r
 {
     assert(((Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14088,6 +14536,10 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_f
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -14109,6 +14561,10 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_input_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -14338,12 +14794,20 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_
 {
     assert(((Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14392,12 +14856,20 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_ran
 {
     assert(((Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14417,6 +14889,10 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fix
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -14438,6 +14914,10 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_el
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -14745,12 +15225,20 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_
 {
     assert(((Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14799,12 +15287,20 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_
 {
     assert(((Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -14824,6 +15320,10 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -14845,6 +15345,10 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_output_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -15074,12 +15578,20 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_
 {
     assert(((Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15128,12 +15640,20 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_
 {
     assert(((Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15153,6 +15673,10 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -15174,6 +15698,10 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -15481,12 +16009,20 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_leng
 {
     assert(((Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        Events_Ty_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15535,12 +16071,20 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_el
 {
     assert(((Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15560,6 +16104,10 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_deriv
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -15581,6 +16129,10 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_range_check(Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -15797,6 +16349,10 @@ inline Events_Ty_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline Events_Ty_elem_init_value(dst)
+{
+    skip;
+}
 inline Events_ty_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -15804,9 +16360,13 @@ inline Events_ty_elem_selection_assign_value(dst, src)
 inline Events_Ty_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 9)
+    for(i : 0 .. (src.length - 1))
     {
         Events_Ty_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 9)
+    {
+        Events_Ty_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15853,12 +16413,20 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_d
 {
     assert(((System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15907,12 +16475,20 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_l
 {
     assert(((System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -15932,6 +16508,10 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_l
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -15953,6 +16533,10 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_l
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -16260,12 +16844,20 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_tes
 {
     assert(((System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -16314,12 +16906,20 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_tes
 {
     assert(((System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -16339,6 +16939,10 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_tes
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -16360,6 +16964,10 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_tes
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -16589,12 +17197,20 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_
 {
     assert(((System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -16643,12 +17259,20 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_
 {
     assert(((System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -16668,6 +17292,10 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -16689,6 +17317,10 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -16996,12 +17628,20 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_te
 {
     assert(((System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17050,12 +17690,20 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_te
 {
     assert(((System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17075,6 +17723,10 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_te
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -17096,6 +17748,10 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_te
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -17325,12 +17981,20 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_te
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17379,12 +18043,20 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_te
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17404,6 +18076,10 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_te
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -17425,6 +18101,10 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_te
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -17732,12 +18412,20 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17786,12 +18474,20 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -17811,6 +18507,10 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -17832,6 +18532,10 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -18048,6 +18752,10 @@ inline System_State_actuator_queue_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline System_State_actuator_queue_elem_init_value(dst)
+{
+    skip;
+}
 inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -18055,9 +18763,13 @@ inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 inline System_State_actuator_queue_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 1)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_queue_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 1)
+    {
+        System_State_actuator_queue_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18104,12 +18816,20 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test
 {
     assert(((System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18158,12 +18878,20 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test
 {
     assert(((System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18183,6 +18911,10 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -18204,6 +18936,10 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -18511,12 +19247,20 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_t
 {
     assert(((System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_input_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18565,12 +19309,20 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_t
 {
     assert(((System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18590,6 +19342,10 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_t
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -18611,6 +19367,10 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_t
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -18840,12 +19600,20 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_tes
 {
     assert(((System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18894,12 +19662,20 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_tes
 {
     assert(((System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -18919,6 +19695,10 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_tes
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -18940,6 +19720,10 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_tes
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -19247,12 +20031,20 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
 {
     assert(((System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_output_event_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -19301,12 +20093,20 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
 {
     assert(((System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -19326,6 +20126,10 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -19347,6 +20151,10 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -19576,12 +20384,20 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -19630,12 +20446,20 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -19655,6 +20479,10 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -19676,6 +20504,10 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -19983,12 +20815,20 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_derived_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20037,12 +20877,20 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_vc <= 10000)));
 }
+inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst, 0);
+}
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_p1_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20062,6 +20910,10 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_range_check(System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_derived_fixed_p1_assign_value(dst, src)
 {
@@ -20083,6 +20935,10 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_range_check(System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc)
 {
     assert(((System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc >= 0) && (System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_vc <= 10000)));
+}
+inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_init_value(dst)
+{
+    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_elem_assign_value(dst, 0);
 }
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_length_fixed_p1_assign_value(dst, src)
 {
@@ -20299,6 +21155,10 @@ inline System_State_controller_queue_elem_assign_value(dst, src)
         skip;
     fi;
 }
+inline System_State_controller_queue_elem_init_value(dst)
+{
+    skip;
+}
 inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 {
     dst = src;
@@ -20306,9 +21166,13 @@ inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 inline System_State_controller_queue_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 1)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_queue_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 1)
+    {
+        System_State_controller_queue_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20395,12 +21259,20 @@ inline System_State_actuator_my_array_elem_range_check(System_State_actuator_my_
 {
     assert(((System_State_actuator_my_array_elem_vc >= 0) && (System_State_actuator_my_array_elem_vc <= 10000)));
 }
+inline System_State_actuator_my_array_elem_init_value(dst)
+{
+    System_State_actuator_my_array_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_my_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_my_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_actuator_my_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20417,12 +21289,20 @@ inline System_State_actuator_my_derived_array_elem_range_check(System_State_actu
 {
     assert(((System_State_actuator_my_derived_array_elem_vc >= 0) && (System_State_actuator_my_derived_array_elem_vc <= 10000)));
 }
+inline System_State_actuator_my_derived_array_elem_init_value(dst)
+{
+    System_State_actuator_my_derived_array_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_my_derived_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_actuator_my_derived_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_actuator_my_derived_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20481,6 +21361,10 @@ inline System_State_actuator_my_fixed_elem_range_check(System_State_actuator_my_
 {
     assert(((System_State_actuator_my_fixed_elem_vc >= 0) && (System_State_actuator_my_fixed_elem_vc <= 10000)));
 }
+inline System_State_actuator_my_fixed_elem_init_value(dst)
+{
+    System_State_actuator_my_fixed_elem_assign_value(dst, 0);
+}
 inline System_State_actuator_my_fixed_assign_value(dst, src)
 {
     int i;
@@ -20497,6 +21381,10 @@ inline System_State_actuator_my_derived_fixed_elem_assign_value(dst, src)
 inline System_State_actuator_my_derived_fixed_elem_range_check(System_State_actuator_my_derived_fixed_elem_vc)
 {
     assert(((System_State_actuator_my_derived_fixed_elem_vc >= 0) && (System_State_actuator_my_derived_fixed_elem_vc <= 10000)));
+}
+inline System_State_actuator_my_derived_fixed_elem_init_value(dst)
+{
+    System_State_actuator_my_derived_fixed_elem_assign_value(dst, 0);
 }
 inline System_State_actuator_my_derived_fixed_assign_value(dst, src)
 {
@@ -20609,12 +21497,20 @@ inline System_State_controller_my_arr_elem_range_check(System_State_controller_m
 {
     assert(((System_State_controller_my_arr_elem_vc >= 0) && (System_State_controller_my_arr_elem_vc <= 10000)));
 }
+inline System_State_controller_my_arr_elem_init_value(dst)
+{
+    System_State_controller_my_arr_elem_assign_value(dst, 0);
+}
 inline System_State_controller_my_arr_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 5)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_my_arr_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 5)
+    {
+        System_State_controller_my_arr_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20673,6 +21569,10 @@ inline System_State_controller_my_fixed_elem_range_check(System_State_controller
 {
     assert(((System_State_controller_my_fixed_elem_vc >= 0) && (System_State_controller_my_fixed_elem_vc <= 10000)));
 }
+inline System_State_controller_my_fixed_elem_init_value(dst)
+{
+    System_State_controller_my_fixed_elem_assign_value(dst, 0);
+}
 inline System_State_controller_my_fixed_assign_value(dst, src)
 {
     int i;
@@ -20690,12 +21590,20 @@ inline System_State_controller_my_derived_array_elem_range_check(System_State_co
 {
     assert(((System_State_controller_my_derived_array_elem_vc >= 0) && (System_State_controller_my_derived_array_elem_vc <= 10000)));
 }
+inline System_State_controller_my_derived_array_elem_init_value(dst)
+{
+    System_State_controller_my_derived_array_elem_assign_value(dst, 0);
+}
 inline System_State_controller_my_derived_array_assign_value(dst, src)
 {
     int i;
-    for(i : 0 .. 2)
+    for(i : 0 .. (src.length - 1))
     {
         System_State_controller_my_derived_array_elem_assign_value(dst.data[i], src.data[i]);
+    }
+    for(i : src.length .. 2)
+    {
+        System_State_controller_my_derived_array_elem_init_value(dst.data[i]);
     }
     dst.length = src.length;
 }
@@ -20711,6 +21619,10 @@ inline System_State_controller_my_derived_fixed_elem_assign_value(dst, src)
 inline System_State_controller_my_derived_fixed_elem_range_check(System_State_controller_my_derived_fixed_elem_vc)
 {
     assert(((System_State_controller_my_derived_fixed_elem_vc >= 0) && (System_State_controller_my_derived_fixed_elem_vc <= 10000)));
+}
+inline System_State_controller_my_derived_fixed_elem_init_value(dst)
+{
+    System_State_controller_my_derived_fixed_elem_assign_value(dst, 0);
 }
 inline System_State_controller_my_derived_fixed_assign_value(dst, src)
 {

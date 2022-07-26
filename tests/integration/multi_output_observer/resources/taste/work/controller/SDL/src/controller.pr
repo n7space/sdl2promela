@@ -1,0 +1,53 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (336, 365), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl test_param MyTestInteger;
+    dcl param MyInteger;
+    dcl error MyInteger;
+    dcl received MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1231, 217), (70, 35) */
+    state Test;
+        /* CIF input (1213, 272), (102, 35) */
+        input result(param);
+            /* CIF decision (1230, 327), (70, 50) */
+            decision param;
+                /* CIF ANSWER (1186, 397), (70, 23) */
+                (0):
+                    /* CIF task (1172, 440), (96, 35) */
+                    task received := 1;
+                /* CIF ANSWER (1276, 397), (70, 23) */
+                else:
+                    /* CIF task (1272, 440), (76, 35) */
+                    task error := 1;
+            enddecision;
+            /* CIF NEXTSTATE (1230, 491), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (846, 212), (70, 35) */
+    state Wait;
+        /* CIF input (819, 267), (121, 35) */
+        input test(test_param);
+            /* CIF task (798, 322), (164, 35) */
+            task param := test_param + 1;
+            /* CIF decision (815, 377), (130, 50) */
+            decision test_param mod 2;
+                /* CIF ANSWER (801, 447), (70, 23) */
+                (0):
+                    /* CIF output (795, 490), (80, 35) */
+                    output f1(param);
+                /* CIF ANSWER (891, 447), (70, 23) */
+                else:
+                    /* CIF output (885, 490), (80, 35) */
+                    output f2(param);
+            enddecision;
+            /* CIF NEXTSTATE (845, 541), (70, 35) */
+            NEXTSTATE Test;
+    endstate;
+endprocess Controller;

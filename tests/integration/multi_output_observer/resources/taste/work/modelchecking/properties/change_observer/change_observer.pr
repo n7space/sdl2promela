@@ -1,0 +1,54 @@
+system change_observer;
+    /* CIF TEXT (417, 291), (507, 136) */
+    use datamodel comment 'observer.asn';
+    
+    signal f1_in (MyInteger) renames output f1 from controller to actuator;
+    signal f2_in (MyInteger) renames output f2 from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to change_observer with f1_in,
+f1_in;
+        from change_observer to env with f1_in,
+f1_in;
+    endchannel;
+    block change_observer;
+        signalroute r
+            from env to change_observer with f1_in,
+f1_in;
+            from change_observer to env with f1_in,
+f1_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process change_observer;
+            /* CIF TEXT (0, 57), (256, 112) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            
+            /* CIF ENDTEXT */
+            /* CIF START (85, 223), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (85, 278), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (606, 303), (70, 35) */
+            state Wait;
+                /* CIF input (606, 358), (70, 35) */
+                input f2_in(y);
+                    /* CIF output (606, 413), (70, 35) */
+                    output f1_in(y);
+                    /* CIF NEXTSTATE (606, 468), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+            /* CIF state (350, 294), (70, 35) */
+            state Wait;
+                /* CIF input (336, 349), (97, 35) */
+                input f1_in(x);
+                    /* CIF output (336, 404), (97, 35) */
+                    output f1_in(x);
+                    /* CIF NEXTSTATE (350, 459), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+        endprocess change_observer;
+    endblock;
+endsystem;

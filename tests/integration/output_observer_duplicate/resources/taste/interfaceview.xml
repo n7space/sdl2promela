@@ -1,0 +1,81 @@
+<InterfaceView asn1file="output_observer_duplicate.acn">
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="39200 27700 75000 70700"/>
+<Provided_Interface name="test" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" priority="1" wcet="0">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="39200 34800"/>
+</Provided_Interface>
+
+<Provided_Interface name="pong" kind="Sporadic" layer="default" queue_size="4" miat="0" stack_size="1024" priority="2" wcet="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="75000 64700"/>
+</Provided_Interface>
+
+<Required_Interface name="ping" kind="Sporadic" layer="default" queue_size="2" miat="0" stack_size="1024" priority="1" wcet="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="75000 33800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="82600 28200 116500 70600"/>
+<Provided_Interface name="ping" kind="Sporadic" layer="default" queue_size="2" miat="0" stack_size="1024" priority="1" wcet="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="82600 33900"/>
+</Provided_Interface>
+
+<Required_Interface name="pong" kind="Sporadic" layer="default" queue_size="4" miat="0" stack_size="1024" priority="2" wcet="0">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="82600 64800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="environ" is_type="NO" language="GUI" default_implementation="default" FPGA_Configurations="">
+    <Property name="Taste::coordinates" value="4700 26800 25700 56700"/>
+<Required_Interface name="test" kind="Sporadic" layer="default" queue_size="1" miat="0" stack_size="1024" priority="1" wcet="0">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="25700 37500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="actuator" ri_name="pong"/>
+    <Target func_name="controller" pi_name="pong"/>
+    <Property name="Taste::coordinates" value="82000 64800 78700 64800 75300 64700"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="ping"/>
+    <Target func_name="actuator" pi_name="ping"/>
+    <Property name="Taste::coordinates" value="75600 33800 78900 33800 82300 33900"/>
+</Connection>
+
+<Connection >
+    <Source func_name="environ" ri_name="test"/>
+    <Target func_name="controller" pi_name="test"/>
+    <Property name="Taste::coordinates" value="26300 37500 32500 37500 32500 34800 38900 34800"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>
