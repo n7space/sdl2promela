@@ -5846,3 +5846,9 @@ inline nothing_init()
         nothing.selection = Observable_Event_no_event_PRESENT;
     }
 }
+inline global_dataview_init()
+{
+    d_step {
+        nothing_init();
+    }
+}

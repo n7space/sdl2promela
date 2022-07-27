@@ -1,23 +1,10 @@
-inline MyTestInteger_generate_value(value)
+inline MyTestInteger_generate_value(MyTestInteger_gv)
 {
+    int MyTestInteger_tmp;
     if
-    ::  true;
-        value = 0;
-    ::  true;
-        value = 1;
-    ::  true;
-        value = 2;
-    ::  true;
-        value = 3;
-    ::  true;
-        value = 4;
-    ::  true;
-        value = 5;
-    ::  true;
-        value = 6;
-    ::  true;
-        value = 7;
-    ::  true;
-        value = 8;
+    ::  atomic {
+        select (MyTestInteger_tmp : 0 .. 8);
+    }
     fi;
+    MyTestInteger_gv = MyTestInteger_tmp;
 }

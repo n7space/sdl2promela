@@ -98,3 +98,7 @@ def test_translates_informal_text():
 
 def test_translates_conditional_expression():
     translate_and_verify("conditional_expression.pr", "conditional_expression.pml")
+
+
+def test_translates_asn1_constant():
+    translate_and_verify("asn1_constant.pr", "asn1_constant.pml")

@@ -44,7 +44,7 @@ class Constant(Expression):
     """Constant value."""
 
     value: str
-    """Constant value ."""
+    """Constant value."""
 
     def __init__(self, value):
         super().__init__()
@@ -134,7 +134,7 @@ class ConstantReference(Expression):
     """Constant reference."""
 
     constantName: str
-    """Constant name."""
+    """Constant name defined elsewhere, usually in ASN.1 datamodel."""
 
     def __init__(self, name):
         self.constantName = name
@@ -1387,6 +1387,10 @@ class Model:
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
+    constants: List[str]
+    """
+    Names of ASN.1 constants.
+    """
     implicit_variables: Dict[str, VariableInfo]
     """
     Dictionary of implicitly defined variables, such as
@@ -1437,6 +1441,7 @@ class Model:
         self.timers = self.source.timers
 
         self.__gather_states()
+        self.__gather_constants()
         self.__gather_variables()
         self.__gather_inputs()
         self.__gather_continuous_signals()
@@ -1660,3 +1665,7 @@ class Model:
                     info[0],
                     convert(info[1]),
                 )
+
+    def __gather_constants(self):
+        # 'variables' is a dict with values defined in ASN.1 model
+        self.constants = list(self.source.DV.variables.keys())
