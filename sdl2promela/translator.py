@@ -294,7 +294,16 @@ def __get_constant_name(
         return "{}_ctxt".format(context.sdl_model.process_name.lower())
 
     else:
-        return constant_reference.constantName.lower()
+        candidates = [
+            name
+            for name in context.sdl_model.constants
+            if constant_reference.constantName.lower() == name.lower()
+        ]
+        if len(candidates) != 1:
+            raise Exception(
+                f"Cannot find constant '{constant_reference.constantName}' in ASN.1 values"
+            )
+        return candidates[0]
 
 
 def __terminate_transition_statement():
@@ -406,6 +415,11 @@ def __generate_expression(context: Context, constant: sdlmodel.Constant):
 @dispatch(Context, sdlmodel.VariableReference)
 def __generate_expression(context: Context, variable: sdlmodel.VariableReference):
     return __generate_variable_name(context, variable, True)
+
+
+@dispatch(Context, sdlmodel.ConstantReference)
+def __generate_expression(context: Context, constant: sdlmodel.ConstantReference):
+    return __generate_variable_name(context, constant, True)
 
 
 @dispatch(Context, sdlmodel.EnumValue)

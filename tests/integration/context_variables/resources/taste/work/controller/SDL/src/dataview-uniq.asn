@@ -28,3 +28,25 @@ T-Null-Record ::= SEQUENCE {}
 END
 
 
+ENVIRON-SUBTYPE DEFINITIONS ::=
+BEGIN
+
+IMPORTS 
+
+MyTestInteger FROM CONTEXT-VARIABLES-DATAVIEW
+
+ ;
+
+
+
+
+
+
+
+Environ-test-p1 ::= MyTestInteger
+
+
+
+
+END
+
