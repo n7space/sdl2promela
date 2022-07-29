@@ -239,6 +239,21 @@ def __get_substate_variable_name(context: Context, substate: str) -> str:
     )
 
 
+def __get_observer_error_variable(context: Context) -> promelamodel.VariableReference:
+    variable_name = "{}_observer_error".format(context.sdl_model.process_name.lower())
+    return VariableReferenceBuilder(variable_name).build()
+
+
+def __get_observer_success_variable(context: Context) -> promelamodel.VariableReference:
+    variable_name = "{}_observer_success".format(context.sdl_model.process_name.lower())
+    return VariableReferenceBuilder(variable_name).build()
+
+
+def __get_observer_ignore_variable(context: Context) -> promelamodel.VariableReference:
+    variable_name = "{}_observer_ignore".format(context.sdl_model.process_name.lower())
+    return VariableReferenceBuilder(variable_name).build()
+
+
 def __is_local_variable(context: Context, variable: str):
     procedure = context.get_parent_procedure()
     if procedure is not None:
@@ -1706,13 +1721,53 @@ def __generate_statement(
         state_variable = __get_state_variable_name(context)
 
     state = context.sdl_model.states[next_state.state_name.lower()]
+
     state_name = __get_state_name(context, state)
-    return (
+    statement = (
         AssignmentBuilder()
         .withTarget(VariableReferenceBuilder(state_variable).build())
         .withSource(VariableReferenceBuilder(state_name).build())
         .build()
     )
+
+    if state.name.lower() in context.sdl_model.errorstates:
+        return (
+            BlockBuilder(promelamodel.BlockType.BLOCK)
+            .withStatement(statement)
+            .withStatement(
+                AssignmentBuilder()
+                .withTarget(__get_observer_error_variable(context))
+                .withSource(promelamodel.IntegerValue(1))
+                .build()
+            )
+            .build()
+        )
+    elif state.name.lower() in context.sdl_model.successstates:
+        return (
+            BlockBuilder(promelamodel.BlockType.BLOCK)
+            .withStatement(statement)
+            .withStatement(
+                AssignmentBuilder()
+                .withTarget(__get_observer_success_variable(context))
+                .withSource(promelamodel.IntegerValue(1))
+                .build()
+            )
+            .build()
+        )
+    elif state.name.lower() in context.sdl_model.ignorestates:
+        return (
+            BlockBuilder(promelamodel.BlockType.BLOCK)
+            .withStatement(statement)
+            .withStatement(
+                AssignmentBuilder()
+                .withTarget(__get_observer_ignore_variable(context))
+                .withSource(promelamodel.IntegerValue(1))
+                .build()
+            )
+            .build()
+        )
+    else:
+        return statement
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.NextTransition)
@@ -2087,6 +2142,24 @@ def __generate_aggregate_inline(
     return builder.build()
 
 
+def __generate_observer_variables(context: Context, builder: ModelBuilder):
+    if context.sdl_model.errorstates:
+        variable_name = "{}_observer_error".format(
+            context.sdl_model.process_name.lower()
+        )
+        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
+    if context.sdl_model.successstates:
+        variable_name = "{}_observer_success".format(
+            context.sdl_model.process_name.lower()
+        )
+        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
+    if context.sdl_model.ignorestates:
+        variable_name = "{}_observer_ignore".format(
+            context.sdl_model.process_name.lower()
+        )
+        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
+
+
 def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     Translate an SDL model into a Promela model.
@@ -2102,6 +2175,7 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
                 context, variable_name, variable_type
             )
         )
+    __generate_observer_variables(context, builder)
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         builder.withInline(__generate_procedure_inline(context, procedure))

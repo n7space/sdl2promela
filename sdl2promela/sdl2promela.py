@@ -27,13 +27,15 @@ class ProgramOptions:
     """Show verbose output."""
     sdl_files: List[List[str]]
     """Groups of sdl files, every group shall contains one process."""
-    scl_files: [str]
+    scl_files: List[str]
     """List of Stop Condition Language Files."""
+    include_observers: bool
 
     def __init__(self):
         self.output_filename = None
         self.observer_info_filename = None
         self.verbose = False
+        self.include_observers = False
         self.sdl_files = []
         self.scl_files = []
 
@@ -62,7 +64,7 @@ class ProgramOptionsParseException(Exception):
 
 def __show_help():
     usage = """usage: sdl2promela [-h] [--sdl FILES [FILES ...]] [-o OUTPUT_FILENAME] [-v]
-                   [--version] [--scl SCL_FILE]
+                   [--version] [--scl SCL_FILE] [--os]
 
 SDL to Promela converter
 
@@ -79,6 +81,9 @@ optional arguments:
   --version             show program's version number and exit
   --scl SCL_FILE
                         Read input files as Stop Conditions
+  --os
+                        Generate checks for observer special states
+                        together with Stop Conditions.
 """
     print(usage)
 
@@ -147,6 +152,8 @@ def __parse_arguments_impl() -> ProgramOptions:
                 )
             index = index + 1
             index = __parse_sdl_arguments(index, options)
+        elif argv[index] == "--os":
+            options.include_observers = True
         else:
             raise ProgramOptionsParseException(
                 "Unknown argument '{}'".format(argv[index])
@@ -207,8 +214,8 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
     """
     try:
         ast, warnings, errors = opengeode.parse(sdl_files)
-    except IOError as error:
-        __log.error("IOError:" + error)
+    except IOError as err:
+        __log.error("IOError: " + str(err))
         traceback.print_exc()
         sys.exit(1)
     except Exception:
@@ -222,8 +229,8 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
             __log.warning(warning)
     if len(errors) > 0:
         __log.error(f"Error: found {len(errors)} errors:")
-        for error in errors:
-            __log.error(error)
+        for error_item in errors:
+            __log.error(error_item)
         sys.exit(1)
     if len(ast.processes) != 1:
         __log.error(
@@ -297,6 +304,7 @@ def translate_scl(
     """
     Translate a list of Stop Condition files into a Promela model and save it to file.
     :param scl_files: List of files with stop conditions
+    :param sdl_files:
     :param output_file_name: Name of file to save Promela model.
     """
     input_model = scl_model.StopConditionModel()
@@ -305,7 +313,16 @@ def translate_scl(
         __log.info(f"Reading process from {group}")
         process = read_process(group)
         __log.info("Reading done")
-        context[process.processName.lower()] = process
+        try:
+            __log.info("Simplifying SDL model")
+            sdl_model = sdlmodel.Model(process)
+        except Exception:
+            __log.error("SDL model simplification failed")
+            traceback.print_exc()
+            return False
+        __log.info("Simplification done")
+
+        context[process.processName.lower()] = sdl_model
     for input_file in scl_files:
         __log.info("Parsing file {}".format(input_file))
         model = scl_parser.parse_stop_condition_file(input_file)
@@ -333,7 +350,7 @@ def main():
     if arguments.verbose:
         __log.setLevel(level=logging.INFO)
 
-    if arguments.scl_files:
+    if arguments.scl_files or arguments.include_observers:
         if not translate_scl(
             arguments.scl_files, arguments.sdl_files, arguments.output_filename
         ):

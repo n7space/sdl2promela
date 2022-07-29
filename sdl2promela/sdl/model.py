@@ -1371,6 +1371,12 @@ class Model:
     """Map associating floating label names with the labels themselves"""
     states: Dict[str, State]
     """Map associating state names with the states themselves."""
+    errorstates: List[str]
+    """List of Error states for observers."""
+    successstates: List[str]
+    """List of Success states for observers."""
+    ignorestates: List[str]
+    """List of Ingore states for observers."""
     inputs: Dict[str, Input]
     """Map associating input signal names with the signals themselves."""
     transitions: Dict[int, Transition]
@@ -1428,6 +1434,9 @@ class Model:
         self.process_implementation_name = self.source.processName
         self.floating_labels = {}
         self.states = {}
+        self.errorstates = self.source.errorstates
+        self.successstates = self.source.successstates
+        self.ignorestates = self.source.ignorestates
         self.inputs = {}
         self.continuous_signals = {}
         self.transitions = {}

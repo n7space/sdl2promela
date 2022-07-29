@@ -200,7 +200,7 @@ class MemberAccess(Expression):
         self.member = None
 
 
-class Call(Statement):
+class Call(Expression):
     """Invocation of an inline function statement."""
 
     target: str

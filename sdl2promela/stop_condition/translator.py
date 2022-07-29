@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sdl2promela.promela.model as promela
+from sdl2promela.sdl import Model
 from sdl2promela.utils import resolve_asn1_type
 from . import model
 import sdl2promela.promela.modelbuilder as promelaBuilder
@@ -10,7 +11,8 @@ from typing import List, Dict, Any, Optional, Union
 import functools
 import typing
 from opengeode import ogAST
-from opengeode import Helper
+
+# from opengeode import Helper
 from opengeode.AdaGenerator import SEPARATOR
 
 
@@ -23,11 +25,12 @@ class TranslateException(Exception):
 class GenerateContext:
     """Context for translator."""
 
-    processes: Dict[str, ogAST.Process]
+    processes: Dict[str, Model]
     """Dict of all processes"""
 
-    aggregates: Dict[str, Dict[str, List[Any]]]
-    """Aggregates created by Helper"""
+    observers_with_error: List[str]
+    observers_with_success: List[str]
+    observers_with_ignore: List[str]
 
     choice_selection: Optional[str]
     """
@@ -65,12 +68,22 @@ class GenerateContext:
 
     def __init__(self, processes: Dict[str, ogAST.Process]):
         self.processes = processes
-        self.aggregates = {}
         self.choice_selection = None
         self.choice_selection_alternatives = None
         self.process_state_selection = None
         self.process_state_selection_substate = None
         self.precheck_expressions = []
+        self.observers_with_error = []
+        self.observers_with_success = []
+        self.observers_with_ignore = []
+
+        for process_name, process in self.processes.items():
+            if process.errorstates:
+                self.observers_with_error.append(process_name.lower())
+            if process.successstates:
+                self.observers_with_success.append(process_name.lower())
+            if process.ignorestates:
+                self.observers_with_ignore.append(process_name.lower())
 
     def clear(self):
         """Clear context.
@@ -411,8 +424,8 @@ class FirstVariableInfo:
 
 
 def _find_state(context: GenerateContext, selector: model.Selector, process_name: str):
-    process = context.processes[process_name]
-    aggregates = context.aggregates[process_name]
+    process = context.processes[process_name].source
+    aggregates = context.processes[process_name].input_aggregates
     composites = process.composite_states
 
     state_name = ""
@@ -694,7 +707,7 @@ def _find_type_of_queue_last_call(context: GenerateContext, call: model.CallExpr
     signal_name = selector.elements[1].name.lower()
     found_signal_types = [
         signal["type"]
-        for signal in process.input_signals
+        for signal in process.source.input_signals
         if signal["name"] == signal_name
     ]
 
@@ -707,7 +720,7 @@ def _find_type_of_queue_last_call(context: GenerateContext, call: model.CallExpr
             f"Ambiguous signal name '{signal_name}' in process '{process_name}'"
         )
 
-    allTypes = getattr(process.DV, "types", {})
+    allTypes = getattr(process.source.DV, "types", {})
 
     finalType = resolve_asn1_type(allTypes, found_signal_types[0])
 
@@ -740,7 +753,7 @@ def _find_type(context: GenerateContext, selector: model.Selector):
 
         # Find the process, all available datatypes in the process
         process = context.processes[variable_info.process_name]
-        allTypes = getattr(process.DV, "types", {})
+        allTypes = getattr(process.source.DV, "types", {})
 
         currentType = resolve_asn1_type(allTypes, variable_info.variable_type)
 
@@ -879,7 +892,11 @@ def _construct_interface_name_from_call(
     process = context.processes[process_name]
 
     queue_exist = next(
-        (x for x in process.input_signals if x["name"].lower() == queue_name.lower()),
+        (
+            x
+            for x in process.source.input_signals
+            if x["name"].lower() == queue_name.lower()
+        ),
         None,
     )
     if queue_exist is None:
@@ -1112,13 +1129,16 @@ def _generate_filter_out_alternative(
         expression = _generate(context, statements[index].expression)
         expression = _add_precheck_expressions(context, expression)
         expressions.append(expression)
-
-    negate_expressions: List[promela.Expression] = [
-        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
-        .withExpression(e)
-        .build()
-        for e in expressions
-    ]
+    # For all observers with ignore state generate list of expressions
+    for observer in context.observers_with_ignore:
+        variable_name = "{}_observer_ignore".format(observer)
+        expression = (
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
+            .withLeft(promelaBuilder.VariableReferenceBuilder(variable_name).build())
+            .withRight(promela.IntegerValue(0))
+            .build()
+        )
+        expressions.append(expression)
 
     def joiner(lhs: promela.Expression, rhs: promela.Expression) -> promela.Expression:
         return (
@@ -1127,6 +1147,35 @@ def _generate_filter_out_alternative(
             .withRight(rhs)
             .build()
         )
+
+    if context.observers_with_success:
+        # Generate one expression AND for all observers with success state
+        # Join generated expression using AND
+        # Append result to list of expression
+        all_observer_expressions: List[promela.Expression] = [
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
+            .withLeft(
+                promelaBuilder.VariableReferenceBuilder(
+                    "{}_observer_success".format(observer)
+                ).build()
+            )
+            .withRight(promela.IntegerValue(0))
+            .build()
+            for observer in context.observers_with_success
+        ]
+
+        expressions.append(
+            functools.reduce(
+                joiner, all_observer_expressions[1:], all_observer_expressions[0]
+            )
+        )
+
+    negate_expressions: List[promela.Expression] = [
+        promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+        .withExpression(e)
+        .build()
+        for e in expressions
+    ]
 
     condition = functools.reduce(
         joiner,
@@ -1205,6 +1254,28 @@ def _generate_eventually_alternative(
     )
 
 
+def _create_alternative_for_success_observer(observer: str) -> promela.Alternative:
+    return (
+        promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
+        .withCondition(
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
+            .withLeft(
+                promelaBuilder.VariableReferenceBuilder(
+                    "{}_observer_success".format(observer)
+                ).build()
+            )
+            .withRight(promela.IntegerValue(0))
+            .build()
+        )
+        .withStatements(
+            promelaBuilder.StatementsBuilder()
+            .withStatement(promela.GoTo("state_0"))
+            .build()
+        )
+        .build()
+    )
+
+
 def _generate_entry_loop() -> promela.Do:
     return (
         promelaBuilder.DoBuilder()
@@ -1223,6 +1294,41 @@ def _generate_entry_loop() -> promela.Do:
     )
 
 
+def _create_never_alternative_for_observer(observer: str) -> promela.Alternative:
+    return (
+        promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
+        .withCondition(
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
+            .withLeft(
+                promelaBuilder.VariableReferenceBuilder(
+                    "{}_observer_error".format(observer)
+                ).build()
+            )
+            .withRight(promela.IntegerValue(0))
+            .build()
+        )
+        .withStatements(
+            promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.AssertBuilder()
+                .withExpression(
+                    promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
+                    .withLeft(
+                        promelaBuilder.VariableReferenceBuilder(
+                            "{}_observer_error".format(observer)
+                        ).build()
+                    )
+                    .withRight(promela.IntegerValue(0))
+                    .build()
+                )
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
+
+
 def _translate_basic_statements(
     input_model: model.StopConditionModel,
     builder: promelaBuilder.DoBuilder,
@@ -1234,6 +1340,10 @@ def _translate_basic_statements(
     for never in input_model.never_statements:
         builder.withAlternative(_generate_never_alternative(never, context))
 
+    if context.observers_with_error:
+        for observer in context.observers_with_error:
+            builder.withAlternative(_create_never_alternative_for_observer(observer))
+
 
 def _build_simple_never_claim(
     input_model: model.StopConditionModel, context: GenerateContext
@@ -1242,7 +1352,11 @@ def _build_simple_never_claim(
 
     _translate_basic_statements(input_model, do_loop_builder, context)
 
-    if input_model.filter_out_statements:
+    if (
+        input_model.filter_out_statements
+        or context.observers_with_ignore
+        or context.observers_with_success
+    ):
         do_loop_builder.withAlternative(
             _generate_filter_out_alternative(input_model.filter_out_statements, context)
         )
@@ -1269,9 +1383,16 @@ def _build_never_claim_for_acceptance_cycles(
 
     _translate_basic_statements(input_model, accept_loop_builder, context)
 
-    accept_loop_builder.withAlternative(
-        _generate_eventually_alternative(input_model.eventually_statements[0], context)
-    )
+    if input_model.eventually_statements:
+        accept_loop_builder.withAlternative(
+            _generate_eventually_alternative(
+                input_model.eventually_statements[0], context
+            )
+        )
+    else:
+        accept_loop_builder.withAlternative(
+            _create_alternative_for_success_observer(context.observers_with_success[0])
+        )
 
     if input_model.filter_out_statements:
         accept_loop_builder.withAlternative(
@@ -1310,24 +1431,22 @@ def translate_model(
 ) -> promela.Model:
     """Translate Stop Condition model into Promela model.
     :param input_model: input Stop Condition model
+    :param processes:
     :returns: Promela Model
     """
-
-    aggregates: Dict[str, Dict[str, List[Any]]] = {}
-
-    for name, process in processes.items():
-        Helper.flatten(process, sep=SEPARATOR)
-        input_aggregates = Helper.state_aggregations(process)
-        aggregates[name] = input_aggregates
-        Helper.parallel_states(input_aggregates)
-        Helper.map_input_state(process)
-
     context = GenerateContext(processes)
-    context.aggregates = aggregates
 
-    if input_model.eventually_statements:
-        if len(input_model.eventually_statements) != 1:
+    if input_model.eventually_statements or context.observers_with_success:
+        if len(input_model.eventually_statements) > 1:
             raise TranslateException("Only one eventually statement is allowed.")
+        if len(context.observers_with_success) > 1:
+            raise TranslateException(
+                "Only one observer with success states is allowed."
+            )
+        if input_model.eventually_statements and context.observers_with_success:
+            raise TranslateException(
+                "Not supported 'eventually' in stop conditions and observer with success state"
+            )
 
         never_claim = _build_never_claim_for_acceptance_cycles(input_model, context)
         return promelaBuilder.ModelBuilder().withNever(never_claim).build()
