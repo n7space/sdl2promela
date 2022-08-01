@@ -47,7 +47,10 @@ TESTS= \
 	output_observer_env \
 	multi_output_observer \
 	observer_partial_specification \
-	output_observer_duplicate
+	output_observer_duplicate \
+	observer_errorstates \
+	observer_successstates \
+	observer_ignorestates
 
 .PHONY: $(TESTS) check
 
