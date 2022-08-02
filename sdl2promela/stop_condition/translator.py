@@ -29,8 +29,16 @@ class GenerateContext:
     """Dict of all processes"""
 
     observers_with_error: List[str]
+    """List of observers which error states."""
+
     observers_with_success: List[str]
+    """List of observer with success states."""
+
     observers_with_ignore: List[str]
+    """List of observers with ignore states."""
+
+    search_for_observer_success: bool
+    """Generate never claim to search for success states."""
 
     choice_selection: Optional[str]
     """
@@ -66,7 +74,9 @@ class GenerateContext:
     Usually this contains checks if variables are initialized.
     """
 
-    def __init__(self, processes: Dict[str, ogAST.Process]):
+    def __init__(
+        self, processes: Dict[str, ogAST.Process], search_for_observer_success: bool
+    ):
         self.processes = processes
         self.choice_selection = None
         self.choice_selection_alternatives = None
@@ -76,6 +86,7 @@ class GenerateContext:
         self.observers_with_error = []
         self.observers_with_success = []
         self.observers_with_ignore = []
+        self.search_for_observer_success = search_for_observer_success
 
         for process_name, process in self.processes.items():
             if process.errorstates:
@@ -1318,10 +1329,9 @@ def _generate_entry_loop() -> promela.Do:
 
 
 def _create_never_alternative_for_observer(
-    context: GenerateContext, observer: str
+    states: List[str], observer: str
 ) -> promela.Alternative:
-    errorstates = context.processes[observer].errorstates
-    condition = _create_observer_state_check(errorstates, observer)
+    condition = _create_observer_state_check(states, observer)
 
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
@@ -1356,8 +1366,16 @@ def _translate_basic_statements(
 
     if context.observers_with_error:
         for observer in context.observers_with_error:
+            states = context.processes[observer].errorstates
             builder.withAlternative(
-                _create_never_alternative_for_observer(context, observer)
+                _create_never_alternative_for_observer(states, observer)
+            )
+
+    if context.search_for_observer_success and context.observers_with_success:
+        for observer in context.observers_with_success:
+            states = context.processes[observer].ignorestates
+            builder.withAlternative(
+                _create_never_alternative_for_observer(states, observer)
             )
 
 
@@ -1443,22 +1461,21 @@ def _build_never_claim_for_acceptance_cycles(
 
 
 def translate_model(
-    input_model: model.StopConditionModel, processes: Dict[str, ogAST.Process]
+    input_model: model.StopConditionModel,
+    processes: Dict[str, ogAST.Process],
+    search_for_observer_success: bool,
 ) -> promela.Model:
     """Translate Stop Condition model into Promela model.
     :param input_model: input Stop Condition model
     :param processes:
+    :param search_for_observer_success:
     :returns: Promela Model
     """
-    context = GenerateContext(processes)
+    context = GenerateContext(processes, search_for_observer_success)
 
     if input_model.eventually_statements or context.observers_with_success:
         if len(input_model.eventually_statements) > 1:
             raise TranslateException("Only one eventually statement is allowed.")
-        if len(context.observers_with_success) > 1:
-            raise TranslateException(
-                "Only one observer with success states is allowed."
-            )
         if input_model.eventually_statements and context.observers_with_success:
             raise TranslateException(
                 "Not supported 'eventually' in stop conditions and observer with success state"

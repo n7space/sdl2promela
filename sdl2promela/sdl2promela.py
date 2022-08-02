@@ -30,6 +30,9 @@ class ProgramOptions:
     scl_files: List[str]
     """List of Stop Condition Language Files."""
     include_observers: bool
+    """Generate checks for special states in observers."""
+    search_for_observer_success: bool
+    """Generate checks to search for special states in observers."""
 
     def __init__(self):
         self.output_filename = None
@@ -38,6 +41,7 @@ class ProgramOptions:
         self.include_observers = False
         self.sdl_files = []
         self.scl_files = []
+        self.search_for_observer_success = False
 
     def verify(self) -> bool:
         """Verify ProgramOptions content and print messages in case of errors."""
@@ -84,6 +88,8 @@ optional arguments:
   --os
                         Generate checks for observer special states
                         together with Stop Conditions.
+  --success-search
+                        Generate never claim to search for success states in observers.
 """
     print(usage)
 
@@ -154,6 +160,8 @@ def __parse_arguments_impl() -> ProgramOptions:
             index = __parse_sdl_arguments(index, options)
         elif argv[index] == "--os":
             options.include_observers = True
+        elif argv[index] == "--success-search":
+            options.search_for_observer_success = True
         else:
             raise ProgramOptionsParseException(
                 "Unknown argument '{}'".format(argv[index])
@@ -299,13 +307,17 @@ def translate(
 
 
 def translate_scl(
-    scl_files: List[str], sdl_files: List[List[str]], output_file_name: str
+    scl_files: List[str],
+    sdl_files: List[List[str]],
+    output_file_name: str,
+    search_for_observer_success: bool,
 ) -> bool:
     """
     Translate a list of Stop Condition files into a Promela model and save it to file.
     :param scl_files: List of files with stop conditions
     :param sdl_files:
     :param output_file_name: Name of file to save Promela model.
+    :param search_for_observer_success:
     """
     input_model = scl_model.StopConditionModel()
     context = {}
@@ -331,7 +343,9 @@ def translate_scl(
         input_model.join(model)
 
     __log.info("Translating Stop Condition Model into Promela Model")
-    output_model = scl_translator.translate_model(input_model, context)
+    output_model = scl_translator.translate_model(
+        input_model, context, search_for_observer_success
+    )
 
     __log.info(f"Opening {output_file_name} for writing and generating output")
     with open(output_file_name, "w") as file:
@@ -352,7 +366,10 @@ def main():
 
     if arguments.scl_files or arguments.include_observers:
         if not translate_scl(
-            arguments.scl_files, arguments.sdl_files, arguments.output_filename
+            arguments.scl_files,
+            arguments.sdl_files,
+            arguments.output_filename,
+            arguments.search_for_observer_success,
         ):
             sys.exit(1)
     else:
