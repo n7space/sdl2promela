@@ -963,15 +963,7 @@ def _generate_queue_length_call(context: GenerateContext, expr: model.CallExpres
     )
 
 
-def _generate_get_state_for_toplevel(
-    context: GenerateContext, process_reference: model.VariableReference
-):
-    process_name = process_reference.name.lower()
-    if process_name not in context.processes:
-        raise TranslateException(
-            "Cannot find process with name '{}'".format(process_name)
-        )
-    context.process_state_selection = process_name
+def _get_state_variable_name(process_name: str):
     return (
         promelaBuilder.MemberAccessBuilder()
         .withUtypeReference(
@@ -985,6 +977,18 @@ def _generate_get_state_for_toplevel(
         .withMember(promelaBuilder.VariableReferenceBuilder("state").build())
         .build()
     )
+
+
+def _generate_get_state_for_toplevel(
+    context: GenerateContext, process_reference: model.VariableReference
+):
+    process_name = process_reference.name.lower()
+    if process_name not in context.processes:
+        raise TranslateException(
+            "Cannot find process with name '{}'".format(process_name)
+        )
+    context.process_state_selection = process_name
+    return _get_state_variable_name(process_name)
 
 
 def _generate_get_state_for_parallel(
@@ -1116,6 +1120,45 @@ def _add_precheck_expressions(
     return expression
 
 
+def _join_expressions(
+    expressions: List[promela.Expression], op: promela.BinaryOperator
+) -> promela.Expression:
+    def joiner(lhs: promela.Expression, rhs: promela.Expression) -> promela.Expression:
+        return (
+            promelaBuilder.BinaryExpressionBuilder(op)
+            .withLeft(lhs)
+            .withRight(rhs)
+            .build()
+        )
+
+    print("len ", len(expressions))
+
+    return functools.reduce(
+        joiner,
+        expressions[1:],
+        expressions[0],
+    )
+
+
+def _create_observer_state_check(
+    states: List[str], observer: str
+) -> promela.Expression:
+    state_variable = _get_state_variable_name(observer)
+    expressions: List[promela.Expression] = []
+    for state in states:
+        statename = observer.capitalize() + "_States_" + state
+        expressions.append(
+            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
+            .withLeft(state_variable)
+            .withRight(promelaBuilder.VariableReferenceBuilder(statename).build())
+            .build()
+        )
+
+    condition = _join_expressions(expressions, promela.BinaryOperator.OR)
+
+    return condition
+
+
 def _generate_filter_out_alternative(
     statements: List[model.FilterOutStatement], context: GenerateContext
 ) -> promela.Alternative:
@@ -1131,43 +1174,26 @@ def _generate_filter_out_alternative(
         expressions.append(expression)
     # For all observers with ignore state generate list of expressions
     for observer in context.observers_with_ignore:
-        variable_name = "{}_observer_ignore".format(observer)
-        expression = (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
-            .withLeft(promelaBuilder.VariableReferenceBuilder(variable_name).build())
-            .withRight(promela.IntegerValue(0))
-            .build()
-        )
+        ignorestates = context.processes[observer].ignorestates
+        expression = _create_observer_state_check(ignorestates, observer)
         expressions.append(expression)
-
-    def joiner(lhs: promela.Expression, rhs: promela.Expression) -> promela.Expression:
-        return (
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.AND)
-            .withLeft(lhs)
-            .withRight(rhs)
-            .build()
-        )
 
     if context.observers_with_success:
         # Generate one expression AND for all observers with success state
         # Join generated expression using AND
         # Append result to list of expression
-        all_observer_expressions: List[promela.Expression] = [
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
-            .withLeft(
-                promelaBuilder.VariableReferenceBuilder(
-                    "{}_observer_success".format(observer)
-                ).build()
+        all_observer_expressions: List[promela.Expression] = []
+        for observer in context.observers_with_success:
+            successstates = context.processes[observer].successstates
+            condition = _create_observer_state_check(successstates, observer)
+            all_observer_expressions.append(
+                promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+                .withExpression(condition)
+                .build()
             )
-            .withRight(promela.IntegerValue(0))
-            .build()
-            for observer in context.observers_with_success
-        ]
 
         expressions.append(
-            functools.reduce(
-                joiner, all_observer_expressions[1:], all_observer_expressions[0]
-            )
+            _join_expressions(all_observer_expressions, promela.BinaryOperator.AND)
         )
 
     negate_expressions: List[promela.Expression] = [
@@ -1177,11 +1203,7 @@ def _generate_filter_out_alternative(
         for e in expressions
     ]
 
-    condition = functools.reduce(
-        joiner,
-        negate_expressions[1:],
-        negate_expressions[0],
-    )
+    condition = _join_expressions(negate_expressions, promela.BinaryOperator.AND)
 
     builder.withCondition(condition)
     builder.withStatements(
@@ -1254,19 +1276,20 @@ def _generate_eventually_alternative(
     )
 
 
-def _create_alternative_for_success_observer(observer: str) -> promela.Alternative:
+def _create_alternative_for_success_observers(
+    context: GenerateContext,
+) -> promela.Alternative:
+    all_observer_expressions: List[promela.Expression] = []
+    for observer in context.observers_with_success:
+        successstates = context.processes[observer].successstates
+        condition = _create_observer_state_check(successstates, observer)
+        all_observer_expressions.append(condition)
+
+    expression = _join_expressions(all_observer_expressions, promela.BinaryOperator.AND)
+
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.BLOCK)
-        .withCondition(
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
-            .withLeft(
-                promelaBuilder.VariableReferenceBuilder(
-                    "{}_observer_success".format(observer)
-                ).build()
-            )
-            .withRight(promela.IntegerValue(0))
-            .build()
-        )
+        .withCondition(expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(promela.GoTo("state_0"))
@@ -1294,31 +1317,22 @@ def _generate_entry_loop() -> promela.Do:
     )
 
 
-def _create_never_alternative_for_observer(observer: str) -> promela.Alternative:
+def _create_never_alternative_for_observer(
+    context: GenerateContext, observer: str
+) -> promela.Alternative:
+    errorstates = context.processes[observer].errorstates
+    condition = _create_observer_state_check(errorstates, observer)
+
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
-        .withCondition(
-            promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.NEQUAL)
-            .withLeft(
-                promelaBuilder.VariableReferenceBuilder(
-                    "{}_observer_error".format(observer)
-                ).build()
-            )
-            .withRight(promela.IntegerValue(0))
-            .build()
-        )
+        .withCondition(condition)
         .withStatements(
             promelaBuilder.StatementsBuilder()
             .withStatement(
                 promelaBuilder.AssertBuilder()
                 .withExpression(
-                    promelaBuilder.BinaryExpressionBuilder(promela.BinaryOperator.EQUAL)
-                    .withLeft(
-                        promelaBuilder.VariableReferenceBuilder(
-                            "{}_observer_error".format(observer)
-                        ).build()
-                    )
-                    .withRight(promela.IntegerValue(0))
+                    promelaBuilder.UnaryExpressionBuilder(promela.UnaryOperator.NOT)
+                    .withExpression(condition)
                     .build()
                 )
                 .build()
@@ -1342,7 +1356,9 @@ def _translate_basic_statements(
 
     if context.observers_with_error:
         for observer in context.observers_with_error:
-            builder.withAlternative(_create_never_alternative_for_observer(observer))
+            builder.withAlternative(
+                _create_never_alternative_for_observer(context, observer)
+            )
 
 
 def _build_simple_never_claim(
@@ -1391,7 +1407,7 @@ def _build_never_claim_for_acceptance_cycles(
         )
     else:
         accept_loop_builder.withAlternative(
-            _create_alternative_for_success_observer(context.observers_with_success[0])
+            _create_alternative_for_success_observers(context)
         )
 
     if input_model.filter_out_statements:

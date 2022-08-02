@@ -239,21 +239,6 @@ def __get_substate_variable_name(context: Context, substate: str) -> str:
     )
 
 
-def __get_observer_error_variable(context: Context) -> promelamodel.VariableReference:
-    variable_name = "{}_observer_error".format(context.sdl_model.process_name.lower())
-    return VariableReferenceBuilder(variable_name).build()
-
-
-def __get_observer_success_variable(context: Context) -> promelamodel.VariableReference:
-    variable_name = "{}_observer_success".format(context.sdl_model.process_name.lower())
-    return VariableReferenceBuilder(variable_name).build()
-
-
-def __get_observer_ignore_variable(context: Context) -> promelamodel.VariableReference:
-    variable_name = "{}_observer_ignore".format(context.sdl_model.process_name.lower())
-    return VariableReferenceBuilder(variable_name).build()
-
-
 def __is_local_variable(context: Context, variable: str):
     procedure = context.get_parent_procedure()
     if procedure is not None:
@@ -1723,51 +1708,12 @@ def __generate_statement(
     state = context.sdl_model.states[next_state.state_name.lower()]
 
     state_name = __get_state_name(context, state)
-    statement = (
+    return (
         AssignmentBuilder()
         .withTarget(VariableReferenceBuilder(state_variable).build())
         .withSource(VariableReferenceBuilder(state_name).build())
         .build()
     )
-
-    if state.name.lower() in context.sdl_model.errorstates:
-        return (
-            BlockBuilder(promelamodel.BlockType.BLOCK)
-            .withStatement(statement)
-            .withStatement(
-                AssignmentBuilder()
-                .withTarget(__get_observer_error_variable(context))
-                .withSource(promelamodel.IntegerValue(1))
-                .build()
-            )
-            .build()
-        )
-    elif state.name.lower() in context.sdl_model.successstates:
-        return (
-            BlockBuilder(promelamodel.BlockType.BLOCK)
-            .withStatement(statement)
-            .withStatement(
-                AssignmentBuilder()
-                .withTarget(__get_observer_success_variable(context))
-                .withSource(promelamodel.IntegerValue(1))
-                .build()
-            )
-            .build()
-        )
-    elif state.name.lower() in context.sdl_model.ignorestates:
-        return (
-            BlockBuilder(promelamodel.BlockType.BLOCK)
-            .withStatement(statement)
-            .withStatement(
-                AssignmentBuilder()
-                .withTarget(__get_observer_ignore_variable(context))
-                .withSource(promelamodel.IntegerValue(1))
-                .build()
-            )
-            .build()
-        )
-    else:
-        return statement
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.NextTransition)
