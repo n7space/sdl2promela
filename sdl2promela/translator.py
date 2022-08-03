@@ -2088,24 +2088,6 @@ def __generate_aggregate_inline(
     return builder.build()
 
 
-def __generate_observer_variables(context: Context, builder: ModelBuilder):
-    if context.sdl_model.errorstates:
-        variable_name = "{}_observer_error".format(
-            context.sdl_model.process_name.lower()
-        )
-        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
-    if context.sdl_model.successstates:
-        variable_name = "{}_observer_success".format(
-            context.sdl_model.process_name.lower()
-        )
-        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
-    if context.sdl_model.ignorestates:
-        variable_name = "{}_observer_ignore".format(
-            context.sdl_model.process_name.lower()
-        )
-        builder.withVariable(VariableDeclarationBuilder(variable_name, "int").build())
-
-
 def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
     """
     Translate an SDL model into a Promela model.
@@ -2121,7 +2103,6 @@ def translate(sdl_model: sdlmodel.Model) -> promelamodel.Model:
                 context, variable_name, variable_type
             )
         )
-    __generate_observer_variables(context, builder)
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         builder.withInline(__generate_procedure_inline(context, procedure))

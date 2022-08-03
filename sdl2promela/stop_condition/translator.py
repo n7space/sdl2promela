@@ -1142,8 +1142,6 @@ def _join_expressions(
             .build()
         )
 
-    print("len ", len(expressions))
-
     return functools.reduce(
         joiner,
         expressions[1:],
@@ -1190,6 +1188,9 @@ def _generate_filter_out_alternative(
         expressions.append(expression)
 
     if context.observers_with_success:
+        # If the observers contains SUCCESS states,
+        # then if all observers reached their SUCCESS states
+        # the model checker shall stop further state exploration.
         # Generate one expression AND for all observers with success state
         # Join generated expression using AND
         # Append result to list of expression
@@ -1372,6 +1373,8 @@ def _translate_basic_statements(
             )
 
     if context.search_for_observer_success and context.observers_with_success:
+        # search for observer success is enabled
+        # convert success states to never states.
         for observer in context.observers_with_success:
             states = context.processes[observer].ignorestates
             builder.withAlternative(

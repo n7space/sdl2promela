@@ -26,7 +26,7 @@ class ProgramOptions:
     verbose: bool
     """Show verbose output."""
     sdl_files: List[List[str]]
-    """Groups of sdl files, every group shall contains one process."""
+    """Groups of sdl files, every group shall contain one process."""
     scl_files: List[str]
     """List of Stop Condition Language Files."""
     include_observers: bool
