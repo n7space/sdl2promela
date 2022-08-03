@@ -1684,22 +1684,31 @@ def __generate_statement(
         if len(statements) == 0:
             statements.append(promelamodel.Skip())
 
-        if answer.condition is None:
-            # If there's no condition, generate 'else'
-            builder.withAlternative(
-                AlternativeBuilder().withStatements(statements).build()
-            )
-        else:
+        if decision.condition is None:
+            # Decision 'ANY'
             builder.withAlternative(
                 AlternativeBuilder()
-                .withCondition(
-                    __translate_answer_condition(
-                        context, transition, decision.condition, answer.condition
-                    )
-                )
+                .withCondition(promelamodel.IntegerValue(1))
                 .withStatements(statements)
                 .build()
             )
+        else:
+            if answer.condition is None:
+                # If there's no condition, generate 'else'
+                builder.withAlternative(
+                    AlternativeBuilder().withStatements(statements).build()
+                )
+            else:
+                builder.withAlternative(
+                    AlternativeBuilder()
+                    .withCondition(
+                        __translate_answer_condition(
+                            context, transition, decision.condition, answer.condition
+                        )
+                    )
+                    .withStatements(statements)
+                    .build()
+                )
     return builder.build()
 
 

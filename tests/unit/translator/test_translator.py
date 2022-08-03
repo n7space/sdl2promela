@@ -1,4 +1,3 @@
-import typing
 from typing import List, Any
 
 import opengeode
@@ -102,3 +101,7 @@ def test_translates_conditional_expression():
 
 def test_translates_asn1_constant():
     translate_and_verify("asn1_constant.pr", "asn1_constant.pml")
+
+
+def test_translates_any():
+    translate_and_verify("decision_any.pr", "decision_any.pml")
