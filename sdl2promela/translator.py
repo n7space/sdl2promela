@@ -1706,6 +1706,7 @@ def __generate_statement(
         state_variable = __get_state_variable_name(context)
 
     state = context.sdl_model.states[next_state.state_name.lower()]
+
     state_name = __get_state_name(context, state)
     return (
         AssignmentBuilder()

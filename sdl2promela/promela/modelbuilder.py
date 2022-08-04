@@ -457,7 +457,7 @@ class AssignmentBuilder:
         self.assignment.target = target
         return self
 
-    def withSource(self, source: Statement) -> "AssignmentBuilder":
+    def withSource(self, source: Expression) -> "AssignmentBuilder":
         """
         Set source expression.
         :param source: Source expression to be set.
@@ -484,7 +484,7 @@ class BinaryExpressionBuilder:
         """
         return self.expression
 
-    def withLeft(self, left: Statement) -> "BinaryExpressionBuilder":
+    def withLeft(self, left: Expression) -> "BinaryExpressionBuilder":
         """
         Set left side of the expression.
         :param left: Left side of the expression to be set.
@@ -493,7 +493,7 @@ class BinaryExpressionBuilder:
         self.expression.left = left
         return self
 
-    def withRight(self, right: Statement) -> "BinaryExpressionBuilder":
+    def withRight(self, right: Expression) -> "BinaryExpressionBuilder":
         """
         Set right side of the expression.
         :param right: Right side of the expression to be set.

@@ -1,0 +1,48 @@
+system observer;
+    /* CIF TEXT (144, 214), (507, 136) */
+    use datamodel comment 'observer.asn';
+    
+    signal ping_in(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with ping_in;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with ping_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (10, 58), (256, 112) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            ignorestates ign;
+            /* CIF ENDTEXT */
+            /* CIF START (169, 269), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (169, 324), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (257, 0), (70, 35) */
+            state ign;
+            endstate;
+            /* CIF state (484, 223), (70, 35) */
+            state Wait;
+                /* CIF input (462, 278), (111, 35) */
+                input ping_in(param);
+                    /* CIF decision (477, 333), (81, 50) */
+                    decision param = 6;
+                        /* CIF ANSWER (439, 403), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (439, 446), (70, 35) */
+                            NEXTSTATE Wait;
+                        /* CIF ANSWER (529, 403), (70, 23) */
+                        (true):
+                            /* CIF NEXTSTATE (529, 446), (70, 35) */
+                            NEXTSTATE ign;
+                    enddecision;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;

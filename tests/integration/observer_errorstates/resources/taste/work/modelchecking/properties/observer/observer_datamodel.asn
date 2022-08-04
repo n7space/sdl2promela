@@ -1,0 +1,26 @@
+Observer-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   Actuator-States, Actuator-Context FROM Actuator-Datamodel
+   Controller-States, Controller-Context FROM Controller-Datamodel
+   MyInteger FROM OBSERVER-ERRORSTATES-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID, Actuator-Event, Controller-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView;
+
+Observer-States ::= ENUMERATED {error, wait}
+
+Observer-Context ::= SEQUENCE {
+   state Observer-States,
+   init-done BOOLEAN
+}
+
+Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2)}
+Observer-Actuator-Event-Msg-Out-Selection  ::= ENUMERATED {pong-present(1)}
+Observer-Actuator-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
+Observer-Controller-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), pong-present(2)}
+Observer-Controller-Event-Msg-Out-Selection  ::= ENUMERATED {ping-present(1)}
+Observer-Controller-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
+Observer-Function-Event-Selection  ::= ENUMERATED {actuator-present(1), controller-present(2)}
+Observer-Observable-Event-Selection  ::= ENUMERATED {no-event-present(1), system-startup-present(2), input-event-present(3), output-event-present(4), unhandled-input-present(5)}
+END
