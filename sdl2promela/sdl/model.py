@@ -1420,6 +1420,7 @@ class Model:
     """
     Names of declared timers.
     """
+    monitors: Dict[str, VariableInfo]
 
     def __init__(self, process: ogAST.Process):
         if process.instance_of_ref:
@@ -1448,6 +1449,7 @@ class Model:
         self.named_transition_ids = {}
         self.aggregates = {}
         self.timers = self.source.timers
+        self.monitors = {}
 
         self.__gather_states()
         self.__gather_constants()
@@ -1459,6 +1461,7 @@ class Model:
         self.__gather_procedures()
         self.__gather_named_transition_ids()
         self.__gather_aggregates()
+        self.__gather_monitors()
 
     def __gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -1678,3 +1681,10 @@ class Model:
     def __gather_constants(self):
         # 'variables' is a dict with values defined in ASN.1 model
         self.constants = list(self.source.DV.variables.keys())
+
+    def __gather_monitors(self):
+        for name, info in self.source.monitors.items():
+            if info[1] is None:
+                self.monitors[name] = VariableInfo(info[0], None)
+            else:
+                self.monitors[name] = VariableInfo(info[0], convert(info[1]))
