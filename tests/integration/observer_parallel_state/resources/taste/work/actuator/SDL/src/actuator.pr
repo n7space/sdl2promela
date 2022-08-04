@@ -1,0 +1,77 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    state aggregation Operation;
+    substructure
+            state Left;
+            substructure
+                    /* CIF TEXT (64, 253), (267, 140) */
+                    -- Text area for declarations and comments
+                    
+                    dcl ping_param MyInteger;
+                    dcl pong_param MyInteger;
+                    /* CIF ENDTEXT */
+                    /* CIF START (209, 76), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (209, 131), (70, 35) */
+                        NEXTSTATE Repeat;
+                    /* CIF state (1037, 123), (70, 35) */
+                    state Add;
+                        /* CIF input (1008, 178), (126, 35) */
+                        input ping(ping_param);
+                            /* CIF task (970, 233), (203, 35) */
+                            task pong_param := ping_param + 1;
+                            /* CIF output (1004, 288), (135, 35) */
+                            output pong(pong_param);
+                            /* CIF NEXTSTATE (1037, 343), (70, 35) */
+                            NEXTSTATE Add;
+                    endstate;
+                    /* CIF state (633, 126), (70, 35) */
+                    state Repeat;
+                        /* CIF input (604, 181), (126, 35) */
+                        input ping(ping_param);
+                            /* CIF task (576, 236), (183, 35) */
+                            task pong_param := ping_param;
+                            /* CIF output (600, 291), (135, 35) */
+                            output pong(pong_param);
+                            /* CIF decision (611, 346), (113, 50) */
+                            decision ping_param = 3;
+                                /* CIF ANSWER (588, 416), (70, 23) */
+                                (false):
+                                    /* CIF NEXTSTATE (588, 459), (70, 35) */
+                                    NEXTSTATE Repeat;
+                                /* CIF ANSWER (678, 416), (70, 23) */
+                                (true):
+                                    /* CIF NEXTSTATE (678, 459), (70, 35) */
+                                    NEXTSTATE Add;
+                            enddecision;
+                    endstate;
+            endsubstructure;
+            state Right;
+            substructure
+                    /* CIF START (267, 147), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (267, 202), (70, 35) */
+                        NEXTSTATE Red;
+                    /* CIF state (550, 163), (70, 35) */
+                    state Red;
+                        /* CIF input (550, 218), (70, 35) */
+                        input dummy;
+                            /* CIF NEXTSTATE (550, 273), (70, 35) */
+                            NEXTSTATE Red;
+                    endstate;
+            endsubstructure;
+            /* CIF state (514, 121), (70, 35) */
+            state Right;
+            endstate;
+            /* CIF state (143, 117), (70, 35) */
+            state Left;
+            endstate;
+    endsubstructure;
+    /* CIF START (573, 103), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (566, 153), (83, 35) */
+        NEXTSTATE Operation;
+    /* CIF state (843, 111), (83, 35) */
+    state Operation;
+    endstate;
+endprocess Actuator;
