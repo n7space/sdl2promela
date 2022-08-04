@@ -1,0 +1,63 @@
+system observer;
+    /* CIF TEXT (144, 214), (507, 136) */
+    use datamodel comment 'observer.asn';
+    
+    signal ping_in(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with ping_in;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with ping_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (0, 57), (256, 112) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            /* CIF ENDTEXT */
+            /* CIF START (623, 15), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (623, 70), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (430, 147), (70, 35) */
+            state Idle;
+                /* CIF input (409, 202), (111, 35) */
+                input ping_in(param);
+                    /* CIF decision (424, 257), (81, 50) */
+                    decision param = 3;
+                        /* CIF ANSWER (268, 327), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (268, 370), (70, 35) */
+                            NEXTSTATE Idle;
+                        /* CIF ANSWER (475, 327), (70, 23) */
+                        (true):
+                            /* CIF decision (392, 370), (235, 50) */
+                            decision st.actuator.state = operation_0_add
+                            /* CIF comment (647, 377), (89, 35) */
+                            comment 'verify state';
+                                /* CIF ANSWER (349, 440), (70, 23) */
+                                (false):
+                                    /* CIF NEXTSTATE (349, 483), (70, 35) */
+                                    NEXTSTATE error;
+                                /* CIF ANSWER (520, 440), (70, 23) */
+                                (true):
+                                    /* CIF task (426, 483), (257, 35) */
+                                    task st.actuator.state := operation_0_repeat
+                                    /* CIF comment (703, 483), (70, 35) */
+                                    comment 'reset state';
+                                    /* CIF NEXTSTATE (520, 538), (70, 35) */
+                                    NEXTSTATE Idle;
+                            enddecision;
+                    enddecision;
+            endstate;
+            /* CIF state (257, 0), (70, 35) */
+            state error;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;
