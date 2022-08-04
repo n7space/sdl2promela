@@ -50,7 +50,13 @@ TESTS= \
 	output_observer_duplicate \
 	observer_errorstates \
 	observer_successstates \
-	observer_ignorestates
+	observer_ignorestates \
+	observer_system_variables \
+	observer_nested_state_variables \
+	observer_parallel_state_variables \
+	observer_system_state \
+	observer_nested_state \
+	observer_parallel_state
 
 .PHONY: $(TESTS) check
 
