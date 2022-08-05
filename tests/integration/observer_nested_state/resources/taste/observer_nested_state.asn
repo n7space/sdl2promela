@@ -1,0 +1,9 @@
+OBSERVER-NESTED-STATE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= MyInteger (0 .. 3)
+
+END
+

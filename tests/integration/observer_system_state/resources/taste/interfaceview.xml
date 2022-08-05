@@ -1,0 +1,81 @@
+<InterfaceView asn1file="observer_system_state.acn">
+<Function name="environ" is_type="NO" language="GUI" default_implementation="default" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="54800 14200 90500 32800"/>
+<Required_Interface name="test" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="62600 32800"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="30500 43400 74000 98700"/>
+<Provided_Interface name="test" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyTestInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="57100 43400"/>
+</Provided_Interface>
+
+<Provided_Interface name="pong" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="74000 91400"/>
+</Provided_Interface>
+
+<Required_Interface name="ping" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="74000 51000"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="106200 41300 156600 100000"/>
+<Provided_Interface name="ping" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="106200 49500"/>
+</Provided_Interface>
+
+<Required_Interface name="pong" kind="Sporadic" layer="default" priority="1" wcet="0" stack_size="1024" miat="0" queue_size="1">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::coordinates" value="106200 91500"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="environ" ri_name="test"/>
+    <Target func_name="controller" pi_name="test"/>
+    <Property name="Taste::coordinates" value="62600 33400 62600 38200 57100 38200 57100 43100"/>
+</Connection>
+
+<Connection >
+    <Source func_name="actuator" ri_name="pong"/>
+    <Target func_name="controller" pi_name="pong"/>
+    <Property name="Taste::coordinates" value="105600 91500 90000 91500 74300 91400"/>
+</Connection>
+
+<Connection >
+    <Source func_name="controller" ri_name="ping"/>
+    <Target func_name="actuator" pi_name="ping"/>
+    <Property name="Taste::coordinates" value="74600 51000 90200 51000 90200 49500 105900 49500"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>

@@ -1,0 +1,52 @@
+OBSERVER-SYSTEM-STATE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyTestInteger ::= MyInteger (0..3)
+
+END
+
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
+ENVIRON-SUBTYPE DEFINITIONS ::=
+BEGIN
+
+IMPORTS 
+
+MyTestInteger FROM OBSERVER-SYSTEM-STATE-DATAVIEW
+
+ ;
+
+
+
+
+
+
+
+Environ-test-p1 ::= MyTestInteger
+
+
+
+
+END
+
