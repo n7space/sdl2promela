@@ -258,7 +258,7 @@ def __is_implicit_variable(context: Context, variable: str):
     return variable in context.sdl_model.implicit_variables.keys()
 
 
-def __is_monitor_variable(context: Context, variable: str):
+def __is_system_state_monitor_variable(context: Context, variable: str):
     if variable in context.sdl_model.monitors:
         return __type_name(context.sdl_model.monitors[variable].type) == "System_State"
     else:
@@ -270,7 +270,7 @@ def __get_variable_name(context: Context, variable: str):
         return VariableReferenceBuilder(
             __get_implicit_variable_name(context, variable)
         ).build()
-    elif __is_monitor_variable(context, variable):
+    elif __is_system_state_monitor_variable(context, variable):
         return VariableReferenceBuilder(__GLOBAL_STATE).build()
     elif __is_local_variable(context, variable):
         return VariableReferenceBuilder(variable.lower()).build()
