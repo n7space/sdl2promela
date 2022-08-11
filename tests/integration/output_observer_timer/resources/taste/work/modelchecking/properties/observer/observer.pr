@@ -1,0 +1,43 @@
+system observer;
+    /* CIF TEXT (144, 214), (569, 136) */
+    use datamodel comment 'observer.asn';
+    
+    signal trigger_out renames output actuator_trigger from demo_timer_manager to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with trigger_out;
+        from observer to env with trigger_out;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with trigger_out;
+            from observer to env with trigger_out;
+        connect c and r;
+        /* CIF PROCESS (305, 91), (150, 75) */
+        process observer;
+            /* CIF TEXT (0, 57), (256, 112) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            successstates reached;
+            /* CIF ENDTEXT */
+            /* CIF START (459, 92), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (459, 147), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (678, 61), (70, 35) */
+            state Wait;
+                /* CIF input (666, 116), (90, 35) */
+                input trigger_out;
+                    /* CIF output (666, 171), (90, 35) */
+                    output trigger_out;
+                    /* CIF NEXTSTATE (676, 221), (70, 35) */
+                    NEXTSTATE reached;
+            endstate;
+            /* CIF state (256, 0), (70, 35) */
+            state reached;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;

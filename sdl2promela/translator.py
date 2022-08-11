@@ -1844,10 +1844,16 @@ def __generate_statement(
         if not isinstance(call.parameters[1], sdlmodel.VariableReference):
             raise Exception("Invalid parameters for 'set_timer' procedure.")
         timer_name = call.parameters[1].variableName.lower()
+        timer_interval = __generate_expression(context, call.parameters[0])
         if timer_name not in context.sdl_model.timers:
             raise Exception(f"Timer '{timer_name}' does not exist.")
         procedure_name = __get_procedure_inline_name(context, f"{timer_name}_set")
-        return CallBuilder().withTarget(procedure_name).build()
+        return (
+            CallBuilder()
+            .withTarget(procedure_name)
+            .withParameter(timer_interval)
+            .build()
+        )
     elif call.name.lower() == "reset_timer":
         if len(call.parameters) != 1:
             raise Exception("Invalid parameters for 'reset_timer' procedure.")
