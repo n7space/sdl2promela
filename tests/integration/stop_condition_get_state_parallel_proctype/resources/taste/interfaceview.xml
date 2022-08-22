@@ -1,0 +1,86 @@
+<InterfaceView asn1file="stop_condition_get_state_parallel_proctype.acn">
+<Function name="inst" is_type="NO" instance_of="controller" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="32300 70100 57100 99600"/>
+<Provided_Interface name="pong" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="57100 76500"/>
+</Provided_Interface>
+
+<Provided_Interface name="dummy" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="57100 82200"/>
+</Provided_Interface>
+
+<Required_Interface name="ping" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="57100 90700"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function name="controller" is_type="YES" type_language="SDL" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="31800 35400 63700 64900"/>
+<Provided_Interface name="pong" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="63700 52300"/>
+</Provided_Interface>
+
+<Provided_Interface name="dummy" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="62600 57600"/>
+</Provided_Interface>
+
+<Required_Interface name="ping" kind="Sporadic" layer="default">
+    <Property name="Taste::coordinates" value="63700 42700"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="false"/>
+</Required_Interface>
+
+</Function>
+
+<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="" startup_priority="1">
+    <Property name="Taste::coordinates" value="85000 73900 127400 101100"/>
+<Provided_Interface name="ping" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="85000 94100"/>
+</Provided_Interface>
+
+<Required_Interface name="pong" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="85000 79400"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface name="dummy" kind="Sporadic" layer="default" stack_size="1024" wcet="0" miat="0" priority="1" queue_size="1">
+    <Property name="Taste::coordinates" value="85000 85100"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Connection >
+    <Source func_name="actuator" ri_name="pong"/>
+    <Target func_name="inst" pi_name="pong"/>
+    <Property name="Taste::coordinates" value="84400 79400 70900 79400 57400 76500"/>
+</Connection>
+
+<Connection >
+    <Source func_name="inst" ri_name="ping"/>
+    <Target func_name="actuator" pi_name="ping"/>
+    <Property name="Taste::coordinates" value="57700 90700 71200 90700 84700 94100"/>
+</Connection>
+
+<Connection >
+    <Source func_name="actuator" ri_name="dummy"/>
+    <Target func_name="inst" pi_name="dummy"/>
+    <Property name="Taste::coordinates" value="84400 85100 70900 85100 70900 82200 57400 82200"/>
+</Connection>
+
+<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
+    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+</Comment>
+
+</InterfaceView>
