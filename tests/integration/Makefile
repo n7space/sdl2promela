@@ -56,7 +56,8 @@ TESTS= \
 	observer_parallel_state_variables \
 	observer_system_state \
 	observer_nested_state \
-	observer_parallel_state
+	observer_parallel_state \
+	stop_condition_get_state_proctype
 
 .PHONY: $(TESTS) check
 

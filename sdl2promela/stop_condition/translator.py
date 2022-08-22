@@ -998,7 +998,8 @@ def _generate_get_state_for_toplevel(
         raise TranslateException(
             "Cannot find process with name '{}'".format(process_name)
         )
-    context.process_state_selection = process_name
+    process = context.processes[process_name]
+    context.process_state_selection = process.process_implementation_name
     return _get_state_variable_name(process_name)
 
 
