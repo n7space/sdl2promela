@@ -998,7 +998,8 @@ def _generate_get_state_for_toplevel(
         raise TranslateException(
             "Cannot find process with name '{}'".format(process_name)
         )
-    context.process_state_selection = process_name
+    process = context.processes[process_name]
+    context.process_state_selection = process.process_implementation_name
     return _get_state_variable_name(process_name)
 
 
@@ -1016,6 +1017,8 @@ def _generate_get_state_for_parallel(
             "Cannot find process with name '{}'".format(process_name)
         )
 
+    process = context.processes[process_name]
+
     # Construct name of the state variable
     state_name, index, _ = _find_state(context, state_reference, process_name)
     if index != len(state_reference.elements) - 1:
@@ -1023,7 +1026,7 @@ def _generate_get_state_for_parallel(
             f"Cannot construct state name, len {len(state_reference.elements)}, {index}, {state_name}"
         )
 
-    context.process_state_selection = process_name
+    context.process_state_selection = process.process_implementation_name
     context.process_state_selection_substate = state_name
 
     state_name = state_name + SEPARATOR + "state"
