@@ -1,0 +1,54 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process type Controller;
+    state aggregation Wait;
+    substructure
+            state Left;
+            substructure
+                    /* CIF START (128, 100), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (128, 155), (70, 35) */
+                        NEXTSTATE Wait;
+                    /* CIF state (719, 115), (73, 35) */
+                    state Reached;
+                    endstate;
+                    /* CIF state (352, 100), (70, 35) */
+                    state Wait;
+                        /* CIF input (352, 155), (70, 35) */
+                        input pong;
+                            /* CIF NEXTSTATE (350, 210), (73, 35) */
+                            NEXTSTATE Reached;
+                    endstate;
+            endsubstructure;
+            state Right;
+            substructure
+                    /* CIF START (152, 77), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (152, 132), (70, 35) */
+                        NEXTSTATE Wait;
+                    /* CIF state (385, 107), (70, 35) */
+                    state Wait;
+                        /* CIF input (385, 162), (70, 35) */
+                        input dummy;
+                            /* CIF output (385, 217), (70, 35) */
+                            output ping;
+                            /* CIF NEXTSTATE (385, 272), (70, 35) */
+                            NEXTSTATE Wait;
+                    endstate;
+            endsubstructure;
+            /* CIF state (725, 298), (70, 35) */
+            state Right;
+            endstate;
+            /* CIF state (307, 288), (70, 35) */
+            state Left;
+            endstate;
+    endsubstructure;
+    /* CIF START (551, 166), (70, 35) */
+    START;
+        /* CIF output (551, 221), (70, 35) */
+        output ping;
+        /* CIF NEXTSTATE (551, 271), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (985, 176), (70, 35) */
+    state Wait;
+    endstate;
+endprocess type Controller;
