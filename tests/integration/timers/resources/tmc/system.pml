@@ -5,23 +5,24 @@
 typedef system_state {
     Controller_Context controller;
     Actuator_Context actuator;
+    AggregateTimerData timers;
 }
 
 int inited;
-bool timer_manager_data[1];
 chan Controller_pong_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
 chan Actuator_watchdog_channel = [1] of {int};
 system_state global_state;
 chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
-inline Actuator_0_watchdog_set(interval)
+inline Actuator_0_watchdog_set(actuator_watchdog_interval)
 {
-    timer_manager_data[0] = true;
+    global_state.timers.actuator.watchdog.interval = actuator_watchdog_interval;
+    global_state.timers.actuator.watchdog.timer_enabled = true;
 }
 inline Actuator_0_watchdog_reset()
 {
-    timer_manager_data[0] = false;
+    global_state.timers.actuator.watchdog.timer_enabled = false;
 }
 inline Actuator_0_RI_0_pong()
 {
@@ -52,9 +53,9 @@ active proctype timer_manager_proc() priority 1
     ::  atomic {
         true;
         if
-        ::  timer_manager_data[0];
+        ::  global_state.timers.actuator.watchdog.timer_enabled;
             Actuator_watchdog_channel!0;
-            timer_manager_data[0] = false;
+            global_state.timers.actuator.watchdog.timer_enabled = false;
         ::  else;
             skip;
         fi;
