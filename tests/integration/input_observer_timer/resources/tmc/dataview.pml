@@ -43,6 +43,8 @@
 #define Events_Ty_elem_output_event_dest int
 #define Events_Ty_elem_unhandled_input_source int
 #define Events_Ty_elem_unhandled_input_dest int
+#define System_State_timers_actuator_trigger_timer_enabled bool
+#define System_State_timers_actuator_trigger_interval int
 #define System_State_actuator_queue_elem_input_event_source int
 #define System_State_actuator_queue_elem_input_event_dest int
 #define System_State_actuator_queue_elem_output_event_source int
@@ -60,6 +62,10 @@
 #define System_State_controller_state int
 #define System_State_controller_init_done bool
 #define System_State_demo_timer_manager_state int
+#define TimerData_timer_enabled bool
+#define TimerData_interval int
+#define AggregateTimerData_actuator_trigger_timer_enabled bool
+#define AggregateTimerData_actuator_trigger_interval int
 #define Observer_States_reached 0
 #define Observer_States_wait 1
 #define Observer_Context_state_reached 0
@@ -1048,6 +1054,19 @@ typedef Actuator_Event_msg_out_pong {
     bit dummy;
 }
 
+typedef AggregateTimerData_actuator_trigger {
+    AggregateTimerData_actuator_trigger_timer_enabled timer_enabled;
+    AggregateTimerData_actuator_trigger_interval interval;
+}
+
+typedef AggregateTimerData_controller {
+    bit dummy;
+}
+
+typedef AggregateTimerData_dummy_entry {
+    bit dummy;
+}
+
 typedef Controller_Context {
     Controller_Context_state state;
     Controller_Context_init_done init_done;
@@ -1817,8 +1836,26 @@ typedef System_State_demo_timer_manager {
     System_State_demo_timer_manager_state state;
 }
 
+typedef System_State_timers_actuator_trigger {
+    System_State_timers_actuator_trigger_timer_enabled timer_enabled;
+    System_State_timers_actuator_trigger_interval interval;
+}
+
+typedef System_State_timers_controller {
+    bit dummy;
+}
+
+typedef System_State_timers_dummy_entry {
+    bit dummy;
+}
+
 typedef T_Null_Record {
     bit dummy;
+}
+
+typedef TimerData {
+    TimerData_timer_enabled timer_enabled;
+    TimerData_interval interval;
 }
 
 typedef Actuator_Event_msg_in_data {
@@ -1829,6 +1866,10 @@ typedef Actuator_Event_msg_in_data {
 
 typedef Actuator_Event_msg_out_data {
     Actuator_Event_msg_out_pong pong;
+}
+
+typedef AggregateTimerData_actuator {
+    AggregateTimerData_actuator_trigger trigger;
 }
 
 typedef Controller_Event_msg_in_data {
@@ -2295,6 +2336,10 @@ typedef System_State_controller_queue_elem_unhandled_input_event_demo_timer_mana
     int selection;
 }
 
+typedef System_State_timers_actuator {
+    System_State_timers_actuator_trigger trigger;
+}
+
 typedef Actuator_Event_msg_in {
     Actuator_Event_msg_in_data data;
     int selection;
@@ -2303,6 +2348,12 @@ typedef Actuator_Event_msg_in {
 typedef Actuator_Event_msg_out {
     Actuator_Event_msg_out_data data;
     int selection;
+}
+
+typedef AggregateTimerData {
+    AggregateTimerData_actuator actuator;
+    AggregateTimerData_controller controller;
+    AggregateTimerData_dummy_entry dummy_entry;
 }
 
 typedef Controller_Event_msg_in {
@@ -2698,6 +2749,12 @@ typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_
 typedef System_State_controller_queue_elem_unhandled_input_event_demo_timer_manager_msg_in {
     System_State_controller_queue_elem_unhandled_input_event_demo_timer_manager_msg_in_data data;
     int selection;
+}
+
+typedef System_State_timers {
+    System_State_timers_actuator actuator;
+    System_State_timers_controller controller;
+    System_State_timers_dummy_entry dummy_entry;
 }
 
 typedef Actuator_Event_data {
@@ -3516,6 +3573,7 @@ typedef System_State_controller_queue {
 }
 
 typedef System_State {
+    System_State_timers timers;
     System_State_actuator_queue actuator_queue;
     System_State_controller_queue controller_queue;
     System_State_actuator actuator;
@@ -6141,6 +6199,47 @@ inline Events_Ty_size_check(Events_Ty_sc)
 {
     assert(((Events_Ty_sc >= 0) && (Events_Ty_sc <= 10)));
 }
+inline System_State_timers_actuator_trigger_timer_enabled_assign_value(dst, src)
+{
+    dst = src;
+    System_State_timers_actuator_trigger_timer_enabled_range_check(dst);
+}
+inline System_State_timers_actuator_trigger_timer_enabled_range_check(System_State_timers_actuator_trigger_timer_enabled_vc)
+{
+    assert(true);
+}
+inline System_State_timers_actuator_trigger_interval_assign_value(dst, src)
+{
+    dst = src;
+    System_State_timers_actuator_trigger_interval_range_check(dst);
+}
+inline System_State_timers_actuator_trigger_interval_range_check(System_State_timers_actuator_trigger_interval_vc)
+{
+    assert(((System_State_timers_actuator_trigger_interval_vc >= 0) && (System_State_timers_actuator_trigger_interval_vc <= 50000)));
+}
+inline System_State_timers_actuator_trigger_assign_value(dst, src)
+{
+    System_State_timers_actuator_trigger_timer_enabled_assign_value(dst.timer_enabled, src.timer_enabled);
+    System_State_timers_actuator_trigger_interval_assign_value(dst.interval, src.interval);
+}
+inline System_State_timers_actuator_assign_value(dst, src)
+{
+    System_State_timers_actuator_trigger_assign_value(dst.trigger, src.trigger);
+}
+inline System_State_timers_controller_assign_value(dst, src)
+{
+    skip;
+}
+inline System_State_timers_dummy_entry_assign_value(dst, src)
+{
+    skip;
+}
+inline System_State_timers_assign_value(dst, src)
+{
+    System_State_timers_actuator_assign_value(dst.actuator, src.actuator);
+    System_State_timers_controller_assign_value(dst.controller, src.controller);
+    System_State_timers_dummy_entry_assign_value(dst.dummy_entry, src.dummy_entry);
+}
 inline System_State_actuator_queue_elem_no_event_assign_value(dst, src)
 {
     skip;
@@ -7636,6 +7735,7 @@ inline System_State_demo_timer_manager_assign_value(dst, src)
 }
 inline System_State_assign_value(dst, src)
 {
+    System_State_timers_assign_value(dst.timers, src.timers);
     System_State_actuator_queue_assign_value(dst.actuator_queue, src.actuator_queue);
     System_State_controller_queue_assign_value(dst.controller_queue, src.controller_queue);
     System_State_actuator_assign_value(dst.actuator, src.actuator);
@@ -7656,6 +7756,70 @@ inline nothing_init()
     d_step {
         nothing.selection = Observable_Event_no_event_PRESENT;
     }
+}
+inline TimerData_timer_enabled_assign_value(dst, src)
+{
+    dst = src;
+    TimerData_timer_enabled_range_check(dst);
+}
+inline TimerData_timer_enabled_range_check(TimerData_timer_enabled_vc)
+{
+    assert(true);
+}
+inline TimerData_interval_assign_value(dst, src)
+{
+    dst = src;
+    TimerData_interval_range_check(dst);
+}
+inline TimerData_interval_range_check(TimerData_interval_vc)
+{
+    assert(((TimerData_interval_vc >= 0) && (TimerData_interval_vc <= 50000)));
+}
+inline TimerData_assign_value(dst, src)
+{
+    TimerData_timer_enabled_assign_value(dst.timer_enabled, src.timer_enabled);
+    TimerData_interval_assign_value(dst.interval, src.interval);
+}
+inline AggregateTimerData_actuator_trigger_timer_enabled_assign_value(dst, src)
+{
+    dst = src;
+    AggregateTimerData_actuator_trigger_timer_enabled_range_check(dst);
+}
+inline AggregateTimerData_actuator_trigger_timer_enabled_range_check(AggregateTimerData_actuator_trigger_timer_enabled_vc)
+{
+    assert(true);
+}
+inline AggregateTimerData_actuator_trigger_interval_assign_value(dst, src)
+{
+    dst = src;
+    AggregateTimerData_actuator_trigger_interval_range_check(dst);
+}
+inline AggregateTimerData_actuator_trigger_interval_range_check(AggregateTimerData_actuator_trigger_interval_vc)
+{
+    assert(((AggregateTimerData_actuator_trigger_interval_vc >= 0) && (AggregateTimerData_actuator_trigger_interval_vc <= 50000)));
+}
+inline AggregateTimerData_actuator_trigger_assign_value(dst, src)
+{
+    AggregateTimerData_actuator_trigger_timer_enabled_assign_value(dst.timer_enabled, src.timer_enabled);
+    AggregateTimerData_actuator_trigger_interval_assign_value(dst.interval, src.interval);
+}
+inline AggregateTimerData_actuator_assign_value(dst, src)
+{
+    AggregateTimerData_actuator_trigger_assign_value(dst.trigger, src.trigger);
+}
+inline AggregateTimerData_controller_assign_value(dst, src)
+{
+    skip;
+}
+inline AggregateTimerData_dummy_entry_assign_value(dst, src)
+{
+    skip;
+}
+inline AggregateTimerData_assign_value(dst, src)
+{
+    AggregateTimerData_actuator_assign_value(dst.actuator, src.actuator);
+    AggregateTimerData_controller_assign_value(dst.controller, src.controller);
+    AggregateTimerData_dummy_entry_assign_value(dst.dummy_entry, src.dummy_entry);
 }
 inline global_dataview_init()
 {

@@ -7,10 +7,10 @@ typedef system_state {
     Observer_Context observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
-bool timer_manager_data[1];
 chan Actuator_ping_channel = [1] of {int};
 chan Actuator_trigger_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
@@ -18,13 +18,14 @@ system_state global_state;
 chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
-inline Actuator_0_trigger_set(interval)
+inline Actuator_0_trigger_set(actuator_trigger_interval)
 {
-    timer_manager_data[0] = true;
+    global_state.timers.actuator.trigger.interval = actuator_trigger_interval;
+    global_state.timers.actuator.trigger.timer_enabled = true;
 }
 inline Actuator_0_trigger_reset()
 {
-    timer_manager_data[0] = false;
+    global_state.timers.actuator.trigger.timer_enabled = false;
 }
 inline Controller_0_RI_0_ping()
 {
@@ -55,9 +56,9 @@ active proctype timer_manager_proc() priority 1
     ::  atomic {
         true;
         if
-        ::  timer_manager_data[0];
+        ::  global_state.timers.actuator.trigger.timer_enabled;
             Actuator_trigger_channel!0;
-            timer_manager_data[0] = false;
+            global_state.timers.actuator.trigger.timer_enabled = false;
         ::  else;
             skip;
         fi;
@@ -96,13 +97,13 @@ Actuator_trigger_loop:
         ::  nempty(Actuator_trigger_channel);
             Actuator_trigger_channel?_;
             Actuator_0_PI_0_trigger();
+            Observer_lock?_;
+            Observer_0_PI_0_trigger_in();
+            Observer_lock!1;
             goto Actuator_trigger_loop;
         ::  empty(Actuator_trigger_channel);
             skip;
         fi;
-        Observer_lock?_;
-        Observer_0_PI_0_trigger_in();
-        Observer_lock!1;
         Actuator_lock!1;
     }
     od;
