@@ -11,7 +11,6 @@ typedef system_state {
 }
 
 int inited;
-chan Actuator_observer_actuator_trigger_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
 chan Actuator_trigger_channel = [1] of {int};
@@ -27,10 +26,6 @@ inline Actuator_0_trigger_set(actuator_trigger_interval)
 inline Actuator_0_trigger_reset()
 {
     global_state.timers.actuator.trigger.timer_enabled = false;
-}
-inline Observer_0_RI_0_trigger_out()
-{
-    Actuator_observer_actuator_trigger_channel!1;
 }
 inline Actuator_0_RI_0_pong()
 {
@@ -102,6 +97,9 @@ Actuator_ping_loop:
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?_;
             Actuator_0_PI_0_ping();
+            Observer_lock?_;
+            Observer_0_PI_0_ping_in();
+            Observer_lock!1;
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
             skip;
@@ -115,23 +113,13 @@ active proctype Actuator_trigger() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Actuator_trigger_channel) || nempty(Actuator_observer_actuator_trigger_channel));
+        nempty(Actuator_trigger_channel);
         Actuator_lock?_;
 Actuator_trigger_loop:
         if
-        ::  nempty(Actuator_observer_actuator_trigger_channel);
-            Actuator_observer_actuator_trigger_channel?_;
-            Actuator_0_PI_0_trigger();
-            goto Actuator_trigger_loop;
-        ::  empty(Actuator_observer_actuator_trigger_channel);
-            skip;
-        fi;
-        if
         ::  nempty(Actuator_trigger_channel);
             Actuator_trigger_channel?_;
-            Observer_lock?_;
-            Observer_0_PI_0_trigger_out();
-            Observer_lock!1;
+            Actuator_0_PI_0_trigger();
             goto Actuator_trigger_loop;
         ::  empty(Actuator_trigger_channel);
             skip;

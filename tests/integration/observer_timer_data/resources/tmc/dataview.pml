@@ -66,10 +66,10 @@
 #define TimerData_interval int
 #define AggregateTimerData_actuator_trigger_timer_enabled bool
 #define AggregateTimerData_actuator_trigger_interval int
-#define Observer_States_reached 0
-#define Observer_States_wait 1
-#define Observer_Context_state_reached 0
-#define Observer_Context_state_wait 1
+#define Observer_States_idle 0
+#define Observer_States_error 1
+#define Observer_Context_state_idle 0
+#define Observer_Context_state_error 1
 #define Observer_Actuator_Event_Msg_In_Selection_input_none_present 1
 #define Observer_Actuator_Event_Msg_In_Selection_ping_present 2
 #define Observer_Actuator_Event_Msg_In_Selection_trigger_present 3
@@ -3590,7 +3590,7 @@ inline Observer_States_assign_value(dst, src)
 }
 inline Observer_States_range_check(Observer_States_vc)
 {
-    assert(((Observer_States_vc == Observer_States_reached) || (Observer_States_vc == Observer_States_wait)));
+    assert(((Observer_States_vc == Observer_States_idle) || (Observer_States_vc == Observer_States_error)));
 }
 inline Observer_Context_state_assign_value(dst, src)
 {
@@ -3599,7 +3599,7 @@ inline Observer_Context_state_assign_value(dst, src)
 }
 inline Observer_Context_state_range_check(Observer_Context_state_vc)
 {
-    assert(((Observer_Context_state_vc == Observer_Context_state_reached) || (Observer_Context_state_vc == Observer_Context_state_wait)));
+    assert(((Observer_Context_state_vc == Observer_Context_state_idle) || (Observer_Context_state_vc == Observer_Context_state_error)));
 }
 inline Observer_Context_init_done_assign_value(dst, src)
 {

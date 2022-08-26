@@ -60,7 +60,8 @@ TESTS= \
 	stop_condition_get_state_proctype \
 	stop_condition_get_state_parallel_proctype \
 	input_observer_timer \
-	output_observer_timer
+	output_observer_timer \
+	observer_timer_data
 
 .PHONY: $(TESTS) check
 
