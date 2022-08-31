@@ -1952,9 +1952,7 @@ def __generate_init_function(context: Context) -> promelamodel.Inline:
     return builder.build()
 
 
-def __generate_continuous_signals_block(
-    context: Context, transition_id
-) -> promelamodel.Statement:
+def __generate_continuous_signals_block(context: Context) -> promelamodel.Statement:
     inner_switch_builder = SwitchBuilder()
     state_variable_name = __get_state_variable_name(context)
     for name, signals in context.sdl_model.continuous_signals.items():
@@ -1970,7 +1968,7 @@ def __generate_continuous_signals_block(
                             [
                                 AssignmentBuilder()
                                 .withTarget(
-                                    VariableReferenceBuilder(transition_id).build()
+                                    VariableReferenceBuilder(__TRANSITION_ID).build()
                                 )
                                 .withSource(
                                     promelamodel.IntegerValue(signal.transition)
@@ -2008,8 +2006,77 @@ def __generate_continuous_signals_block(
     return inner_switch_builder.build()
 
 
+def __generate_continuous_signals_block_for_observer(
+    context: Context,
+) -> promelamodel.Statement:
+    inner_switch_builder = DoBuilder()
+    state_variable_name = __get_state_variable_name(context)
+    for name, signals in context.sdl_model.continuous_signals.items():
+        if len(signals) > 0:
+            statements = []
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build())
+                .withSource(promelamodel.IntegerValue(-1))
+                .build()
+            )
+            for signal in signals:
+                statements.append(
+                    SwitchBuilder()
+                    .withAlternative(
+                        AlternativeBuilder()
+                        .withCondition(__generate_expression(context, signal.trigger))
+                        .withStatements(
+                            [
+                                AssignmentBuilder()
+                                .withTarget(
+                                    VariableReferenceBuilder(
+                                        __OBSERVER_TRANSITION_ID
+                                    ).build()
+                                )
+                                .withSource(
+                                    promelamodel.IntegerValue(signal.transition)
+                                )
+                                .build()
+                            ]
+                        )
+                        .build()
+                    )
+                    .withAlternative(
+                        AlternativeBuilder()
+                        .withStatements([promelamodel.Break()])
+                        .build()
+                    )
+                    .build()
+                )
+            transition_inline = __get_transition_function_name(context)
+            param = VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build()
+            statements.append(
+                CallBuilder().withTarget(transition_inline).withParameter(param).build()
+            )
+            state = context.sdl_model.states[name]
+            state_name = __get_state_name(context, state)
+            inner_switch_builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                    .withLeft(VariableReferenceBuilder(state_variable_name).build())
+                    .withRight(VariableReferenceBuilder(state_name).build())
+                    .build()
+                )
+                .withStatements(statements)
+                .build()
+            )
+
+    inner_switch_builder.withAlternative(
+        AlternativeBuilder().withStatements([promelamodel.Break()]).build()
+    )
+
+    return inner_switch_builder.build()
+
+
 def __generate_continuous_signals(context: Context) -> promelamodel.Statement:
-    block = __generate_continuous_signals_block(context, __TRANSITION_ID)
+    block = __generate_continuous_signals_block(context)
 
     check_queue_inline = "{}_check_queue".format(context.sdl_model.process_name)
     switch_builder = SwitchBuilder()
@@ -2112,18 +2179,7 @@ def __generate_observer_check_inline(context: Context) -> promelamodel.Inline:
             ).build()
         )
         blockBuilder.withStatement(
-            AssignmentBuilder()
-            .withTarget(VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build())
-            .withSource(promelamodel.IntegerValue(-1))
-            .build()
-        )
-        blockBuilder.withStatement(
-            __generate_continuous_signals_block(context, __OBSERVER_TRANSITION_ID)
-        )
-        transition_inline = __get_transition_function_name(context)
-        param = VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build()
-        blockBuilder.withStatement(
-            CallBuilder().withTarget(transition_inline).withParameter(param).build()
+            __generate_continuous_signals_block_for_observer(context)
         )
     else:
         blockBuilder.withStatement(promelamodel.Skip())

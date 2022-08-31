@@ -18,8 +18,8 @@ chan Actuator_ping_channel = [1] of {MyInteger};
 MyInteger Actuator_ping_signal_parameter;
 bool Actuator_ping_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
@@ -53,14 +53,14 @@ Controller_pong_loop:
         ::  nempty(Controller_pong_channel);
             Controller_pong_channel?Controller_pong_signal_parameter;
             Controller_0_PI_0_pong(Controller_pong_signal_parameter);
+            Observer_lock?_;
+            Observer_0_check_continuous_signals();
+            Observer_lock!1;
             goto Controller_pong_loop;
         ::  empty(Controller_pong_channel);
             skip;
         fi;
         Controller_lock!1;
-        Observer_lock?_;
-        Observer_0_check_continuous_signals();
-        Observer_lock!1;
     }
     od;
 }
@@ -76,14 +76,14 @@ Actuator_ping_loop:
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?Actuator_ping_signal_parameter;
             Actuator_0_PI_0_ping(Actuator_ping_signal_parameter);
+            Observer_lock?_;
+            Observer_0_check_continuous_signals();
+            Observer_lock!1;
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
             skip;
         fi;
         Actuator_lock!1;
-        Observer_lock?_;
-        Observer_0_check_continuous_signals();
-        Observer_lock!1;
     }
     od;
 }
@@ -91,10 +91,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Actuator_0_init();
-        Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         Observer_0_init();
         Observer_lock!1;
         inited = 1;
