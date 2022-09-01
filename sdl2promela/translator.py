@@ -1953,7 +1953,10 @@ def __generate_init_function(context: Context) -> promelamodel.Inline:
 
 
 def __generate_continuous_signals_alternative(
-    context: Context, transition_id: str, signals: List[sdlmodel.ContinuousSignal]
+    context: Context,
+    transition_id: str,
+    signals: List[sdlmodel.ContinuousSignal],
+    is_loop: bool,
 ) -> List[promelamodel.Statement]:
     statements: List[promelamodel.Statement] = []
     for signal in signals:
@@ -1973,7 +1976,11 @@ def __generate_continuous_signals_alternative(
                 .build()
             )
             .withAlternative(
-                AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
+                AlternativeBuilder()
+                .withStatements(
+                    [promelamodel.Break() if is_loop else promelamodel.Skip()]
+                )
+                .build()
             )
             .build()
         )
@@ -1986,7 +1993,7 @@ def __generate_continuous_signals_block(context: Context) -> promelamodel.Statem
     for name, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
             statements = __generate_continuous_signals_alternative(
-                context, __TRANSITION_ID, signals
+                context, __TRANSITION_ID, signals, False
             )
             state = context.sdl_model.states[name]
             state_name = __get_state_name(context, state)
@@ -2025,7 +2032,7 @@ def __generate_continuous_signals_block_for_observer(
             )
             statements.extend(
                 __generate_continuous_signals_alternative(
-                    context, __OBSERVER_TRANSITION_ID, signals
+                    context, __OBSERVER_TRANSITION_ID, signals, True
                 )
             )
             transition_inline = __get_transition_function_name(context)
