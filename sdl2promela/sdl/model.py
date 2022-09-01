@@ -723,6 +723,9 @@ class ObservedSignalKind(Enum):
     OUTPUT = 2
     """Output Observer, inspecting and mutating output from a function."""
 
+    CONTINUOUS_SIGNAL = 3
+    """Continuous cignal observer, reaction to change in system state."""
+
 
 class ObserverAttachmentInfo:
     """Observer attachment info sourced from the Renames clause."""
@@ -1474,6 +1477,7 @@ class Model:
     def __gather_continuous_signals(self):
         for state in self.states:
             self.continuous_signals[state] = []
+        continuous_signals_exist = False
         for state, signals in self.source.cs_mapping.items():
             for signal in signals:
                 if signal.observer_input is not None:
@@ -1484,6 +1488,11 @@ class Model:
                 cs.trigger = convert(signal.trigger.question)
                 cs.transition = signal.transition_id
                 self.continuous_signals[state].append(cs)
+                continuous_signals_exist = True
+        if continuous_signals_exist:
+            info = ObserverAttachmentInfo()
+            info.kind = ObservedSignalKind.CONTINUOUS_SIGNAL
+            self.observer_attachments.append(info)
 
     def __get_inputs_of_name(self, name: str) -> List[ogAST.Input]:
         result = set()

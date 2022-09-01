@@ -24,9 +24,8 @@ TEST_DIR: str = os.path.dirname(os.path.realpath(__file__))
 RESOURCE_DIR: str = os.path.join(TEST_DIR, "resources")
 
 
-def read_main_process(path: str, expected_warning_count: int = 0) -> ogAST.Process:
+def read_main_process(path: str) -> ogAST.Process:
     ast, warnings, errors = opengeode.parse([path])
-    assert len(warnings) == expected_warning_count
     assert len(errors) == 0
     assert len(ast.processes) == 1
     return ast.processes[0]
@@ -187,9 +186,7 @@ def test_model_reads_joins():
 
 def test_model_reads_join_based_loop():
     path = os.path.join(RESOURCE_DIR, "loop.pr")
-    # There used to be 2 expected warnings regarding the range
-    # After OpenGEODE 3.9.4, no warnings are reported
-    process = read_main_process(path, 0)
+    process = read_main_process(path)
 
     model = Model(process)
 
@@ -214,9 +211,7 @@ def test_model_reads_join_based_loop():
 
 def test_model_reads_for_with_range():
     path = os.path.join(RESOURCE_DIR, "for_with_range.pr")
-    # There used to be 2 expected warnings regarding the range
-    # After OpenGEODE 3.9.4, no warnings are reported
-    process = read_main_process(path, 0)
+    process = read_main_process(path)
 
     model = Model(process)
 
@@ -235,9 +230,7 @@ def test_model_reads_for_with_range():
 
 def test_model_reads_procedure_calls():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
-    # There used to be 3 expected warnings regarding the range
-    # After OpenGEODE 3.9.4, no warnings are reported
-    process = read_main_process(path, 0)
+    process = read_main_process(path)
 
     model = Model(process)
     assert len(model.transitions) == 2
@@ -264,9 +257,7 @@ def test_model_reads_procedure_calls():
 
 def test_model_reads_internal_procedures():
     path = os.path.join(RESOURCE_DIR, "internal_procedures.pr")
-    # There used to be 3 expected warnings regarding the range
-    # After OpenGEODE 3.9.4, no warnings are reported
-    process = read_main_process(path, 0)
+    process = read_main_process(path)
 
     model = Model(process)
 
