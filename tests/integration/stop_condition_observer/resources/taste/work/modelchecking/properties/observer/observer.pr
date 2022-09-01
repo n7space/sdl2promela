@@ -1,0 +1,67 @@
+system observer;
+    /* CIF TEXT (144, 214), (460, 140) */
+    use datamodel comment 'observer.asn';
+    
+    signal ping_in(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with ping_in;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with ping_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (88, 51), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            dcl some_variable MyInteger := 0;
+            
+            /* CIF ENDTEXT */
+            /* CIF START (662, 63), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (662, 118), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (384, 254), (70, 35) */
+            state Idle;
+                /* CIF input (347, 309), (143, 35) */
+                input ping_in(ping_param);
+                    /* CIF decision (362, 364), (113, 50) */
+                    decision ping_param > 9;
+                        /* CIF ANSWER (545, 434), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (545, 477), (70, 35) */
+                            NEXTSTATE Idle;
+                        /* CIF ANSWER (339, 434), (70, 23) */
+                        (true):
+                            /* CIF decision (309, 477), (128, 50) */
+                            decision some_variable = 3;
+                                /* CIF ANSWER (220, 547), (70, 23) */
+                                (true):
+                                    /* CIF NEXTSTATE (219, 590), (73, 35) */
+                                    NEXTSTATE Reached;
+                                /* CIF ANSWER (384, 547), (70, 23) */
+                                (false):
+                                    /* CIF task (303, 590), (230, 35) */
+                                    task some_variable := some_variable + 1;
+                                    /* CIF NEXTSTATE (384, 645), (70, 35) */
+                                    NEXTSTATE Idle;
+                            enddecision;
+                    enddecision;
+            endstate;
+            /* CIF state (933, 262), (73, 35) */
+            state Reached;
+                /* CIF input (898, 317), (143, 35) */
+                input ping_in(ping_param);
+                    /* CIF NEXTSTATE (933, 372), (73, 35) */
+                    NEXTSTATE Reached;
+            endstate;
+            /* CIF state (496, 63), (70, 35) */
+            state error;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;
