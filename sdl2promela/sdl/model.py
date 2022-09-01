@@ -724,6 +724,7 @@ class ObservedSignalKind(Enum):
     """Output Observer, inspecting and mutating output from a function."""
 
     CONTINUOUS_SIGNAL = 3
+    """Continuous cignal observer, reaction to change in system state."""
 
 
 class ObserverAttachmentInfo:

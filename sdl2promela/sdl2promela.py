@@ -280,9 +280,8 @@ def translate(
 
     try:
         __log.info("Translating SDL into Promela")
-        promela_model = translator.translate(
-            sdl_model, attachment_info_file_name is not None
-        )
+        is_observer = attachment_info_file_name is not None
+        promela_model = translator.translate(sdl_model, is_observer)
     except Exception:
         __log.error("SDL to Promela model translation failed")
         traceback.print_exc()
