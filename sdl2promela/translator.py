@@ -1965,7 +1965,7 @@ def __generate_continuous_signals_alternative(
                 .withStatements(
                     [
                         AssignmentBuilder()
-                        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                        .withTarget(VariableReferenceBuilder(transition_id).build())
                         .withSource(promelamodel.IntegerValue(signal.transition))
                         .build()
                     ]
