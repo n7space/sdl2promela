@@ -62,6 +62,7 @@ TESTS= \
 	input_observer_timer \
 	output_observer_timer \
 	observer_timer_data \
+	stop_condition_observer \
 	observer_continuous_signal
 
 .PHONY: $(TESTS) check

@@ -1,0 +1,1 @@
+eventually get_state(observer) = reached and observer.some_variable > 0;
