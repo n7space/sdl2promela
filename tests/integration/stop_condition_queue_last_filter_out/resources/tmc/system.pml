@@ -5,6 +5,7 @@
 typedef system_state {
     Controller_Context controller;
     Actuator_Context actuator;
+    AggregateTimerData timers;
 }
 
 int inited;
@@ -46,45 +47,66 @@ inline Actuator_check_queue()
 active proctype Controller_pong() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Controller_pong_channel?_;
-        Controller_lock?token;
-        Controller_0_PI_0_pong();
-        Controller_lock!token;
+        nempty(Controller_pong_channel);
+        Controller_lock?_;
+Controller_pong_loop:
+        if
+        ::  nempty(Controller_pong_channel);
+            Controller_pong_channel?_;
+            Controller_0_PI_0_pong();
+            goto Controller_pong_loop;
+        ::  empty(Controller_pong_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
 active proctype Controller_test() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Controller_test_channel?Controller_test_signal_parameter;
-        Controller_test_channel_used = 1;
-        Controller_lock?token;
-        Controller_0_PI_0_test(Controller_test_signal_parameter);
-        Controller_lock!token;
+        nempty(Controller_test_channel);
+        Controller_lock?_;
+Controller_test_loop:
+        if
+        ::  nempty(Controller_test_channel);
+            Controller_test_channel?Controller_test_signal_parameter;
+            Controller_test_channel_used = 1;
+            Controller_0_PI_0_test(Controller_test_signal_parameter);
+            goto Controller_test_loop;
+        ::  empty(Controller_test_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
 active proctype Actuator_ping() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Actuator_ping_channel?Actuator_ping_signal_parameter;
-        Actuator_ping_channel_used = 1;
-        Actuator_lock?token;
-        Actuator_0_PI_0_ping(Actuator_ping_signal_parameter);
-        Actuator_lock!token;
+        nempty(Actuator_ping_channel);
+        Actuator_lock?_;
+Actuator_ping_loop:
+        if
+        ::  nempty(Actuator_ping_channel);
+            Actuator_ping_channel?Actuator_ping_signal_parameter;
+            Actuator_ping_channel_used = 1;
+            Actuator_0_PI_0_ping(Actuator_ping_signal_parameter);
+            goto Actuator_ping_loop;
+        ::  empty(Actuator_ping_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
     }
     od;
 }
-active proctype Environ_test()
+active proctype Environ_test() priority 1
 {
     inited;
     MyTestInteger value;
@@ -98,11 +120,11 @@ active proctype Environ_test()
 init
 {
     atomic {
-        int init_token = 1;
+        global_dataview_init();
         Actuator_0_init();
-        Actuator_lock!init_token;
+        Actuator_lock!1;
         Controller_0_init();
-        Controller_lock!init_token;
+        Controller_lock!1;
         inited = 1;
     }
 }
