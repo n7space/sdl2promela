@@ -1,0 +1,61 @@
+system observer;
+    /* CIF TEXT (144, 214), (460, 140) */
+    use datamodel comment 'observer.asn';
+    
+    signal ping_in(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with ping_in;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with ping_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (0, 57), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            
+            dcl indicator MyInteger := 0;
+            /* CIF ENDTEXT */
+            /* CIF START (93, 259), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (93, 314), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (357, 160), (70, 35) */
+            state Idle;
+                /* CIF input (343, 215), (97, 35) */
+                input ping_in(prm);
+                    /* CIF decision (357, 270), (70, 50) */
+                    decision prm = 2;
+                        /* CIF ANSWER (312, 340), (70, 23) */
+                        (true):
+                            /* CIF decision (312, 383), (70, 50) */
+                            decision any;
+                                /* CIF ANSWER (357, 453), (70, 23) */
+                                (right):
+                                    /* CIF task (342, 496), (99, 35) */
+                                    task indicator := 2;
+                                /* CIF ANSWER (246, 453), (70, 23) */
+                                (left):
+                                    /* CIF task (232, 496), (99, 35) */
+                                    task indicator := 1;
+                            enddecision;
+                            /* CIF NEXTSTATE (312, 547), (70, 35) */
+                            NEXTSTATE Idle;
+                        /* CIF ANSWER (452, 340), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (452, 383), (70, 35) */
+                            NEXTSTATE Idle;
+                    enddecision;
+            endstate;
+            /* CIF state (361, 63), (70, 35) */
+            state error;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;
