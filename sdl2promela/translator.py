@@ -1698,6 +1698,8 @@ def __generate_statement(
             statements.append(promelamodel.Skip())
 
         if decision.condition is None:
+            if not context.is_observer:
+                raise Exception(f"Decision block ANY is allowed only for observers")
             # Decision 'ANY'
             builder.withAlternative(
                 AlternativeBuilder()

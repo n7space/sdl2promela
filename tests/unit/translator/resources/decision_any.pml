@@ -26,6 +26,10 @@ inline Complexsdl_0_transition(id)
     fi;
   od;
 }
+inline Complexsdl_0_check_continuous_signals()
+{
+  skip;
+}
 inline Complexsdl_0_init()
 {
   Complexsdl_0_transition(0);
