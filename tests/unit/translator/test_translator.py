@@ -1,4 +1,3 @@
-import typing
 from typing import List, Any
 
 import opengeode
@@ -23,12 +22,14 @@ def dump_lines(path: str, lines: List[str]):
         file.writelines(lines)
 
 
-def translate_and_verify(path_to_source: str, path_to_reference: str):
+def translate_and_verify(
+    path_to_source: str, path_to_reference: str, is_observer: bool = False
+):
     effective_path_to_source = os.path.join(RESOURCE_DIR, path_to_source)
     process = sdl2promela.read_process([effective_path_to_source])
     sdl_model = sdlmodel.Model(process)
 
-    promela_model = translator.translate(sdl_model)
+    promela_model = translator.translate(sdl_model, is_observer)
 
     stream = io.StringIO()
     promelagenerator.generate_model(promela_model, stream)
@@ -102,3 +103,7 @@ def test_translates_conditional_expression():
 
 def test_translates_asn1_constant():
     translate_and_verify("asn1_constant.pr", "asn1_constant.pml")
+
+
+def test_translates_any():
+    translate_and_verify("decision_any.pr", "decision_any.pml", True)

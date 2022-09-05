@@ -1358,6 +1358,16 @@ def convert(source: ogAST.Decision) -> Action:
             return decision
         else:
             raise ValueError("Empty (informal?) decision question")
+    elif source.kind == "any":
+        decision = Decision()
+        decision.condition = None
+        for sourceAnswer in source.answers:
+            answer = convert(sourceAnswer)
+            decision.answers.append(answer)
+        return decision
+    elif source.kind == "informal_text":
+        # Ignore decision with informal text
+        return None
     else:
         raise ValueError("Unsupported decision type: " + source.kind)
     return None
