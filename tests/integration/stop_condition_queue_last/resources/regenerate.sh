@@ -10,7 +10,7 @@ fi
 
 echo "Building project"
 pushd taste
-if ! make debug && make -C work/build -f Makefile.taste observer.asn
+if ! make observer_dataview
 then
 	echo "CRITICAL: Cannot build project"
 	exit 1
