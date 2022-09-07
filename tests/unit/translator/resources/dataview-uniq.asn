@@ -44,6 +44,19 @@ BEGIN
        dummy MyInteger
    }
 
+   SmallInteger ::= INTEGER (0 .. 2)
+   BigInteger ::= INTEGER (3 .. 5)
+   MyChoice ::= CHOICE {
+      small SmallInteger,
+      big BigInteger
+   }
+   MySequence ::= SEQUENCE {
+      value SmallInteger,
+      version MyChoice
+   }
+
+   MySequenceOf ::= SEQUENCE (SIZE(1)) OF MySequence
+
    myIntegerInitVal MyInteger ::= 3
 
 END
