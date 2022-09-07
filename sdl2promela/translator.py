@@ -1528,10 +1528,13 @@ def __generate_assignment(
             )
 
         if name in right.elements:
+            field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name))
+            field.type = right.elements[name].type
+
             statements.extend(
                 __generate_assignment(
                     context,
-                    sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name)),
+                    field,
                     right.elements[name],
                     dataType.type,
                 )
