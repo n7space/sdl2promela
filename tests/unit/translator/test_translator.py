@@ -107,3 +107,9 @@ def test_translates_asn1_constant():
 
 def test_translates_any():
     translate_and_verify("decision_any.pr", "decision_any.pml", True)
+
+
+def test_translates_complex_sequence_assignment():
+    translate_and_verify(
+        "complex_sequence_assignment.pr", "complex_sequence_assignment.pml"
+    )
