@@ -1614,10 +1614,12 @@ def __generate_assignment(
         )
 
     for index in range(length):
+        field = sdlmodel.ArrayAccess(left, sdlmodel.Constant(str(index)))
+        field.type = finalType.type
         statements.extend(
             __generate_assignment(
                 context,
-                sdlmodel.ArrayAccess(left, sdlmodel.Constant(str(index))),
+                field,
                 right.elements[index],
                 finalType.type,
             )
