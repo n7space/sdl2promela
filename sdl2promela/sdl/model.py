@@ -1461,12 +1461,13 @@ class Model:
         self.implicit_variables = {}
         self.named_transition_ids = {}
         self.aggregates = {}
-        self.timers = self.source.timers
+        self.timers = []
         self.monitors = {}
 
         self.__gather_states()
         self.__gather_constants()
         self.__gather_variables()
+        self.__gather_timers()
         self.__gather_inputs()
         self.__gather_continuous_signals()
         self.__gather_transitions()
@@ -1483,6 +1484,10 @@ class Model:
             state = State()
             state.name = stateName
             self.states[stateName] = state
+
+    def __gather_timers(self):
+        for timer in self.source.timers:
+            self.timers.append(timer.lower())
 
     def __gather_continuous_signals(self):
         for state in self.states:
@@ -1593,7 +1598,7 @@ class Model:
                 info.observerSignalName = input.name
                 self.observer_attachments.append(info)
             self.inputs[input.name] = input
-        for timer in self.source.timers:
+        for timer in self.timers:
             input = Input()
             input.name = timer
             input.transitions = {}
