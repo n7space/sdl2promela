@@ -7,13 +7,16 @@ inline Bare_outputs_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.bare_outputs.state = Bare_outputs_States_state_1;
       transition_id = -1;
+      global_state.bare_outputs.state = Bare_outputs_States_state_1;
+      goto continuous_signals;
     ::(transition_id == 1)->
       Bare_outputs_0_RI_0_signal_out();
-      global_state.bare_outputs.state = Bare_outputs_States_state_1;
       transition_id = -1;
+      global_state.bare_outputs.state = Bare_outputs_States_state_1;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Bare_outputs_0_init()

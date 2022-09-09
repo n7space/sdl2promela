@@ -7,17 +7,21 @@ inline Complexsdl_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
+      global_state.complexsdl.state = Complexsdl_States_wait;
+      goto continuous_signals;
     ::(transition_id == 1)->
       Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
-      global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
+      global_state.complexsdl.state = Complexsdl_States_wait;
+      goto continuous_signals;
     ::(transition_id == 2)->
       Complexsdl_0_mytimer_set(1000);
-      global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
+      global_state.complexsdl.state = Complexsdl_States_wait;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Complexsdl_0_init()

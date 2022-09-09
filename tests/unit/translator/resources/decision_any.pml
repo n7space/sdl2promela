@@ -7,8 +7,9 @@ inline Complexsdl_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
+      global_state.complexsdl.state = Complexsdl_States_wait;
+      goto continuous_signals;
     ::(transition_id == 1)->
       if
       ::1->
@@ -17,13 +18,15 @@ inline Complexsdl_0_transition(id)
         MyInteger_assign_value(global_state.complexsdl.result, 3);
       ::1->
         MyInteger_assign_value(global_state.complexsdl.result, 1);
-     ::1->
+      ::1->
         MyInteger_assign_value(global_state.complexsdl.result, 4);
       fi;
       Complexsdl_0_RI_0_response(global_state.complexsdl.result);
-      global_state.complexsdl.state = Complexsdl_States_wait;
       transition_id = -1;
+      global_state.complexsdl.state = Complexsdl_States_wait;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Complexsdl_0_check_continuous_signals()

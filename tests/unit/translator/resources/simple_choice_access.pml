@@ -7,8 +7,9 @@ inline Simplechoiceaccess_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
       transition_id = -1;
+      global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
+      goto continuous_signals;
     ::(transition_id == 1)->
       if
       ::(global_state.simplechoiceaccess.my_data.selection == MyUnion_packet_PRESENT)->
@@ -17,9 +18,11 @@ inline Simplechoiceaccess_0_transition(id)
         MyInteger_assign_value(global_state.simplechoiceaccess.my_int, 0);
       fi;
       Simplechoiceaccess_0_RI_0_pong(global_state.simplechoiceaccess.my_int);
-      global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
       transition_id = -1;
+      global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Simplechoiceaccess_0_init()
