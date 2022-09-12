@@ -100,7 +100,7 @@ class Context:
 
     missing_type: Optional[Asn1Type]
 
-    dont_generate_transition_stop: bool
+    state_aggregation: bool
 
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
@@ -109,7 +109,7 @@ class Context:
         self.in_transition_chain = False
         self.loop_level = 0
         self.missing_type = None
-        self.dont_generate_transition_stop = False
+        self.state_aggregation = False
 
     def push_parent(self, parent: Any):
         """
@@ -1751,7 +1751,7 @@ def __generate_statement(
 
     state_name = __get_state_name(context, state)
     statements: List[promelamodel.Statement] = []
-    if not context.dont_generate_transition_stop:
+    if not context.state_aggregation:
         statements.append(__terminate_transition_statement())
     statements.append(
         AssignmentBuilder()
@@ -1759,7 +1759,7 @@ def __generate_statement(
         .withSource(VariableReferenceBuilder(state_name).build())
         .build()
     )
-    if not context.dont_generate_transition_stop:
+    if not context.state_aggregation:
         statements.append(promelamodel.GoTo(__LABEL_CONTINUOUS_SIGNALS))
     return promelamodel.StatementsWrapper(statements)
 
@@ -1923,18 +1923,6 @@ def __generate_statement(
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
-# def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
-#     # If transition does not contain an explicit move to another transition
-#     # Then it is necessary to generate an instruction to stop transition
-#     if len(transition.actions) == 0:
-#         return True
-#     return (
-#         len(transition.actions) > 0
-#         and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
-#         and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
-#     )
-
-
 def __generate_transition(
     context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
@@ -1942,12 +1930,6 @@ def __generate_transition(
     statements = []
     for action in transition.actions:
         statements.append(__generate_statement(context, transition, action))
-
-    # if not context.in_transition_chain:
-    #     if not isinstance(transition.parent, sdlmodel.Procedure):
-    #         # Procedures do not change the current transition
-    #         if __should_generate_transition_stop(transition):
-    #             statements.append(__terminate_transition_statement())
 
     context.pop_parent()
     return statements
@@ -2222,9 +2204,9 @@ def __generate_aggregate_inline(
         if transition_id not in context.sdl_model.transitions:
             raise Exception(f"Missing transition with id {transition_id}")
         transition = context.sdl_model.transitions[transition_id]
-        context.dont_generate_transition_stop = True
+        context.state_aggregation = True
         blockBuilder.withStatements(__generate_transition(context, transition))
-        context.dont_generate_transition_stop = False
+        context.state_aggregation = False
 
     builder.withDefinition(blockBuilder.build())
 
