@@ -1,0 +1,215 @@
+Actuator-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   MyInteger FROM DECISION-REGRESSION-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID FROM System-Dataview;
+
+Actuator-States ::= ENUMERATED {left, wait, right}
+
+Actuator-Context ::= SEQUENCE {
+   state Actuator-States,
+   init-done BOOLEAN,
+   param MyInteger
+}
+
+END
+
+Controller-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   MyInteger FROM DECISION-REGRESSION-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID FROM System-Dataview;
+
+Controller-States ::= ENUMERATED {wait}
+
+Controller-Context ::= SEQUENCE {
+   state Controller-States,
+   init-done BOOLEAN,
+   param MyInteger
+}
+
+END
+
+DECISION-REGRESSION-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+END
+
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+-- List of functions (instances) present in the system
+PID ::= ENUMERATED {
+    actuator,
+    controller,
+    
+    env
+}
+
+END
+
+
+Simulation-DataView DEFINITIONS ::=
+BEGIN
+   IMPORTS
+      
+      --  ASN.1 modules used by thread actuator_ping
+      MyInteger FROM DECISION-REGRESSION-DATAVIEW
+      
+      
+      -- Import generic integer type (used for timers)
+      T-UInt32 FROM TASTE-BasicTypes
+      PID      FROM System-Dataview
+      -- Import timers
+      AggregateTimerData FROM Simulation-Timers-DataView
+      --  Import the SDL function states needed for the global system state
+      Actuator-Context   FROM Actuator-Datamodel
+      Controller-Context FROM Controller-Datamodel
+   ;
+
+   --  Simulator needs to knows about cyclic interfaces
+   Periodic-Event {Event-Ty} ::= SEQUENCE {
+      period INTEGER (0 .. 500000),  -- Upper limit is arbitrary
+      event  Event-Ty
+   }
+
+   --  To keep a constant list of events.
+   Periodic-Events {Event-Ty, INTEGER:max} ::=
+      SEQUENCE (SIZE (0 .. max)) OF Periodic-Event {Event-Ty}
+
+   
+   
+   
+   Actuator-Event ::= CHOICE {
+      msg-in CHOICE {
+         input-none SEQUENCE {},
+         ping SEQUENCE { p1 MyInteger}
+      },
+      msg-out CHOICE {
+         pong SEQUENCE {   }
+      }
+   }
+   
+   Controller-Event ::= CHOICE {
+      msg-in CHOICE {
+         input-none SEQUENCE {},
+         pong SEQUENCE {  }
+      },
+      msg-out CHOICE {
+         ping SEQUENCE { p1 MyInteger }
+      }
+   }
+   
+
+   --  Current observer state flag (used by model checkers)
+   Observer-State-Kind ::= ENUMERATED {
+      regular-state,
+      error-state,
+      ignore-state,
+      success-state
+   }
+
+   --  Event related to the execution of a PI or call of a RI in the functional code
+   Function-Event ::= CHOICE {
+      actuator   Actuator-Event,
+      controller Controller-Event
+   }
+
+   --  Type used to store events in a database: associate a name to the event
+   Named-Function-Event ::= SEQUENCE {
+      id    IA5String (SIZE (1..80)),
+      event Function-Event
+   }
+
+   --  Event at interface level (PI or RI), including source and destination ID
+   Interface-Event ::= SEQUENCE {
+      source PID,
+      dest   PID,
+      event  Function-Event
+   }
+
+   --  Event sent to the observers
+   Observable-Event ::= CHOICE {
+      no-event        SEQUENCE {},
+      system-startup  SEQUENCE {},
+      input-event     Interface-Event,   --  input event is evaluated after the transition
+      output-event    Interface-Event,   --  output event is evaluated before the message is sent
+      unhandled-input Interface-Event    --  message received in a state where it is not expected
+   }
+
+   --  constant that can be used to refer to the absence of an input/output event
+   nothing Observable-Event ::= no-event : {}
+
+   --  Define a queue of events, corresponding to the input queue for each function
+   max-events INTEGER ::= 10
+   Events-Ty ::= SEQUENCE (SIZE (0 .. max-events)) OF Observable-Event
+
+   --  Global system state (excluding observers, which are defined later)
+   actuator-queue-size INTEGER ::= 2
+   controller-queue-size INTEGER ::= 2
+
+   System-State ::= SEQUENCE {
+      --  Timers
+      timers AggregateTimerData,
+      --  Message queues
+      actuator-queue   Events-Ty (SIZE (0 .. actuator-queue-size)),
+      controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
+
+      actuator    Actuator-Context,
+      controller  Controller-Context
+   }
+
+END
+
+Simulation-Timers-DataView DEFINITIONS ::=
+BEGIN
+
+   TimerData ::= SEQUENCE {
+      timer-enabled BOOLEAN,
+      interval INTEGER (0 .. 50000)
+   }
+
+   AggregateTimerData ::= SEQUENCE {
+      
+      
+      
+      actuator SEQUENCE {
+      },
+      
+      controller SEQUENCE {
+      },
+      
+      dummy-entry SEQUENCE {}
+   }
+
+END
+

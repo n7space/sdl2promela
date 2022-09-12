@@ -41,6 +41,7 @@ __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
+__LABEL_CONTINUOUS_SIGNALS = "continuous_signals"
 
 __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
@@ -99,6 +100,8 @@ class Context:
 
     missing_type: Optional[Asn1Type]
 
+    state_aggregation: bool
+
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.is_observer = False
@@ -106,6 +109,7 @@ class Context:
         self.in_transition_chain = False
         self.loop_level = 0
         self.missing_type = None
+        self.state_aggregation = False
 
     def push_parent(self, parent: Any):
         """
@@ -934,10 +938,10 @@ def __generate_for_over_a_numeric_range(
     transition: sdlmodel.Transition,
     task: sdlmodel.ForLoopTask,
     inner_statements: List[promelamodel.Statement],
-) -> promelamodel.Statement:
-    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
+) -> List[promelamodel.Statement]:
+    statements: List[promelamodel.Statement] = []
     range = typing.cast(sdlmodel.NumericForLoopRange, task.range)
-    block_builder.withStatement(
+    statements.append(
         VariableDeclarationBuilder(task.iteratorName.variableName, "int").build()
     )
 
@@ -948,7 +952,7 @@ def __generate_for_over_a_numeric_range(
     else:
         start_expression = promelamodel.IntegerValue(0)
 
-    block_builder.withStatements(
+    statements.extend(
         [
             AssignmentBuilder()
             .withTarget(iteratorReference)
@@ -956,7 +960,7 @@ def __generate_for_over_a_numeric_range(
             .build()
         ]
     )
-    block_builder.withStatements(
+    statements.extend(
         [
             DoBuilder()
             .withAlternative(
@@ -989,7 +993,7 @@ def __generate_for_over_a_numeric_range(
             .build()
         ]
     )
-    return block_builder.build()
+    return statements
 
 
 def __generate_for_over_sequenceof(
@@ -997,12 +1001,12 @@ def __generate_for_over_sequenceof(
     transition: sdlmodel.Transition,
     task: sdlmodel.ForLoopTask,
     statements: List[promelamodel.Statement],
-):
-    block_builder = BlockBuilder(promelamodel.BlockType.BLOCK)
+) -> List[promelamodel.Statement]:
+    statements: List[promelamodel.Statement] = []
     range = typing.cast(sdlmodel.ForEachLoopRange, task.range)
     basic_type = find_basic_type(context.sdl_model.source.dataview, range.variableType)
 
-    block_builder.withStatement(
+    statements.append(
         VariableDeclarationBuilder(
             task.iteratorName.variableName, __type_name(range.type)
         ).build()
@@ -1010,9 +1014,7 @@ def __generate_for_over_sequenceof(
 
     iterator_name = "i" + str(context.loop_level)
 
-    block_builder.withStatement(
-        VariableDeclarationBuilder(iterator_name, "int").build()
-    )
+    statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
 
     for_loop_builder = ForLoopBuilder()
     for_loop_builder.withIterator(VariableReferenceBuilder(iterator_name).build())
@@ -1057,9 +1059,9 @@ def __generate_for_over_sequenceof(
     all_statements.extend(statements)
     for_loop_builder.withBody(all_statements)
 
-    block_builder.withStatement(for_loop_builder.build())
+    statements.append(for_loop_builder.build())
 
-    return block_builder.build()
+    return statements
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ForLoopTask)
@@ -1076,12 +1078,14 @@ def __generate_statement(
 
     context.leave_loop()
     if isinstance(task.range, sdlmodel.NumericForLoopRange):
-        return __generate_for_over_a_numeric_range(
-            context, transition, task, inner_statements
+        return promelamodel.StatementsWrapper(
+            __generate_for_over_a_numeric_range(
+                context, transition, task, inner_statements
+            )
         )
     if isinstance(task.range, sdlmodel.ForEachLoopRange):
-        return __generate_for_over_sequenceof(
-            context, transition, task, inner_statements
+        return promelamodel.StatementsWrapper(
+            __generate_for_over_sequenceof(context, transition, task, inner_statements)
         )
     else:
         raise NotImplementedError(
@@ -1746,12 +1750,18 @@ def __generate_statement(
     state = context.sdl_model.states[next_state.state_name.lower()]
 
     state_name = __get_state_name(context, state)
-    return (
+    statements: List[promelamodel.Statement] = []
+    if not context.state_aggregation:
+        statements.append(__terminate_transition_statement())
+    statements.append(
         AssignmentBuilder()
         .withTarget(VariableReferenceBuilder(state_variable).build())
         .withSource(VariableReferenceBuilder(state_name).build())
         .build()
     )
+    if not context.state_aggregation:
+        statements.append(promelamodel.GoTo(__LABEL_CONTINUOUS_SIGNALS))
+    return promelamodel.StatementsWrapper(statements)
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.NextTransition)
@@ -1913,18 +1923,6 @@ def __generate_statement(
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
-def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
-    # If transition does not contain an explicit move to another transition
-    # Then it is necessary to generate an instruction to stop transition
-    if len(transition.actions) == 0:
-        return True
-    return (
-        len(transition.actions) > 0
-        and not isinstance(transition.actions[-1], sdlmodel.NextTransition)
-        and not isinstance(transition.actions[-1], sdlmodel.TransitionChoice)
-    )
-
-
 def __generate_transition(
     context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
@@ -1932,12 +1930,6 @@ def __generate_transition(
     statements = []
     for action in transition.actions:
         statements.append(__generate_statement(context, transition, action))
-
-    if not context.in_transition_chain:
-        if not isinstance(transition.parent, sdlmodel.Procedure):
-            # Procedures do not change the current transition
-            if __should_generate_transition_stop(transition):
-                statements.append(__terminate_transition_statement())
 
     context.pop_parent()
     return statements
@@ -2131,6 +2123,7 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
 
     statements: List[promelamodel.Statement] = []
     statements.append(switch_builder.build())
+    statements.append(promelamodel.Label(__LABEL_CONTINUOUS_SIGNALS))
     continuous_signals_present = False
     for _, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
@@ -2211,7 +2204,9 @@ def __generate_aggregate_inline(
         if transition_id not in context.sdl_model.transitions:
             raise Exception(f"Missing transition with id {transition_id}")
         transition = context.sdl_model.transitions[transition_id]
+        context.state_aggregation = True
         blockBuilder.withStatements(__generate_transition(context, transition))
+        context.state_aggregation = False
 
     builder.withDefinition(blockBuilder.build())
 

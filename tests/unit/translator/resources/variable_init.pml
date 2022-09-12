@@ -7,25 +7,30 @@ inline Actuator_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.actuator.state = Actuator_States_wait;
       transition_id = -1;
+      global_state.actuator.state = Actuator_States_wait;
+      goto continuous_signals;
     ::(transition_id == 1)->
-      global_state.actuator.state = Actuator_States_wait;
       transition_id = -1;
+      global_state.actuator.state = Actuator_States_wait;
+      goto continuous_signals;
     ::(transition_id == 2)->
       Actuator_0_RI_0_pong();
       transition_id = 3;
     ::(transition_id == 3)->
-      global_state.actuator.state = Actuator_States_nested_0_a;
       transition_id = -1;
+      global_state.actuator.state = Actuator_States_nested_0_a;
+      goto continuous_signals;
     ::(transition_id == 4)->
       Actuator_0_RI_0_pong();
       transition_id = 1;
     ::(transition_id == 5)->
       Actuator_0_RI_0_pong();
-      global_state.actuator.state = Actuator_States_nested_0_b;
       transition_id = -1;
+      global_state.actuator.state = Actuator_States_nested_0_b;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Actuator_0_init()

@@ -54,17 +54,20 @@ inline Host_0_transition(id)
     ::(transition_id == -1)->
       break;
     ::(transition_id == 0)->
-      global_state.host.state = Host_States_wait;
       transition_id = -1;
+      global_state.host.state = Host_States_wait;
+      goto continuous_signals;
     ::(transition_id == 1)->
       Host_0_proc();
       Host_0_procWithArguments(global_state.host.r, 1, global_state.host.b, global_state.host.y);
       Host_0_procWithLocalVariables();
       Host_0_procWithOutput();
       Host_0_multireturn(global_state.host.r, global_state.host.a);
-      global_state.host.state = Host_States_wait;
       transition_id = -1;
+      global_state.host.state = Host_States_wait;
+      goto continuous_signals;
     fi;
+    continuous_signals:
   od;
 }
 inline Host_0_init()
@@ -75,7 +78,7 @@ inline Host_0_PI_0_trigger(input_param)
 {
   if
   ::(global_state.host.state == Host_States_wait)->
-	MyInteger_assign_value(global_state.host.x, input_param);
+    MyInteger_assign_value(global_state.host.x, input_param);
     Host_0_transition(1);
   ::else->
     skip;

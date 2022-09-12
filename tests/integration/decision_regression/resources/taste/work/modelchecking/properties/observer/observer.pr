@@ -1,0 +1,66 @@
+system observer;
+    /* CIF TEXT (144, 214), (460, 140) */
+    use datamodel comment 'observer.asn';
+    
+    signal ping_in(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with ping_in;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with ping_in;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (0, 57), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            /* CIF ENDTEXT */
+            /* CIF START (431, 123), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (431, 178), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (614, 98), (70, 35) */
+            state error;
+            endstate;
+            /* CIF state (667, 202), (70, 35) */
+            state Idle;
+                /* CIF input (629, 257), (143, 35) */
+                input ping_in(ping_param);
+                    /* CIF decision (644, 312), (113, 50) */
+                    decision ping_param = 2;
+                        /* CIF ANSWER (748, 382), (70, 23) */
+                        (false):
+                            /* CIF decision (701, 425), (163, 50) */
+                            decision st.actuator.state = right;
+                                /* CIF ANSWER (703, 495), (70, 23) */
+                                (true):
+                                    /* CIF NEXTSTATE (703, 538), (70, 35) */
+                                    NEXTSTATE Idle;
+                                /* CIF ANSWER (793, 495), (70, 23) */
+                                (false):
+                                    /* CIF NEXTSTATE (793, 538), (70, 35) */
+                                    NEXTSTATE error;
+                            enddecision;
+                        /* CIF ANSWER (577, 382), (70, 23) */
+                        (true):
+                            /* CIF decision (533, 425), (156, 50) */
+                            decision st.actuator.state = left;
+                                /* CIF ANSWER (532, 495), (70, 23) */
+                                (true):
+                                    /* CIF NEXTSTATE (532, 538), (70, 35) */
+                                    NEXTSTATE Idle;
+                                /* CIF ANSWER (622, 495), (70, 23) */
+                                (false):
+                                    /* CIF NEXTSTATE (622, 538), (70, 35) */
+                                    NEXTSTATE error;
+                            enddecision;
+                    enddecision;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;

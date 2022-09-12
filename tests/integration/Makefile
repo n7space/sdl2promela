@@ -64,7 +64,8 @@ TESTS= \
 	observer_timer_data \
 	stop_condition_observer \
 	observer_continuous_signal \
-	observer_decision_any
+	observer_decision_any \
+	decision_regression
 
 .PHONY: $(TESTS) check
 
