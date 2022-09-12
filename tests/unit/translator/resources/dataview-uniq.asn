@@ -57,6 +57,10 @@ BEGIN
 
    MySequenceOf ::= SEQUENCE (SIZE(1)) OF MySequence
 
+   MyOctetString ::= OCTET STRING (SIZE(2))
+
+   MyVariableOctetString ::= OCTET STRING (SIZE(0..2))
+
    myIntegerInitVal MyInteger ::= 3
 
 END

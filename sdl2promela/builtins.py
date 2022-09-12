@@ -59,12 +59,18 @@ def __translate_length(
 
     realType = resolve_asn1_type(allTypes, types[0])
 
-    if realType.kind != "SequenceOfType":
-        err = f"Invalid parameter for length call, expected SequenceOfType, got {types[0].kind}"
+    if realType.kind not in [
+        "SequenceOfType",
+        "OctetStringType",
+        "BitStringType",
+        "IA5StringType",
+    ]:
+        err = f"Invalid parameter for length call, expected SequenceOfType, got {realType.kind}"
         raise ValueError(err)
 
     if realType.Min == realType.Max:
-        # If Min == Max then the SEQUENCE OF has fixed size
+        # If Min == Max then the array type (SEQUENCE OF or STRING)
+        # has fixed size
         # If the SEQUENCE OF has fixed size, then the usage
         # of length is valid, but the datatype in promela
         # has no field, which determines actual number of elements
