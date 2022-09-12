@@ -65,7 +65,9 @@ def __translate_length(
         "BitStringType",
         "IA5StringType",
     ]:
-        err = f"Invalid parameter for length call, expected SequenceOfType, got {realType.kind}"
+        err = "Invalid parameter for length call, expected one of: "
+        err += "SequenceOfType, OctetStringType, BitStringType, IA5StringType, "
+        err += f"got {realType.kind}"
         raise ValueError(err)
 
     if realType.Min == realType.Max:
