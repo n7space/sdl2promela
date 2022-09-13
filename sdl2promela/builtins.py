@@ -239,7 +239,7 @@ def translate_assignment(
     right = translate_builtin(call, parameters, types, allTypes)
     if right is None:
         raise Exception(
-            f"Builtin {call.name} cannot be used on the left side of assignment"
+            f"Builtin {call.name} cannot be used on the right side of assignment"
         )
     if inlineName is None:
         return AssignmentBuilder().withTarget(left).withSource(right).build()

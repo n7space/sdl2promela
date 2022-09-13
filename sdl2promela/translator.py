@@ -175,7 +175,7 @@ def __type_name(datatype: Any) -> str:
 def __requires_assign_value_inline(datatype: Any) -> bool:
     """
     Checks if the assignment to variable of type `datatype`:
-    requires call of inline or normal assignment operator.
+    require call of inline or normal assignment operator.
     Types defined in ASN.1 dataview model requires inline call.
 
     :param datatype: Datatype object to check.
@@ -190,8 +190,8 @@ def __get_assign_value_inline_name(datatype: Any) -> str:
     """
     Build name for the inline to assign value to variable with type `datatype`.
 
-    :param datatype: Datatype of varialbe on left side.
-    :returns: Name for the inline to assign value.
+    :param datatype: Datatype of variable on left side.
+    :returns: Name for the inline for value assignment.
     """
     return "{}_assign_value".format(__type_name(datatype))
 
@@ -357,7 +357,7 @@ def __build_assignment(
 ) -> promelamodel.Statement:
     """
     Build assignment where ``left` is target and `right` is source.
-    The `left_type` is type which determinates if the assignment
+    The `left_type` is type which determines if the assignment
     should use inline call or ordinary assignment.
 
     :param left: Reference to the target variable.
