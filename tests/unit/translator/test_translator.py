@@ -123,3 +123,7 @@ def test_translates_timer_with_camelcase_name():
 
 def test_translates_octet_string_length():
     translate_and_verify("octet_string_length.pr", "octet_string_length.pml")
+
+
+def test_translates_lowercase_process_name():
+    translate_and_verify("lowercase_process_name.pr", "lowercase_process_name.pml")

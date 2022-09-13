@@ -191,7 +191,7 @@ def __get_implicit_variable_name(context: Context, variable_name: str) -> str:
 
 
 def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
-    return context.sdl_model.process_name + SEPARATOR + procedure_name
+    return context.sdl_model.process_name.capitalize() + SEPARATOR + procedure_name
 
 
 def __get_procedure_inline_end_label_name(context: Context, procedure_name: str) -> str:
