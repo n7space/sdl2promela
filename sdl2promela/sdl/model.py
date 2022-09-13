@@ -1704,7 +1704,9 @@ class Model:
 
     def __gather_constants(self):
         # 'variables' is a dict with values defined in ASN.1 model
-        self.constants = list(self.source.DV.variables.keys())
+        self.constants = [
+            name.replace("-", "_") for name in self.source.DV.variables.keys()
+        ]
 
     def __gather_monitors(self):
         for name, info in self.source.monitors.items():
