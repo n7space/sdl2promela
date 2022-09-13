@@ -256,15 +256,23 @@ def generate(context: Context, block: model.Block):
     context.output("}\n")
 
 
+def __requires_statement_separator(statement):
+    if isinstance(statement, model.StatementsWrapper):
+        return False
+    if isinstance(statement, model.Label):
+        return False
+    if isinstance(statement, model.Block):
+        return False
+    return True
+
+
 @dispatch(Context, model.StatementsWrapper)
 def generate(context: Context, wrapper: model.StatementsWrapper):
     for statement in wrapper.statements:
         if statement is not None:
             generate(context, statement)
             # Avoid multiple ";" for nested statement wrappers
-            if not isinstance(statement, model.StatementsWrapper) and not isinstance(
-                statement, model.Label
-            ):
+            if __requires_statement_separator(statement):
                 context.output(";\n")
 
 

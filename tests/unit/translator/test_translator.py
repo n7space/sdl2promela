@@ -125,5 +125,12 @@ def test_translates_octet_string_length():
     translate_and_verify("octet_string_length.pr", "octet_string_length.pml")
 
 
+def test_translates_assignment_to_element_of_octet_string():
+    translate_and_verify(
+        "assignment_to_element_of_octet_string.pr",
+        "assignment_to_element_of_octet_string.pml",
+    )
+
+
 def test_translates_lowercase_process_name():
     translate_and_verify("lowercase_process_name.pr", "lowercase_process_name.pml")

@@ -12,14 +12,26 @@ inline Complexsdl_0_transition(id)
       goto continuous_signals;
     ::(transition_id == 1)->
       {
-        SmallInteger_assign_value(global_state.complexsdl.value4.value, 2);
-        global_state.complexsdl.value4.version.selection = MyChoice_small_PRESENT;
-        SmallInteger_assign_value(global_state.complexsdl.value4.version.data.small, 2);
+        int index;
+        index = 0;
+        do
+        ::(index < 2)->
+          global_state.complexsdl.octfix.data[index] = 2;
+          index = (index + 1);
+        ::else->
+          break;
+        od;
       }
       {
-        SmallInteger_assign_value(global_state.complexsdl.value1.data[0].value, 1);
-        global_state.complexsdl.value1.data[0].version.selection = MyChoice_big_PRESENT;
-        BigInteger_assign_value(global_state.complexsdl.value1.data[0].version.data.big, 4);
+        int index;
+        index = 0;
+        do
+        ::(index < 2)->
+          global_state.complexsdl.octfix.data[index] = ((global_state.complexsdl.octfix.data[index] + 2) % 255);
+          index = (index + 1);
+        ::else->
+          break;
+        od;
       }
       Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
       transition_id = -1;
