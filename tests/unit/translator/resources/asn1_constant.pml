@@ -12,6 +12,7 @@ inline Complexsdl_0_transition(id)
       goto continuous_signals;
     ::(transition_id == 1)->
       MyInteger_assign_value(global_state.complexsdl.param, myIntegerInitVal);
+	  MyInteger_assign_value(global_state.complexsdl.param, (global_state.complexsdl.param + my_DataInitVal.data[0]));
       Complexsdl_0_RI_0_response(global_state.complexsdl.param);
       transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
