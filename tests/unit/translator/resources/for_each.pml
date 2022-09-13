@@ -18,8 +18,7 @@ inline Taskwithloop_0_transition(id)
         for(i0 : 0 .. (global_state.taskwithloop.variable_param.length - 1))
         {
           MyInteger_assign_value(each, global_state.taskwithloop.variable_param.data[i0]);
-          MyInteger each;
-          int i0;
+          MyInteger_assign_value(global_state.taskwithloop.result_param, (global_state.taskwithloop.result_param + each));
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
@@ -34,8 +33,7 @@ inline Taskwithloop_0_transition(id)
         for(i0 : 0 .. 9)
         {
           MyInteger_assign_value(each, global_state.taskwithloop.fixed_param.data[i0]);
-          MyInteger each;
-          int i0;
+          MyInteger_assign_value(global_state.taskwithloop.result_param, (global_state.taskwithloop.result_param + each));
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
@@ -50,8 +48,7 @@ inline Taskwithloop_0_transition(id)
         for(i0 : 0 .. 9)
         {
           MyInteger_assign_value(each, global_state.taskwithloop.child_param.data.data[i0]);
-          MyInteger each;
-          int i0;
+          MyInteger_assign_value(global_state.taskwithloop.result_param, (global_state.taskwithloop.result_param + each));
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
@@ -88,8 +85,15 @@ inline Taskwithloop_0_transition(id)
         for(i0 : 0 .. 1)
         {
           MyArray_assign_value(a, global_state.taskwithloop.nested_param.data[i0]);
-          MyArray a;
-          int i0;
+          {
+            MyInteger b;
+            int i1;
+            for(i1 : 0 .. 9)
+            {
+              MyInteger_assign_value(b, a.data[i1]);
+              MyInteger_assign_value(global_state.taskwithloop.result_param, (global_state.taskwithloop.result_param + b));
+            };
+          }
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);

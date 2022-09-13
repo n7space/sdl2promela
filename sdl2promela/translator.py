@@ -175,8 +175,8 @@ def __type_name(datatype: Any) -> str:
 def __requires_assign_value_inline(datatype: Any) -> bool:
     """
     Checks if the assignment to variable of type `datatype`:
-    require call of inline or normal assignment operator.
-    Types defined in ASN.1 dataview model requires inline call.
+    requires call of inline or normal assignment operator.
+    Types defined in ASN.1 dataview model require inline call.
 
     :param datatype: Datatype object to check.
     :returns: True if `datatype` requires inline call, otherwise False.
@@ -1042,11 +1042,11 @@ def __generate_for_over_sequenceof(
     task: sdlmodel.ForLoopTask,
     statements: List[promelamodel.Statement],
 ) -> List[promelamodel.Statement]:
-    statements: List[promelamodel.Statement] = []
+    result_statements: List[promelamodel.Statement] = []
     range = typing.cast(sdlmodel.ForEachLoopRange, task.range)
     basic_type = find_basic_type(context.sdl_model.source.dataview, range.variableType)
 
-    statements.append(
+    result_statements.append(
         VariableDeclarationBuilder(
             task.iteratorName.variableName, __type_name(range.type)
         ).build()
@@ -1054,7 +1054,7 @@ def __generate_for_over_sequenceof(
 
     iterator_name = "i" + str(context.loop_level)
 
-    statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
+    result_statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
 
     for_loop_builder = ForLoopBuilder()
     for_loop_builder.withIterator(VariableReferenceBuilder(iterator_name).build())
@@ -1097,10 +1097,12 @@ def __generate_for_over_sequenceof(
     all_statements.extend(statements)
     for_loop_builder.withBody(all_statements)
 
-    statements.append(for_loop_builder.build())
+    result_statements.append(for_loop_builder.build())
 
     return [
-        BlockBuilder(promelamodel.BlockType.BLOCK).withStatements(statements).build()
+        BlockBuilder(promelamodel.BlockType.BLOCK)
+        .withStatements(result_statements)
+        .build()
     ]
 
 
