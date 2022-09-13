@@ -1,9 +1,10 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
 from .utils import Asn1Type, resolve_asn1_type
 from .promela.modelbuilder import (
     CallBuilder,
+    AssignmentBuilder,
     MemberAccessBuilder,
     VariableReferenceBuilder,
     BinaryExpressionBuilder,
@@ -23,7 +24,7 @@ __BUILTIN_NAMES = [
 
 def __check_parameters(
     parameters: List[promelamodel.Expression], count: int, function: str
-):
+) -> None:
     if len(parameters) != count:
         raise ValueError(
             f"{function} built-in function expected {count} arguments, but received {len(parameters)}."
@@ -35,7 +36,7 @@ def __check_parameters(
 
 def __translate_writeln(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-) -> promelamodel.Statement:
+) -> Optional[promelamodel.Expression]:
     """
     "writeln" does not make sense for a model checker, so it is quietly removed.
     As it is removed, the number and existence of parameters does not matter.
@@ -89,7 +90,7 @@ def __translate_length(
 
 def __translate_present(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 1, "present")
     if (
         not isinstance(parameters[0], promelamodel.VariableReference)
@@ -108,7 +109,7 @@ def __translate_present(
 
 def __translate_to_enum(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 2, "to_enum")
     # The first argument is a choice determinant, the second is enum type
     # which is ignored.
@@ -124,7 +125,7 @@ def __translate_to_enum(
 
 def __translate_to_selector(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 2, "to_selector")
     # The first argument is an enum , the second is choice type
     # which is ignored.
@@ -140,21 +141,21 @@ def __translate_to_selector(
 
 def __translate_num(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 1, "num")
     return parameters[0]
 
 
 def __translate_val(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 2, "val")
     return parameters[0]
 
 
 def __translate_exist(
     call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
-):
+) -> promelamodel.Expression:
     __check_parameters(parameters, 1, "exist")
     if not isinstance(parameters[0], promelamodel.MemberAccess):
         raise ValueError("Invalid type of parameter for Exist")
@@ -188,7 +189,7 @@ def translate_builtin(
     parameters: List[promelamodel.Expression],
     types: List[Asn1Type],
     allTypes: Dict[str, Asn1Type],
-) -> promelamodel.Statement:
+) -> Optional[promelamodel.Expression]:
     """
     Translate a built-in function.
     :param call: Call to be translated.
@@ -213,81 +214,40 @@ def translate_builtin(
         return __translate_num(call, parameters)
     elif call.name.lower() == "exist":
         return __translate_exist(call, parameters)
-    raise NotImplementedError(f"Built in {call.name} is not yet implemented")
+    raise NotImplementedError(f"Builtin {call.name} is not yet implemented")
 
 
 def translate_assignment(
-    inlineName: str,
+    inlineName: Optional[str],
     call: sdlmodel.ProcedureCall,
-    left: promelamodel.Expression,
+    left: promelamodel.VariableReference,
     parameters: List[promelamodel.Expression],
     types: List[Asn1Type],
     allTypes: Dict[str, Asn1Type],
-):
+) -> promelamodel.Statement:
     """
     Translate an assignment, where right side is built-in function.
-    :param inlineName: name of inline, which assigns value
+
+    :param inlineName: name of inline, which assigns value, or None when
+                       assignment shall be used
     :param call: Call to be translated.
     :param parameters: List of translated call parameters.
     :param types: List of types of parameters.
     :param allTypes: All available asn1 datatypes
-    :returns: Translation of the assignment.
+    :returns: promela statement, which is translated version of SDL assignment
     """
-    if call.name.lower() == "length":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_length(call, parameters, types, allTypes))
-            .build()
+    right = translate_builtin(call, parameters, types, allTypes)
+    if right is None:
+        raise Exception(
+            f"Builtin {call.name} cannot be used on the left side of assignment"
         )
-    if call.name.lower() == "present":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_present(call, parameters))
-            .build()
-        )
-    if call.name.lower() == "to_enum":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_to_enum(call, parameters))
-            .build()
-        )
-    if call.name.lower() == "to_selector":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_to_selector(call, parameters))
-            .build()
-        )
-    if call.name.lower() == "val":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_val(call, parameters))
-            .build()
-        )
-    if call.name.lower() == "num":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_num(call, parameters))
-            .build()
-        )
-    if call.name.lower() == "exist":
-        return (
-            CallBuilder()
-            .withTarget(inlineName)
-            .withParameter(left)
-            .withParameter(__translate_exist(call, parameters))
-            .build()
-        )
+    if inlineName is None:
+        return AssignmentBuilder().withTarget(left).withSource(right).build()
     else:
-        raise NotImplementedError(f"Built in {call.name} is not yet implemented")
+        return (
+            CallBuilder()
+            .withTarget(inlineName)
+            .withParameter(left)
+            .withParameter(right)
+            .build()
+        )
