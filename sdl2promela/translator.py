@@ -1031,7 +1031,9 @@ def __generate_for_over_a_numeric_range(
             .build()
         ]
     )
-    return statements
+    return [
+        BlockBuilder(promelamodel.BlockType.BLOCK).withStatements(statements).build()
+    ]
 
 
 def __generate_for_over_sequenceof(
@@ -1097,7 +1099,9 @@ def __generate_for_over_sequenceof(
 
     statements.append(for_loop_builder.build())
 
-    return statements
+    return [
+        BlockBuilder(promelamodel.BlockType.BLOCK).withStatements(statements).build()
+    ]
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ForLoopTask)
