@@ -123,3 +123,10 @@ def test_translates_timer_with_camelcase_name():
 
 def test_translates_octet_string_length():
     translate_and_verify("octet_string_length.pr", "octet_string_length.pml")
+
+
+def test_translates_assignment_to_element_of_octet_string():
+    translate_and_verify(
+        "assignment_to_element_of_octet_string.pr",
+        "assignment_to_element_of_octet_string.pml",
+    )

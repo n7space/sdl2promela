@@ -172,8 +172,28 @@ def __type_name(datatype: Any) -> str:
     raise NotImplementedError(f"__type_name is not implemented for {datatype.kind}")
 
 
-def __get_assign_value_inline_name(type: Any) -> str:
-    return "{}_assign_value".format(__type_name(type))
+def __requires_assign_value_inline(datatype: Any) -> bool:
+    """
+    Checks if the assignment to variable of type `datatype`:
+    requires call of inline or normal assignment operator.
+    Types defined in ASN.1 dataview model require inline call.
+
+    :param datatype: Datatype object to check.
+    :returns: True if `datatype` requires inline call, otherwise False.
+    """
+    if datatype.kind in ["ReferenceType", "EnumeratedType"]:
+        return True
+    return False
+
+
+def __get_assign_value_inline_name(datatype: Any) -> str:
+    """
+    Build name for the inline to assign value to variable with type `datatype`.
+
+    :param datatype: Datatype of variable on left side.
+    :returns: Name for the inline for value assignment.
+    """
+    return "{}_assign_value".format(__type_name(datatype))
 
 
 def __get_promela_binary_operator(
@@ -330,6 +350,32 @@ def __get_constant_name(
                 f"Cannot find constant '{constant_reference.constantName}' in ASN.1 values"
             )
         return candidates[0]
+
+
+def __build_assignment(
+    left: promelamodel.VariableReference, right: promelamodel.Expression, left_type: Any
+) -> promelamodel.Statement:
+    """
+    Build assignment where ``left` is target and `right` is source.
+    The `left_type` is type which determines if the assignment
+    should use inline call or ordinary assignment.
+
+    :param left: Reference to the target variable.
+    :param right: The source expression.
+    :left_type: Type of target.
+    :returns: A promela statement, which performs actual assignment.
+    """
+    if __requires_assign_value_inline(left_type):
+        assignInlineName = __get_assign_value_inline_name(left_type)
+        return (
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(left)
+            .withParameter(right)
+            .build()
+        )
+    else:
+        return AssignmentBuilder().withTarget(left).withSource(right).build()
 
 
 def __terminate_transition_statement():
@@ -653,17 +699,12 @@ def __generate_procedure_inline(
                     parameter.name, __type_name(parameter.typeObject)
                 ).build()
             )
-            assignInlineName = __get_assign_value_inline_name(parameter.typeObject)
-            blockBuilder.withStatements(
-                [
-                    CallBuilder()
-                    .withTarget(assignInlineName)
-                    .withParameter(VariableReferenceBuilder(parameter.name).build())
-                    .withParameter(
-                        VariableReferenceBuilder(intermediateParameterName).build()
-                    )
-                    .build()
-                ]
+            blockBuilder.withStatement(
+                __build_assignment(
+                    VariableReferenceBuilder(parameter.name).build(),
+                    VariableReferenceBuilder(intermediateParameterName).build(),
+                    parameter.typeObject,
+                )
             )
         else:
             builder.withParameter(parameter.name)
@@ -749,17 +790,14 @@ def __generate_execute_transition(
     # Generate assignment of signal parameters into variables
     for target_variable_ref in input_block.target_variables:
         variable = context.sdl_model.variables[target_variable_ref.variableName]
-        assignInlineName = __get_assign_value_inline_name(variable.type)
         statements.append(
-            CallBuilder()
-            .withTarget(assignInlineName)
-            .withParameter(__generate_variable_name(context, target_variable_ref, True))
-            .withParameter(
+            __build_assignment(
+                __generate_variable_name(context, target_variable_ref, True),
                 VariableReferenceBuilder(
                     __get_parameter_name(input.parameters[0].target_variable)
-                ).build()
+                ).build(),
+                variable.type,
             )
-            .build()
         )
 
     # Generate exit procedure calls in case of composite state.
@@ -993,7 +1031,9 @@ def __generate_for_over_a_numeric_range(
             .build()
         ]
     )
-    return statements
+    return [
+        BlockBuilder(promelamodel.BlockType.BLOCK).withStatements(statements).build()
+    ]
 
 
 def __generate_for_over_sequenceof(
@@ -1002,11 +1042,11 @@ def __generate_for_over_sequenceof(
     task: sdlmodel.ForLoopTask,
     statements: List[promelamodel.Statement],
 ) -> List[promelamodel.Statement]:
-    statements: List[promelamodel.Statement] = []
+    result_statements: List[promelamodel.Statement] = []
     range = typing.cast(sdlmodel.ForEachLoopRange, task.range)
     basic_type = find_basic_type(context.sdl_model.source.dataview, range.variableType)
 
-    statements.append(
+    result_statements.append(
         VariableDeclarationBuilder(
             task.iteratorName.variableName, __type_name(range.type)
         ).build()
@@ -1014,7 +1054,7 @@ def __generate_for_over_sequenceof(
 
     iterator_name = "i" + str(context.loop_level)
 
-    statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
+    result_statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
 
     for_loop_builder = ForLoopBuilder()
     for_loop_builder.withIterator(VariableReferenceBuilder(iterator_name).build())
@@ -1040,10 +1080,8 @@ def __generate_for_over_sequenceof(
 
     all_statements: List[promelamodel.Statement] = []
     all_statements.append(
-        CallBuilder()
-        .withTarget(__get_assign_value_inline_name(range.type))
-        .withParameter(VariableReferenceBuilder(task.iteratorName.variableName).build())
-        .withParameter(
+        __build_assignment(
+            VariableReferenceBuilder(task.iteratorName.variableName).build(),
             ArrayAccessBuilder()
             .withArray(
                 MemberAccessBuilder()
@@ -1052,16 +1090,20 @@ def __generate_for_over_sequenceof(
                 .build()
             )
             .withIndex(VariableReferenceBuilder(iterator_name).build())
-            .build()
+            .build(),
+            range.type,
         )
-        .build()
     )
     all_statements.extend(statements)
     for_loop_builder.withBody(all_statements)
 
-    statements.append(for_loop_builder.build())
+    result_statements.append(for_loop_builder.build())
 
-    return statements
+    return [
+        BlockBuilder(promelamodel.BlockType.BLOCK)
+        .withStatements(result_statements)
+        .build()
+    ]
 
 
 @dispatch(Context, sdlmodel.Transition, sdlmodel.ForLoopTask)
@@ -1120,16 +1162,13 @@ def __generate_statement(
     assert isinstance(transition.parent, sdlmodel.Procedure)
     if procedureReturn.expression is None:
         return None
-    assignInlineName = __get_assign_value_inline_name(transition.parent.returnType)
     statements = []
     statements.append(
-        CallBuilder()
-        .withTarget(assignInlineName)
-        .withParameter(
-            VariableReferenceBuilder(__get_procedure_inline_return_name()).build()
+        __build_assignment(
+            VariableReferenceBuilder(__get_procedure_inline_return_name()).build(),
+            __generate_expression(context, procedureReturn.expression),
+            transition.parent.returnType,
         )
-        .withParameter(__generate_expression(context, procedureReturn.expression))
-        .build()
     )
     statements.append(
         promelamodel.GoTo(
@@ -1197,7 +1236,10 @@ def __generate_assignment(
         # Inlines cannot return a value, and so the return is handled via
         # the first parameter
         if builtins.is_builtin(right.name):
-            assignInlineName = __get_assign_value_inline_name(left_type)
+            assignInlineName: Optional[str] = None
+            if __requires_assign_value_inline(left_type):
+                assignInlineName = __get_assign_value_inline_name(left_type)
+
             left_side = __generate_variable_name(context, left, True)
 
             parameters = []
@@ -1224,13 +1266,12 @@ def __generate_assignment(
                 inlineCall.withParameter(__generate_expression(context, parameter))
             statements.append(inlineCall.build())
     else:
-        assignInlineName = __get_assign_value_inline_name(left_type)
         statements.append(
-            CallBuilder()
-            .withTarget(assignInlineName)
-            .withParameter(__generate_variable_name(context, left, True))
-            .withParameter(__generate_expression(context, right))
-            .build()
+            __build_assignment(
+                __generate_variable_name(context, left, True),
+                __generate_expression(context, right),
+                left_type,
+            )
         )
 
     return statements
