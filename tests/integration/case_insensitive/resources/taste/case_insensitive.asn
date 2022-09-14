@@ -1,0 +1,17 @@
+CASE-INSENSITIVE-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MySeq ::= SEQUENCE {
+       camelCase MyInteger,
+       lowercase MyInteger
+   }
+
+   MyChoice ::= CHOICE {
+       camelCaseAlternative MyInteger,
+       lowercase-alternative MyInteger
+   }
+
+END
+

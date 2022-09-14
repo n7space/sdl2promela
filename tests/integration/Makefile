@@ -66,7 +66,8 @@ TESTS= \
 	observer_continuous_signal \
 	observer_decision_any \
 	decision_regression \
-	multiple_loop
+	multiple_loop \
+	case_insensitive
 
 .PHONY: $(TESTS) check
 
