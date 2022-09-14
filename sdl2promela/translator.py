@@ -457,8 +457,8 @@ def __build_member_reference_for_type(
         )
         raise Exception(error)
 
-    member_field = sdlmodel.VariableReference(candidates[0])
-    return __generate_variable_name(context, member_field, False)
+    member_name = sdlmodel.VariableReference(candidates[0])
+    return VariableReferenceBuilder(member_name.variableName).build()
 
 
 @dispatch(Context, sdlmodel.MemberAccess, bool)
@@ -473,7 +473,9 @@ def __generate_variable_name(
     # then result shall be like: 'container.data.field'
     left_type = resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
     if left_type.kind == "ChoiceType":
-        member = __build_member_reference_for_type(member_access.member, left_type)
+        member = __build_member_reference_for_type(
+            context, member_access.member, left_type
+        )
         return (
             MemberAccessBuilder()
             .withUtypeReference(
@@ -484,17 +486,19 @@ def __generate_variable_name(
                 .withMember(VariableReferenceBuilder("data").build())
                 .build()
             )
-            .withMember(__generate_variable_name(context, member, False))
+            .withMember(member)
             .build()
         )
     elif left_type.kind == "SequenceType":
-        member = __build_member_reference_for_type(member_access.member, left_type)
+        member = __build_member_reference_for_type(
+            context, member_access.member, left_type
+        )
         return (
             MemberAccessBuilder()
             .withUtypeReference(
                 __generate_variable_name(context, member_access.sequence, toplevel)
             )
-            .withMember(__generate_variable_name(context, member, False))
+            .withMember(member)
             .build()
         )
     else:
