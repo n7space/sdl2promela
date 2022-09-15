@@ -1,0 +1,58 @@
+system Actuator;
+    /* CIF TEXT (552, 9), (291, 140) */
+    use Datamodel comment 'dataview-uniq.asn';
+    
+    signal impulse(MyInteger);
+    
+    signal response(MyInteger);
+    /* CIF ENDTEXT */
+    channel c
+        from env to Actuator with impulse;
+        from Actuator to env with response;
+    endchannel;
+    block Actuator;
+        signalroute r
+            from env to Actuator with impulse;
+            from Actuator to env with response;
+        connect c and r;
+        /* CIF PROCESS (250, 149), (150, 75) */
+        process Actuator;
+            /* CIF TEXT (1209, 18), (267, 140) */
+            -- Text area for declarations and comments
+            
+            DCL param MyInteger;
+            /* CIF ENDTEXT */
+            /* CIF procedure (1024, 270), (97, 35) */
+            procedure do_calculate;
+                /* CIF TEXT (101, 153), (267, 140) */
+                -- Text area for declarations and comments
+                
+                fpar
+                  in/out test_p MyInteger;
+                
+                /* CIF ENDTEXT */
+                /* CIF START (590, 214), (70, 35) */
+                START;
+                    /* CIF task (529, 269), (191, 35) */
+                    task test_P := TEST_P + test_p + 1;
+                    /* CIF return (607, 324), (35, 35) */
+                    return ;
+            endprocedure;
+            /* CIF START (320, 21), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (320, 71), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (598, 129), (70, 35) */
+            state Wait;
+                /* CIF input (567, 184), (114, 35) */
+                input impulse(param);
+                    /* CIF PROCEDURECALL (553, 239), (142, 35) */
+                    call do_calculate(param);
+                    /* CIF output (563, 294), (122, 35) */
+                    output response(param);
+                    /* CIF NEXTSTATE (590, 344), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+        endprocess Actuator;
+    endblock;
+endsystem;
