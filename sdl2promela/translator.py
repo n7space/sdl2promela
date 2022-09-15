@@ -2048,6 +2048,12 @@ def __generate_statement(
         return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
+def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:
+    if len(transition.actions) == 0:
+        return True
+    return False
+
+
 def __generate_transition(
     context: Context, transition: sdlmodel.Transition
 ) -> List[promelamodel.Statement]:
@@ -2055,6 +2061,12 @@ def __generate_transition(
     statements = []
     for action in transition.actions:
         statements.append(__generate_statement(context, transition, action))
+
+    if not context.in_transition_chain:
+        if not isinstance(transition.parent, sdlmodel.Procedure):
+            # Procedures do not change the current transition
+            if __should_generate_transition_stop(transition):
+                statements.append(__terminate_transition_statement())
 
     context.pop_parent()
     return statements

@@ -11,6 +11,7 @@ inline Complexsdl_0_transition(id)
       global_state.complexsdl.state = Complexsdl_States_wait;
       goto continuous_signals;
     ::(transition_id == 1)->
+      transition_id = -1;
     fi;
     continuous_signals:
   od;
