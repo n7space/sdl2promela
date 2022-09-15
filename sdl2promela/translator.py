@@ -220,12 +220,48 @@ def __get_procedure_inline_end_label_name(context: Context, procedure_name: str)
     )
 
 
-def __get_procedure_inline_parameter_name(name: str) -> str:
-    return f"param_{name.lower()}"
+def __get_procedure_inline_parameter_name(context: Context, name: str) -> str:
+    """
+    Get name of the parameter for inline in promela
+    based on parameter named `name` in procedure in SDL.
+
+    :param context: Generate context.
+    :param name: name of the procedure parameter in SDL.
+    :returns: name of inline parameter for promela.
+    """
+    procedure = context.get_parent_procedure()
+    if procedure is None:
+        raise ValueError("Parent procedure is None")
+    return f"{procedure.name.lower()}_param_{name.lower()}"
 
 
-def __get_procedure_inline_return_name() -> str:
-    return "param_returns"
+def __get_procedure_local_variable_name(context: Context, variable_name: str) -> str:
+    """
+    Get name of the local variable for promela inline
+    based on local variable named `name` in procedure in SDL.
+
+    :param context: Generate context.
+    :param variable_name: Name of the variable in SDL.
+    :returns: name of the variable for promela.
+    """
+    procedure = context.get_parent_procedure()
+    if procedure is None:
+        raise ValueError("Parent procedure is None")
+    return f"{procedure.name.lower()}_{variable_name.lower()}"
+
+
+def __get_procedure_inline_return_name(context: Context) -> str:
+    """
+    Get name of the local variable for promela inline,
+    which shall be used to return value.
+
+    :param context: Generate context.
+    :returns: name of the parameter for promela inline.
+    """
+    procedure = context.get_parent_procedure()
+    if procedure is None:
+        raise ValueError("Parent procedure is None")
+    return f"{procedure.name.lower()}_param_returns"
 
 
 def __get_transition_function_name(context: Context) -> str:
@@ -276,39 +312,90 @@ def __get_substate_variable_name(context: Context, substate: str) -> str:
     )
 
 
-def __is_local_variable(context: Context, variable: str):
+def __is_procedure_variable(context: Context, variable: str) -> bool:
+    """
+    Check if the `variable` is local variable of parameter of procedure.
+
+    :param context: Generate context.
+    :param variable: Name of the variable.
+    :returns: True if the `variable` is param of local variable of procedure,
+              otherwise False.
+    """
     procedure = context.get_parent_procedure()
-    if procedure is not None:
-        if variable in procedure.variables.keys():
-            return True
-        else:
-            for parameter in procedure.parameters:
-                if parameter.name == variable:
-                    return True
-    if variable.lower() in context.sdl_model.variables:
+    if procedure is None:
         return False
-    else:
-        return True
+    variables = [variable.lower() for variable in procedure.variables.keys()]
+    parameters = [parameter.name.lower() for parameter in procedure.parameters]
+    return (variable.lower() in variables) or (variable.lower() in parameters)
 
 
-def __is_implicit_variable(context: Context, variable: str):
-    return variable in context.sdl_model.implicit_variables.keys()
+def __is_local_variable(context: Context, variable: str) -> bool:
+    """
+    Check if the `variable` is local variable,
+    i.e. it is not a global variable of process,
+    but rather o variable defined as an index inside loop.
+    Before calling this, the `__is_procedure_variable`
+    and `__is_system_state_monitor_variable`
+    should be called.
+
+    :param context: Generate context.
+    :param variable: Name of the variable.
+    :returns: True if the `variable` is local variable, otherwise False.
+    """
+    variables = [variable.lower() for variable in context.sdl_model.variables.keys()]
+    return variable.lower() not in variables
 
 
-def __is_system_state_monitor_variable(context: Context, variable: str):
-    if variable in context.sdl_model.monitors:
-        return __type_name(context.sdl_model.monitors[variable].type) == "System_State"
-    else:
-        return False
+def __is_implicit_variable(context: Context, variable: str) -> bool:
+    """
+    Check if the variable is implicit defined variable,
+    i.e. it is a variable used in observer in Input block.
+
+    :param context: Generate context
+    :param variable: Name of the variable
+    :returns: True if the `variable` is implicit variable, otherwise False.
+    """
+    variables = [variable.lower() for variable in context.sdl_model.implicit_variables]
+    return variable.lower() in variables
 
 
-def __get_variable_name(context: Context, variable: str):
+def __is_system_state_monitor_variable(context: Context, variable: str) -> bool:
+    """
+    Check if the variable is system monitor variable,
+    i.e. it is defined as 'monitor' inside observer and it has type 'System_State'.
+
+    :param context: Generate context.
+    :param variable: Name of the variable.
+    :returns: True if the `variable` is monitor variable, otherwise False.
+    """
+    for name, monitor in context.sdl_model.monitors.items():
+        if variable.lower() == name.lower():
+            return __type_name(monitor.type) == "System_State"
+    return False
+
+
+def __get_variable_name(
+    context: Context, variable: str
+) -> Union[promelamodel.VariableReference, promelamodel.MemberAccess]:
+    """
+    Get promela reference to variable with name `variable`.
+    Based on the kind of variable (local, global, monitor or procedure local)
+    This returns a valid reference.
+
+    :param context: Generate context.
+    :param variable: Name of the variable.
+    :returns: reference to variable of reference to member if variable is global.
+    """
     if __is_implicit_variable(context, variable):
         return VariableReferenceBuilder(
             __get_implicit_variable_name(context, variable.lower())
         ).build()
     elif __is_system_state_monitor_variable(context, variable):
         return VariableReferenceBuilder(__GLOBAL_STATE).build()
+    elif __is_procedure_variable(context, variable):
+        return VariableReferenceBuilder(
+            __get_procedure_local_variable_name(context, variable)
+        ).build()
     elif __is_local_variable(context, variable):
         return VariableReferenceBuilder(variable.lower()).build()
     else:
@@ -727,6 +814,9 @@ def __get_remote_function_name(context: Context, output: sdlmodel.Output) -> str
 def __generate_procedure_inline(
     context: Context, procedure: sdlmodel.Procedure
 ) -> promelamodel.Inline:
+    """
+    Generate promela inline for SDL procedure.
+    """
     context.push_parent(procedure)
     builder = InlineBuilder()
     builder.withName(__get_procedure_inline_name(context, procedure.name))
@@ -734,12 +824,13 @@ def __generate_procedure_inline(
     for localVariable, localVariableTypeObject in procedure.variables.items():
         blockBuilder.withStatement(
             VariableDeclarationBuilder(
-                localVariable, __type_name(localVariableTypeObject[0])
+                __get_procedure_local_variable_name(context, localVariable),
+                __type_name(localVariableTypeObject[0]),
             ).build()
         )
     # Procedure return, if any, is handled via the first parameter
     if procedure.returnType is not None:
-        builder.withParameter(__get_procedure_inline_return_name())
+        builder.withParameter(__get_procedure_inline_return_name(context))
     for parameter in procedure.parameters:
         # Inlines are like macros. For a call foo(1+3), the 1+3 will be used
         # wherever the parameter is referenced. To avoid that, an intermediate
@@ -748,23 +839,30 @@ def __generate_procedure_inline(
         # the output value propagation more difficult
         if parameter.direction == sdlmodel.ProcedureParameterDirection.IN:
             intermediateParameterName = __get_procedure_inline_parameter_name(
-                parameter.name
+                context, parameter.name
             )
             builder.withParameter(intermediateParameterName)
             blockBuilder.withStatement(
                 VariableDeclarationBuilder(
-                    parameter.name.lower(), __type_name(parameter.typeObject)
+                    __get_procedure_local_variable_name(context, parameter.name),
+                    __type_name(parameter.typeObject),
                 ).build()
             )
             blockBuilder.withStatement(
                 __build_assignment(
-                    VariableReferenceBuilder(parameter.name.lower()).build(),
+                    VariableReferenceBuilder(
+                        __get_procedure_local_variable_name(context, parameter.name)
+                    ).build(),
                     VariableReferenceBuilder(intermediateParameterName.lower()).build(),
                     parameter.typeObject,
                 )
             )
         else:
-            builder.withParameter(parameter.name)
+            # If the parameter has 'out' flag (this includes 'in/out')
+            # Then use normal local variable name, no additional assignment is required
+            builder.withParameter(
+                __get_procedure_local_variable_name(context, parameter.name)
+            )
     blockBuilder.withStatements(__generate_transition(context, procedure.transition))
     # This can be optimized - not needed if there is only one return, but both the return statement
     # and this part must be aware of the decision.
@@ -1222,7 +1320,9 @@ def __generate_statement(
     statements = []
     statements.append(
         __build_assignment(
-            VariableReferenceBuilder(__get_procedure_inline_return_name()).build(),
+            VariableReferenceBuilder(
+                __get_procedure_inline_return_name(context)
+            ).build(),
             __generate_expression(context, procedureReturn.expression),
             transition.parent.returnType,
         )
