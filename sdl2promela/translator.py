@@ -221,7 +221,7 @@ def __get_procedure_inline_end_label_name(context: Context, procedure_name: str)
 
 
 def __get_procedure_inline_parameter_name(name: str) -> str:
-    return f"param_{name}"
+    return f"param_{name.lower()}"
 
 
 def __get_procedure_inline_return_name() -> str:
@@ -305,7 +305,7 @@ def __is_system_state_monitor_variable(context: Context, variable: str):
 def __get_variable_name(context: Context, variable: str):
     if __is_implicit_variable(context, variable):
         return VariableReferenceBuilder(
-            __get_implicit_variable_name(context, variable)
+            __get_implicit_variable_name(context, variable.lower())
         ).build()
     elif __is_system_state_monitor_variable(context, variable):
         return VariableReferenceBuilder(__GLOBAL_STATE).build()
@@ -392,11 +392,13 @@ def __generate_variable_name(
     context: Context,
     variable_reference: sdlmodel.VariableReference,
     toplevel: bool,
-):
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
     if toplevel:
         return __get_variable_name(context, variable_reference.variableName)
     else:
-        return VariableReferenceBuilder(variable_reference.variableName.lower()).build()
+        return VariableReferenceBuilder(variable_reference.variableName).build()
 
 
 @dispatch(Context, sdlmodel.ConstantReference, bool)
@@ -404,7 +406,9 @@ def __generate_variable_name(
     context: Context,
     constant_reference: sdlmodel.ConstantReference,
     toplevel: bool,
-):
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
     return VariableReferenceBuilder(
         __get_constant_name(context, constant_reference)
     ).build()
@@ -415,8 +419,46 @@ def __generate_variable_name(
     context: Context,
     constant: sdlmodel.Constant,
     toplevel: bool,
-):
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
     return VariableReferenceBuilder(constant.value).build()
+
+
+def __build_member_reference_for_type(
+    context: Context, member: sdlmodel.VariableReference, datatype: Any
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
+    """
+    Build valid reference name to the member of `datatype`,
+    based on `member` from SDL model.
+    The `datatype` can be SEQUENCE or CHOICE.
+    SDL is case insensitive, but the promela is case sensitive.
+    This function ensures that generated reference will be valid.
+
+    :param context: Generate context
+    :param member: Input reference to member from SDL source.
+    :param datatype: Type of the structure, where `member` should exist
+    :returns: promela VariableReference which contains valid reference to member
+    """
+
+    candidates = [
+        name.replace("-", "_")
+        for name in datatype.Children
+        if name.replace("-", "_").lower() == member.variableName.lower()
+    ]
+    if len(candidates) == 0:
+        error = f"Cannot find member '{member}' in variable of type '{datatype.CName}'"
+        raise Exception(error)
+    elif len(candidates) > 1:
+        error = (
+            f"Ambiguous member name '{member}' in variable of type '{datatype.CName}'"
+        )
+        raise Exception(error)
+
+    member_name = sdlmodel.VariableReference(candidates[0])
+    return VariableReferenceBuilder(member_name.variableName).build()
 
 
 @dispatch(Context, sdlmodel.MemberAccess, bool)
@@ -424,11 +466,16 @@ def __generate_variable_name(
     context: Context,
     member_access: sdlmodel.MemberAccess,
     toplevel: bool,
-):
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
     # In case when the left side has type of CHOICE
     # then result shall be like: 'container.data.field'
     left_type = resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
     if left_type.kind == "ChoiceType":
+        member = __build_member_reference_for_type(
+            context, member_access.member, left_type
+        )
         return (
             MemberAccessBuilder()
             .withUtypeReference(
@@ -439,18 +486,26 @@ def __generate_variable_name(
                 .withMember(VariableReferenceBuilder("data").build())
                 .build()
             )
-            .withMember(__generate_variable_name(context, member_access.member, False))
+            .withMember(member)
             .build()
         )
-    else:
+    elif left_type.kind == "SequenceType":
+        member = __build_member_reference_for_type(
+            context, member_access.member, left_type
+        )
         return (
             MemberAccessBuilder()
             .withUtypeReference(
                 __generate_variable_name(context, member_access.sequence, toplevel)
             )
-            .withMember(__generate_variable_name(context, member_access.member, False))
+            .withMember(member)
             .build()
         )
+    else:
+        error = f"Invalid attempt to access field of type '{left_type.CName}'"
+        error += " {left_type.Kind}"
+        error += ", which is not ChoiceType nor SequenceType"
+        raise Exception(error)
 
 
 @dispatch(Context, sdlmodel.ArrayAccess, bool)
@@ -458,7 +513,9 @@ def __generate_variable_name(
     context: Context,
     array_access: sdlmodel.ArrayAccess,
     toplevel: bool,
-):
+) -> Union[
+    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+]:
     return (
         ArrayAccessBuilder()
         .withArray(
@@ -696,13 +753,13 @@ def __generate_procedure_inline(
             builder.withParameter(intermediateParameterName)
             blockBuilder.withStatement(
                 VariableDeclarationBuilder(
-                    parameter.name, __type_name(parameter.typeObject)
+                    parameter.name.lower(), __type_name(parameter.typeObject)
                 ).build()
             )
             blockBuilder.withStatement(
                 __build_assignment(
-                    VariableReferenceBuilder(parameter.name).build(),
-                    VariableReferenceBuilder(intermediateParameterName).build(),
+                    VariableReferenceBuilder(parameter.name.lower()).build(),
+                    VariableReferenceBuilder(intermediateParameterName.lower()).build(),
                     parameter.typeObject,
                 )
             )
@@ -1328,10 +1385,14 @@ def __generate_assignment(
         or finalType.kind == SEQUENCEOF_TYPE_NAME
     ):
         if int(finalType.Min) != 0:
-            raise Exception(f"Invalid assignment to type{finalType.CName}")
+            raise Exception(f"Invalid assignment to type {finalType.CName}")
 
-        data_field = sdlmodel.MemberAccess(
-            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
+        data_field = __generate_variable_name(context, left, True)
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(data_field)
+            .withMember(VariableReferenceBuilder(STRING_DATA_MEMBER_NAME).build())
+            .build()
         )
 
         statements: List[promelamodel.Statement] = []
@@ -1347,7 +1408,7 @@ def __generate_assignment(
             for index in range(int(finalType.Max)):
                 element = (
                     ArrayAccessBuilder()
-                    .withArray(__generate_variable_name(context, data_field, True))
+                    .withArray(data_field)
                     .withIndex(promelamodel.IntegerValue(index))
                     .build()
                 )
@@ -1398,8 +1459,12 @@ def __generate_assignment(
     ):
         length = len(right.value)
         check_length_constraint(finalType, length)
-        data_field = sdlmodel.MemberAccess(
-            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
+        data_field = __generate_variable_name(context, left, True)
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(data_field)
+            .withMember(VariableReferenceBuilder(STRING_DATA_MEMBER_NAME).build())
+            .build()
         )
 
         statements: List[promelamodel.Statement] = []
@@ -1414,7 +1479,7 @@ def __generate_assignment(
             )
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(context, data_field, True))
+                .withArray(data_field)
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -1455,8 +1520,12 @@ def __generate_assignment(
         length = len(right.elements)
         check_length_constraint(finalType, length)
 
-        data_field = sdlmodel.MemberAccess(
-            left, sdlmodel.VariableReference(STRING_DATA_MEMBER_NAME)
+        data_field = __generate_variable_name(context, left, True)
+        data_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(data_field)
+            .withMember(VariableReferenceBuilder(STRING_DATA_MEMBER_NAME).build())
+            .build()
         )
 
         statements: List[promelamodel.Statement] = []
@@ -1471,7 +1540,7 @@ def __generate_assignment(
             )
             element = (
                 ArrayAccessBuilder()
-                .withArray(__generate_variable_name(context, data_field, True))
+                .withArray(data_field)
                 .withIndex(promelamodel.IntegerValue(index))
                 .build()
             )
@@ -1694,16 +1763,31 @@ def __generate_assignment(
     finalType = resolve_asn1_type(context.sdl_model.types, left_type)
     statements: List[promelamodel.Statement] = []
 
-    if right.choice not in finalType.Children:
-        raise Exception(
-            "Invalid assignment to CHOICE: variant {} does not exist".format(
-                right.choice
-            )
-        )
+    candidates = [
+        name
+        for name in finalType.Children
+        if name.replace("-", "_").lower() == right.choice.lower()
+    ]
 
-    valueType = finalType.Children[right.choice].type
+    if len(candidates) == 0:
+        error = f"Invalid assignment to CHOICE {finalType.CName}, "
+        error += f"variant '{right.choice}' does not exist."
+        raise Exception(error)
+    elif len(candidates) > 1:
+        error = f"Invalid assignment to CHOICE {finalType.CName}, "
+        error += f"variant '{right.choice}' is ambiguous."
+        raise Exception(error)
 
-    selection = __type_name(left_type) + "_" + right.choice + "_PRESENT"
+    selected_alternative = candidates[0]
+
+    valueType = finalType.Children[selected_alternative].type
+
+    selection = (
+        __type_name(left_type)
+        + "_"
+        + selected_alternative.replace("-", "_")
+        + "_PRESENT"
+    )
 
     selection_field = (
         MemberAccessBuilder()
@@ -1714,7 +1798,7 @@ def __generate_assignment(
 
     data_field = sdlmodel.MemberAccess(
         left,
-        sdlmodel.VariableReference(right.choice),
+        sdlmodel.VariableReference(selected_alternative.replace("-", "_")),
     )
 
     data_field.type = right.type

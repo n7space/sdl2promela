@@ -1,0 +1,55 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (375, 324), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl myParam MyInteger;
+    dcl myseq MySeq;
+    dcl mySecondSeq MySeq;
+    dcl mychoice MyChoice;
+    dcl mySECONDchoice MyChoice;
+    /* CIF ENDTEXT */
+    /* CIF procedure (463, 555), (79, 35) */
+    procedure CalculaTE;
+        /* CIF TEXT (99, 207), (267, 140) */
+        -- Text area for declarations and comments
+        
+        fpar in mylow MyInteger,
+        in myCamel MyInteger,
+        out doom MyInteger;
+        /* CIF ENDTEXT */
+        /* CIF START (437, 198), (70, 35) */
+        START;
+            /* CIF task (376, 253), (192, 35) */
+            task DOOM := mycamel + MYLOW;
+            /* CIF return (454, 308), (35, 35) */
+            return ;
+    endprocedure;
+    /* CIF START (628, 122), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (628, 172), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1073, 144), (70, 35) */
+    state Wait;
+        /* CIF input (1052, 199), (111, 35) */
+        input ping(myparam);
+            /* CIF task (1028, 254), (158, 35) */
+            task myseq.loWERCASE := 1;
+            /* CIF PROCEDURECALL (922, 309), (370, 35) */
+            call calculate(myseq.lowerCase, MYPARAM, MYSEQ.camelCase);
+            /* CIF task (1026, 364), (162, 35) */
+            task mysecondseq := MYSEQ;
+            /* CIF task (908, 419), (399, 35) */
+            task mychoice := CAMELCASEalternative : mysecondSEQ.CAMELCASE;
+            /* CIF task (950, 474), (314, 35) */
+            task mysecondchoice := LOWERCASE_ALTERNATIVE : 0;
+            /* CIF PROCEDURECALL (810, 524), (594, 35) */
+            call CALCULATE(mychoice.camelcasealternative, myParam, MYSECONDchoice.lowerCase_Alternative);
+            /* CIF task (941, 574), (332, 35) */
+            task MYPARAM := mysecondchoice.lowercase_alternative;
+            /* CIF output (1049, 629), (116, 35) */
+            output pong(myparaM);
+            /* CIF NEXTSTATE (1073, 684), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
