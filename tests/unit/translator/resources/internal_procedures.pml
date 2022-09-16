@@ -1,16 +1,16 @@
-inline Host_0_multireturn(param_returns, param_a)
+inline Host_0_multireturn(multireturn_param_returns, multireturn_param_a)
 {
-  MyInteger r;
-  MyInteger a;
-  MyInteger_assign_value(a, param_a);
+  MyInteger multireturn_r;
+  MyInteger multireturn_a;
+  MyInteger_assign_value(multireturn_a, multireturn_param_a);
   if
-  ::(a > 10)->
-    MyInteger_assign_value(r, (a * 2));
-    MyInteger_assign_value(param_returns, r);
+  ::(multireturn_a > 10)->
+    MyInteger_assign_value(multireturn_r, (multireturn_a * 2));
+    MyInteger_assign_value(multireturn_param_returns, multireturn_r);
     goto Host_0_multireturn_0_end;
-  ::(a <= 10)->
-    MyInteger_assign_value(r, (a + 1));
-    MyInteger_assign_value(param_returns, (a * r));
+  ::(multireturn_a <= 10)->
+    MyInteger_assign_value(multireturn_r, (multireturn_a + 1));
+    MyInteger_assign_value(multireturn_param_returns, (multireturn_a * multireturn_r));
     goto Host_0_multireturn_0_end;
   fi;
   Host_0_multireturn_0_end:
@@ -20,24 +20,24 @@ inline Host_0_proc()
   MyInteger_assign_value(global_state.host.y, (global_state.host.a + global_state.host.b));
   Host_0_proc_0_end:
 }
-inline Host_0_procWithArguments(param_returns, param_p1, param_p2, r)
+inline Host_0_procWithArguments(procwitharguments_param_returns, procwitharguments_param_p1, procwitharguments_param_p2, procwitharguments_r)
 {
-  MyInteger p1;
-  MyInteger_assign_value(p1, param_p1);
-  MyInteger p2;
-  MyInteger_assign_value(p2, param_p2);
-  MyInteger_assign_value(r, (p1 + p2));
-  MyInteger_assign_value(param_returns, r);
+  MyInteger procwitharguments_p1;
+  MyInteger_assign_value(procwitharguments_p1, procwitharguments_param_p1);
+  MyInteger procwitharguments_p2;
+  MyInteger_assign_value(procwitharguments_p2, procwitharguments_param_p2);
+  MyInteger_assign_value(procwitharguments_r, (procwitharguments_p1 + procwitharguments_p2));
+  MyInteger_assign_value(procwitharguments_param_returns, procwitharguments_r);
   goto Host_0_procWithArguments_0_end;
   Host_0_procWithArguments_0_end:
 }
 inline Host_0_procWithLocalVariables()
 {
-  MyInteger l1;
-  MyInteger l2;
-  MyInteger_assign_value(l1, global_state.host.a);
-  MyInteger_assign_value(l2, global_state.host.b);
-  MyInteger_assign_value(global_state.host.y, (l1 + l2));
+  MyInteger procwithlocalvariables_l1;
+  MyInteger procwithlocalvariables_l2;
+  MyInteger_assign_value(procwithlocalvariables_l1, global_state.host.a);
+  MyInteger_assign_value(procwithlocalvariables_l2, global_state.host.b);
+  MyInteger_assign_value(global_state.host.y, (procwithlocalvariables_l1 + procwithlocalvariables_l2));
   Host_0_procWithLocalVariables_0_end:
 }
 inline Host_0_procWithOutput()

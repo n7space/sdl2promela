@@ -1,0 +1,85 @@
+system Actuator;
+    /* CIF TEXT (552, 9), (291, 140) */
+    use Datamodel comment 'dataview-uniq.asn';
+    
+    signal impulse(MyInteger);
+    
+    signal response(MyInteger);
+    /* CIF ENDTEXT */
+    channel c
+        from env to Actuator with impulse;
+        from Actuator to env with response;
+    endchannel;
+    block Actuator;
+        signalroute r
+            from env to Actuator with impulse;
+            from Actuator to env with response;
+        connect c and r;
+        /* CIF PROCESS (250, 150), (150, 75) */
+        process Actuator;
+            /* CIF TEXT (1209, 18), (267, 140) */
+            -- Text area for declarations and comments
+            
+            DCL tmp MyInteger;
+            DCL auxilary MyInteger;
+            DCL param MyInteger;
+            /* CIF ENDTEXT */
+            /* CIF procedure (1025, 270), (97, 35) */
+            procedure do_calculate;
+                /* CIF TEXT (101, 153), (267, 140) */
+                -- Text area for declarations and comments
+                
+                fpar
+                  in samename MyInteger,
+                  in operand MyInteger,
+                  out result MyInteger;
+                
+                dcl datapack MyData;
+                /* CIF ENDTEXT */
+                /* CIF START (590, 214), (70, 35) */
+                START;
+                    /* CIF task (503, 269), (243, 35) */
+                    task datapack.left := samename + operand;
+                    /* CIF task (558, 324), (132, 35) */
+                    task datapack.right := 2;
+                    /* CIF PROCEDURECALL (540, 379), (168, 35) */
+                    call do_sub(datapack, result);
+                    /* CIF return (607, 429), (35, 35) */
+                    return ;
+            endprocedure;
+            /* CIF procedure (1037, 376), (70, 35) */
+            procedure do_sub;
+                /* CIF TEXT (202, 320), (267, 140) */
+                -- Text area for declarations and comments
+                
+                fpar
+                  in samename MyData,
+                  out result MyInteger;
+                /* CIF ENDTEXT */
+                /* CIF START (619, 222), (70, 35) */
+                START;
+                    /* CIF task (520, 277), (266, 35) */
+                    task result := samename.left - samename.right;
+                    /* CIF return (636, 332), (35, 35) */
+                    return ;
+            endprocedure;
+            /* CIF START (320, 21), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (320, 71), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (598, 129), (70, 35) */
+            state Wait;
+                /* CIF input (568, 184), (114, 35) */
+                input impulse(param);
+                    /* CIF task (579, 239), (93, 35) */
+                    task auxilary := 4;
+                    /* CIF PROCEDURECALL (513, 289), (225, 35) */
+                    call do_calculate(param, auxilary, tmp);
+                    /* CIF output (571, 344), (109, 35) */
+                    output response(tmp);
+                    /* CIF NEXTSTATE (591, 394), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+        endprocess Actuator;
+    endblock;
+endsystem;

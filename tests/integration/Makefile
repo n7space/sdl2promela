@@ -67,7 +67,9 @@ TESTS= \
 	observer_decision_any \
 	decision_regression \
 	multiple_loop \
-	case_insensitive
+	case_insensitive \
+	same_parameter_in_two_procedures \
+	procedure_inout_parameter
 
 .PHONY: $(TESTS) check
 
