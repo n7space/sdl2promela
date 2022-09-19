@@ -152,13 +152,13 @@ def test_model_reads_expression_based_decision():
 
     assert isinstance(decision.answers[0].condition, BinaryExpression)
     assert decision.answers[0].condition.operator == BinaryOperator.EQUAL
-    assert decision.answers[0].condition.right.value == "true"
+    assert decision.answers[0].condition.right.value == True
     assert len(decision.answers[0].actions) == 1
     assert isinstance(decision.answers[0].actions[0], NextState)
 
     assert isinstance(decision.answers[1].condition, BinaryExpression)
     assert decision.answers[1].condition.operator == BinaryOperator.EQUAL
-    assert decision.answers[1].condition.right.value == "false"
+    assert decision.answers[1].condition.right.value == False
     assert len(decision.answers[1].actions) == 1
     assert isinstance(decision.answers[1].actions[0], NextState)
 

@@ -501,17 +501,6 @@ def __generate_variable_name(
     ).build()
 
 
-@dispatch(Context, sdlmodel.Constant, bool)
-def __generate_variable_name(
-    context: Context,
-    constant: sdlmodel.Constant,
-    toplevel: bool,
-) -> Union[
-    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
-]:
-    return VariableReferenceBuilder(constant.value).build()
-
-
 def __build_member_reference_for_type(
     context: Context, member: sdlmodel.VariableReference, datatype: Any
 ) -> Union[
@@ -625,7 +614,17 @@ def __generate_expression(context: Context, value: sdlmodel.StringValue):
 
 @dispatch(Context, sdlmodel.Constant)
 def __generate_expression(context: Context, constant: sdlmodel.Constant):
-    return VariableReferenceBuilder(constant.value).build()
+    return promelamodel.IntegerValue(int(constant.value))
+
+
+@dispatch(Context, sdlmodel.RealConstant)
+def __generate_expression(context: Context, constant: sdlmodel.RealConstant):
+    return promelamodel.FloatValue(float(constant.value))
+
+
+@dispatch(Context, sdlmodel.BooleanConstant)
+def __generate_expression(context: Context, constant: sdlmodel.BooleanConstant):
+    return promelamodel.BooleanValue(constant.value)
 
 
 @dispatch(Context, sdlmodel.VariableReference)

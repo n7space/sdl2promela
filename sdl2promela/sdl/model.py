@@ -46,12 +46,40 @@ class Constant(Expression):
     value: str
     """Constant value."""
 
-    def __init__(self, value):
+    def __init__(self, value: str):
         super().__init__()
         self.value = value
 
     def __str__(self):
         return f"Constant(value={self.value})"
+
+
+class RealConstant(Expression):
+    """Real constant value."""
+
+    value: str
+    """Real constant value."""
+
+    def __init__(self, value: str):
+        super().__init__()
+        self.value = value
+
+    def __str__(self):
+        return f"RealConstant(value={self.value})"
+
+
+class BooleanConstant(Expression):
+    """Boolean constant value."""
+
+    value: bool
+    """Boolean value."""
+
+    def __init__(self, value: bool):
+        super().__init__()
+        self.value = value
+
+    def __str__(self):
+        return f"BooleanConstant(value={self.value})"
 
 
 class EnumValue(Expression):
@@ -1036,6 +1064,22 @@ def convert(source: ogAST.PrimInteger):
     return constant
 
 
+@dispatch(ogAST.PrimReal)
+def convert(source: ogAST.PrimReal):
+    if isinstance(source.value, list):
+        if len(source.value) != 1:
+            raise ValueError(
+                "Source value is an array with an unsupported number of elements: "
+                + len(source.value)
+            )
+        constant = RealConstant(source.value[0])
+    else:
+        constant = RealConstant(source.value)
+
+    constant.type = source.exprType
+    return constant
+
+
 @dispatch(ogAST.PrimBoolean)
 def convert(source: ogAST.PrimBoolean):
     if isinstance(source.value, list):
@@ -1044,9 +1088,9 @@ def convert(source: ogAST.PrimBoolean):
                 "Source value is an array with an unsupported number of elements: "
                 + len(source.value)
             )
-        constant = Constant(source.value[0])
+        constant = BooleanConstant(source.value[0].lower() == "true")
     else:
-        constant = Constant(source.value)
+        constant = BooleanConstant(source.value.lower() == "true")
 
     constant.type = source.exprType
     return constant
