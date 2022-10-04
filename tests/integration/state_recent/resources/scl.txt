@@ -1,0 +1,2 @@
+never get_state(controller) = error;
+eventually get_state(controller) = finished;

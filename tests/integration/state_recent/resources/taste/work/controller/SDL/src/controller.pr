@@ -1,0 +1,59 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (362, 507), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    dcl finished MyInteger := 0;
+    /* CIF ENDTEXT */
+    /* CIF START (468, 215), (70, 35) */
+    START;
+        /* CIF task (460, 270), (84, 35) */
+        task param := 4;
+        /* CIF output (455, 325), (94, 35) */
+        output ping(param);
+        /* CIF NEXTSTATE (468, 375), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (776, 217), (70, 35) */
+    state Wait;
+        /* CIF input (761, 272), (98, 35) */
+        input pong(param);
+            /* CIF decision (776, 327), (70, 50) */
+            decision param;
+                /* CIF ANSWER (731, 397), (70, 23) */
+                (4):
+                    /* CIF task (723, 440), (84, 35) */
+                    task param := 0;
+                    /* CIF output (718, 495), (94, 35) */
+                    output ping(param);
+                    /* CIF NEXTSTATE (731, 550), (70, 35) */
+                    NEXTSTATE Idle;
+                /* CIF ANSWER (821, 397), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (821, 440), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1087, 227), (70, 35) */
+    state Idle;
+        /* CIF input (1072, 282), (98, 35) */
+        input pong(param);
+            /* CIF decision (1087, 337), (70, 50) */
+            decision param;
+                /* CIF ANSWER (1042, 407), (70, 23) */
+                (10):
+                    /* CIF NEXTSTATE (1041, 450), (70, 35) */
+                    NEXTSTATE finished;
+                /* CIF ANSWER (1132, 407), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (1132, 450), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
+    /* CIF state (752, 110), (70, 35) */
+    state error;
+    endstate;
+    /* CIF state (524, 104), (70, 35) */
+    state finished;
+    endstate;
+endprocess Controller;
