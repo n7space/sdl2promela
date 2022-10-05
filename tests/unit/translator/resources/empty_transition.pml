@@ -12,6 +12,7 @@ inline Complexsdl_0_transition(id)
       goto continuous_signals;
     ::(transition_id == 1)->
       transition_id = -1;
+      goto continuous_signals;
     fi;
     continuous_signals:
   od;

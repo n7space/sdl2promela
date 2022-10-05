@@ -1304,7 +1304,9 @@ def convert(source: ogAST.Terminator) -> Action:
             if len(result.candidates) > 0:
                 return result
             else:
-                return None
+                next_state = NextState()
+                next_state.state_name = ""
+                return next_state
         if source.inputString == "-*":
             return None
         if source.next_id != -1:

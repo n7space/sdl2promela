@@ -1966,6 +1966,13 @@ def __generate_statement(
     transition: sdlmodel.Transition,
     next_state: sdlmodel.NextState,
 ) -> promelamodel.Statement:
+    statements: List[promelamodel.Statement] = []
+    if next_state.state_name == "":
+        if not context.state_aggregation:
+            statements.append(__terminate_transition_statement())
+            statements.append(promelamodel.GoTo(__LABEL_CONTINUOUS_SIGNALS))
+        return promelamodel.StatementsWrapper(statements)
+
     if next_state.substate:
         state_variable = __get_substate_variable_name(context, next_state.substate)
     else:
@@ -1974,7 +1981,6 @@ def __generate_statement(
     state = context.sdl_model.states[next_state.state_name.lower()]
 
     state_name = __get_state_name(context, state)
-    statements: List[promelamodel.Statement] = []
     if not context.state_aggregation:
         statements.append(__terminate_transition_statement())
     statements.append(
