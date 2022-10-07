@@ -7,10 +7,11 @@ IMPORTS
    Demo-timer-manager-States, Demo-timer-manager-Context FROM Demo-timer-manager-Datamodel
    MyInteger FROM OBSERVER-TIMER-DATA-DATAVIEW
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
-   PID, Actuator-Event, Controller-Event, Demo-Timer-Manager-Event, Demo-Timer-Manager-Periodic-Events, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
+   PID FROM System-Dataview
+   Actuator-Event, Controller-Event, Demo-Timer-Manager-Event, Demo-Timer-Manager-Periodic-Events, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
-Observer-States ::= ENUMERATED {idle, error}
+Observer-States ::= ENUMERATED {error, idle}
 
 Observer-Context ::= SEQUENCE {
    state Observer-States,
@@ -26,6 +27,6 @@ Observer-Controller-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-
 Observer-Demo-Timer-Manager-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), tick-present(2)}
 Observer-Demo-Timer-Manager-Event-Msg-Out-Selection  ::= ENUMERATED {actuator-trigger-present(1)}
 Observer-Demo-Timer-Manager-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
-Observer-Function-Event-Selection  ::= ENUMERATED {actuator-present(1), controller-present(2), demo-timer-manager-present(3)}
+Observer-Function-Event-Selection  ::= ENUMERATED {actuator-present(1), controller-present(2), env-present(3)}
 Observer-Observable-Event-Selection  ::= ENUMERATED {no-event-present(1), system-startup-present(2), input-event-present(3), output-event-present(4), unhandled-input-present(5)}
 END

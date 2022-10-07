@@ -3,7 +3,8 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger FROM OUTPUT-OBSERVER-TIMER-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID FROM System-Dataview;
 
 Actuator-States ::= ENUMERATED {wait}
 
@@ -19,7 +20,8 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger FROM OUTPUT-OBSERVER-TIMER-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID FROM System-Dataview;
 
 Controller-States ::= ENUMERATED {wait}
 
@@ -69,6 +71,21 @@ T-Null-Record ::= SEQUENCE {}
 END
 
 
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+-- List of functions (instances) present in the system
+PID ::= ENUMERATED {
+    actuator,
+    controller,
+    
+    env
+}
+
+END
+
 
 Simulation-DataView DEFINITIONS ::=
 BEGIN
@@ -80,16 +97,14 @@ BEGIN
       
       -- Import generic integer type (used for timers)
       T-UInt32 FROM TASTE-BasicTypes
+      PID      FROM System-Dataview
+      -- Import timers
+      AggregateTimerData FROM Simulation-Timers-DataView
       --  Import the SDL function states needed for the global system state
       Actuator-Context           FROM Actuator-Datamodel
       Controller-Context         FROM Controller-Datamodel
       Demo-timer-manager-Context FROM Demo-timer-manager-Datamodel
    ;
-
-   --  List all the TASTE functions present in the system
-   PID ::= ENUMERATED {
-        env, actuator, controller, demo-timer-manager
-   }
 
    --  Simulator needs to knows about cyclic interfaces
    Periodic-Event {Event-Ty} ::= SEQUENCE {
@@ -152,9 +167,9 @@ BEGIN
 
    --  Event related to the execution of a PI or call of a RI in the functional code
    Function-Event ::= CHOICE {
-      actuator           Actuator-Event,
-      controller         Controller-Event,
-      demo-timer-manager Demo-Timer-Manager-Event
+      actuator   Actuator-Event,
+      controller Controller-Event,
+      env        Demo-Timer-Manager-Event
    }
 
    --  Type used to store events in a database: associate a name to the event
@@ -189,7 +204,10 @@ BEGIN
    --  Global system state (excluding observers, which are defined later)
    actuator-queue-size INTEGER ::= 2
    controller-queue-size INTEGER ::= 2
+
    System-State ::= SEQUENCE {
+      --  Timers
+      timers AggregateTimerData,
       --  Message queues
       actuator-queue   Events-Ty (SIZE (0 .. actuator-queue-size)),
       controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
@@ -197,6 +215,31 @@ BEGIN
       actuator            Actuator-Context,
       controller          Controller-Context,
       demo-timer-manager  Demo-timer-manager-Context
+   }
+
+END
+
+Simulation-Timers-DataView DEFINITIONS ::=
+BEGIN
+
+   TimerData ::= SEQUENCE {
+      timer-enabled BOOLEAN,
+      interval INTEGER (0 .. 50000)
+   }
+
+   AggregateTimerData ::= SEQUENCE {
+      
+      
+      
+      actuator SEQUENCE {
+         trigger TimerData
+      
+      },
+      
+      controller SEQUENCE {
+      },
+      
+      dummy-entry SEQUENCE {}
    }
 
 END
