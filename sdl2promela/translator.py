@@ -28,6 +28,7 @@ from .promela.modelbuilder import MemberAccessBuilder
 from .promela.modelbuilder import ArrayAccessBuilder
 from .promela.modelbuilder import ForLoopBuilder
 from .promela.modelbuilder import ConditionalExpressionBuilder
+from .promela.modelbuilder import PrintfBuilder
 from .utils import resolve_asn1_type
 from .utils import Asn1Type
 
@@ -2209,6 +2210,8 @@ def __generate_continuous_signals_alternative(
     is_loop: bool,
 ) -> List[promelamodel.Statement]:
     statements: List[promelamodel.Statement] = []
+    message = f"process continuous signals in {context.sdl_model.process_name}\\n"
+
     for signal in signals:
         statements.append(
             SwitchBuilder()
@@ -2217,10 +2220,13 @@ def __generate_continuous_signals_alternative(
                 .withCondition(__generate_expression(context, signal.trigger))
                 .withStatements(
                     [
+                        PrintfBuilder()
+                        .withParameter(promelamodel.StringValue(message))
+                        .build(),
                         AssignmentBuilder()
                         .withTarget(VariableReferenceBuilder(transition_id).build())
                         .withSource(promelamodel.IntegerValue(signal.transition))
-                        .build()
+                        .build(),
                     ]
                 )
                 .build()
