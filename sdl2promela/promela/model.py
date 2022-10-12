@@ -139,6 +139,14 @@ class BooleanValue(PrimaryExpression):
         self.value = value
 
 
+class StringValue(PrimaryExpression):
+
+    value: str
+
+    def __init__(self, value: str):
+        self.value = value
+
+
 class Parentheses(PrimaryExpression):
     """Parentheses for grouping expressions"""
 
@@ -234,6 +242,16 @@ class Assignment(Statement):
     def __init__(self):
         self.target = None
         self.source = None
+
+
+class Printf(Statement):
+    """Printf statement."""
+
+    parameters: List[Expression]
+    """Parameters for pritnf call."""
+
+    def __init__(self):
+        self.parameters = []
 
 
 class BlockType(Enum):

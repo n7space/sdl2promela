@@ -201,6 +201,11 @@ def generate(context: Context, booleanValue: model.BooleanValue):
         context.output("false")
 
 
+@dispatch(Context, model.StringValue)
+def generate(context: Context, stringValue: model.StringValue):
+    context.output(f'"{stringValue.value}"')
+
+
 @dispatch(Context, model.Parentheses)
 def generate(context: Context, parentheses: model.Parentheses):
     context.output("(")
@@ -240,6 +245,17 @@ def generate(context: Context, assignment: model.Assignment):
     generate(context, assignment.target)
     context.output(" = ")
     generate(context, assignment.source)
+
+
+@dispatch(Context, model.Printf)
+def generate(context: Context, printf: model.Printf):
+    context.output("printf(")
+    last_index = len(printf.parameters) - 1
+    for i in range(0, len(printf.parameters)):
+        generate(context, printf.parameters[i])
+        if i != last_index:
+            context.output(", ")
+    context.output(")")
 
 
 @dispatch(Context, model.Block)

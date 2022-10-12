@@ -14,6 +14,7 @@ from sdl2promela.promela.model import (
     VariableDeclaration,
     VariableReference,
     Assignment,
+    Printf,
     BinaryExpression,
     BinaryOperator,
     BlockType,
@@ -464,6 +465,20 @@ class AssignmentBuilder:
         :returns: The buider itself (for call chaining).
         """
         self.assignment.source = source
+        return self
+
+
+class PrintfBuilder:
+    def __init__(self):
+        self.parameters: List[Expression] = []
+
+    def build(self) -> Printf:
+        result = Printf()
+        result.parameters = self.parameters
+        return result
+
+    def withParameter(self, parameter: Expression) -> "PrintfBuilder":
+        self.parameters.append(parameter)
         return self
 
 
