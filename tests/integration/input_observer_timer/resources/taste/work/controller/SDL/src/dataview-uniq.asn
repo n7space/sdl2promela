@@ -26,3 +26,18 @@ T-Null-Record ::= SEQUENCE {}
 END
 
 
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+-- List of functions (instances) present in the system
+PID ::= ENUMERATED {
+    actuator,
+    controller,
+    
+    env
+}
+
+END
+

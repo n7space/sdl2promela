@@ -16,8 +16,8 @@ chan Controller_pong_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
 chan Actuator_trigger_channel = [1] of {int};
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Actuator_0_trigger_set(actuator_trigger_interval)
 {
@@ -144,10 +144,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Actuator_0_init();
-        Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         Observer_0_init();
         Observer_lock!1;
         inited = 1;
