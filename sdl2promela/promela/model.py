@@ -140,8 +140,10 @@ class BooleanValue(PrimaryExpression):
 
 
 class StringValue(PrimaryExpression):
+    """String primary expression."""
 
     value: str
+    """String value of primary expression"""
 
     def __init__(self, value: str):
         self.value = value
@@ -248,7 +250,7 @@ class Printf(Statement):
     """Printf statement."""
 
     parameters: List[Expression]
-    """Parameters for pritnf call."""
+    """Parameters for printf call."""
 
     def __init__(self):
         self.parameters = []
