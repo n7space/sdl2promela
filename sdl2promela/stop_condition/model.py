@@ -252,8 +252,12 @@ class AlwaysStatement:
     expression: Expression
     """Expression of always statement."""
 
-    def __init__(self, expression: Expression):
+    text: str
+    """Text of the statement."""
+
+    def __init__(self, expression: Expression, text: str):
         self.expression = expression
+        self.text = text
 
     def __str__(self):
         return f"AlwaysStatement(expression={self.expression}"
@@ -265,8 +269,12 @@ class NeverStatement:
     expression: Expression
     """Expression of never statement."""
 
-    def __init__(self, expression: Expression):
+    text: str
+    """Text of the statement."""
+
+    def __init__(self, expression: Expression, text: str):
         self.expression = expression
+        self.text = text
 
     def __str__(self):
         return f"NeverStatement(expression={self.expression}"
@@ -278,8 +286,12 @@ class EventuallyStatement:
     expression: Expression
     """Expression of eventually statement."""
 
-    def __init__(self, expression: Expression):
+    text: str
+    """Text of the statement."""
+
+    def __init__(self, expression: Expression, text: str):
         self.expression = expression
+        self.text = text
 
     def __str__(self):
         return f"EventuallyStatement(expression={self.expression}"
@@ -291,8 +303,12 @@ class FilterOutStatement:
     expression: Expression
     """Expression of filter_out statement."""
 
-    def __init__(self, expression: Expression):
+    text: str
+    """Text of the statement."""
+
+    def __init__(self, expression: Expression, text: str):
         self.expression = expression
+        self.text = text
 
     def __str__(self):
         return f"FilterOutStatement(expression={self.expression}"
