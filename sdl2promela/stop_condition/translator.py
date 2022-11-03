@@ -1235,12 +1235,19 @@ def _generate_always_alternative(
     context.precheck_expressions = []
     entry_expression = _generate(context, model.NotExpression(always.expression))
 
+    message_text = f"SCL violation: {always.text}\\n"
+
     entry_expression = _add_precheck_expressions(context, entry_expression)
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(entry_expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.PrintfBuilder()
+                .withParameter(promela.StringValue(message_text))
+                .build()
+            )
             .withStatement(
                 promelaBuilder.AssertBuilder().withExpression(assert_expression).build()
             )
@@ -1259,11 +1266,18 @@ def _generate_never_alternative(
     assert_expression = _generate(context, model.NotExpression(never.expression))
     entry_expression = _add_precheck_expressions(context, entry_expression)
 
+    message_text = f"SCL violation: {never.text}\\n"
+
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(entry_expression)
         .withStatements(
             promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.PrintfBuilder()
+                .withParameter(promela.StringValue(message_text))
+                .build()
+            )
             .withStatement(
                 promelaBuilder.AssertBuilder().withExpression(assert_expression).build()
             )
@@ -1337,11 +1351,18 @@ def _create_never_alternative_for_observer(
 ) -> promela.Alternative:
     condition = _create_observer_state_check(states, observer)
 
+    message_text = f"Observer entered errorstate: {observer}\\n"
+
     return (
         promelaBuilder.AlternativeBuilder(promela.BlockType.ATOMIC)
         .withCondition(condition)
         .withStatements(
             promelaBuilder.StatementsBuilder()
+            .withStatement(
+                promelaBuilder.PrintfBuilder()
+                .withParameter(promela.StringValue(message_text))
+                .build()
+            )
             .withStatement(
                 promelaBuilder.AssertBuilder()
                 .withExpression(

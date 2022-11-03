@@ -37,6 +37,26 @@ from .model import EventuallyStatement
 from .model import FilterOutStatement
 
 
+def _token_stream(node: antlr3.tree.CommonTree) -> antlr3.CommonTokenStream:
+    parent = node
+    while parent:
+        try:
+            return parent.token_stream
+        except AttributeError:
+            parent = parent.getParent()
+
+
+def _get_input_string(root: antlr3.tree.CommonTree) -> str:
+    try:
+        res = _token_stream(root).toString(
+            root.getTokenStartIndex(), root.getTokenStopIndex()
+        )
+        res.replace("\n", "").replace("\r", "").strip()
+        return res
+    except AttributeError:
+        return ""
+
+
 class TranslationException(Exception):
     """Exception during parsing Stop Condition model"""
 
@@ -209,23 +229,29 @@ def _parse_expression(expr: antlr3.tree.CommonTree) -> Expression:
 
 
 def _parse_always_statement(statement: antlr3.tree.CommonTree) -> AlwaysStatement:
-    return AlwaysStatement(_parse_expression(statement.children[0]))
+    print(dir(statement))
+    text = _get_input_string(statement)
+    return AlwaysStatement(_parse_expression(statement.children[0]), text)
 
 
 def _parse_never_statement(statement: antlr3.tree.CommonTree) -> NeverStatement:
-    return NeverStatement(_parse_expression(statement.children[0]))
+    print(dir(statement))
+    text = _get_input_string(statement)
+    return NeverStatement(_parse_expression(statement.children[0]), text)
 
 
 def _parse_eventually_statement(
     statement: antlr3.tree.CommonTree,
 ) -> EventuallyStatement:
-    return EventuallyStatement(_parse_expression(statement.children[0]))
+    text = _get_input_string(statement)
+    return EventuallyStatement(_parse_expression(statement.children[0]), text)
 
 
 def _parse_filter_out_statement(
     statement: antlr3.tree.CommonTree,
 ) -> FilterOutStatement:
-    return FilterOutStatement(_parse_expression(statement.children[0]))
+    text = _get_input_string(statement)
+    return FilterOutStatement(_parse_expression(statement.children[0]), text)
 
 
 def parse_stop_condition(text: str) -> Optional[StopConditionModel]:
