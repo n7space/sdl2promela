@@ -545,8 +545,8 @@ def __build_member_reference_for_type(
 
 def __resolve_member_access_type(context: Context, member_access: sdlmodel.MemberAccess) -> Any:
     if isinstance(member_access.sequence, sdlmodel.MemberAccess):
-        type = resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
-        member = __build_member_reference_for_type(context, member_access.sequence.member, type)
+        parent_type = __resolve_member_access_type(context, member_access.sequence)
+        member = __build_member_reference_for_type(context, member_access.sequence.member, parent_type)
         return member[1]
     else:
         return resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
