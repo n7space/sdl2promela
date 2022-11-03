@@ -229,13 +229,11 @@ def _parse_expression(expr: antlr3.tree.CommonTree) -> Expression:
 
 
 def _parse_always_statement(statement: antlr3.tree.CommonTree) -> AlwaysStatement:
-    print(dir(statement))
     text = _get_input_string(statement)
     return AlwaysStatement(_parse_expression(statement.children[0]), text)
 
 
 def _parse_never_statement(statement: antlr3.tree.CommonTree) -> NeverStatement:
-    print(dir(statement))
     text = _get_input_string(statement)
     return NeverStatement(_parse_expression(statement.children[0]), text)
 
