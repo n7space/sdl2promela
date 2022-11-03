@@ -504,9 +504,14 @@ def __generate_variable_name(
 
 def __build_member_reference_for_type(
     context: Context, member: sdlmodel.VariableReference, datatype: Any
-) -> Tuple[Union[
-    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
-    ], Any]:
+) -> Tuple[
+    Union[
+        promelamodel.VariableReference,
+        promelamodel.MemberAccess,
+        promelamodel.ArrayAccess,
+    ],
+    Any,
+]:
     """
     Build valid reference name to the member of `datatype`,
     based on `member` from SDL model.
@@ -540,16 +545,24 @@ def __build_member_reference_for_type(
         raise Exception(error)
 
     member_name = sdlmodel.VariableReference(candidates[0][0])
-    return (VariableReferenceBuilder(member_name.variableName).build(), candidates[0][1])
+    return (
+        VariableReferenceBuilder(member_name.variableName).build(),
+        candidates[0][1],
+    )
 
 
-def __resolve_member_access_type(context: Context, member_access: sdlmodel.MemberAccess) -> Any:
+def __resolve_member_access_type(
+    context: Context, member_access: sdlmodel.MemberAccess
+) -> Any:
     if isinstance(member_access.sequence, sdlmodel.MemberAccess):
         parent_type = __resolve_member_access_type(context, member_access.sequence)
-        member = __build_member_reference_for_type(context, member_access.sequence.member, parent_type)
+        member = __build_member_reference_for_type(
+            context, member_access.sequence.member, parent_type
+        )
         return member[1]
     else:
         return resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
+
 
 @dispatch(Context, sdlmodel.MemberAccess, bool)
 def __generate_variable_name(
