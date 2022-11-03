@@ -529,11 +529,11 @@ def __build_member_reference_for_type(
     variable_name = member.variableName.lower()
     candidates = []
     for candidate in datatype.Children.items():
-        candidate_name = candidate[0].lower()
+        candidate_name = candidate[0].replace("-", "_").lower()
         candidate_type = candidate[1]
         resolved_type = resolve_asn1_type(context.sdl_model.types, candidate_type.type)
         if candidate_name == variable_name:
-            candidates.append((candidate[0], resolved_type))
+            candidates.append((candidate[0].replace("-", "_"), resolved_type))
 
     if len(candidates) == 0:
         error = f"Cannot find member '{member}' in variable of type '{datatype.CName}'"
