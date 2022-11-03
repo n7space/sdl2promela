@@ -2,7 +2,7 @@ system ComplexAssignment;
     /* CIF TEXT (144, 214), (519, 140) */
     use datamodel comment 'complex_choice_assignment.asn';
     
-    signal tc(SystemCommand) renames output systemTc from EGSE to ModeManager; 
+    signal tc(SystemCommand);
     /* CIF ENDTEXT */
     channel c
         from env to ComplexAssignment with tc;
@@ -14,13 +14,8 @@ system ComplexAssignment;
         /* CIF PROCESS (259, 87), (150, 75) */
         process ComplexAssignment;
             /* CIF TEXT (13, 57), (222, 140) */
-            monitor st System_State;
-            
-            
-            monitor event Observable_Event;
             DCL x dataItem;
-            
-            
+            DCL cmd SystemCommand;
             /* CIF ENDTEXT */
             /* CIF START (280, 58), (70, 35) */
             START;

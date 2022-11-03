@@ -26,7 +26,6 @@ inline Sharedmemory_0_transition(id)
 }
 inline Sharedmemory_0_init()
 {
-  PID_assign_value(global_state.sharedmemory.sender, PID_env);
   Sharedmemory_0_transition(0);
 }
 inline Sharedmemory_0_PI_0_MemWriteA(input_param)

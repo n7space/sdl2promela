@@ -1,4 +1,3 @@
-SystemCommand ComplexAssignment_0_cmd;
 inline Complexassignment_0_transition(id)
 {
   int transition_id;
@@ -13,11 +12,11 @@ inline Complexassignment_0_transition(id)
       goto continuous_signals;
     ::(transition_id == 1)->
       {
-        DataItem_assign_value(global_state.complexassignment.x, ComplexAssignment_0_cmd.data.goToOperational.threshold2);
+        DataItem_assign_value(global_state.complexassignment.x, global_state.complexassignment.cmd.data.goToOperational.threshold2);
         {
-          ComplexAssignment_0_cmd.selection = SystemCommand_goToOperational_PRESENT;
-          DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold1, global_state.complexassignment.x);
-          DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold2, 1);
+          global_state.complexassignment.cmd.selection = SystemCommand_goToOperational_PRESENT;
+          DataItem_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold1, global_state.complexassignment.x);
+          DataItem_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold2, 1);
         }
       }
       transition_id = -1;
@@ -28,14 +27,13 @@ inline Complexassignment_0_transition(id)
 }
 inline Complexassignment_0_init()
 {
-  PID_assign_value(global_state.complexassignment.sender, PID_env);
   Complexassignment_0_transition(0);
 }
 inline Complexassignment_0_PI_0_tc(input_param)
 {
   if
   ::(global_state.complexassignment.state == Complexassignment_States_idle)->
-    SystemCommand_assign_value(ComplexAssignment_0_cmd, input_param);
+    SystemCommand_assign_value(global_state.complexassignment.cmd, input_param);
     Complexassignment_0_transition(1);
   ::else->
     skip;
