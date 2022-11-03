@@ -31,7 +31,8 @@ system ComplexAssignment;
                 /* CIF input (405, 123), (70, 35) */
                 input tc(cmd);
                 /* CIF task (48, 404), (331, 38) */
-                task cmd := gotoOperational: {threshold1 1, threshold2 1};
+                task x := cmd.gotoOperational.threshold2,
+                cmd := gotoOperational: {threshold1 x, threshold2 1};
                 /* CIF NEXTSTATE (405, 528), (70, 35) */
                 NEXTSTATE -;
             endstate;

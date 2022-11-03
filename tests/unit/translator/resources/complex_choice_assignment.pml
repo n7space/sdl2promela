@@ -13,9 +13,12 @@ inline Complexassignment_0_transition(id)
       goto continuous_signals;
     ::(transition_id == 1)->
       {
-        ComplexAssignment_0_cmd.selection = SystemCommand_goToOperational_PRESENT;
-        DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold1, 1);
-        DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold2, 1);
+        DataItem_assign_value(global_state.complexassignment.x, ComplexAssignment_0_cmd.data.goToOperational.threshold2);
+        {
+          ComplexAssignment_0_cmd.selection = SystemCommand_goToOperational_PRESENT;
+          DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold1, global_state.complexassignment.x);
+          DataItem_assign_value(ComplexAssignment_0_cmd.data.goToOperational.threshold2, 1);
+        }
       }
       transition_id = -1;
       goto continuous_signals;

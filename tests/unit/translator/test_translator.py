@@ -114,6 +114,9 @@ def test_translates_complex_sequence_assignment():
         "complex_sequence_assignment.pr", "complex_sequence_assignment.pml"
     )
 
+def test_translates_complex_choice_assignment():
+    translate_and_verify("complex_choice_assignment.pr", "complex_choice_assignment.pml")
+
 
 def test_translates_timer_with_camelcase_name():
     translate_and_verify(
@@ -134,7 +137,3 @@ def test_translates_assignment_to_element_of_octet_string():
 
 def test_translates_lowercase_process_name():
     translate_and_verify("lowercase_process_name.pr", "lowercase_process_name.pml")
-
-
-def test_translates_complex_assignment():
-    translate_and_verify("complex_assignment.pr", "complex_assignment.pml")
