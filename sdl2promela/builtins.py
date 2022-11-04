@@ -19,6 +19,8 @@ __BUILTIN_NAMES = [
     "num",
     "val",
     "exist",
+    "float",
+    "fix",
 ]
 
 
@@ -175,6 +177,20 @@ def __translate_exist(
     )
 
 
+def __translate_float(
+    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+) -> promelamodel.Expression:
+    __check_parameters(parameters, 1, "float")
+    return parameters[0]
+
+
+def __translate_fix(
+    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+) -> promelamodel.Expression:
+    __check_parameters(parameters, 1, "fix")
+    return parameters[0]
+
+
 def is_builtin(call_name: str) -> bool:
     """
     Is the given call referring to a built-in function?
@@ -214,6 +230,10 @@ def translate_builtin(
         return __translate_num(call, parameters)
     elif call.name.lower() == "exist":
         return __translate_exist(call, parameters)
+    elif call.name.lower() == "float":
+        return __translate_float(call, parameters)
+    elif call.name.lower() == "fix":
+        return __translate_fix(call, parameters)
     raise NotImplementedError(f"Builtin {call.name} is not yet implemented")
 
 
