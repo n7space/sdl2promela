@@ -1,4 +1,4 @@
-from typing import List, Union, Any, Optional
+from typing import List, Union, Any, Optional, Tuple
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -504,8 +504,13 @@ def __generate_variable_name(
 
 def __build_member_reference_for_type(
     context: Context, member: sdlmodel.VariableReference, datatype: Any
-) -> Union[
-    promelamodel.VariableReference, promelamodel.MemberAccess, promelamodel.ArrayAccess
+) -> Tuple[
+    Union[
+        promelamodel.VariableReference,
+        promelamodel.MemberAccess,
+        promelamodel.ArrayAccess,
+    ],
+    Any,
 ]:
     """
     Build valid reference name to the member of `datatype`,
@@ -518,13 +523,18 @@ def __build_member_reference_for_type(
     :param member: Input reference to member from SDL source.
     :param datatype: Type of the structure, where `member` should exist
     :returns: promela VariableReference which contains valid reference to member
+        and its type
     """
 
-    candidates = [
-        name.replace("-", "_")
-        for name in datatype.Children
-        if name.replace("-", "_").lower() == member.variableName.lower()
-    ]
+    variable_name = member.variableName.lower()
+    candidates = []
+    for candidate in datatype.Children.items():
+        candidate_name = candidate[0].replace("-", "_").lower()
+        candidate_type = candidate[1]
+        resolved_type = resolve_asn1_type(context.sdl_model.types, candidate_type.type)
+        if candidate_name == variable_name:
+            candidates.append((candidate[0].replace("-", "_"), resolved_type))
+
     if len(candidates) == 0:
         error = f"Cannot find member '{member}' in variable of type '{datatype.CName}'"
         raise Exception(error)
@@ -534,8 +544,24 @@ def __build_member_reference_for_type(
         )
         raise Exception(error)
 
-    member_name = sdlmodel.VariableReference(candidates[0])
-    return VariableReferenceBuilder(member_name.variableName).build()
+    member_name = sdlmodel.VariableReference(candidates[0][0])
+    return (
+        VariableReferenceBuilder(member_name.variableName).build(),
+        candidates[0][1],
+    )
+
+
+def __resolve_member_access_type(
+    context: Context, member_access: sdlmodel.MemberAccess
+) -> Any:
+    if isinstance(member_access.sequence, sdlmodel.MemberAccess):
+        parent_type = __resolve_member_access_type(context, member_access.sequence)
+        member = __build_member_reference_for_type(
+            context, member_access.sequence.member, parent_type
+        )
+        return member[1]
+    else:
+        return resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
 
 
 @dispatch(Context, sdlmodel.MemberAccess, bool)
@@ -548,11 +574,12 @@ def __generate_variable_name(
 ]:
     # In case when the left side has type of CHOICE
     # then result shall be like: 'container.data.field'
-    left_type = resolve_asn1_type(context.sdl_model.types, member_access.sequence.type)
+    left_type = __resolve_member_access_type(context, member_access)
+
     if left_type.kind == "ChoiceType":
         member = __build_member_reference_for_type(
             context, member_access.member, left_type
-        )
+        )[0]
         return (
             MemberAccessBuilder()
             .withUtypeReference(
@@ -569,7 +596,7 @@ def __generate_variable_name(
     elif left_type.kind == "SequenceType":
         member = __build_member_reference_for_type(
             context, member_access.member, left_type
-        )
+        )[0]
         return (
             MemberAccessBuilder()
             .withUtypeReference(

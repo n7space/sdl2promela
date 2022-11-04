@@ -1,0 +1,63 @@
+system Sharedmemory;
+
+    /* CIF TEXT (144, 214), (519, 140) */
+    use datamodel comment 'complex_sequence_assignment2.asn';
+
+    signal MemWriteA (T_WriteAccess);   
+    signal MemWriteB (T_WriteAccess);
+    /* CIF ENDTEXT */
+   
+
+   channel c
+      from env to Sharedmemory with MemWriteA, MemWriteB;
+   endchannel;
+
+   block Sharedmemory;
+
+      signalroute r
+      from env to Sharedmemory with MemWriteA, MemWriteB;
+      connect c and r;
+
+      /* CIF PROCESS (258, 152), (150, 75) */
+process Sharedmemory;
+    /* CIF TEXT (1005, 65), (267, 140) */
+    -- Text area for declarations and comments
+    
+    DCL memBuffer T_MemBuffer;
+    DCL writeAccess T_WriteAccess;
+    /* CIF ENDTEXT */
+    /* CIF START (417, 94), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (417, 144), (70, 35) */
+        NEXTSTATE IDLE;
+    /* CIF state (753, 243), (70, 35) */
+    state IDLE;
+        /* CIF input (796, 298), (171, 35) */
+        input MemWriteB(writeAccess);
+            /* CIF PROCEDURECALL (791, 353), (182, 68) */
+            call writeln('WriteB addr ', 
+writeAccess.write_address,
+' val ',
+writeAccess.write_value);
+            /* CIF task (747, 452), (269, 38) */
+            task memBuffer(writeAccess.write_address) :=
+writeAccess.write_value;
+            /* CIF NEXTSTATE (847, 510), (70, 35) */
+            NEXTSTATE IDLE;
+        /* CIF input (506, 298), (172, 35) */
+        input MemWriteA(writeAccess);
+            /* CIF PROCEDURECALL (501, 353), (182, 68) */
+            call writeln('WriteA addr ', 
+writeAccess.write_address,
+' val ',
+writeAccess.write_value);
+            /* CIF task (458, 452), (269, 38) */
+            task memBuffer(writeAccess.write_address) :=
+writeAccess.write_value;
+            /* CIF NEXTSTATE (558, 510), (70, 35) */
+            NEXTSTATE IDLE;
+    endstate;
+endprocess Sharedmemory;
+
+   endblock;
+endsystem;

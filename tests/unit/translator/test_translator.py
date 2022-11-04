@@ -115,6 +115,18 @@ def test_translates_complex_sequence_assignment():
     )
 
 
+def test_translates_complex_sequence_assignment2():
+    translate_and_verify(
+        "complex_sequence_assignment2.pr", "complex_sequence_assignment2.pml"
+    )
+
+
+def test_translates_complex_choice_assignment():
+    translate_and_verify(
+        "complex_choice_assignment.pr", "complex_choice_assignment.pml"
+    )
+
+
 def test_translates_timer_with_camelcase_name():
     translate_and_verify(
         "timer_with_camelcase_name.pr", "timer_with_camelcase_name.pml"
