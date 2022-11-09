@@ -1,8 +1,8 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF START (523, 212), (80, 35) */
+    /* CIF START (537, 225), (80, 35) */
     START;
-        /* CIF NEXTSTATE (528, 262), (70, 35) */
+        /* CIF NEXTSTATE (542, 275), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (874, 239), (70, 35) */
     state Wait;
