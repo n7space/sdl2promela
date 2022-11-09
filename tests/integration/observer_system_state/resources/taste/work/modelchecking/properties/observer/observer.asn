@@ -3,13 +3,15 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger, MyTestInteger FROM OBSERVER-SYSTEM-STATE-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID-Range, PID FROM System-Dataview;
 
 Actuator-States ::= ENUMERATED {add, repeat}
 
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
+   sender PID,
    ping-param MyInteger,
    pong-param MyInteger
 }
@@ -21,13 +23,15 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger, MyTestInteger FROM OBSERVER-SYSTEM-STATE-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID-Range, PID FROM System-Dataview;
 
-Controller-States ::= ENUMERATED {operation, wait}
+Controller-States ::= ENUMERATED {wait, operation}
 
 Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
+   sender PID,
    test-param MyTestInteger,
    ping-param MyInteger,
    pong-param MyInteger
@@ -64,6 +68,25 @@ T-Null-Record ::= SEQUENCE {}
 
 END
 
+
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+   -- Range of PID - type can be used to size arrays of PID type
+   PID-Range ::= INTEGER(0..3)
+
+   -- List of functions (instances) present in the system
+   PID ::= ENUMERATED {
+       actuator,
+       controller,
+       environ,
+       
+       env
+   }
+
+END
 
 ENVIRON-SUBTYPE DEFINITIONS ::=
 BEGIN
@@ -104,15 +127,13 @@ BEGIN
       
       -- Import generic integer type (used for timers)
       T-UInt32 FROM TASTE-BasicTypes
+      PID      FROM System-Dataview
+      -- Import timers
+      AggregateTimerData FROM Simulation-Timers-DataView
       --  Import the SDL function states needed for the global system state
       Actuator-Context   FROM Actuator-Datamodel
       Controller-Context FROM Controller-Datamodel
    ;
-
-   --  List all the TASTE functions present in the system
-   PID ::= ENUMERATED {
-        env, actuator, controller, environ
-   }
 
    --  Simulator needs to knows about cyclic interfaces
    Periodic-Event {Event-Ty} ::= SEQUENCE {
@@ -202,13 +223,39 @@ BEGIN
    --  Global system state (excluding observers, which are defined later)
    actuator-queue-size INTEGER ::= 2
    controller-queue-size INTEGER ::= 2
+
    System-State ::= SEQUENCE {
+      --  Timers
+      timers AggregateTimerData,
       --  Message queues
       actuator-queue   Events-Ty (SIZE (0 .. actuator-queue-size)),
       controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
 
       actuator    Actuator-Context,
       controller  Controller-Context
+   }
+
+END
+
+Simulation-Timers-DataView DEFINITIONS ::=
+BEGIN
+
+   TimerData ::= SEQUENCE {
+      timer-enabled BOOLEAN,
+      interval INTEGER (0 .. 50000)
+   }
+
+   AggregateTimerData ::= SEQUENCE {
+      
+      
+      
+      actuator SEQUENCE {
+      },
+      
+      controller SEQUENCE {
+      },
+      
+      dummy-entry SEQUENCE {}
    }
 
 END
