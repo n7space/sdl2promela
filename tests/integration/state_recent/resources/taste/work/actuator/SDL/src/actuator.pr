@@ -9,21 +9,24 @@ process Actuator;
     START;
         /* CIF NEXTSTATE (320, 60), (70, 35) */
         NEXTSTATE Wait;
+    /* CIF state (630, 169), (74, 35) */
+    state Disabled;
+    endstate;
     /* CIF state (1057, 189), (70, 35) */
     state Wait;
-        /* CIF input (930, 244), (118, 35) */
+        /* CIF input (929, 244), (118, 35) */
         input ping(my_param);
-            /* CIF decision (937, 299), (104, 50) */
+            /* CIF decision (936, 299), (104, 50) */
             decision my_param = 0;
                 /* CIF ANSWER (1015, 369), (70, 23) */
                 (false):
-                    /* CIF output (989, 412), (122, 35) */
+                    /* CIF output (988, 412), (122, 35) */
                     output pong(my_param);
                 /* CIF ANSWER (881, 369), (70, 23) */
                 (true):
-                    /* CIF task (859, 412), (115, 35) */
+                    /* CIF task (858, 412), (115, 35) */
                     task my_param := 10;
-                    /* CIF output (855, 467), (122, 35) */
+                    /* CIF output (854, 467), (122, 35) */
                     output pong(my_param);
             enddecision;
             /* CIF NEXTSTATE (954, 518), (70, 35) */
@@ -32,8 +35,5 @@ process Actuator;
         input disable;
             /* CIF NEXTSTATE (1120, 299), (74, 35) */
             NEXTSTATE Disabled;
-    endstate;
-    /* CIF state (631, 169), (74, 35) */
-    state Disabled;
     endstate;
 endprocess Actuator;
