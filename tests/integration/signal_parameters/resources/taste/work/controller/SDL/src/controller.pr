@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (421, 243), (267, 140) */
+    /* CIF TEXT (422, 256), (267, 140) */
     -- Text area for declarations and comments
     
     dcl error MyInteger;
@@ -14,35 +14,24 @@ process Controller;
     START;
         /* CIF NEXTSTATE (320, 60), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1330, 269), (92, 35) */
-    state OperationA;
-        /* CIF input (1305, 324), (143, 35) */
-        input result(result_param);
-            /* CIF decision (1292, 379), (169, 50) */
-            decision result_param = expected;
-                /* CIF ANSWER (1285, 449), (70, 23) */
-                (true):
-                    /* CIF task (1214, 492), (212, 35) */
-                    task check_param := check_param / 2;
-                    /* CIF task (1235, 547), (171, 35) */
-                    task expected := check_param;
-                    /* CIF output (1250, 602), (141, 35) */
-                    output check(check_param);
-                    /* CIF NEXTSTATE (1275, 657), (91, 35) */
-                    NEXTSTATE OperationB;
-                /* CIF ANSWER (1449, 449), (70, 23) */
-                (false):
-                    /* CIF task (1445, 492), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (1438, 547), (92, 35) */
-                    NEXTSTATE OperationA;
-            enddecision;
+    /* CIF state (1005, 262), (70, 35) */
+    state Wait;
+        /* CIF input (978, 317), (121, 35) */
+        input test(test_param);
+            /* CIF task (947, 372), (184, 35) */
+            task check_param := test_param;
+            /* CIF task (953, 427), (171, 35) */
+            task expected := check_param;
+            /* CIF output (968, 482), (141, 35) */
+            output check(check_param);
+            /* CIF NEXTSTATE (993, 532), (92, 35) */
+            NEXTSTATE OperationA;
     endstate;
-    /* CIF state (1850, 288), (91, 35) */
+    /* CIF state (1849, 288), (91, 35) */
     state OperationB;
-        /* CIF input (1824, 343), (143, 35) */
+        /* CIF input (1823, 343), (143, 35) */
         input result(result_param);
-            /* CIF decision (1811, 398), (169, 50) */
+            /* CIF decision (1810, 398), (169, 50) */
             decision result_param = expected;
                 /* CIF ANSWER (1816, 468), (70, 23) */
                 (true):
@@ -58,17 +47,28 @@ process Controller;
                     NEXTSTATE OperationB;
             enddecision;
     endstate;
-    /* CIF state (1005, 262), (70, 35) */
-    state Wait;
-        /* CIF input (979, 317), (121, 35) */
-        input test(test_param);
-            /* CIF task (945, 372), (189, 35) */
-            task check_param := test_param;
-            /* CIF task (954, 427), (171, 35) */
-            task expected := check_param;
-            /* CIF output (969, 482), (141, 35) */
-            output check(check_param);
-            /* CIF NEXTSTATE (993, 532), (92, 35) */
-            NEXTSTATE OperationA;
+    /* CIF state (1329, 269), (92, 35) */
+    state OperationA;
+        /* CIF input (1304, 324), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1291, 379), (169, 50) */
+            decision result_param = expected;
+                /* CIF ANSWER (1285, 449), (70, 23) */
+                (true):
+                    /* CIF task (1213, 492), (212, 35) */
+                    task check_param := check_param / 2;
+                    /* CIF task (1234, 547), (171, 35) */
+                    task expected := check_param;
+                    /* CIF output (1249, 602), (141, 35) */
+                    output check(check_param);
+                    /* CIF NEXTSTATE (1274, 657), (91, 35) */
+                    NEXTSTATE OperationB;
+                /* CIF ANSWER (1449, 449), (70, 23) */
+                (false):
+                    /* CIF task (1445, 492), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (1437, 547), (92, 35) */
+                    NEXTSTATE OperationA;
+            enddecision;
     endstate;
 endprocess Controller;

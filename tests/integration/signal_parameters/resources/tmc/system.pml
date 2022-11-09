@@ -5,100 +5,136 @@
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
-chan actuator_check_channel = [1] of {MyInteger};
-chan controller_test_channel = [1] of {TestInteger};
-chan controller_result_channel = [1] of {MyInteger};
+chan Actuator_check_channel = [1] of {MyInteger};
+MyInteger Actuator_check_signal_parameter;
+bool Actuator_check_channel_used = 0;
+chan Controller_result_channel = [1] of {MyInteger};
+MyInteger Controller_result_signal_parameter;
+bool Controller_result_channel_used = 0;
+chan Controller_test_channel = [1] of {TestInteger};
+TestInteger Controller_test_signal_parameter;
+bool Controller_test_channel_used = 0;
 system_state global_state;
-chan actuator_lock = [1] of {int};
-chan controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_check(actuator_check_p1)
 {
-    actuator_check_channel!actuator_check_p1;
+    Actuator_check_channel!actuator_check_p1;
 }
 inline Actuator_check_queue()
 {
     atomic {
-        empty(actuator_check_channel);
+        empty(Actuator_check_channel);
     }
 }
-inline Env_0_RI_0_test(controller_test_p1)
+inline Actuator_0_get_sender(Actuator_sender_arg)
 {
-    controller_test_channel!controller_test_p1;
+    skip;
 }
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
-    controller_result_channel!controller_result_p1;
+    Controller_result_channel!controller_result_p1;
+}
+inline Environ_0_RI_0_test(controller_test_p1)
+{
+    Controller_test_channel!controller_test_p1;
 }
 inline Controller_check_queue()
 {
     atomic {
-        empty(controller_test_channel) && empty(controller_result_channel);
+        (empty(Controller_result_channel) && empty(Controller_test_channel));
     }
 }
-active proctype env_test()
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
+}
+active proctype Actuator_check() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Actuator_check_channel);
+        Actuator_lock?_;
+Actuator_check_loop:
+        if
+        ::  nempty(Actuator_check_channel);
+            Actuator_check_channel?Actuator_check_signal_parameter;
+            Actuator_check_channel_used = 1;
+            Actuator_0_PI_0_check(Actuator_check_signal_parameter);
+            goto Actuator_check_loop;
+        ::  empty(Actuator_check_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
+    }
+    od;
+}
+active proctype Controller_result() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Controller_result_channel);
+        Controller_lock?_;
+Controller_result_loop:
+        if
+        ::  nempty(Controller_result_channel);
+            Controller_result_channel?Controller_result_signal_parameter;
+            Controller_result_channel_used = 1;
+            Controller_0_PI_0_result(Controller_result_signal_parameter);
+            goto Controller_result_loop;
+        ::  empty(Controller_result_channel);
+            skip;
+        fi;
+        Controller_lock!1;
+    }
+    od;
+}
+active proctype Controller_test() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Controller_test_channel);
+        Controller_lock?_;
+Controller_test_loop:
+        if
+        ::  nempty(Controller_test_channel);
+            Controller_test_channel?Controller_test_signal_parameter;
+            Controller_test_channel_used = 1;
+            Controller_0_PI_0_test(Controller_test_signal_parameter);
+            goto Controller_test_loop;
+        ::  empty(Controller_test_channel);
+            skip;
+        fi;
+        Controller_lock!1;
+    }
+    od;
+}
+active proctype Environ_test() priority 1
 {
     inited;
     TestInteger value;
     do
     ::  atomic {
         TestInteger_generate_value(value);
-        Env_0_RI_0_test(value);
-    }
-    od;
-}
-active proctype actuator_check() priority 1
-{
-    inited;
-    int token;
-    MyInteger signal_parameter;
-    do
-    ::  atomic {
-        actuator_check_channel?signal_parameter;
-        actuator_lock?token;
-        Actuator_0_PI_0_check(signal_parameter);
-        actuator_lock!token;
-    }
-    od;
-}
-active proctype controller_test() priority 1
-{
-    inited;
-    int token;
-    TestInteger signal_parameter;
-    do
-    ::  atomic {
-        controller_test_channel?signal_parameter;
-        controller_lock?token;
-        Controller_0_PI_0_test(signal_parameter);
-        controller_lock!token;
-    }
-    od;
-}
-active proctype controller_result() priority 1
-{
-    inited;
-    int token;
-    MyInteger signal_parameter;
-    do
-    ::  atomic {
-        controller_result_channel?signal_parameter;
-        controller_lock?token;
-        Controller_0_PI_0_result(signal_parameter);
-        controller_lock!token;
+        Environ_0_RI_0_test(value);
     }
     od;
 }
 init
 {
     atomic {
-        int init_token = 1;
+        global_dataview_init();
         Actuator_0_init();
-        actuator_lock!init_token;
+        Actuator_lock!1;
         Controller_0_init();
-        controller_lock!init_token;
+        Controller_lock!1;
         inited = 1;
     }
 }
