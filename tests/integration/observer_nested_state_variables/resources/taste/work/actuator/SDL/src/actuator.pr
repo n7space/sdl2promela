@@ -12,34 +12,34 @@ process Actuator;
             START;
                 /* CIF NEXTSTATE (437, 250), (70, 35) */
                 NEXTSTATE One;
-            /* CIF state (988, 217), (70, 35) */
-            state Two;
-                /* CIF input (959, 272), (126, 35) */
-                input ping(ping_param);
-                    /* CIF task (931, 327), (183, 35) */
-                    task pong_param := ping_param;
-                    /* CIF output (955, 382), (135, 35) */
-                    output pong(pong_param);
-                    /* CIF NEXTSTATE (988, 437), (70, 35) */
-                    NEXTSTATE One;
-            endstate;
             /* CIF state (697, 213), (70, 35) */
             state One;
-                /* CIF input (668, 268), (126, 35) */
+                /* CIF input (667, 268), (126, 35) */
                 input ping(ping_param);
-                    /* CIF task (640, 323), (183, 35) */
+                    /* CIF task (639, 323), (183, 35) */
                     task pong_param := ping_param;
-                    /* CIF output (664, 378), (135, 35) */
+                    /* CIF output (663, 378), (135, 35) */
                     output pong(pong_param);
-                    /* CIF NEXTSTATE (697, 428), (70, 35) */
+                    /* CIF NEXTSTATE (696, 428), (70, 35) */
                     NEXTSTATE Two;
+            endstate;
+            /* CIF state (988, 217), (70, 35) */
+            state Two;
+                /* CIF input (958, 272), (126, 35) */
+                input ping(ping_param);
+                    /* CIF task (930, 327), (183, 35) */
+                    task pong_param := ping_param;
+                    /* CIF output (954, 382), (135, 35) */
+                    output pong(pong_param);
+                    /* CIF NEXTSTATE (987, 437), (70, 35) */
+                    NEXTSTATE One;
             endstate;
     endsubstructure;
     /* CIF START (393, 147), (70, 35) */
     START;
         /* CIF NEXTSTATE (393, 197), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (716, 142), (70, 35) */
+    /* CIF state (730, 157), (70, 35) */
     state Wait;
     endstate;
 endprocess Actuator;
