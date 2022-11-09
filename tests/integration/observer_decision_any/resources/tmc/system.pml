@@ -31,6 +31,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
@@ -40,6 +44,10 @@ inline Controller_check_queue()
     atomic {
         empty(Controller_pong_channel);
     }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {
