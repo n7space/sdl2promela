@@ -1,23 +1,23 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (1298, 178), (165, 63) */
+    /* CIF TEXT (1303, 184), (170, 140) */
     dcl p1 MyBool;
     
     dcl valReceived MyBool;
     /* CIF ENDTEXT */
     /* CIF START (653, 229), (70, 35) */
     START;
-        /* CIF task (610, 284), (155, 40) */
+        /* CIF task (617, 284), (140, 35) */
         task valReceived := false;
-        /* CIF NEXTSTATE (653, 355), (70, 35) */
+        /* CIF NEXTSTATE (653, 350), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1048, 243), (70, 35) */
     state Wait;
-        /* CIF input (1021, 298), (122, 35) */
+        /* CIF input (1028, 298), (106, 35) */
         input readValue(p1);
             /* CIF task (1013, 353), (136, 35) */
             task valReceived := true;
-            /* CIF NEXTSTATE (1047, 403), (70, 40) */
-            NEXTSTATE  Wait;
+            /* CIF NEXTSTATE (1047, 403), (70, 35) */
+            NEXTSTATE Wait;
     endstate;
 endprocess Controller;

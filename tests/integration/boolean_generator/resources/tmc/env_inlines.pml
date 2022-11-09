@@ -1,9 +1,9 @@
-inline MyBool_generate_value(value)
+inline MyBool_generate_value(MyBool_gv)
 {
     if
     ::  true;
-        value = 1;
+        MyBool_gv = 1;
     ::  true;
-        value = 0;
+        MyBool_gv = 0;
     fi;
 }
