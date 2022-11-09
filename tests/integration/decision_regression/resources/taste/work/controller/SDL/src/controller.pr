@@ -5,11 +5,11 @@ process Controller;
     
     dcl param MyInteger := 0;
     /* CIF ENDTEXT */
-    /* CIF START (616, 113), (70, 35) */
+    /* CIF START (624, 115), (70, 35) */
     START;
-        /* CIF output (603, 168), (94, 35) */
+        /* CIF output (611, 170), (94, 35) */
         output ping(param);
-        /* CIF NEXTSTATE (616, 218), (70, 35) */
+        /* CIF NEXTSTATE (624, 220), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1137, 108), (70, 35) */
     state Wait;
