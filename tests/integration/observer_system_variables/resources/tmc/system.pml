@@ -7,6 +7,7 @@ typedef system_state {
     Observer_Context observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
@@ -30,6 +31,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
@@ -39,6 +44,10 @@ inline Controller_check_queue()
     atomic {
         empty(Controller_pong_channel);
     }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {
@@ -51,14 +60,15 @@ Actuator_ping_loop:
         if
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?Actuator_ping_signal_parameter;
+            Actuator_ping_channel_used = 1;
             Actuator_0_PI_0_ping(Actuator_ping_signal_parameter);
+            Observer_lock?_;
+            Observer_0_PI_0_ping_in(Actuator_ping_signal_parameter);
+            Observer_lock!1;
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
             skip;
         fi;
-        Observer_lock?_;
-        Observer_0_PI_0_ping_in(Actuator_ping_signal_parameter);
-        Observer_lock!1;
         Actuator_lock!1;
     }
     od;
@@ -74,6 +84,7 @@ Controller_pong_loop:
         if
         ::  nempty(Controller_pong_channel);
             Controller_pong_channel?Controller_pong_signal_parameter;
+            Controller_pong_channel_used = 1;
             Controller_0_PI_0_pong(Controller_pong_signal_parameter);
             goto Controller_pong_loop;
         ::  empty(Controller_pong_channel);
