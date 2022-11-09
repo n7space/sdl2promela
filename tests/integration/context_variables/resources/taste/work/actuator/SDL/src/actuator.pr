@@ -6,19 +6,19 @@ process Actuator;
     dcl check_param MyInteger;
     dcl result_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (333, 20), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (333, 70), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (937, 180), (70, 35) */
     state Wait;
-        /* CIF input (901, 235), (141, 35) */
+        /* CIF input (900, 235), (141, 35) */
         input check(check_param);
-            /* CIF task (810, 290), (323, 35) */
+            /* CIF task (809, 290), (323, 35) */
             task result_param := check_param + actuator_ctxt.coeff;
-            /* CIF output (900, 345), (143, 35) */
+            /* CIF output (899, 345), (143, 35) */
             output result(result_param);
-            /* CIF NEXTSTATE (937, 400), (70, 35) */
+            /* CIF NEXTSTATE (936, 400), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;
