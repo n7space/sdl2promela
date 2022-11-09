@@ -1,5 +1,5 @@
 system observer;
-    /* CIF TEXT (144, 214), (507, 136) */
+    /* CIF TEXT (144, 214), (461, 140) */
     use datamodel comment 'observer.asn';
     
     signal ping_in(MyInteger) renames input ping from controller to actuator;
@@ -13,7 +13,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
-            /* CIF TEXT (0, 57), (256, 112) */
+            /* CIF TEXT (0, 57), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
@@ -24,11 +24,14 @@ system observer;
             START;
                 /* CIF NEXTSTATE (623, 70), (70, 35) */
                 NEXTSTATE Idle;
+            /* CIF state (261, 7), (70, 35) */
+            state error;
+            endstate;
             /* CIF state (430, 147), (70, 35) */
             state Idle;
-                /* CIF input (409, 202), (111, 35) */
+                /* CIF input (408, 202), (111, 35) */
                 input ping_in(param);
-                    /* CIF decision (424, 257), (81, 50) */
+                    /* CIF decision (423, 257), (81, 50) */
                     decision param = 3;
                         /* CIF ANSWER (268, 327), (70, 23) */
                         (false):
@@ -46,17 +49,14 @@ system observer;
                                     NEXTSTATE error;
                                 /* CIF ANSWER (520, 440), (70, 23) */
                                 (true):
-                                    /* CIF task (426, 483), (257, 35) */
+                                    /* CIF task (427, 483), (255, 35) */
                                     task st.actuator.state := operation_0_repeat
-                                    /* CIF comment (703, 483), (70, 35) */
+                                    /* CIF comment (702, 483), (86, 35) */
                                     comment 'reset state';
                                     /* CIF NEXTSTATE (520, 538), (70, 35) */
                                     NEXTSTATE Idle;
                             enddecision;
                     enddecision;
-            endstate;
-            /* CIF state (257, 0), (70, 35) */
-            state error;
             endstate;
         endprocess observer;
     endblock;
