@@ -5,11 +5,11 @@ process Controller;
     
     dcl reached MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (642, 100), (70, 35) */
+    /* CIF START (653, 111), (70, 35) */
     START;
-        /* CIF output (642, 155), (70, 35) */
+        /* CIF output (653, 166), (70, 35) */
         output ping;
-        /* CIF NEXTSTATE (642, 205), (70, 35) */
+        /* CIF NEXTSTATE (653, 216), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (909, 183), (70, 35) */
     state Wait;
