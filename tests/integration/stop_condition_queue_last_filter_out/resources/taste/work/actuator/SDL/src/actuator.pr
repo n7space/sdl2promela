@@ -5,33 +5,21 @@ process Actuator;
     
     dcl ping_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (333, 18), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (333, 68), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1196, 172), (73, 35) */
-    state Special;
-        /* CIF input (1168, 227), (126, 35) */
-        input ping(ping_param);
-            /* CIF output (1197, 282), (70, 35) */
-            output pong;
-            /* CIF NEXTSTATE (1197, 337), (70, 35) */
-            NEXTSTATE Error;
-    endstate;
-    /* CIF state (1469, 179), (70, 35) */
-    state Error;
-    endstate;
     /* CIF state (884, 175), (70, 35) */
     state Wait;
-        /* CIF input (851, 230), (126, 35) */
+        /* CIF input (850, 230), (126, 35) */
         input ping(ping_param);
-            /* CIF decision (803, 285), (223, 50) */
+            /* CIF decision (857, 285), (113, 50) */
             decision ping_param = 0;
-                /* CIF ANSWER (816, 355), (114, 23) */
+                /* CIF ANSWER (838, 355), (70, 23) */
                 (true):
                     /* CIF output (838, 398), (70, 35) */
                     output pong;
-                    /* CIF NEXTSTATE (836, 453), (73, 35) */
+                    /* CIF NEXTSTATE (838, 453), (70, 35) */
                     NEXTSTATE Special;
                 /* CIF ANSWER (942, 355), (70, 23) */
                 (false):
@@ -40,5 +28,17 @@ process Actuator;
                     /* CIF NEXTSTATE (942, 453), (70, 35) */
                     NEXTSTATE Wait;
             enddecision;
+    endstate;
+    /* CIF state (1469, 179), (70, 35) */
+    state Error;
+    endstate;
+    /* CIF state (1197, 172), (70, 35) */
+    state Special;
+        /* CIF input (1167, 227), (126, 35) */
+        input ping(ping_param);
+            /* CIF output (1196, 282), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1196, 337), (70, 35) */
+            NEXTSTATE Error;
     endstate;
 endprocess Actuator;
