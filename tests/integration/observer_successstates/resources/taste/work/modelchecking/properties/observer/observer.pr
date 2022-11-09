@@ -1,5 +1,5 @@
 system observer;
-    /* CIF TEXT (144, 214), (507, 136) */
+    /* CIF TEXT (141, 198), (461, 140) */
     use datamodel comment 'observer.asn';
     
     signal ping_in(MyInteger) renames input ping from controller to actuator;
@@ -13,7 +13,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
-            /* CIF TEXT (0, 57), (256, 112) */
+            /* CIF TEXT (0, 57), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
@@ -24,11 +24,14 @@ system observer;
             START;
                 /* CIF NEXTSTATE (106, 318), (70, 35) */
                 NEXTSTATE Wait;
+            /* CIF state (530, 103), (70, 35) */
+            state found;
+            endstate;
             /* CIF state (572, 292), (70, 35) */
             state Wait;
-                /* CIF input (548, 347), (111, 35) */
+                /* CIF input (547, 347), (111, 35) */
                 input ping_in(param);
-                    /* CIF decision (563, 402), (81, 50) */
+                    /* CIF decision (562, 402), (81, 50) */
                     decision param = 5;
                         /* CIF ANSWER (527, 472), (70, 23) */
                         (true):
@@ -39,9 +42,6 @@ system observer;
                             /* CIF NEXTSTATE (617, 515), (70, 35) */
                             NEXTSTATE Wait;
                     enddecision;
-            endstate;
-            /* CIF state (530, 103), (70, 35) */
-            state found;
             endstate;
         endprocess observer;
     endblock;
