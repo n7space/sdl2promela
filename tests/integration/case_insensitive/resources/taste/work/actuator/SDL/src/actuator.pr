@@ -9,7 +9,7 @@ process Actuator;
     dcl mychoice MyChoice;
     dcl mySECONDchoice MyChoice;
     /* CIF ENDTEXT */
-    /* CIF procedure (463, 555), (79, 35) */
+    /* CIF procedure (462, 555), (79, 35) */
     procedure CalculaTE;
         /* CIF TEXT (99, 207), (267, 140) */
         -- Text area for declarations and comments
@@ -20,18 +20,18 @@ process Actuator;
         /* CIF ENDTEXT */
         /* CIF START (437, 198), (70, 35) */
         START;
-            /* CIF task (376, 253), (192, 35) */
+            /* CIF task (375, 253), (192, 35) */
             task DOOM := mycamel + MYLOW;
             /* CIF return (454, 308), (35, 35) */
             return ;
     endprocedure;
-    /* CIF START (628, 122), (70, 35) */
+    /* CIF START (632, 124), (70, 35) */
     START;
-        /* CIF NEXTSTATE (628, 172), (70, 35) */
+        /* CIF NEXTSTATE (632, 174), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1073, 144), (70, 35) */
     state Wait;
-        /* CIF input (1052, 199), (111, 35) */
+        /* CIF input (1051, 199), (111, 35) */
         input ping(myparam);
             /* CIF task (1028, 254), (158, 35) */
             task myseq.loWERCASE := 1;
@@ -39,7 +39,7 @@ process Actuator;
             call calculate(myseq.lowerCase, MYPARAM, MYSEQ.camelCase);
             /* CIF task (1026, 364), (162, 35) */
             task mysecondseq := MYSEQ;
-            /* CIF task (908, 419), (399, 35) */
+            /* CIF task (907, 419), (399, 35) */
             task mychoice := CAMELCASEalternative : mysecondSEQ.CAMELCASE;
             /* CIF task (950, 474), (314, 35) */
             task mysecondchoice := LOWERCASE_ALTERNATIVE : 0;
@@ -49,7 +49,7 @@ process Actuator;
             task MYPARAM := mysecondchoice.lowercase_alternative;
             /* CIF output (1049, 629), (116, 35) */
             output pong(myparaM);
-            /* CIF NEXTSTATE (1073, 684), (70, 35) */
+            /* CIF NEXTSTATE (1072, 684), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;
