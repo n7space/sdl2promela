@@ -5,14 +5,15 @@
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context inst;
+    AggregateTimerData timers;
 }
 
 int inited;
 chan Actuator_ping_channel = [1] of {int};
 chan Inst_pong_channel = [1] of {int};
 system_state global_state;
-chan Inst_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Inst_lock = [1] of {int};
 inline Inst_0_RI_0_ping()
 {
     int dummy;
@@ -24,6 +25,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
@@ -34,6 +39,10 @@ inline Inst_check_queue()
     atomic {
         empty(Inst_pong_channel);
     }
+}
+inline Inst_0_get_sender(Inst_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {
@@ -79,10 +88,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Inst_0_init();
-        Inst_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Inst_0_init();
+        Inst_lock!1;
         inited = 1;
     }
 }
