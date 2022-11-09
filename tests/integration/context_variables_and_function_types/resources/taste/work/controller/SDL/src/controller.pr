@@ -6,31 +6,30 @@ process Controller;
     dcl check_param MyInteger;
     dcl result_param MyInteger;
     dcl error MyInteger;
-    
     /* CIF ENDTEXT */
-    /* CIF START (507, 222), (70, 35) */
+    /* CIF START (517, 227), (70, 35) */
     START;
-        /* CIF task (479, 277), (124, 35) */
+        /* CIF task (489, 282), (124, 35) */
         task check_param := 1;
-        /* CIF output (471, 332), (141, 35) */
+        /* CIF output (481, 337), (141, 35) */
         output check(check_param);
-        /* CIF NEXTSTATE (507, 382), (70, 35) */
+        /* CIF NEXTSTATE (517, 387), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (894, 236), (70, 35) */
     state Wait;
-        /* CIF input (857, 291), (143, 35) */
+        /* CIF input (856, 291), (143, 35) */
         input result(result_param);
-            /* CIF decision (864, 346), (129, 50) */
+            /* CIF decision (863, 346), (129, 50) */
             decision result_param = 11;
-                /* CIF ANSWER (849, 416), (70, 24) */
+                /* CIF ANSWER (849, 416), (70, 23) */
                 (true):
-                    /* CIF NEXTSTATE (849, 460), (70, 35) */
+                    /* CIF NEXTSTATE (849, 459), (70, 35) */
                     NEXTSTATE Wait;
-                /* CIF ANSWER (939, 416), (70, 24) */
+                /* CIF ANSWER (939, 416), (70, 23) */
                 (false):
-                    /* CIF task (935, 460), (76, 35) */
+                    /* CIF task (935, 459), (76, 35) */
                     task error := 1;
-                    /* CIF NEXTSTATE (939, 510), (70, 35) */
+                    /* CIF NEXTSTATE (939, 509), (70, 35) */
                     NEXTSTATE Wait;
             enddecision;
     endstate;
