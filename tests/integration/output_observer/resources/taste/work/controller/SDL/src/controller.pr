@@ -16,20 +16,20 @@ process Controller;
         output ping(param);
         /* CIF NEXTSTATE (549, 343), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (901, 167), (70, 35) */
+    /* CIF state (912, 166), (70, 35) */
     state Wait;
-        /* CIF input (886, 222), (98, 35) */
+        /* CIF input (895, 221), (98, 35) */
         input pong(param);
-            /* CIF decision (901, 277), (70, 50) */
+            /* CIF decision (910, 276), (70, 50) */
             decision param;
-                /* CIF ANSWER (856, 347), (70, 23) */
+                /* CIF ANSWER (867, 346), (70, 23) */
                 (0):
-                    /* CIF task (843, 390), (94, 35) */
+                    /* CIF task (854, 389), (94, 35) */
                     task reached := 1;
-                /* CIF ANSWER (946, 347), (70, 23) */
+                /* CIF ANSWER (957, 346), (70, 23) */
                 else:
             enddecision;
-            /* CIF NEXTSTATE (901, 441), (70, 35) */
+            /* CIF NEXTSTATE (910, 440), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;
