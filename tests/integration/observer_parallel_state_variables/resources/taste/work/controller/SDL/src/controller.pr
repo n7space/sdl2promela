@@ -6,19 +6,19 @@ process Controller;
     dcl ping_param MyInteger;
     dcl pong_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (834, 304), (70, 35) */
+    /* CIF START (839, 316), (70, 35) */
     START;
-        /* CIF task (810, 359), (116, 35) */
+        /* CIF task (815, 371), (116, 35) */
         task ping_param := 2;
-        /* CIF output (805, 414), (126, 35) */
+        /* CIF output (810, 426), (126, 35) */
         output ping(ping_param);
-        /* CIF NEXTSTATE (834, 464), (70, 35) */
+        /* CIF NEXTSTATE (839, 476), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1171, 315), (70, 35) */
     state Wait;
-        /* CIF input (1138, 370), (135, 35) */
+        /* CIF input (1137, 370), (135, 35) */
         input pong(pong_param);
-            /* CIF NEXTSTATE (1171, 425), (70, 35) */
+            /* CIF NEXTSTATE (1170, 425), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;
