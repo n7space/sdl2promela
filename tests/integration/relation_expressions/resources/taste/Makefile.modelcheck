@@ -1,0 +1,36 @@
+model-check: InterfaceView.aadl DeploymentView.aadl DataView.aadl
+	$(KAZOO) -gw --glue -t MOCHECK
+	$(MAKE) -C work model-check
+
+create-obs: work/modelchecking/properties work/modelchecking observer_dataview
+	mkdir -p work/modelchecking/properties/$(NAME)
+	make -C work obs-skeleton NAME=$(NAME)
+
+create-msc: work/modelchecking/properties work/modelchecking observer_dataview
+	mkdir -p work/modelchecking/properties/$(NAME)
+	make -C work msc-skeleton NAME=$(NAME)
+
+create-bsc: work/modelchecking/properties work/modelchecking observer_dataview
+	mkdir -p work/modelchecking/properties/$(NAME)
+	make -C work bsc-skeleton NAME=$(NAME)
+
+work/modelchecking/properties:
+	mkdir -p work/modelchecking/properties
+
+work/modelchecking:
+	mkdir -p work/modelchecking
+
+create-subtype: work/modelchecking/subtypes work/modelchecking
+	find work/ -path work/binaries -prune -o -name subtype_*.asn -exec cat {} \; >  work/modelchecking/subtypes/$(NAME).asn
+
+work/modelchecking/subtypes:
+	mkdir -p work/modelchecking/subtypes
+
+# Native model cheker target (experimental - for systems made of SDL functions only)
+native_modelchecker:
+	if [ -f work/glue_debug ] || [ -f work/glue_release ] || [ -f work/glue_coverage ]; then $(MAKE) clean; fi
+	$(MAKE) interfaceview work/glue_simu
+	$(MAKE) -C work
+	$(MAKE) -C work/simulation -f Makefile.Simulation modelcheck
+	cd work/simulation && ./modelcheck
+
