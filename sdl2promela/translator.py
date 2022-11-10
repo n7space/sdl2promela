@@ -2408,12 +2408,12 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
     if context.sdl_model.floating_labels:
         statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
         for name, label in context.sdl_model.floating_labels.items():
-            statements.append(promelamodel.Label(name))
+            statements.append(promelamodel.Label(name.lower()))
             fake_transition = sdlmodel.Transition()
             fake_transition.actions = label.actions
             statements.extend(__generate_transition(context, fake_transition))
             statements.append(promelamodel.GoTo(__NEXT_TRANSITION_LABEL_NAME))
-            statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
+        statements.append(promelamodel.Label(__NEXT_TRANSITION_LABEL_NAME))
 
     do_builder.withAlternative(AlternativeBuilder().withStatements(statements).build())
 
