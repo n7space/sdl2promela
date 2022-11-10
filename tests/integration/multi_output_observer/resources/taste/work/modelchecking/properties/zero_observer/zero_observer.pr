@@ -1,5 +1,5 @@
 system zero_observer;
-    /* CIF TEXT (144, 214), (507, 136) */
+    /* CIF TEXT (105, 218), (446, 140) */
     use datamodel comment 'observer.asn';
     
     signal f1_in (MyInteger) renames output f1 from controller to actuator;
@@ -20,11 +20,10 @@ f2_in;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process zero_observer;
-            /* CIF TEXT (0, 57), (256, 112) */
+            /* CIF TEXT (21, 61), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
-            
             /* CIF ENDTEXT */
             /* CIF START (61, 203), (70, 35) */
             START;
