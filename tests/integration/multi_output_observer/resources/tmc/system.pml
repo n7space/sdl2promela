@@ -30,8 +30,8 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Change_observer_lock = [1] of {int};
 chan Zero_observer_lock = [1] of {int};
 inline Change_observer_0_RI_0_f1_in(change_observer_actuator_p1)
@@ -61,7 +61,7 @@ inline Controller_0_RI_0_f2(actuator_f2_p1)
 inline Actuator_check_queue()
 {
     atomic {
-        (empty(Actuator_zero_observer_f1_channel) && (empty(Actuator_f1_channel) && (empty(Actuator_change_observer_f1_channel) && (empty(Actuator_zero_observer_f2_channel) && (empty(Actuator_f2_channel) && empty(Actuator_change_observer_f2_channel))))));
+        (empty(Actuator_change_observer_f1_channel) && (empty(Actuator_f1_channel) && (empty(Actuator_zero_observer_f1_channel) && (empty(Actuator_change_observer_f2_channel) && (empty(Actuator_f2_channel) && empty(Actuator_zero_observer_f2_channel))))));
     }
 }
 inline Actuator_0_get_sender(Actuator_sender_arg)
@@ -91,14 +91,24 @@ active proctype Actuator_f1() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Actuator_zero_observer_f1_channel) || (nempty(Actuator_f1_channel) || nempty(Actuator_change_observer_f1_channel)));
+        (nempty(Actuator_change_observer_f1_channel) || (nempty(Actuator_f1_channel) || nempty(Actuator_zero_observer_f1_channel)));
         Actuator_lock?_;
 Actuator_f1_loop:
         if
-        ::  nempty(Actuator_zero_observer_f1_channel);
-            Actuator_zero_observer_f1_channel?Actuator_f1_signal_parameter;
+        ::  nempty(Actuator_change_observer_f1_channel);
+            Actuator_change_observer_f1_channel?Actuator_f1_signal_parameter;
             Actuator_f1_channel_used = 1;
             Actuator_0_PI_0_f1(Actuator_f1_signal_parameter);
+            goto Actuator_f1_loop;
+        ::  empty(Actuator_change_observer_f1_channel);
+            skip;
+        fi;
+        if
+        ::  nempty(Actuator_zero_observer_f1_channel);
+            Actuator_zero_observer_f1_channel?Actuator_f1_signal_parameter;
+            Change_observer_lock?_;
+            Change_observer_0_PI_0_f1_in(Actuator_f1_signal_parameter);
+            Change_observer_lock!1;
             goto Actuator_f1_loop;
         ::  empty(Actuator_zero_observer_f1_channel);
             skip;
@@ -106,21 +116,11 @@ Actuator_f1_loop:
         if
         ::  nempty(Actuator_f1_channel);
             Actuator_f1_channel?Actuator_f1_signal_parameter;
-            Change_observer_lock?_;
-            Change_observer_0_PI_0_f1_in(Actuator_f1_signal_parameter);
-            Change_observer_lock!1;
-            goto Actuator_f1_loop;
-        ::  empty(Actuator_f1_channel);
-            skip;
-        fi;
-        if
-        ::  nempty(Actuator_change_observer_f1_channel);
-            Actuator_change_observer_f1_channel?Actuator_f1_signal_parameter;
             Zero_observer_lock?_;
             Zero_observer_0_PI_0_f1_in(Actuator_f1_signal_parameter);
             Zero_observer_lock!1;
             goto Actuator_f1_loop;
-        ::  empty(Actuator_change_observer_f1_channel);
+        ::  empty(Actuator_f1_channel);
             skip;
         fi;
         Actuator_lock!1;
@@ -132,14 +132,24 @@ active proctype Actuator_f2() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Actuator_zero_observer_f2_channel) || (nempty(Actuator_f2_channel) || nempty(Actuator_change_observer_f2_channel)));
+        (nempty(Actuator_change_observer_f2_channel) || (nempty(Actuator_f2_channel) || nempty(Actuator_zero_observer_f2_channel)));
         Actuator_lock?_;
 Actuator_f2_loop:
         if
-        ::  nempty(Actuator_zero_observer_f2_channel);
-            Actuator_zero_observer_f2_channel?Actuator_f2_signal_parameter;
+        ::  nempty(Actuator_change_observer_f2_channel);
+            Actuator_change_observer_f2_channel?Actuator_f2_signal_parameter;
             Actuator_f2_channel_used = 1;
             Actuator_0_PI_0_f2(Actuator_f2_signal_parameter);
+            goto Actuator_f2_loop;
+        ::  empty(Actuator_change_observer_f2_channel);
+            skip;
+        fi;
+        if
+        ::  nempty(Actuator_zero_observer_f2_channel);
+            Actuator_zero_observer_f2_channel?Actuator_f2_signal_parameter;
+            Change_observer_lock?_;
+            Change_observer_0_PI_0_f2_in(Actuator_f2_signal_parameter);
+            Change_observer_lock!1;
             goto Actuator_f2_loop;
         ::  empty(Actuator_zero_observer_f2_channel);
             skip;
@@ -147,21 +157,11 @@ Actuator_f2_loop:
         if
         ::  nempty(Actuator_f2_channel);
             Actuator_f2_channel?Actuator_f2_signal_parameter;
-            Change_observer_lock?_;
-            Change_observer_0_PI_0_f2_in(Actuator_f2_signal_parameter);
-            Change_observer_lock!1;
-            goto Actuator_f2_loop;
-        ::  empty(Actuator_f2_channel);
-            skip;
-        fi;
-        if
-        ::  nempty(Actuator_change_observer_f2_channel);
-            Actuator_change_observer_f2_channel?Actuator_f2_signal_parameter;
             Zero_observer_lock?_;
             Zero_observer_0_PI_0_f2_in(Actuator_f2_signal_parameter);
             Zero_observer_lock!1;
             goto Actuator_f2_loop;
-        ::  empty(Actuator_change_observer_f2_channel);
+        ::  empty(Actuator_f2_channel);
             skip;
         fi;
         Actuator_lock!1;
@@ -225,10 +225,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         Change_observer_0_init();
         Change_observer_lock!1;
         Zero_observer_0_init();

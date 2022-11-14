@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	test_multi_output_observer
 
-# .SILENT : \
-# 	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \
