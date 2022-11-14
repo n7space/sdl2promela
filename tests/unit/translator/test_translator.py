@@ -146,3 +146,7 @@ def test_translates_assignment_to_element_of_octet_string():
 
 def test_translates_lowercase_process_name():
     translate_and_verify("lowercase_process_name.pr", "lowercase_process_name.pml")
+
+
+def test_translates_double_label():
+    translate_and_verify("double_label.pr", "double_label.pml")
