@@ -13,23 +13,23 @@ process Controller;
         output ping(ping_param);
         /* CIF NEXTSTATE (548, 246), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (789, 91), (70, 35) */
+    /* CIF state (803, 97), (70, 35) */
     state Wait;
-        /* CIF input (789, 146), (70, 35) */
+        /* CIF input (803, 152), (70, 35) */
         input pong;
-            /* CIF decision (763, 201), (120, 50) */
+            /* CIF decision (777, 207), (120, 50) */
             decision ping_param < 10;
-                /* CIF ANSWER (744, 271), (70, 23) */
+                /* CIF ANSWER (758, 277), (70, 23) */
                 (true):
-                    /* CIF task (679, 314), (199, 35) */
+                    /* CIF task (693, 320), (199, 35) */
                     task ping_param := ping_param + 1;
-                    /* CIF output (715, 369), (126, 35) */
+                    /* CIF output (729, 375), (126, 35) */
                     output ping(ping_param);
-                    /* CIF NEXTSTATE (744, 424), (70, 35) */
+                    /* CIF NEXTSTATE (758, 430), (70, 35) */
                     NEXTSTATE Wait;
-                /* CIF ANSWER (889, 271), (70, 23) */
+                /* CIF ANSWER (903, 277), (70, 23) */
                 (false):
-                    /* CIF NEXTSTATE (889, 314), (70, 35) */
+                    /* CIF NEXTSTATE (903, 320), (70, 35) */
                     NEXTSTATE Wait;
             enddecision;
     endstate;

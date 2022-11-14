@@ -3,37 +3,51 @@
 #include "env_inlines.pml"
 typedef system_state {
     Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
-chan controller_readValue_channel = [1] of {MyBool};
+chan Controller_readValue_channel = [1] of {MyBool};
+MyBool Controller_readvalue_signal_parameter;
+bool Controller_readvalue_channel_used = 0;
 system_state global_state;
-chan controller_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Environment_0_RI_0_readValue(controller_readValue_p1)
 {
-    controller_readValue_channel!controller_readValue_p1;
+    Controller_readValue_channel!controller_readValue_p1;
 }
 inline Controller_check_queue()
 {
     atomic {
-        empty(controller_readValue_channel);
+        empty(Controller_readValue_channel);
     }
 }
-active proctype controller_readValue() priority 1
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
+}
+active proctype Controller_readValue() priority 1
 {
     inited;
-    int token;
-    MyBool signal_parameter;
     do
     ::  atomic {
-        controller_readValue_channel?signal_parameter;
-        controller_lock?token;
-        Controller_0_PI_0_readValue(signal_parameter);
-        controller_lock!token;
+        nempty(Controller_readValue_channel);
+        Controller_lock?_;
+Controller_readvalue_loop:
+        if
+        ::  nempty(Controller_readValue_channel);
+            Controller_readValue_channel?Controller_readvalue_signal_parameter;
+            Controller_readvalue_channel_used = 1;
+            Controller_0_PI_0_readValue(Controller_readvalue_signal_parameter);
+            goto Controller_readvalue_loop;
+        ::  empty(Controller_readValue_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
-active proctype environment_readValue()
+active proctype Environment_readValue() priority 1
 {
     inited;
     MyBool value;
@@ -47,9 +61,9 @@ active proctype environment_readValue()
 init
 {
     atomic {
-        int init_token = 1;
+        global_dataview_init();
         Controller_0_init();
-        controller_lock!init_token;
+        Controller_lock!1;
         inited = 1;
     }
 }

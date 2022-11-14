@@ -1,6 +1,6 @@
 SPIN?=spin
 CC=gcc
-CFLAGS=-O2
+CFLAGS=-O0
 
 # We are testing the sources, not the installed application
 SDL2PROMELA=PYTHONPATH=../../../ python3 -m sdl2promela.sdl2promela
@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	test_integer_expressions
 
-#.SILENT : \
-#	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \

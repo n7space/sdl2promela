@@ -7,26 +7,15 @@ process Controller;
     dcl ping_param MyInteger;
     dcl pong_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (332, 17), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (332, 67), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (947, 244), (70, 35) */
-    state Wait;
-        /* CIF input (919, 299), (121, 35) */
-        input test(test_param);
-            /* CIF task (922, 354), (116, 35) */
-            task ping_param := 0;
-            /* CIF output (917, 409), (126, 35) */
-            output ping(ping_param);
-            /* CIF NEXTSTATE (938, 464), (83, 35) */
-            NEXTSTATE Operation;
-    endstate;
-    /* CIF state (1327, 255), (83, 35) */
+    /* CIF state (1326, 255), (83, 35) */
     state Operation;
-        /* CIF input (1301, 310), (135, 35) */
+        /* CIF input (1300, 310), (135, 35) */
         input pong(pong_param);
-            /* CIF decision (1280, 365), (177, 50) */
+            /* CIF decision (1279, 365), (177, 50) */
             decision pong_param = test_param;
                 /* CIF ANSWER (1233, 435), (70, 23) */
                 (true):
@@ -41,5 +30,16 @@ process Controller;
                     /* CIF NEXTSTATE (1374, 583), (83, 35) */
                     NEXTSTATE Operation;
             enddecision;
+    endstate;
+    /* CIF state (947, 244), (70, 35) */
+    state Wait;
+        /* CIF input (918, 299), (121, 35) */
+        input test(test_param);
+            /* CIF task (921, 354), (116, 35) */
+            task ping_param := 0;
+            /* CIF output (916, 409), (126, 35) */
+            output ping(ping_param);
+            /* CIF NEXTSTATE (937, 464), (83, 35) */
+            NEXTSTATE Operation;
     endstate;
 endprocess Controller;

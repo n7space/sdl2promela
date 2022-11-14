@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (381, 273), (267, 140) */
+    /* CIF TEXT (383, 286), (267, 140) */
     -- Text area for declarations and comments
     
     dcl ping_param MyInteger;
@@ -16,9 +16,9 @@ process Controller;
         NEXTSTATE Wait;
     /* CIF state (1127, 340), (70, 35) */
     state Wait;
-        /* CIF input (1091, 395), (135, 35) */
+        /* CIF input (1090, 395), (135, 35) */
         input pong(pong_param);
-            /* CIF decision (1100, 450), (117, 50) */
+            /* CIF decision (1099, 450), (117, 50) */
             decision pong_param = 5;
                 /* CIF ANSWER (1000, 520), (70, 23) */
                 (true):
@@ -29,9 +29,9 @@ process Controller;
                     /* CIF task (1105, 563), (203, 35) */
                     task ping_param := pong_param + 1;
             enddecision;
-            /* CIF output (1096, 614), (126, 35) */
+            /* CIF output (1095, 614), (126, 35) */
             output ping(ping_param);
-            /* CIF NEXTSTATE (1124, 669), (70, 35) */
+            /* CIF NEXTSTATE (1123, 669), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;

@@ -1,5 +1,5 @@
 system observer;
-    /* CIF TEXT (144, 214), (507, 136) */
+    /* CIF TEXT (144, 214), (461, 140) */
     use datamodel comment 'observer.asn';
     
     signal ping_in(MyInteger) renames input ping from controller to actuator;
@@ -13,7 +13,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
-            /* CIF TEXT (36, 67), (256, 112) */
+            /* CIF TEXT (43, 68), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
@@ -25,17 +25,11 @@ system observer;
             START;
                 /* CIF NEXTSTATE (60, 310), (70, 35) */
                 NEXTSTATE Idle;
-            /* CIF state (740, 54), (70, 35) */
-            state error;
-            endstate;
-            /* CIF state (970, 69), (70, 35) */
-            state reached;
-            endstate;
             /* CIF state (442, 233), (70, 35) */
             state Idle;
-                /* CIF input (420, 288), (111, 35) */
+                /* CIF input (419, 288), (111, 35) */
                 input ping_in(param);
-                    /* CIF decision (365, 343), (222, 50) */
+                    /* CIF decision (368, 343), (214, 50) */
                     decision param = st.actuator.pong_param;
                         /* CIF ANSWER (397, 413), (70, 23) */
                         (true):
@@ -46,6 +40,12 @@ system observer;
                             /* CIF NEXTSTATE (487, 456), (70, 35) */
                             NEXTSTATE error;
                     enddecision;
+            endstate;
+            /* CIF state (969, 69), (70, 35) */
+            state reached;
+            endstate;
+            /* CIF state (740, 54), (70, 35) */
+            state error;
             endstate;
         endprocess observer;
     endblock;

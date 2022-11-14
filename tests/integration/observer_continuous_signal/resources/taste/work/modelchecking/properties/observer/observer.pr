@@ -1,27 +1,26 @@
 system observer;
 /* CIF TEXT (144, 214), (258, 140) */
 use datamodel comment 'observer.asn';
-
 /* CIF ENDTEXT */
 block observer;
 /* CIF PROCESS (259, 87), (150, 75) */
 process observer;
-/* CIF TEXT (0, 57), (222, 140) */
+/* CIF TEXT (7, 57), (222, 140) */
 monitor st System_State;
 
 monitor event Observable_Event;
 
 errorstates error;
 /* CIF ENDTEXT */
-/* CIF START (320, 21), (70, 35) */
+/* CIF START (329, 30), (70, 35) */
 START;
-    /* CIF NEXTSTATE (320, 76), (70, 35) */
+    /* CIF NEXTSTATE (329, 85), (70, 35) */
     NEXTSTATE Idle;
 /* CIF state (327, 174), (70, 35) */
 state Idle;
-    /* CIF provided (288, 229), (147, 35) */
+    /* CIF provided (286, 229), (147, 35) */
     provided st.actuator.param = 3;
-        /* CIF NEXTSTATE (327, 284), (70, 35) */
+        /* CIF NEXTSTATE (325, 284), (70, 35) */
         NEXTSTATE error;
 endstate;
 /* CIF state (71, 297), (70, 35) */

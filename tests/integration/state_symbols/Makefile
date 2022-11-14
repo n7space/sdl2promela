@@ -46,7 +46,7 @@ test_state_symbols:
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output

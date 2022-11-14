@@ -6,21 +6,21 @@ process Controller;
     dcl param MyInteger;
     dcl ok MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (709, 242), (70, 35) */
+    /* CIF START (720, 246), (70, 35) */
     START;
-        /* CIF task (709, 297), (70, 35) */
+        /* CIF task (720, 301), (70, 35) */
         task ok := 0;
-        /* CIF task (701, 352), (84, 35) */
+        /* CIF task (712, 356), (84, 35) */
         task param := 3;
-        /* CIF output (694, 407), (99, 35) */
+        /* CIF output (707, 411), (94, 35) */
         output ping(param);
-        /* CIF NEXTSTATE (709, 457), (70, 35) */
+        /* CIF NEXTSTATE (720, 461), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1081, 237), (70, 35) */
     state Wait;
-        /* CIF input (1065, 292), (98, 35) */
+        /* CIF input (1064, 292), (98, 35) */
         input pong(param);
-            /* CIF decision (1080, 347), (70, 50) */
+            /* CIF decision (1079, 347), (70, 50) */
             decision param;
                 /* CIF ANSWER (1036, 417), (70, 23) */
                 (0):
@@ -29,7 +29,7 @@ process Controller;
                 /* CIF ANSWER (1126, 417), (70, 23) */
                 else:
             enddecision;
-            /* CIF NEXTSTATE (1080, 511), (70, 35) */
+            /* CIF NEXTSTATE (1079, 511), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;

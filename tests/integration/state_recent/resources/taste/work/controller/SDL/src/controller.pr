@@ -14,11 +14,33 @@ process Controller;
         output ping(param);
         /* CIF NEXTSTATE (468, 375), (70, 35) */
         NEXTSTATE Wait;
+    /* CIF state (526, 115), (70, 35) */
+    state finished;
+    endstate;
+    /* CIF state (752, 110), (70, 35) */
+    state error;
+    endstate;
+    /* CIF state (1087, 227), (70, 35) */
+    state Idle;
+        /* CIF input (1071, 282), (98, 35) */
+        input pong(param);
+            /* CIF decision (1086, 337), (70, 50) */
+            decision param;
+                /* CIF ANSWER (1042, 407), (70, 23) */
+                (10):
+                    /* CIF NEXTSTATE (1041, 450), (70, 35) */
+                    NEXTSTATE finished;
+                /* CIF ANSWER (1132, 407), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (1132, 450), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
     /* CIF state (776, 217), (70, 35) */
     state Wait;
-        /* CIF input (761, 272), (98, 35) */
+        /* CIF input (760, 272), (98, 35) */
         input pong(param);
-            /* CIF decision (776, 327), (70, 50) */
+            /* CIF decision (775, 327), (70, 50) */
             decision param;
                 /* CIF ANSWER (731, 397), (70, 23) */
                 (4):
@@ -33,27 +55,5 @@ process Controller;
                     /* CIF NEXTSTATE (821, 440), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
-    endstate;
-    /* CIF state (1087, 227), (70, 35) */
-    state Idle;
-        /* CIF input (1072, 282), (98, 35) */
-        input pong(param);
-            /* CIF decision (1087, 337), (70, 50) */
-            decision param;
-                /* CIF ANSWER (1042, 407), (70, 23) */
-                (10):
-                    /* CIF NEXTSTATE (1041, 450), (70, 35) */
-                    NEXTSTATE finished;
-                /* CIF ANSWER (1132, 407), (70, 23) */
-                else:
-                    /* CIF NEXTSTATE (1132, 450), (70, 35) */
-                    NEXTSTATE error;
-            enddecision;
-    endstate;
-    /* CIF state (752, 110), (70, 35) */
-    state error;
-    endstate;
-    /* CIF state (524, 104), (70, 35) */
-    state finished;
     endstate;
 endprocess Controller;

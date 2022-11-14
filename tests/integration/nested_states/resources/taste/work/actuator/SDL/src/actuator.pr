@@ -16,6 +16,13 @@ process Actuator;
                 output result(result_param);
                 /* CIF NEXTSTATE (173, 288), (70, 35) */
                 NEXTSTATE Red;
+            /* CIF state (632, 445), (70, 35) */
+            state Green;
+                /* CIF input (632, 500), (70, 35) */
+                input tick;
+                    /* CIF return (649, 555), (35, 35) */
+                    return finished;
+            endstate;
             /* CIF state (258, 434), (70, 35) */
             state Red;
                 /* CIF input (258, 489), (70, 35) */
@@ -27,23 +34,34 @@ process Actuator;
                     /* CIF NEXTSTATE (258, 654), (70, 35) */
                     NEXTSTATE Green;
             endstate;
-            /* CIF state (632, 445), (70, 35) */
-            state Green;
-                /* CIF input (632, 500), (70, 35) */
-                input tick;
-                    /* CIF return (649, 555), (35, 35) */
-                    return finished;
-            endstate;
     endsubstructure;
     /* CIF TEXT (376, 191), (267, 140) */
     -- Text area for declarations and comments
     
     dcl result_param MyStatus;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (329, 16), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (329, 66), (70, 35) */
         NEXTSTATE Wait;
+    /* CIF state (1077, 201), (70, 35) */
+    state First;
+        /* CIF input (1077, 256), (70, 35) */
+        input tick;
+            /* CIF NEXTSTATE (1077, 311), (70, 35) */
+            NEXTSTATE Nested;
+    endstate;
+    /* CIF state (794, 194), (70, 35) */
+    state Wait;
+        /* CIF input (794, 249), (70, 35) */
+        input tick;
+            /* CIF task (728, 304), (201, 35) */
+            task result_param := transition_top;
+            /* CIF output (757, 354), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (794, 409), (70, 35) */
+            NEXTSTATE First;
+    endstate;
     /* CIF state (1314, 212), (70, 35) */
     state Nested;
         /* CIF connect (1314, 267), (70, 35) */
@@ -54,23 +72,5 @@ process Actuator;
             output result(result_param);
             /* CIF NEXTSTATE (1314, 432), (70, 35) */
             NEXTSTATE Wait;
-    endstate;
-    /* CIF state (794, 194), (70, 35) */
-    state Wait;
-        /* CIF input (794, 249), (70, 35) */
-        input tick;
-            /* CIF task (718, 304), (222, 35) */
-            task result_param := transition_top;
-            /* CIF output (757, 354), (143, 35) */
-            output result(result_param);
-            /* CIF NEXTSTATE (794, 409), (70, 35) */
-            NEXTSTATE First;
-    endstate;
-    /* CIF state (1077, 201), (70, 35) */
-    state First;
-        /* CIF input (1077, 256), (70, 35) */
-        input tick;
-            /* CIF NEXTSTATE (1077, 311), (70, 35) */
-            NEXTSTATE Nested;
     endstate;
 endprocess Actuator;

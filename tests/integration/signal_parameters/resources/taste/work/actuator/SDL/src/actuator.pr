@@ -7,30 +7,30 @@ process Actuator;
     dcl second_check_param MyInteger;
     dcl result_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (330, 19), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (330, 69), (70, 35) */
         NEXTSTATE First;
-    /* CIF state (1506, 246), (70, 35) */
-    state Second;
-        /* CIF input (1445, 301), (190, 35) */
-        input check(second_check_param);
-            /* CIF task (1409, 356), (263, 35) */
-            task result_param := second_check_param;
-            /* CIF output (1469, 411), (143, 35) */
-            output result(result_param);
-            /* CIF NEXTSTATE (1506, 466), (70, 35) */
-            NEXTSTATE First;
-    endstate;
     /* CIF state (1069, 241), (70, 35) */
     state First;
-        /* CIF input (1017, 296), (172, 35) */
+        /* CIF input (1016, 296), (172, 35) */
         input check(first_check_param);
-            /* CIF task (991, 351), (225, 35) */
+            /* CIF task (990, 351), (225, 35) */
             task result_param := first_check_param;
-            /* CIF output (1032, 406), (143, 35) */
+            /* CIF output (1031, 406), (143, 35) */
             output result(result_param);
-            /* CIF NEXTSTATE (1069, 461), (70, 35) */
+            /* CIF NEXTSTATE (1068, 461), (70, 35) */
             NEXTSTATE Second;
+    endstate;
+    /* CIF state (1506, 246), (70, 35) */
+    state Second;
+        /* CIF input (1444, 301), (190, 35) */
+        input check(second_check_param);
+            /* CIF task (1418, 356), (243, 35) */
+            task result_param := second_check_param;
+            /* CIF output (1468, 411), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1505, 466), (70, 35) */
+            NEXTSTATE First;
     endstate;
 endprocess Actuator;

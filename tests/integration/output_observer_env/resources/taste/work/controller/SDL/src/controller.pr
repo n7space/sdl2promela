@@ -1,4 +1,4 @@
-/* CIF PROCESS (250, 149), (150, 75) */
+/* CIF PROCESS (250, 148), (150, 75) */
 process Controller;
     /* CIF TEXT (455, 375), (267, 140) */
     -- Text area for declarations and comments
@@ -6,17 +6,17 @@ process Controller;
     dcl error MyInteger;
     dcl param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (511, 135), (70, 35) */
+    /* CIF START (523, 147), (70, 35) */
     START;
-        /* CIF task (507, 190), (76, 35) */
+        /* CIF task (519, 202), (76, 35) */
         task error := 0;
-        /* CIF NEXTSTATE (511, 240), (70, 35) */
+        /* CIF NEXTSTATE (523, 252), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (922, 188), (70, 35) */
     state Wait;
-        /* CIF input (908, 243), (94, 35) */
+        /* CIF input (906, 243), (94, 35) */
         input ping(param);
-            /* CIF decision (921, 298), (70, 50) */
+            /* CIF decision (919, 298), (70, 50) */
             decision param;
                 /* CIF ANSWER (877, 368), (70, 23) */
                 (0):
@@ -25,7 +25,7 @@ process Controller;
                     /* CIF task (963, 411), (76, 35) */
                     task error := 1;
             enddecision;
-            /* CIF NEXTSTATE (921, 462), (70, 35) */
+            /* CIF NEXTSTATE (919, 462), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;

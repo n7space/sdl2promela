@@ -3,14 +3,15 @@
 #include "inst.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Actuator_Context actuator;
     Controller_Context inst;
+    Actuator_Context actuator;
+    AggregateTimerData timers;
 }
 
 int inited;
 chan Actuator_ping_channel = [1] of {int};
-chan Inst_pong_channel = [1] of {int};
 chan Inst_dummy_channel = [1] of {int};
+chan Inst_pong_channel = [1] of {int};
 system_state global_state;
 chan Inst_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
@@ -25,21 +26,29 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
-inline Actuator_0_RI_0_pong()
+inline Actuator_0_get_sender(Actuator_sender_arg)
 {
-    int dummy;
-    Inst_pong_channel!dummy;
+    skip;
 }
 inline Actuator_0_RI_0_dummy()
 {
     int dummy;
     Inst_dummy_channel!dummy;
 }
+inline Actuator_0_RI_0_pong()
+{
+    int dummy;
+    Inst_pong_channel!dummy;
+}
 inline Inst_check_queue()
 {
     atomic {
-        (empty(Inst_pong_channel) && empty(Inst_dummy_channel));
+        (empty(Inst_dummy_channel) && empty(Inst_pong_channel));
     }
+}
+inline Inst_0_get_sender(Inst_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {
@@ -61,26 +70,6 @@ Actuator_ping_loop:
     }
     od;
 }
-active proctype Inst_pong() priority 1
-{
-    inited;
-    do
-    ::  atomic {
-        nempty(Inst_pong_channel);
-        Inst_lock?_;
-Inst_pong_loop:
-        if
-        ::  nempty(Inst_pong_channel);
-            Inst_pong_channel?_;
-            Inst_0_PI_0_pong();
-            goto Inst_pong_loop;
-        ::  empty(Inst_pong_channel);
-            skip;
-        fi;
-        Inst_lock!1;
-    }
-    od;
-}
 active proctype Inst_dummy() priority 1
 {
     inited;
@@ -95,6 +84,26 @@ Inst_dummy_loop:
             Inst_0_PI_0_dummy();
             goto Inst_dummy_loop;
         ::  empty(Inst_dummy_channel);
+            skip;
+        fi;
+        Inst_lock!1;
+    }
+    od;
+}
+active proctype Inst_pong() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Inst_pong_channel);
+        Inst_lock?_;
+Inst_pong_loop:
+        if
+        ::  nempty(Inst_pong_channel);
+            Inst_pong_channel?_;
+            Inst_0_PI_0_pong();
+            goto Inst_pong_loop;
+        ::  empty(Inst_pong_channel);
             skip;
         fi;
         Inst_lock!1;

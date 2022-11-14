@@ -15,17 +15,19 @@ chan Actuator_ping_channel = [1] of {int};
 chan Actuator_trigger_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Actuator_0_trigger_set(actuator_trigger_interval)
 {
     global_state.timers.actuator.trigger.interval = actuator_trigger_interval;
     global_state.timers.actuator.trigger.timer_enabled = true;
+    printf("set_timer actuator trigger %d\n", actuator_trigger_interval);
 }
 inline Actuator_0_trigger_reset()
 {
     global_state.timers.actuator.trigger.timer_enabled = false;
+    printf("reset_timer actuator trigger\n");
 }
 inline Controller_0_RI_0_ping()
 {
@@ -38,6 +40,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
@@ -48,6 +54,10 @@ inline Controller_check_queue()
     atomic {
         empty(Controller_pong_channel);
     }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype timer_manager_proc() priority 1
 {
@@ -132,10 +142,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         Observer_0_init();
         Observer_lock!1;
         inited = 1;

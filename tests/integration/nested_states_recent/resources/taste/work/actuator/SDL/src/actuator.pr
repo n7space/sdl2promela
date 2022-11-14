@@ -7,6 +7,22 @@ process Actuator;
             
             dcl result_param MyInteger;
             /* CIF ENDTEXT */
+            /* CIF procedure (202, 284), (70, 35) */
+            procedure entry;
+                /* CIF TEXT (405, 263), (267, 140) */
+                -- Text area for declarations and comments
+                
+                dcl status_param MyStatus;
+                /* CIF ENDTEXT */
+                /* CIF START (256, 478), (70, 35) */
+                START;
+                    /* CIF task (204, 533), (173, 35) */
+                    task status_param := on_entry;
+                    /* CIF output (217, 583), (147, 35) */
+                    output status(status_param);
+                    /* CIF return (273, 638), (35, 35) */
+                    return ;
+            endprocedure;
             /* CIF procedure (204, 405), (70, 35) */
             procedure exit;
                 /* CIF TEXT (686, 218), (267, 140) */
@@ -23,39 +39,12 @@ process Actuator;
                     /* CIF return (282, 424), (35, 35) */
                     return ;
             endprocedure;
-            /* CIF procedure (202, 284), (70, 35) */
-            procedure entry;
-                /* CIF TEXT (405, 263), (267, 140) */
-                -- Text area for declarations and comments
-                
-                dcl status_param MyStatus;
-                /* CIF ENDTEXT */
-                /* CIF START (256, 478), (70, 35) */
-                START;
-                    /* CIF task (203, 533), (175, 35) */
-                    task status_param := on_entry;
-                    /* CIF output (217, 583), (147, 35) */
-                    output status(status_param);
-                    /* CIF return (273, 638), (35, 35) */
-                    return ;
-            endprocedure;
             /* CIF START (184, 84), (70, 35) */
             START;
                 /* CIF task (156, 139), (124, 35) */
                 task result_param := 1;
                 /* CIF NEXTSTATE (184, 189), (70, 35) */
                 NEXTSTATE First;
-            /* CIF state (469, 139), (70, 35) */
-            state First;
-                /* CIF input (469, 194), (70, 35) */
-                input tick;
-                    /* CIF output (432, 249), (143, 35) */
-                    output result(result_param);
-                    /* CIF task (432, 304), (143, 35) */
-                    task result_param := 2;
-                    /* CIF NEXTSTATE (469, 354), (70, 35) */
-                    NEXTSTATE Second;
-            endstate;
             /* CIF state (797, 149), (70, 35) */
             state Second;
                 /* CIF input (797, 204), (70, 35) */
@@ -65,10 +54,21 @@ process Actuator;
                     /* CIF NEXTSTATE (797, 309), (70, 35) */
                     NEXTSTATE First;
             endstate;
+            /* CIF state (469, 139), (70, 35) */
+            state First;
+                /* CIF input (469, 194), (70, 35) */
+                input tick;
+                    /* CIF output (432, 249), (143, 35) */
+                    output result(result_param);
+                    /* CIF task (441, 304), (124, 35) */
+                    task result_param := 2;
+                    /* CIF NEXTSTATE (469, 354), (70, 35) */
+                    NEXTSTATE Second;
+            endstate;
     endsubstructure;
-    /* CIF START (620, 136), (70, 35) */
+    /* CIF START (625, 139), (70, 35) */
     START;
-        /* CIF NEXTSTATE (620, 186), (70, 35) */
+        /* CIF NEXTSTATE (625, 189), (70, 35) */
         NEXTSTATE Nested;
     /* CIF state (941, 149), (70, 35) */
     state Nested;

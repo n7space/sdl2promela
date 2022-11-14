@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF TEXT (385, 172), (267, 140) */
+    /* CIF TEXT (394, 165), (267, 140) */
     -- Text area for declarations and comments
     
     dcl param MyInteger;
@@ -9,65 +9,11 @@ process Actuator;
     START;
         /* CIF NEXTSTATE (862, 176), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1126, 130), (70, 35) */
-    state Wait;
-        /* CIF input (1113, 185), (94, 35) */
-        input ping(param);
-            /* CIF decision (1126, 240), (70, 50) */
-            decision param;
-                /* CIF ANSWER (1081, 310), (70, 23) */
-                (2):
-                    /* CIF decision (1081, 353), (70, 50) */
-                    decision param;
-                        /* CIF ANSWER (1036, 423), (70, 23) */
-                        (2):
-                            /* CIF output (1036, 466), (70, 35) */
-                            output pong;
-                            /* CIF NEXTSTATE (1036, 516), (70, 35) */
-                            NEXTSTATE Left;
-                        /* CIF ANSWER (1126, 423), (70, 23) */
-                        else:
-                    enddecision;
-                /* CIF ANSWER (1207, 310), (70, 23) */
-                else:
-            enddecision;
-            /* CIF output (1126, 582), (70, 35) */
-            output pong;
-            /* CIF NEXTSTATE (1126, 637), (70, 35) */
-            NEXTSTATE Right;
-    endstate;
-    /* CIF state (1882, 135), (70, 35) */
-    state Right;
-        /* CIF input (1869, 190), (94, 35) */
-        input ping(param);
-            /* CIF decision (1882, 245), (70, 50) */
-            decision param;
-                /* CIF ANSWER (1838, 315), (70, 23) */
-                (2):
-                    /* CIF decision (1838, 358), (70, 50) */
-                    decision param;
-                        /* CIF ANSWER (1793, 428), (70, 23) */
-                        (2):
-                            /* CIF output (1793, 471), (70, 35) */
-                            output pong;
-                            /* CIF NEXTSTATE (1793, 521), (70, 35) */
-                            NEXTSTATE Left;
-                        /* CIF ANSWER (1883, 428), (70, 23) */
-                        else:
-                    enddecision;
-                /* CIF ANSWER (1964, 315), (70, 23) */
-                else:
-            enddecision;
-            /* CIF output (1882, 587), (70, 35) */
-            output pong;
-            /* CIF NEXTSTATE (1882, 637), (70, 35) */
-            NEXTSTATE Right;
-    endstate;
     /* CIF state (1505, 135), (70, 35) */
     state Left;
-        /* CIF input (1492, 190), (94, 35) */
+        /* CIF input (1491, 190), (94, 35) */
         input ping(param);
-            /* CIF decision (1505, 245), (70, 50) */
+            /* CIF decision (1504, 245), (70, 50) */
             decision param;
                 /* CIF ANSWER (1461, 315), (70, 23) */
                 (2):
@@ -85,9 +31,63 @@ process Actuator;
                 /* CIF ANSWER (1587, 315), (70, 23) */
                 else:
             enddecision;
-            /* CIF output (1505, 587), (70, 35) */
+            /* CIF output (1504, 587), (70, 35) */
             output pong;
-            /* CIF NEXTSTATE (1505, 637), (70, 35) */
+            /* CIF NEXTSTATE (1504, 637), (70, 35) */
+            NEXTSTATE Right;
+    endstate;
+    /* CIF state (1882, 135), (70, 35) */
+    state Right;
+        /* CIF input (1868, 190), (94, 35) */
+        input ping(param);
+            /* CIF decision (1881, 245), (70, 50) */
+            decision param;
+                /* CIF ANSWER (1838, 315), (70, 23) */
+                (2):
+                    /* CIF decision (1838, 358), (70, 50) */
+                    decision param;
+                        /* CIF ANSWER (1793, 428), (70, 23) */
+                        (2):
+                            /* CIF output (1793, 471), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (1793, 521), (70, 35) */
+                            NEXTSTATE Left;
+                        /* CIF ANSWER (1883, 428), (70, 23) */
+                        else:
+                    enddecision;
+                /* CIF ANSWER (1964, 315), (70, 23) */
+                else:
+            enddecision;
+            /* CIF output (1881, 587), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1881, 637), (70, 35) */
+            NEXTSTATE Right;
+    endstate;
+    /* CIF state (1126, 130), (70, 35) */
+    state Wait;
+        /* CIF input (1112, 185), (94, 35) */
+        input ping(param);
+            /* CIF decision (1125, 240), (70, 50) */
+            decision param;
+                /* CIF ANSWER (1081, 310), (70, 23) */
+                (2):
+                    /* CIF decision (1081, 353), (70, 50) */
+                    decision param;
+                        /* CIF ANSWER (1036, 423), (70, 23) */
+                        (2):
+                            /* CIF output (1036, 466), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (1036, 516), (70, 35) */
+                            NEXTSTATE Left;
+                        /* CIF ANSWER (1126, 423), (70, 23) */
+                        else:
+                    enddecision;
+                /* CIF ANSWER (1207, 310), (70, 23) */
+                else:
+            enddecision;
+            /* CIF output (1125, 582), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1125, 637), (70, 35) */
             NEXTSTATE Right;
     endstate;
 endprocess Actuator;

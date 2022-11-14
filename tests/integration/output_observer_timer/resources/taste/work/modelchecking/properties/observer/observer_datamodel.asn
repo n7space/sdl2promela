@@ -7,7 +7,7 @@ IMPORTS
    Demo-timer-manager-States, Demo-timer-manager-Context FROM Demo-timer-manager-Datamodel
    MyInteger FROM OUTPUT-OBSERVER-TIMER-DATAVIEW
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
-   PID FROM System-Dataview
+   PID-Range, PID FROM System-Dataview
    Actuator-Event, Controller-Event, Demo-Timer-Manager-Event, Demo-Timer-Manager-Periodic-Events, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
@@ -15,7 +15,8 @@ Observer-States ::= ENUMERATED {reached, wait}
 
 Observer-Context ::= SEQUENCE {
    state Observer-States,
-   init-done BOOLEAN
+   init-done BOOLEAN,
+   sender PID
 }
 
 Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2), trigger-present(3)}

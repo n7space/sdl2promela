@@ -1,30 +1,20 @@
 #include "dataview.pml"
-#include "controller.pml"
 #include "actuator.pml"
+#include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
-chan Controller_pong_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
 chan Actuator_tick_channel = [1] of {int};
+chan Controller_pong_channel = [1] of {int};
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Actuator_0_RI_0_pong()
-{
-    int dummy;
-    Controller_pong_channel!dummy;
-}
-inline Controller_check_queue()
-{
-    atomic {
-        empty(Controller_pong_channel);
-    }
-}
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_ping()
 {
     int dummy;
@@ -38,56 +28,96 @@ inline Controller_0_RI_0_tick()
 inline Actuator_check_queue()
 {
     atomic {
-        empty(Actuator_ping_channel) && empty(Actuator_tick_channel);
+        (empty(Actuator_ping_channel) && empty(Actuator_tick_channel));
     }
 }
-active proctype Controller_pong() priority 1
+inline Actuator_0_get_sender(Actuator_sender_arg)
 {
-    inited;
-    int token;
-    do
-    ::  atomic {
-        Controller_pong_channel?_;
-        Controller_lock?token;
-        Controller_0_PI_0_pong();
-        Controller_lock!token;
+    skip;
+}
+inline Actuator_0_RI_0_pong()
+{
+    int dummy;
+    Controller_pong_channel!dummy;
+}
+inline Controller_check_queue()
+{
+    atomic {
+        empty(Controller_pong_channel);
     }
-    od;
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Actuator_ping_channel?_;
-        Actuator_lock?token;
-        Actuator_0_PI_0_ping();
-        Actuator_lock!token;
+        nempty(Actuator_ping_channel);
+        Actuator_lock?_;
+Actuator_ping_loop:
+        if
+        ::  nempty(Actuator_ping_channel);
+            Actuator_ping_channel?_;
+            Actuator_0_PI_0_ping();
+            goto Actuator_ping_loop;
+        ::  empty(Actuator_ping_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
     }
     od;
 }
 active proctype Actuator_tick() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        Actuator_tick_channel?_;
-        Actuator_lock?token;
-        Actuator_0_PI_0_tick();
-        Actuator_lock!token;
+        nempty(Actuator_tick_channel);
+        Actuator_lock?_;
+Actuator_tick_loop:
+        if
+        ::  nempty(Actuator_tick_channel);
+            Actuator_tick_channel?_;
+            Actuator_0_PI_0_tick();
+            goto Actuator_tick_loop;
+        ::  empty(Actuator_tick_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
+    }
+    od;
+}
+active proctype Controller_pong() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Controller_pong_channel);
+        Controller_lock?_;
+Controller_pong_loop:
+        if
+        ::  nempty(Controller_pong_channel);
+            Controller_pong_channel?_;
+            Controller_0_PI_0_pong();
+            goto Controller_pong_loop;
+        ::  empty(Controller_pong_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
 init
 {
     atomic {
-        int init_token = 1;
-        Actuator_0_init();
-        Actuator_lock!init_token;
+        global_dataview_init();
         Controller_0_init();
-        Controller_lock!init_token;
+        Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         inited = 1;
     }
 }

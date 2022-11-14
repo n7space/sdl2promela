@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (650, 225), (290, 184) */
+    /* CIF TEXT (655, 229), (267, 140) */
     -- Text area for declarations and comments
     
     dcl boolean_result MyBooleanResult;
@@ -13,232 +13,190 @@ process Controller;
     START;
         /* CIF task (727, 493), (76, 35) */
         task error := 0;
-        /* CIF task (698, 548), (136, 88) */
+        /* CIF task (708, 548), (115, 83) */
         task relation := {
     oper o_equal,
     left 10,
     right 10
 };
-        /* CIF output (639, 656), (253, 35) */
+        /* CIF output (710, 651), (110, 35) */
         output check(relation);
-        /* CIF NEXTSTATE (716, 706), (98, 35) */
+        /* CIF NEXTSTATE (716, 701), (98, 35) */
         NEXTSTATE CheckEqual1;
-    /* CIF label (1073, 238), (87, 35) */
+    /* CIF label (1072, 238), (87, 35) */
     connection goto_error:
-        /* CIF task (1079, 293), (76, 35) */
+        /* CIF task (1078, 293), (76, 35) */
         task error := 1;
-        /* CIF NEXTSTATE (1082, 348), (70, 35) */
+        /* CIF NEXTSTATE (1081, 348), (70, 35) */
         NEXTSTATE Error;
     /* CIF End Label */
     endconnection;
-    /* CIF state (1570, 2938), (143, 35) */
-    state CheckGreaterEqual2;
-        /* CIF input (1539, 2993), (208, 35) */
+    /* CIF state (2158, 2410), (111, 35) */
+    state CheckGreater3;
+        /* CIF input (2139, 2465), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1587, 3048), (111, 50) */
+            /* CIF decision (2161, 2520), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (1482, 3118), (70, 24) */
-                (true):
-                    /* CIF join (1499, 3162), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1656, 3118), (70, 24) */
+                /* CIF ANSWER (2056, 2590), (70, 23) */
                 (false):
-                    /* CIF task (1622, 3162), (137, 88) */
+                    /* CIF join (2073, 2633), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2230, 2590), (70, 23) */
+                (true):
+                    /* CIF task (2185, 2633), (159, 83) */
                     task relation := {
-    oper o_greater,
-    left 15,
+    oper o_greaterequal,
+    left 10,
     right 10
 };
-                    /* CIF output (1564, 3270), (253, 35) */
+                    /* CIF output (2209, 2736), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1619, 3325), (143, 35) */
-                    NEXTSTATE CheckGreaterEqual3;
+                    /* CIF NEXTSTATE (2193, 2791), (143, 35) */
+                    NEXTSTATE CheckGreaterEqual1;
             enddecision;
     endstate;
-    /* CIF state (2160, 2934), (143, 35) */
-    state CheckGreaterEqual3;
-        /* CIF input (2129, 2989), (208, 35) */
+    /* CIF state (1046, 1419), (91, 35) */
+    state CheckLess1;
+        /* CIF input (1021, 1474), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (2177, 3044), (111, 50) */
+            /* CIF decision (1043, 1529), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (2072, 3114), (70, 24) */
-                (false):
-                    /* CIF join (2089, 3158), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (2246, 3114), (70, 24) */
+                /* CIF ANSWER (938, 1599), (70, 23) */
                 (true):
-                    /* CIF task (2216, 3158), (129, 42) */
-                    task finished := 1;
-                    /* CIF NEXTSTATE (2209, 3220), (143, 35) */
-                    NEXTSTATE CheckGreaterEqual3;
-            enddecision;
-    endstate;
-    /* CIF state (1016, 2931), (143, 35) */
-    state CheckGreaterEqual1;
-        /* CIF input (986, 2986), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (1034, 3041), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (929, 3111), (70, 24) */
-                (false):
-                    /* CIF join (946, 3155), (35, 35) */
+                    /* CIF join (955, 1642), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1103, 3111), (70, 24) */
-                (true):
-                    /* CIF task (1069, 3155), (137, 88) */
+                /* CIF ANSWER (1112, 1599), (70, 23) */
+                (false):
+                    /* CIF task (1094, 1642), (105, 83) */
                     task relation := {
-    oper o_greater,
+    oper o_less,
     left 10,
     right 15
 };
-                    /* CIF output (1011, 3263), (253, 35) */
+                    /* CIF output (1091, 1745), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1066, 3318), (143, 35) */
-                    NEXTSTATE CheckGreaterEqual2;
+                    /* CIF NEXTSTATE (1101, 1800), (91, 35) */
+                    NEXTSTATE CheckLess2;
             enddecision;
     endstate;
-    /* CIF state (1624, 2415), (111, 35) */
-    state CheckGreater2;
-        /* CIF input (1578, 2470), (208, 35) */
+    /* CIF state (1635, 1414), (91, 35) */
+    state CheckLess2;
+        /* CIF input (1609, 1469), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1626, 2525), (111, 50) */
+            /* CIF decision (1631, 1524), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (1521, 2595), (70, 24) */
-                (true):
-                    /* CIF join (1538, 2639), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1695, 2595), (70, 24) */
+                /* CIF ANSWER (1526, 1594), (70, 23) */
                 (false):
-                    /* CIF task (1661, 2639), (137, 88) */
+                    /* CIF join (1543, 1637), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1700, 1594), (70, 23) */
+                (true):
+                    /* CIF task (1682, 1637), (105, 83) */
                     task relation := {
-    oper o_greater,
+    oper o_less,
     left 15,
     right 10
 };
-                    /* CIF output (1603, 2747), (253, 35) */
+                    /* CIF output (1679, 1740), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1674, 2802), (111, 35) */
-                    NEXTSTATE CheckGreater3;
+                    /* CIF NEXTSTATE (1689, 1795), (91, 35) */
+                    NEXTSTATE CheckLess3;
             enddecision;
     endstate;
-    /* CIF state (1033, 2427), (111, 35) */
-    state CheckGreater1;
-        /* CIF input (988, 2482), (208, 35) */
+    /* CIF state (1606, 944), (107, 35) */
+    state CheckNEqual2;
+        /* CIF input (1582, 999), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1036, 2537), (111, 50) */
+            /* CIF decision (1604, 1054), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (931, 2607), (70, 24) */
-                (true):
-                    /* CIF join (948, 2651), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1105, 2607), (70, 24) */
+                /* CIF ANSWER (1499, 1124), (70, 23) */
                 (false):
-                    /* CIF task (1071, 2651), (137, 88) */
+                    /* CIF join (1516, 1167), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1673, 1124), (70, 23) */
+                (true):
+                    /* CIF task (1655, 1167), (105, 83) */
                     task relation := {
-    oper o_greater,
+    oper o_less,
+    left 10,
+    right 10
+};
+                    /* CIF output (1652, 1270), (110, 35) */
+                    output check(relation);
+                    /* CIF NEXTSTATE (1662, 1325), (91, 35) */
+                    NEXTSTATE CheckLess1;
+            enddecision;
+    endstate;
+    /* CIF state (1127, 445), (98, 35) */
+    state CheckEqual1;
+        /* CIF input (1105, 500), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (1127, 555), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1022, 625), (70, 23) */
+                (false):
+                    /* CIF join (1039, 668), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1196, 625), (70, 23) */
+                (true):
+                    /* CIF task (1173, 668), (115, 83) */
+                    task relation := {
+    oper o_equal,
     left 10,
     right 15
 };
-                    /* CIF output (1013, 2759), (253, 35) */
+                    /* CIF output (1175, 771), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1084, 2814), (111, 35) */
-                    NEXTSTATE CheckGreater2;
+                    /* CIF NEXTSTATE (1181, 826), (98, 35) */
+                    NEXTSTATE CheckEqual2;
             enddecision;
     endstate;
-    /* CIF state (2173, 1898), (123, 35) */
-    state CheckLessEqual3;
-        /* CIF input (2135, 1953), (208, 35) */
+    /* CIF state (1589, 447), (98, 35) */
+    state CheckEqual2;
+        /* CIF input (1569, 502), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (2183, 2008), (111, 50) */
+            /* CIF decision (1591, 557), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (2078, 2078), (70, 24) */
+                /* CIF ANSWER (1486, 627), (70, 23) */
                 (true):
-                    /* CIF join (2095, 2122), (35, 35) */
+                    /* CIF join (1503, 670), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (2252, 2078), (70, 24) */
+                /* CIF ANSWER (1660, 627), (70, 23) */
                 (false):
-                    /* CIF task (2218, 2122), (137, 88) */
+                    /* CIF task (1633, 670), (122, 83) */
                     task relation := {
-    oper o_greater,
+    oper o_nequal,
     left 10,
     right 10
 };
-                    /* CIF output (2160, 2230), (253, 35) */
+                    /* CIF output (1639, 773), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (2231, 2285), (111, 35) */
-                    NEXTSTATE CheckGreater1;
+                    /* CIF NEXTSTATE (1641, 828), (107, 35) */
+                    NEXTSTATE CheckNEqual1;
             enddecision;
     endstate;
-    /* CIF state (1620, 1895), (123, 35) */
-    state CheckLessEqual2;
-        /* CIF input (1582, 1950), (208, 35) */
+    /* CIF state (1040, 946), (107, 35) */
+    state CheckNEqual1;
+        /* CIF input (1016, 1001), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1630, 2005), (111, 50) */
+            /* CIF decision (1038, 1056), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (1525, 2075), (70, 24) */
-                (false):
-                    /* CIF join (1542, 2119), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1699, 2075), (70, 24) */
+                /* CIF ANSWER (933, 1126), (70, 23) */
                 (true):
-                    /* CIF task (1665, 2119), (137, 88) */
-                    task relation := {
-    oper o_lessequal,
-    left 15,
-    right 10
-};
-                    /* CIF output (1607, 2227), (253, 35) */
-                    output check(relation);
-                    /* CIF NEXTSTATE (1672, 2282), (123, 35) */
-                    NEXTSTATE CheckLessEqual3;
-            enddecision;
-    endstate;
-    /* CIF state (1013, 1902), (123, 35) */
-    state CheckLessEqual1;
-        /* CIF input (976, 1957), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (1024, 2012), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (919, 2082), (70, 24) */
-                (false):
-                    /* CIF join (936, 2126), (35, 35) */
+                    /* CIF join (950, 1169), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1093, 2082), (70, 24) */
-                (true):
-                    /* CIF task (1059, 2126), (137, 88) */
+                /* CIF ANSWER (1107, 1126), (70, 23) */
+                (false):
+                    /* CIF task (1080, 1169), (122, 83) */
                     task relation := {
-    oper o_lessequal,
+    oper o_nequal,
     left 10,
     right 15
 };
-                    /* CIF output (1001, 2234), (253, 35) */
+                    /* CIF output (1086, 1272), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1066, 2289), (123, 35) */
-                    NEXTSTATE CheckLessEqual2;
-            enddecision;
-    endstate;
-    /* CIF state (2195, 1419), (91, 35) */
-    state CheckLess3;
-        /* CIF input (2142, 1474), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (2190, 1529), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (2002, 1599), (70, 24) */
-                (true):
-                    /* CIF join (2019, 1643), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (2282, 1599), (70, 24) */
-                (false):
-                    /* CIF task (2248, 1643), (137, 88) */
-                    task relation := {
-    oper o_lessequal,
-    left 10,
-    right 10
-};
-                    /* CIF output (2190, 1751), (253, 35) */
-                    output check(relation);
-                    /* CIF NEXTSTATE (2255, 1806), (123, 35) */
-                    NEXTSTATE CheckLessEqual1;
+                    /* CIF NEXTSTATE (1088, 1327), (107, 35) */
+                    NEXTSTATE CheckNEqual2;
             enddecision;
     endstate;
     /* CIF state (1328, 241), (70, 35) */
@@ -248,172 +206,214 @@ process Controller;
             /* CIF NEXTSTATE (1328, 351), (70, 35) */
             NEXTSTATE Error;
     endstate;
-    /* CIF state (1040, 946), (108, 35) */
-    state CheckNEqual1;
-        /* CIF input (990, 1001), (208, 35) */
+    /* CIF state (2194, 1419), (91, 35) */
+    state CheckLess3;
+        /* CIF input (2168, 1474), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1038, 1056), (111, 50) */
+            /* CIF decision (2190, 1529), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (933, 1126), (70, 24) */
+                /* CIF ANSWER (2002, 1599), (70, 23) */
                 (true):
-                    /* CIF join (950, 1170), (35, 35) */
+                    /* CIF join (2019, 1642), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1107, 1126), (70, 24) */
+                /* CIF ANSWER (2282, 1599), (70, 23) */
                 (false):
-                    /* CIF task (1074, 1170), (136, 88) */
+                    /* CIF task (2248, 1642), (137, 83) */
                     task relation := {
-    oper o_nequal,
-    left 10,
-    right 15
-};
-                    /* CIF output (1015, 1278), (253, 35) */
-                    output check(relation);
-                    /* CIF NEXTSTATE (1088, 1333), (108, 35) */
-                    NEXTSTATE CheckNEqual2;
-            enddecision;
-    endstate;
-    /* CIF state (1590, 447), (98, 35) */
-    state CheckEqual2;
-        /* CIF input (1543, 502), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (1591, 557), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (1486, 627), (70, 24) */
-                (true):
-                    /* CIF join (1503, 671), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1660, 627), (70, 24) */
-                (false):
-                    /* CIF task (1627, 671), (136, 88) */
-                    task relation := {
-    oper o_nequal,
+    oper o_lessequal,
     left 10,
     right 10
 };
-                    /* CIF output (1568, 779), (253, 35) */
+                    /* CIF output (2261, 1745), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1641, 834), (108, 35) */
-                    NEXTSTATE CheckNEqual1;
+                    /* CIF NEXTSTATE (2255, 1800), (123, 35) */
+                    NEXTSTATE CheckLessEqual1;
             enddecision;
     endstate;
-    /* CIF state (1128, 445), (98, 35) */
-    state CheckEqual1;
-        /* CIF input (1079, 500), (208, 35) */
+    /* CIF state (1012, 1902), (123, 35) */
+    state CheckLessEqual1;
+        /* CIF input (1002, 1957), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1127, 555), (111, 50) */
+            /* CIF decision (1024, 2012), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (1022, 625), (70, 24) */
+                /* CIF ANSWER (919, 2082), (70, 23) */
                 (false):
-                    /* CIF join (1039, 669), (35, 35) */
+                    /* CIF join (936, 2125), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1196, 625), (70, 24) */
+                /* CIF ANSWER (1093, 2082), (70, 23) */
                 (true):
-                    /* CIF task (1163, 669), (136, 88) */
+                    /* CIF task (1059, 2125), (137, 83) */
                     task relation := {
-    oper o_equal,
+    oper o_lessequal,
     left 10,
     right 15
 };
-                    /* CIF output (1104, 777), (253, 35) */
+                    /* CIF output (1072, 2228), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1181, 832), (98, 35) */
-                    NEXTSTATE CheckEqual2;
+                    /* CIF NEXTSTATE (1066, 2283), (123, 35) */
+                    NEXTSTATE CheckLessEqual2;
             enddecision;
     endstate;
-    /* CIF state (1606, 944), (108, 35) */
-    state CheckNEqual2;
-        /* CIF input (1556, 999), (208, 35) */
+    /* CIF state (1619, 1895), (123, 35) */
+    state CheckLessEqual2;
+        /* CIF input (1608, 1950), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1604, 1054), (111, 50) */
+            /* CIF decision (1630, 2005), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (1499, 1124), (70, 24) */
+                /* CIF ANSWER (1525, 2075), (70, 23) */
                 (false):
-                    /* CIF join (1516, 1168), (35, 35) */
+                    /* CIF join (1542, 2118), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1673, 1124), (70, 24) */
+                /* CIF ANSWER (1699, 2075), (70, 23) */
                 (true):
-                    /* CIF task (1640, 1168), (136, 88) */
+                    /* CIF task (1665, 2118), (137, 83) */
                     task relation := {
-    oper o_less,
-    left 10,
-    right 10
-};
-                    /* CIF output (1581, 1276), (253, 35) */
-                    output check(relation);
-                    /* CIF NEXTSTATE (1659, 1331), (98, 35) */
-                    NEXTSTATE CheckLess1;
-            enddecision;
-    endstate;
-    /* CIF state (1636, 1414), (91, 35) */
-    state CheckLess2;
-        /* CIF input (1583, 1469), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (1631, 1524), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (1526, 1594), (70, 24) */
-                (false):
-                    /* CIF join (1543, 1638), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (1700, 1594), (70, 24) */
-                (true):
-                    /* CIF task (1667, 1638), (136, 88) */
-                    task relation := {
-    oper o_less,
+    oper o_lessequal,
     left 15,
     right 10
 };
-                    /* CIF output (1608, 1746), (253, 35) */
+                    /* CIF output (1678, 2221), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (1686, 1801), (98, 35) */
-                    NEXTSTATE CheckLess3;
+                    /* CIF NEXTSTATE (1672, 2276), (123, 35) */
+                    NEXTSTATE CheckLessEqual3;
             enddecision;
     endstate;
-    /* CIF state (1047, 1419), (91, 35) */
-    state CheckLess1;
-        /* CIF input (995, 1474), (208, 35) */
+    /* CIF state (2172, 1898), (123, 35) */
+    state CheckLessEqual3;
+        /* CIF input (2161, 1953), (154, 35) */
         input result(boolean_result);
-            /* CIF decision (1043, 1529), (111, 50) */
+            /* CIF decision (2183, 2008), (111, 50) */
             decision boolean_result;
-                /* CIF ANSWER (938, 1599), (70, 24) */
+                /* CIF ANSWER (2078, 2078), (70, 23) */
                 (true):
-                    /* CIF join (955, 1643), (35, 35) */
+                    /* CIF join (2095, 2121), (35, 35) */
                     join goto_error;
-                /* CIF ANSWER (1112, 1599), (70, 24) */
+                /* CIF ANSWER (2252, 2078), (70, 23) */
                 (false):
-                    /* CIF task (1079, 1643), (136, 88) */
+                    /* CIF task (2223, 2121), (126, 83) */
                     task relation := {
-    oper o_less,
-    left 10,
-    right 15
-};
-                    /* CIF output (1020, 1751), (253, 35) */
-                    output check(relation);
-                    /* CIF NEXTSTATE (1098, 1806), (98, 35) */
-                    NEXTSTATE CheckLess2;
-            enddecision;
-    endstate;
-    /* CIF state (2159, 2410), (111, 35) */
-    state CheckGreater3;
-        /* CIF input (2113, 2465), (208, 35) */
-        input result(boolean_result);
-            /* CIF decision (2161, 2520), (111, 50) */
-            decision boolean_result;
-                /* CIF ANSWER (2056, 2590), (70, 24) */
-                (false):
-                    /* CIF join (2073, 2634), (35, 35) */
-                    join goto_error;
-                /* CIF ANSWER (2230, 2590), (70, 24) */
-                (true):
-                    /* CIF task (2185, 2634), (159, 88) */
-                    task relation := {
-    oper o_greaterequal,
+    oper o_greater,
     left 10,
     right 10
 };
-                    /* CIF output (2138, 2742), (253, 35) */
+                    /* CIF output (2231, 2224), (110, 35) */
                     output check(relation);
-                    /* CIF NEXTSTATE (2193, 2797), (143, 35) */
-                    NEXTSTATE CheckGreaterEqual1;
+                    /* CIF NEXTSTATE (2231, 2279), (111, 35) */
+                    NEXTSTATE CheckGreater1;
+            enddecision;
+    endstate;
+    /* CIF state (1032, 2427), (111, 35) */
+    state CheckGreater1;
+        /* CIF input (1014, 2482), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (1036, 2537), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (931, 2607), (70, 23) */
+                (true):
+                    /* CIF join (948, 2650), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1105, 2607), (70, 23) */
+                (false):
+                    /* CIF task (1076, 2650), (126, 83) */
+                    task relation := {
+    oper o_greater,
+    left 10,
+    right 15
+};
+                    /* CIF output (1084, 2753), (110, 35) */
+                    output check(relation);
+                    /* CIF NEXTSTATE (1084, 2808), (111, 35) */
+                    NEXTSTATE CheckGreater2;
+            enddecision;
+    endstate;
+    /* CIF state (1623, 2415), (111, 35) */
+    state CheckGreater2;
+        /* CIF input (1604, 2470), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (1626, 2525), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1521, 2595), (70, 23) */
+                (true):
+                    /* CIF join (1538, 2638), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1695, 2595), (70, 23) */
+                (false):
+                    /* CIF task (1666, 2638), (126, 83) */
+                    task relation := {
+    oper o_greater,
+    left 15,
+    right 10
+};
+                    /* CIF output (1674, 2741), (110, 35) */
+                    output check(relation);
+                    /* CIF NEXTSTATE (1674, 2796), (111, 35) */
+                    NEXTSTATE CheckGreater3;
+            enddecision;
+    endstate;
+    /* CIF state (1015, 2931), (143, 35) */
+    state CheckGreaterEqual1;
+        /* CIF input (1012, 2986), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (1034, 3041), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (929, 3111), (70, 23) */
+                (false):
+                    /* CIF join (946, 3154), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1103, 3111), (70, 23) */
+                (true):
+                    /* CIF task (1074, 3154), (126, 83) */
+                    task relation := {
+    oper o_greater,
+    left 10,
+    right 15
+};
+                    /* CIF output (1082, 3257), (110, 35) */
+                    output check(relation);
+                    /* CIF NEXTSTATE (1066, 3312), (143, 35) */
+                    NEXTSTATE CheckGreaterEqual2;
+            enddecision;
+    endstate;
+    /* CIF state (2159, 2934), (143, 35) */
+    state CheckGreaterEqual3;
+        /* CIF input (2155, 2989), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (2177, 3044), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (2072, 3114), (70, 23) */
+                (false):
+                    /* CIF join (2089, 3157), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (2246, 3114), (70, 23) */
+                (true):
+                    /* CIF task (2233, 3157), (94, 35) */
+                    task finished := 1;
+                    /* CIF NEXTSTATE (2209, 3212), (143, 35) */
+                    NEXTSTATE CheckGreaterEqual3;
+            enddecision;
+    endstate;
+    /* CIF state (1569, 2938), (143, 35) */
+    state CheckGreaterEqual2;
+        /* CIF input (1565, 2993), (154, 35) */
+        input result(boolean_result);
+            /* CIF decision (1587, 3048), (111, 50) */
+            decision boolean_result;
+                /* CIF ANSWER (1482, 3118), (70, 23) */
+                (true):
+                    /* CIF join (1499, 3161), (35, 35) */
+                    join goto_error;
+                /* CIF ANSWER (1656, 3118), (70, 23) */
+                (false):
+                    /* CIF task (1627, 3161), (126, 83) */
+                    task relation := {
+    oper o_greater,
+    left 15,
+    right 10
+};
+                    /* CIF output (1635, 3264), (110, 35) */
+                    output check(relation);
+                    /* CIF NEXTSTATE (1619, 3319), (143, 35) */
+                    NEXTSTATE CheckGreaterEqual3;
             enddecision;
     endstate;
 endprocess Controller;

@@ -19,10 +19,12 @@ inline Actuator_0_watchdog_set(actuator_watchdog_interval)
 {
     global_state.timers.actuator.watchdog.interval = actuator_watchdog_interval;
     global_state.timers.actuator.watchdog.timer_enabled = true;
+    printf("set_timer actuator watchdog %d\n", actuator_watchdog_interval);
 }
 inline Actuator_0_watchdog_reset()
 {
     global_state.timers.actuator.watchdog.timer_enabled = false;
+    printf("reset_timer actuator watchdog\n");
 }
 inline Controller_0_RI_0_ping()
 {
@@ -35,6 +37,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
@@ -45,6 +51,10 @@ inline Controller_check_queue()
     atomic {
         empty(Controller_pong_channel);
     }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype timer_manager_proc() priority 1
 {

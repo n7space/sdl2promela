@@ -28,3 +28,22 @@ T-Null-Record ::= SEQUENCE {}
 END
 
 
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+   -- Range of PID - type can be used to size arrays of PID type
+   PID-Range ::= INTEGER(0..3)
+
+   -- List of functions (instances) present in the system
+   PID ::= ENUMERATED {
+       actuator,
+       controller,
+       environ,
+       
+       env
+   }
+
+END
+

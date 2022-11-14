@@ -3,8 +3,9 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Actuator_Context actuator;
     Controller_Context controller;
+    Actuator_Context actuator;
+    AggregateTimerData timers;
 }
 
 int inited;
@@ -30,6 +31,10 @@ inline Actuator_check_queue()
         empty(Actuator_check_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
@@ -44,6 +49,10 @@ inline Controller_check_queue()
         (empty(Controller_result_channel) && empty(Controller_test_channel));
     }
 }
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
+}
 active proctype Actuator_check() priority 1
 {
     inited;
@@ -55,23 +64,13 @@ Actuator_check_loop:
         if
         ::  nempty(Actuator_check_channel);
             Actuator_check_channel?Actuator_check_signal_parameter;
+            Actuator_check_channel_used = 1;
             Actuator_0_PI_0_check(Actuator_check_signal_parameter);
             goto Actuator_check_loop;
         ::  empty(Actuator_check_channel);
             skip;
         fi;
         Actuator_lock!1;
-    }
-    od;
-}
-active proctype Environ_test() priority 1
-{
-    inited;
-    MyTestInteger value;
-    do
-    ::  atomic {
-        MyTestInteger_generate_value(value);
-        Environ_0_RI_0_test(value);
     }
     od;
 }
@@ -86,6 +85,7 @@ Controller_result_loop:
         if
         ::  nempty(Controller_result_channel);
             Controller_result_channel?Controller_result_signal_parameter;
+            Controller_result_channel_used = 1;
             Controller_0_PI_0_result(Controller_result_signal_parameter);
             goto Controller_result_loop;
         ::  empty(Controller_result_channel);
@@ -106,12 +106,24 @@ Controller_test_loop:
         if
         ::  nempty(Controller_test_channel);
             Controller_test_channel?Controller_test_signal_parameter;
+            Controller_test_channel_used = 1;
             Controller_0_PI_0_test(Controller_test_signal_parameter);
             goto Controller_test_loop;
         ::  empty(Controller_test_channel);
             skip;
         fi;
         Controller_lock!1;
+    }
+    od;
+}
+active proctype Environ_test() priority 1
+{
+    inited;
+    MyTestInteger value;
+    do
+    ::  atomic {
+        MyTestInteger_generate_value(value);
+        Environ_0_RI_0_test(value);
     }
     od;
 }

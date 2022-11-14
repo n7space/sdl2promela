@@ -5,8 +5,8 @@
 #include "env_inlines.pml"
 typedef system_state {
     Observer_Context observer;
-    Actuator_Context actuator;
     Controller_Context controller;
+    Actuator_Context actuator;
     AggregateTimerData timers;
 }
 
@@ -29,6 +29,10 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
+inline Actuator_0_get_sender(Actuator_sender_arg)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
@@ -39,6 +43,10 @@ inline Controller_check_queue()
     atomic {
         empty(Controller_pong_channel);
     }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
 }
 active proctype Actuator_ping() priority 1
 {

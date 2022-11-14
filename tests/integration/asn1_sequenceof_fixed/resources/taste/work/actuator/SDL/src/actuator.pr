@@ -6,19 +6,19 @@ process Actuator;
     dcl work_param MyTestParameter;
     dcl result_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (328, 16), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (328, 66), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1105, 104), (69, 35) */
+    /* CIF state (1104, 104), (70, 35) */
     state Wait;
-        /* CIF input (1073, 159), (133, 35) */
+        /* CIF input (1072, 159), (133, 35) */
         input work(work_param);
             /* CIF task (1036, 214), (206, 35) */
             task result_param := work_param(0);
-            /* CIF output (1068, 269), (143, 35) */
+            /* CIF output (1067, 269), (143, 35) */
             output result(result_param);
-            /* CIF NEXTSTATE (1105, 324), (70, 35) */
+            /* CIF NEXTSTATE (1104, 324), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

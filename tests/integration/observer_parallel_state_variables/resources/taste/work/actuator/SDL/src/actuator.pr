@@ -2,41 +2,6 @@
 process Actuator;
     state aggregation Wait;
     substructure
-            state Left;
-            substructure
-                    /* CIF TEXT (52, 354), (267, 140) */
-                    -- Text area for declarations and comments
-                    
-                    dcl ping_param MyInteger;
-                    dcl pong_param MyInteger;
-                    /* CIF ENDTEXT */
-                    /* CIF START (194, 109), (70, 35) */
-                    START;
-                        /* CIF NEXTSTATE (194, 164), (70, 35) */
-                        NEXTSTATE One;
-                    /* CIF state (970, 267), (70, 35) */
-                    state Two;
-                        /* CIF input (941, 322), (126, 35) */
-                        input ping(ping_param);
-                            /* CIF task (913, 377), (183, 35) */
-                            task pong_param := ping_param;
-                            /* CIF output (937, 432), (135, 35) */
-                            output pong(pong_param);
-                            /* CIF NEXTSTATE (970, 487), (70, 35) */
-                            NEXTSTATE One;
-                    endstate;
-                    /* CIF state (644, 262), (70, 35) */
-                    state One;
-                        /* CIF input (615, 317), (126, 35) */
-                        input ping(ping_param);
-                            /* CIF task (587, 372), (183, 35) */
-                            task pong_param := ping_param;
-                            /* CIF output (611, 427), (135, 35) */
-                            output pong(pong_param);
-                            /* CIF NEXTSTATE (644, 477), (70, 35) */
-                            NEXTSTATE Two;
-                    endstate;
-            endsubstructure;
             state Right;
             substructure
                     /* CIF START (138, 97), (70, 35) */
@@ -51,16 +16,51 @@ process Actuator;
                             NEXTSTATE Red;
                     endstate;
             endsubstructure;
-            /* CIF state (463, 194), (70, 35) */
-            state Right;
-            endstate;
+            state Left;
+            substructure
+                    /* CIF TEXT (52, 354), (267, 140) */
+                    -- Text area for declarations and comments
+                    
+                    dcl ping_param MyInteger;
+                    dcl pong_param MyInteger;
+                    /* CIF ENDTEXT */
+                    /* CIF START (194, 109), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (194, 164), (70, 35) */
+                        NEXTSTATE One;
+                    /* CIF state (644, 262), (70, 35) */
+                    state One;
+                        /* CIF input (614, 317), (126, 35) */
+                        input ping(ping_param);
+                            /* CIF task (586, 372), (183, 35) */
+                            task pong_param := ping_param;
+                            /* CIF output (610, 427), (135, 35) */
+                            output pong(pong_param);
+                            /* CIF NEXTSTATE (643, 477), (70, 35) */
+                            NEXTSTATE Two;
+                    endstate;
+                    /* CIF state (970, 267), (70, 35) */
+                    state Two;
+                        /* CIF input (940, 322), (126, 35) */
+                        input ping(ping_param);
+                            /* CIF task (912, 377), (183, 35) */
+                            task pong_param := ping_param;
+                            /* CIF output (936, 432), (135, 35) */
+                            output pong(pong_param);
+                            /* CIF NEXTSTATE (969, 487), (70, 35) */
+                            NEXTSTATE One;
+                    endstate;
+            endsubstructure;
             /* CIF state (195, 206), (70, 35) */
             state Left;
             endstate;
+            /* CIF state (463, 194), (70, 35) */
+            state Right;
+            endstate;
     endsubstructure;
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (330, 21), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (330, 71), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (450, 10), (70, 35) */
     state Wait;
