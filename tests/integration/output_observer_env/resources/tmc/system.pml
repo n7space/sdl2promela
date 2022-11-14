@@ -5,6 +5,7 @@
 typedef system_state {
     Observer_Context observer;
     Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
@@ -32,6 +33,10 @@ inline Controller_check_queue()
         (empty(Controller_observer_ping_channel) && empty(Controller_ping_channel));
     }
 }
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
+}
 inline Controller_0_RI_0_pong(environ_pong_p1)
 {
     Environ_pong_channel!environ_pong_p1;
@@ -43,20 +48,24 @@ active proctype Controller_ping() priority 1
     ::  atomic {
         (nempty(Controller_ping_channel) || nempty(Controller_observer_ping_channel));
         Controller_lock?_;
+Controller_ping_loop:
+        if
+        ::  nempty(Controller_observer_ping_channel);
+            Controller_observer_ping_channel?Controller_ping_signal_parameter;
+            Controller_ping_channel_used = 1;
+            Controller_0_PI_0_ping(Controller_ping_signal_parameter);
+            goto Controller_ping_loop;
+        ::  empty(Controller_observer_ping_channel);
+            skip;
+        fi;
         if
         ::  nempty(Controller_ping_channel);
             Controller_ping_channel?Controller_ping_signal_parameter;
             Observer_lock?_;
             Observer_0_PI_0_ping_in(Controller_ping_signal_parameter);
             Observer_lock!1;
+            goto Controller_ping_loop;
         ::  empty(Controller_ping_channel);
-            skip;
-        fi;
-        if
-        ::  nempty(Controller_observer_ping_channel);
-            Controller_observer_ping_channel?Controller_ping_signal_parameter;
-            Controller_0_PI_0_ping(Controller_ping_signal_parameter);
-        ::  empty(Controller_observer_ping_channel);
             skip;
         fi;
         Controller_lock!1;
@@ -69,9 +78,12 @@ active proctype Environ_pong() priority 1
     do
     ::  atomic {
         nempty(Environ_pong_channel);
+Environ_pong_loop:
         if
         ::  nempty(Environ_pong_channel);
             Environ_pong_channel?Environ_pong_signal_parameter;
+            Environ_pong_channel_used = 1;
+            goto Environ_pong_loop;
         ::  empty(Environ_pong_channel);
             skip;
         fi;
@@ -92,6 +104,7 @@ active proctype Environ_ping() priority 1
 init
 {
     atomic {
+        global_dataview_init();
         Controller_0_init();
         Controller_lock!1;
         Observer_0_init();

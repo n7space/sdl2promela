@@ -2,29 +2,6 @@
 process Actuator;
     state aggregation Parallel;
     substructure
-            state Left;
-            substructure
-                    /* CIF TEXT (1279, 179), (267, 140) */
-                    -- Text area for declarations and comments
-                    
-                    dcl left_result_param MyStatus;
-                    /* CIF ENDTEXT */
-                    /* CIF START (288, 242), (70, 35) */
-                    START;
-                        /* CIF NEXTSTATE (288, 297), (70, 35) */
-                        NEXTSTATE Wait;
-                    /* CIF state (649, 255), (70, 35) */
-                    state Wait;
-                        /* CIF input (648, 310), (71, 35) */
-                        input tick_left;
-                            /* CIF task (543, 365), (280, 35) */
-                            task left_result_param := transition_left_parallel;
-                            /* CIF output (598, 420), (170, 35) */
-                            output result(left_result_param);
-                            /* CIF NEXTSTATE (649, 475), (70, 35) */
-                            NEXTSTATE Wait;
-                    endstate;
-            endsubstructure;
             state Right;
             substructure
                     /* CIF TEXT (129, 319), (267, 140) */
@@ -38,21 +15,44 @@ process Actuator;
                         NEXTSTATE Wait;
                     /* CIF state (835, 329), (70, 35) */
                     state Wait;
-                        /* CIF input (830, 384), (79, 35) */
+                        /* CIF input (829, 384), (79, 35) */
                         input tick_right;
                             /* CIF task (722, 439), (294, 35) */
                             task right_result_param := transition_right_parallel;
                             /* CIF output (780, 494), (178, 35) */
                             output result(right_result_param);
-                            /* CIF NEXTSTATE (835, 549), (70, 35) */
+                            /* CIF NEXTSTATE (834, 549), (70, 35) */
                             NEXTSTATE Wait;
                     endstate;
             endsubstructure;
-            /* CIF state (956, 282), (70, 35) */
-            state Right;
-            endstate;
+            state Left;
+            substructure
+                    /* CIF TEXT (1279, 179), (267, 140) */
+                    -- Text area for declarations and comments
+                    
+                    dcl left_result_param MyStatus;
+                    /* CIF ENDTEXT */
+                    /* CIF START (288, 242), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (288, 297), (70, 35) */
+                        NEXTSTATE Wait;
+                    /* CIF state (649, 255), (70, 35) */
+                    state Wait;
+                        /* CIF input (647, 310), (71, 35) */
+                        input tick_left;
+                            /* CIF task (543, 365), (280, 35) */
+                            task left_result_param := transition_left_parallel;
+                            /* CIF output (598, 420), (170, 35) */
+                            output result(left_result_param);
+                            /* CIF NEXTSTATE (648, 475), (70, 35) */
+                            NEXTSTATE Wait;
+                    endstate;
+            endsubstructure;
             /* CIF state (290, 260), (70, 35) */
             state Left;
+            endstate;
+            /* CIF state (956, 282), (70, 35) */
+            state Right;
             endstate;
     endsubstructure;
     /* CIF TEXT (379, 302), (267, 140) */
@@ -60,31 +60,12 @@ process Actuator;
     
     dcl result_param MyStatus;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (328, 15), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (328, 65), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1605, 223), (70, 35) */
+    /* CIF state (1364, 132), (70, 35) */
     state Parallel;
-        /* CIF input (1605, 278), (70, 35) */
-        input tick;
-            /* CIF task (1540, 333), (199, 35) */
-            task result_param := leave_parallel;
-            /* CIF output (1568, 388), (143, 35) */
-            output result(result_param);
-            /* CIF NEXTSTATE (1605, 443), (70, 35) */
-            NEXTSTATE Wait;
-    endstate;
-    /* CIF state (1187, 224), (70, 35) */
-    state First;
-        /* CIF input (1187, 279), (70, 35) */
-        input tick;
-            /* CIF task (1121, 334), (200, 35) */
-            task result_param := enter_parallel;
-            /* CIF output (1150, 389), (143, 35) */
-            output result(result_param);
-            /* CIF NEXTSTATE (1187, 444), (70, 35) */
-            NEXTSTATE Parallel;
     endstate;
     /* CIF state (800, 210), (70, 35) */
     state Wait;
@@ -97,7 +78,26 @@ process Actuator;
             /* CIF NEXTSTATE (800, 430), (70, 35) */
             NEXTSTATE First;
     endstate;
-    /* CIF state (1364, 132), (70, 35) */
+    /* CIF state (1187, 224), (70, 35) */
+    state First;
+        /* CIF input (1187, 279), (70, 35) */
+        input tick;
+            /* CIF task (1121, 334), (200, 35) */
+            task result_param := enter_parallel;
+            /* CIF output (1150, 389), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1187, 444), (70, 35) */
+            NEXTSTATE Parallel;
+    endstate;
+    /* CIF state (1605, 223), (70, 35) */
     state Parallel;
+        /* CIF input (1605, 278), (70, 35) */
+        input tick;
+            /* CIF task (1540, 333), (199, 35) */
+            task result_param := leave_parallel;
+            /* CIF output (1568, 388), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (1605, 443), (70, 35) */
+            NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

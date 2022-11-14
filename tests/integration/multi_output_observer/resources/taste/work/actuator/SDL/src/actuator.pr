@@ -5,30 +5,30 @@ process Actuator;
     
     dcl param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (335, 25), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (335, 75), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1313, 327), (70, 35) */
     state Wait;
-        /* CIF input (1307, 382), (80, 35) */
+        /* CIF input (1303, 382), (80, 35) */
         input f2(param);
-            /* CIF task (1280, 437), (135, 35) */
+            /* CIF task (1276, 437), (135, 35) */
             task param := param + 2;
-            /* CIF output (1296, 492), (102, 35) */
+            /* CIF output (1292, 492), (102, 35) */
             output result(param);
-            /* CIF NEXTSTATE (1313, 547), (70, 35) */
+            /* CIF NEXTSTATE (1309, 547), (70, 35) */
             NEXTSTATE Wait;
     endstate;
     /* CIF state (950, 325), (70, 35) */
     state Wait;
-        /* CIF input (944, 380), (80, 35) */
+        /* CIF input (940, 380), (80, 35) */
         input f1(param);
-            /* CIF task (918, 435), (133, 35) */
+            /* CIF task (914, 435), (133, 35) */
             task param := param * 2;
-            /* CIF output (933, 490), (102, 35) */
+            /* CIF output (929, 490), (102, 35) */
             output result(param);
-            /* CIF NEXTSTATE (950, 545), (70, 35) */
+            /* CIF NEXTSTATE (946, 545), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

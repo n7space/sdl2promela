@@ -6,11 +6,11 @@ process Controller;
         output ping;
         /* CIF NEXTSTATE (320, 115), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (664, 90), (70, 35) */
+    /* CIF state (664, 80), (70, 35) */
     state Wait;
-        /* CIF input (664, 145), (70, 35) */
+        /* CIF input (664, 135), (70, 35) */
         input pong;
-            /* CIF NEXTSTATE (664, 200), (70, 35) */
+            /* CIF NEXTSTATE (664, 190), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;

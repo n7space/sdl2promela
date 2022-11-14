@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
-    /* CIF TEXT (561, 189), (267, 140) */
+    /* CIF TEXT (568, 197), (267, 140) */
     -- Text area for declarations and comments
     
     dcl result_param ResultStatus;
@@ -13,49 +13,55 @@ process Controller;
         output tick;
         /* CIF NEXTSTATE (518, 501), (145, 35) */
         NEXTSTATE WaitForEnterParallel;
-    /* CIF state (1734, 396), (92, 35) */
-    state WaitForTick;
-        /* CIF input (1709, 451), (143, 35) */
+    /* CIF state (965, 212), (70, 35) */
+    state Error;
+    endstate;
+    /* CIF state (1204, 253), (72, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (751, 394), (145, 35) */
+    state WaitForEnterParallel;
+        /* CIF input (752, 449), (143, 35) */
         input result(result_param);
-            /* CIF decision (1716, 506), (128, 50) */
+            /* CIF decision (760, 504), (128, 50) */
             decision result_param = ok;
-                /* CIF ANSWER (1701, 576), (70, 23) */
+                /* CIF ANSWER (745, 574), (70, 23) */
                 (true):
-                    /* CIF output (1700, 619), (71, 35) */
-                    output tick_left;
-                    /* CIF NEXTSTATE (1685, 669), (100, 35) */
-                    NEXTSTATE WaitForWork;
-                /* CIF ANSWER (1791, 576), (70, 23) */
+                    /* CIF output (740, 617), (79, 35) */
+                    output tick_right;
+                    /* CIF NEXTSTATE (701, 672), (156, 35) */
+                    NEXTSTATE WaitForRightInParallel;
+                /* CIF ANSWER (872, 574), (70, 23) */
                 (false):
-                    /* CIF task (1787, 619), (76, 35) */
+                    /* CIF task (868, 617), (76, 35) */
                     task error := 1;
-                    /* CIF NEXTSTATE (1791, 674), (70, 35) */
+                    /* CIF NEXTSTATE (872, 667), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (2041, 416), (100, 35) */
-    state WaitForWork;
-        /* CIF input (2020, 471), (143, 35) */
+    /* CIF state (1042, 400), (156, 35) */
+    state WaitForRightInParallel;
+        /* CIF input (1049, 455), (143, 35) */
         input result(result_param);
-            /* CIF decision (2020, 526), (143, 50) */
-            decision result_param = work;
-                /* CIF ANSWER (2012, 596), (70, 23) */
+            /* CIF decision (1057, 510), (128, 50) */
+            decision result_param = ok;
+                /* CIF ANSWER (1042, 580), (70, 23) */
                 (true):
-                    /* CIF task (1999, 639), (94, 35) */
-                    task reached := 1;
-                    /* CIF NEXTSTATE (2010, 694), (72, 35) */
-                    NEXTSTATE Finished;
-                /* CIF ANSWER (2102, 596), (70, 23) */
+                    /* CIF output (1041, 623), (71, 35) */
+                    output tick_left;
+                    /* CIF NEXTSTATE (1002, 678), (148, 35) */
+                    NEXTSTATE WaitForLeftInParallel;
+                /* CIF ANSWER (1165, 580), (70, 23) */
                 (false):
-                    /* CIF task (2098, 639), (76, 35) */
+                    /* CIF task (1161, 623), (76, 35) */
                     task error := 1;
-                    /* CIF NEXTSTATE (2102, 694), (70, 35) */
+                    /* CIF NEXTSTATE (1165, 678), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1385, 397), (148, 35) */
+    /* CIF state (1384, 397), (148, 35) */
     state WaitForLeftInParallel;
-        /* CIF input (1388, 452), (143, 35) */
+        /* CIF input (1387, 452), (143, 35) */
         input result(result_param);
             /* CIF decision (1395, 507), (128, 50) */
             decision result_param = ok;
@@ -73,50 +79,44 @@ process Controller;
                     NEXTSTATE Error;
             enddecision;
     endstate;
-    /* CIF state (1043, 400), (156, 35) */
-    state WaitForRightInParallel;
-        /* CIF input (1050, 455), (143, 35) */
+    /* CIF state (2040, 416), (100, 35) */
+    state WaitForWork;
+        /* CIF input (2019, 471), (143, 35) */
         input result(result_param);
-            /* CIF decision (1057, 510), (128, 50) */
-            decision result_param = ok;
-                /* CIF ANSWER (1042, 580), (70, 23) */
+            /* CIF decision (2019, 526), (143, 50) */
+            decision result_param = work;
+                /* CIF ANSWER (2012, 596), (70, 23) */
                 (true):
-                    /* CIF output (1041, 623), (71, 35) */
+                    /* CIF task (1999, 639), (94, 35) */
+                    task reached := 1;
+                    /* CIF NEXTSTATE (2010, 694), (72, 35) */
+                    NEXTSTATE Finished;
+                /* CIF ANSWER (2102, 596), (70, 23) */
+                (false):
+                    /* CIF task (2098, 639), (76, 35) */
+                    task error := 1;
+                    /* CIF NEXTSTATE (2102, 694), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1733, 396), (92, 35) */
+    state WaitForTick;
+        /* CIF input (1708, 451), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1716, 506), (128, 50) */
+            decision result_param = ok;
+                /* CIF ANSWER (1701, 576), (70, 23) */
+                (true):
+                    /* CIF output (1700, 619), (71, 35) */
                     output tick_left;
-                    /* CIF NEXTSTATE (1002, 678), (148, 35) */
-                    NEXTSTATE WaitForLeftInParallel;
-                /* CIF ANSWER (1165, 580), (70, 23) */
+                    /* CIF NEXTSTATE (1685, 669), (100, 35) */
+                    NEXTSTATE WaitForWork;
+                /* CIF ANSWER (1791, 576), (70, 23) */
                 (false):
-                    /* CIF task (1162, 623), (76, 35) */
+                    /* CIF task (1787, 619), (76, 35) */
                     task error := 1;
-                    /* CIF NEXTSTATE (1165, 678), (70, 35) */
+                    /* CIF NEXTSTATE (1791, 674), (70, 35) */
                     NEXTSTATE Error;
             enddecision;
-    endstate;
-    /* CIF state (752, 394), (145, 35) */
-    state WaitForEnterParallel;
-        /* CIF input (753, 449), (143, 35) */
-        input result(result_param);
-            /* CIF decision (760, 504), (128, 50) */
-            decision result_param = ok;
-                /* CIF ANSWER (745, 574), (70, 23) */
-                (true):
-                    /* CIF output (740, 617), (79, 35) */
-                    output tick_right;
-                    /* CIF NEXTSTATE (701, 672), (156, 35) */
-                    NEXTSTATE WaitForRightInParallel;
-                /* CIF ANSWER (872, 574), (70, 23) */
-                (false):
-                    /* CIF task (869, 617), (76, 35) */
-                    task error := 1;
-                    /* CIF NEXTSTATE (872, 667), (70, 35) */
-                    NEXTSTATE Error;
-            enddecision;
-    endstate;
-    /* CIF state (1205, 253), (72, 35) */
-    state Finished;
-    endstate;
-    /* CIF state (965, 212), (70, 35) */
-    state Error;
     endstate;
 endprocess Controller;

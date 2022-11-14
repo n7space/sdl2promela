@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	test_stop_condition_get_state_parallel_proctype
 
-#.SILENT : \
-#	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \

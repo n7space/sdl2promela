@@ -7,16 +7,23 @@ SPACECREATOR?=spacecreator.AppImage
 #
 # export <PARTITIONNAME>_USER_CFLAGS=...
 # export <PARTITIONNAME>_USER_LDFLAGS=...
-# export <PARTITIONNAME>_EXTERNAL_SOURCE_PATH=
+# export <PARTITIONNAME>_EXTERNAL_SOURCE_PATH=...
+#
+# NOTE: this can also be done in the Deployment View directly
 
 # If you need to reset this Makefile to its original state, run:
-# $ space-creator reset
+# $ taste reset
+
+# Disable the progress bar from taste-update-data-view when building systems
+export NO_PROGRESS_BAR=1
 
 # Get the list of ASN.1 files from Space Creator project file:
 DISTFILES=$(shell qmake nested_states.pro -o /tmp/null 2>&1)
 ASN1_FILES=$(shell find ${DISTFILES} 2>/dev/null | egrep '\.asn$$|\.asn1$$')
 
 all:	release
+
+include Makefile.modelcheck
 
 release:	work/glue_release
 	rm -rf work/glue_debug
@@ -46,9 +53,19 @@ edit_cv:
 
 # Simulation target (experimental - for systems made of SDL functions only)
 simu:	
+	if [ -f work/glue_debug ] || [ -f work/glue_release ] || [ -f work/glue_coverage ]; then $(MAKE) clean; fi
 	$(MAKE) interfaceview work/glue_simu
 	$(MAKE) -C work
 	$(MAKE) -C work/simulation -f Makefile.Simulation simu
+
+# Simulation and model checking: shortcut to create observer.asn
+observer_dataview:
+	$(MAKE) DataView.aadl
+	$(MAKE) InterfaceView.aadl
+	$(MAKE) interfaceview
+	$(KAZOO) --glue -t SIMU
+	$(MAKE) -C work dataview/dataview-uniq.asn
+	$(MAKE) -C work/build -f Makefile.taste observer.asn
 
 skeletons:
 	$(MAKE) work/skeletons_built
@@ -107,6 +124,10 @@ clean:
 	rm -f work/glue_release work/glue_debug work/glue_coverage work/skeletons_built
 	find work -type d -name "wrappers" -exec rm -rf {} + || :
 	find work -type d -name "*_GUI" -exec rm -rf {} + || :
+	find work -type d -path "*/QGenC/xmi" -exec rm -rf {} + || : 
+	find work -type d -path "*/QGenC/src/.qgeninfo" -exec rm -rf {} + || : 
+	find work -type f -path "*/QGenC/src/*.h" -exec rm -f {} + || : 
+	find work -type f -path "*/QGenC/src/*.c" -exec rm -f {} + || : 
 
 .PHONY: clean release debug coverage skeletons simu run
 

@@ -15,8 +15,8 @@ DELETE_TEST_DIR=rm -r ${TEST_DIR}
 TESTS = \
 	test_stop_condition_eventually_error test_stop_condition_eventually_ok
 
-#.SILENT : \
-#	${TESTS}
+.SILENT : \
+	${TESTS}
 
 .PHONY : \
 	${TESTS} \

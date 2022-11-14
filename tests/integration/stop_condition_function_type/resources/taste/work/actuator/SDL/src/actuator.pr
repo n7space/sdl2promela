@@ -5,17 +5,17 @@ process type Actuator;
     
     dcl param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (331, 20), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (331, 70), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1004, 217), (70, 33) */
+    /* CIF state (1004, 217), (70, 35) */
     state Wait;
-        /* CIF input (991, 270), (94, 35) */
+        /* CIF input (990, 274), (94, 35) */
         input ping(param);
-            /* CIF output (989, 325), (98, 35) */
+            /* CIF output (988, 329), (98, 35) */
             output pong(param);
-            /* CIF NEXTSTATE (1004, 380), (70, 35) */
+            /* CIF NEXTSTATE (1003, 384), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess type Actuator;

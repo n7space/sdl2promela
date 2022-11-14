@@ -1,112 +1,151 @@
 #include "dataview.pml"
-#include "controller.pml"
 #include "actuator.pml"
+#include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
+    AggregateTimerData timers;
 }
 
 int inited;
-chan controller_result_channel = [1] of {MyStatus};
-chan actuator_tick_channel = [1] of {int};
-chan actuator_tick_left_channel = [1] of {int};
-chan actuator_tick_right_channel = [1] of {int};
+chan Actuator_tick_channel = [1] of {int};
+chan Actuator_tick_left_channel = [1] of {int};
+chan Actuator_tick_right_channel = [1] of {int};
+chan Controller_result_channel = [1] of {MyStatus};
+MyStatus Controller_result_signal_parameter;
+bool Controller_result_channel_used = 0;
 system_state global_state;
-chan controller_lock = [1] of {int};
-chan actuator_lock = [1] of {int};
-inline Actuator_0_RI_0_result(controller_result_p1)
-{
-    controller_result_channel!controller_result_p1;
-}
-inline Controller_check_queue()
-{
-    atomic {
-        empty(controller_result_channel);
-    }
-}
+chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_tick()
 {
     int dummy;
-    actuator_tick_channel!dummy;
+    Actuator_tick_channel!dummy;
 }
 inline Controller_0_RI_0_tick_left()
 {
     int dummy;
-    actuator_tick_left_channel!dummy;
+    Actuator_tick_left_channel!dummy;
 }
 inline Controller_0_RI_0_tick_right()
 {
     int dummy;
-    actuator_tick_right_channel!dummy;
+    Actuator_tick_right_channel!dummy;
 }
 inline Actuator_check_queue()
 {
     atomic {
-        empty(actuator_tick_channel) && empty(actuator_tick_left_channel) && empty(actuator_tick_right_channel);
+        (empty(Actuator_tick_channel) && (empty(Actuator_tick_left_channel) && empty(Actuator_tick_right_channel)));
     }
 }
-active proctype controller_result() priority 1
+inline Actuator_0_get_sender(Actuator_sender_arg)
 {
-    inited;
-    int token;
-    MyStatus signal_parameter;
-    do
-    ::  atomic {
-        controller_result_channel?signal_parameter;
-        controller_lock?token;
-        Controller_0_PI_0_result(signal_parameter);
-        controller_lock!token;
-    }
-    od;
+    skip;
 }
-active proctype actuator_tick() priority 1
+inline Actuator_0_RI_0_result(controller_result_p1)
 {
-    inited;
-    int token;
-    do
-    ::  atomic {
-        actuator_tick_channel?_;
-        actuator_lock?token;
-        Actuator_0_PI_0_tick();
-        actuator_lock!token;
-    }
-    od;
+    Controller_result_channel!controller_result_p1;
 }
-active proctype actuator_tick_left() priority 1
+inline Controller_check_queue()
+{
+    atomic {
+        empty(Controller_result_channel);
+    }
+}
+inline Controller_0_get_sender(Controller_sender_arg)
+{
+    skip;
+}
+active proctype Actuator_tick() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        actuator_tick_left_channel?_;
-        actuator_lock?token;
-        Actuator_0_PI_0_tick_left();
-        actuator_lock!token;
+        nempty(Actuator_tick_channel);
+        Actuator_lock?_;
+Actuator_tick_loop:
+        if
+        ::  nempty(Actuator_tick_channel);
+            Actuator_tick_channel?_;
+            Actuator_0_PI_0_tick();
+            goto Actuator_tick_loop;
+        ::  empty(Actuator_tick_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
     }
     od;
 }
-active proctype actuator_tick_right() priority 1
+active proctype Actuator_tick_left() priority 1
 {
     inited;
-    int token;
     do
     ::  atomic {
-        actuator_tick_right_channel?_;
-        actuator_lock?token;
-        Actuator_0_PI_0_tick_right();
-        actuator_lock!token;
+        nempty(Actuator_tick_left_channel);
+        Actuator_lock?_;
+Actuator_tick_left_loop:
+        if
+        ::  nempty(Actuator_tick_left_channel);
+            Actuator_tick_left_channel?_;
+            Actuator_0_PI_0_tick_left();
+            goto Actuator_tick_left_loop;
+        ::  empty(Actuator_tick_left_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
+    }
+    od;
+}
+active proctype Actuator_tick_right() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Actuator_tick_right_channel);
+        Actuator_lock?_;
+Actuator_tick_right_loop:
+        if
+        ::  nempty(Actuator_tick_right_channel);
+            Actuator_tick_right_channel?_;
+            Actuator_0_PI_0_tick_right();
+            goto Actuator_tick_right_loop;
+        ::  empty(Actuator_tick_right_channel);
+            skip;
+        fi;
+        Actuator_lock!1;
+    }
+    od;
+}
+active proctype Controller_result() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Controller_result_channel);
+        Controller_lock?_;
+Controller_result_loop:
+        if
+        ::  nempty(Controller_result_channel);
+            Controller_result_channel?Controller_result_signal_parameter;
+            Controller_result_channel_used = 1;
+            Controller_0_PI_0_result(Controller_result_signal_parameter);
+            goto Controller_result_loop;
+        ::  empty(Controller_result_channel);
+            skip;
+        fi;
+        Controller_lock!1;
     }
     od;
 }
 init
 {
     atomic {
-        int init_token = 1;
+        global_dataview_init();
         Controller_0_init();
-        controller_lock!init_token;
+        Controller_lock!1;
         Actuator_0_init();
-        actuator_lock!init_token;
+        Actuator_lock!1;
         inited = 1;
     }
 }

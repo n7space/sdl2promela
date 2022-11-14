@@ -28,25 +28,22 @@ T-Null-Record ::= SEQUENCE {}
 END
 
 
-ENVIRON-SUBTYPE DEFINITIONS ::=
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
 BEGIN
 
-IMPORTS 
+   -- Range of PID - type can be used to size arrays of PID type
+   PID-Range ::= INTEGER(0..3)
 
-MyTestInteger FROM MULTI-OUTPUT-OBSERVER-DATAVIEW
-
- ;
-
-
-
-
-
-
-
-Environ-test-p1 ::= MyTestInteger
-
-
-
+   -- List of functions (instances) present in the system
+   PID ::= ENUMERATED {
+       actuator,
+       controller,
+       environ,
+       
+       env
+   }
 
 END
 

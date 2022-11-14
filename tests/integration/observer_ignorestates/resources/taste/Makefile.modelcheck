@@ -26,3 +26,11 @@ create-subtype: work/modelchecking/subtypes work/modelchecking
 work/modelchecking/subtypes:
 	mkdir -p work/modelchecking/subtypes
 
+# Native model cheker target (experimental - for systems made of SDL functions only)
+native_modelchecker:
+	if [ -f work/glue_debug ] || [ -f work/glue_release ] || [ -f work/glue_coverage ]; then $(MAKE) clean; fi
+	$(MAKE) interfaceview work/glue_simu
+	$(MAKE) -C work
+	$(MAKE) -C work/simulation -f Makefile.Simulation modelcheck
+	cd work/simulation && ./modelcheck
+

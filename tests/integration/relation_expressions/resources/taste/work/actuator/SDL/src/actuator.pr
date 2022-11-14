@@ -1,50 +1,50 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF TEXT (1512, 90), (290, 184) */
+    /* CIF TEXT (1512, 90), (267, 140) */
     -- Text area for declarations and comments
     
     dcl boolean_result MyBooleanResult;
     
     dcl relation RelationTestParam;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (328, 16), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (328, 66), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1401, 300), (70, 35) */
     state Wait;
-        /* CIF input (1347, 355), (163, 35) */
+        /* CIF input (1373, 355), (110, 35) */
         input check(relation);
-            /* CIF decision (1379, 410), (100, 50) */
+            /* CIF decision (1378, 410), (100, 50) */
             decision relation.oper;
-                /* CIF ANSWER (417, 480), (77, 24) */
+                /* CIF ANSWER (420, 480), (70, 23) */
                 (o_equal):
-                    /* CIF task (309, 524), (293, 35) */
+                    /* CIF task (310, 523), (289, 35) */
                     task boolean_result := relation.left = relation.right;
-                /* CIF ANSWER (723, 480), (77, 24) */
+                /* CIF ANSWER (722, 480), (77, 23) */
                 (o_nequal):
-                    /* CIF task (614, 524), (297, 35) */
+                    /* CIF task (614, 523), (294, 35) */
                     task boolean_result := relation.left /= relation.right;
-                /* CIF ANSWER (1651, 480), (70, 24) */
+                /* CIF ANSWER (1651, 480), (70, 23) */
                 (o_less):
-                    /* CIF task (1539, 524), (294, 35) */
+                    /* CIF task (1541, 523), (289, 35) */
                     task boolean_result := relation.left < relation.right;
-                /* CIF ANSWER (1023, 480), (92, 24) */
+                /* CIF ANSWER (1022, 480), (92, 23) */
                 (o_lessequal):
-                    /* CIF task (921, 524), (297, 35) */
+                    /* CIF task (920, 523), (297, 35) */
                     task boolean_result := relation.left <= relation.right;
-                /* CIF ANSWER (1337, 480), (80, 24) */
+                /* CIF ANSWER (1336, 480), (80, 23) */
                 (o_greater):
-                    /* CIF task (1229, 524), (297, 35) */
+                    /* CIF task (1232, 523), (289, 35) */
                     task boolean_result := relation.left > relation.right;
-                /* CIF ANSWER (1935, 480), (113, 24) */
+                /* CIF ANSWER (1934, 480), (113, 23) */
                 (o_greaterequal):
-                    /* CIF task (1843, 524), (297, 35) */
+                    /* CIF task (1842, 523), (297, 35) */
                     task boolean_result := relation.left >= relation.right;
             enddecision;
-            /* CIF output (1325, 575), (208, 35) */
+            /* CIF output (1351, 574), (154, 35) */
             output result(boolean_result);
-            /* CIF NEXTSTATE (1394, 625), (70, 35) */
+            /* CIF NEXTSTATE (1393, 624), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

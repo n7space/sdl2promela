@@ -1,6 +1,6 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF TEXT (10, 10), (252, 250) */
+    /* CIF TEXT (10, 10), (252, 140) */
     -- Timers defined in the interface view
     -- Use SET_TIMER (value, timer name)
     -- and RESET_TIMER (timer name) in a
@@ -11,15 +11,6 @@ process Actuator;
     START;
         /* CIF NEXTSTATE (387, 148), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (936, 256), (70, 35) */
-    state Wait;
-        /* CIF input (936, 311), (70, 35) */
-        input trigger;
-            /* CIF output (936, 366), (70, 35) */
-            output pong;
-            /* CIF NEXTSTATE (936, 421), (70, 35) */
-            NEXTSTATE Wait;
-    endstate;
     /* CIF state (591, 260), (70, 35) */
     state Wait;
         /* CIF input (591, 315), (70, 35) */
@@ -27,6 +18,15 @@ process Actuator;
             /* CIF PROCEDURECALL (542, 370), (167, 35) */
             call set_timer(1000, trigger);
             /* CIF NEXTSTATE (591, 425), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (936, 256), (70, 35) */
+    state Wait;
+        /* CIF input (936, 311), (70, 35) */
+        input trigger;
+            /* CIF output (936, 366), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (936, 421), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

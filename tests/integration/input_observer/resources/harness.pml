@@ -18,6 +18,7 @@
 #define T_Int8 int
 #define T_UInt8 int
 #define T_Boolean bool
+#define PID_Range int
 #define PID int
 #define Mmi_Event_msg_in_action_y MyInteger
 #define Mmi_Event_msg_out_trigger_z MyInteger
@@ -60,10 +61,15 @@
 #define Observer_State_Kind_error_state 1
 #define Observer_State_Kind_ignore_state 2
 #define Observer_State_Kind_success_state 3
+#define PID_actuator 0
+#define PID_controller 1
+#define PID_environ 2
+#define PID_env 3
 
 typedef Inputobserver_Context {
     Inputobserver_Context_state state;
     Inputobserver_Context_init_done init_done;
+    PID sender;
     Inputobserver_Context_received_action received_action;
     Inputobserver_Context_received_trigger received_trigger;
 }
@@ -99,6 +105,24 @@ inline T_Boolean_assign_value(dst, src)
     dst = src;
 }
 
+inline PID_Range_assign_value(dst, src)
+{
+    dst = src;
+    PID_Range_range_check(dst);
+}
+inline PID_Range_range_check(PID_Range_vc)
+{
+    assert(((PID_Range_vc >= 0) && (PID_Range_vc <= 3)));
+}
+inline PID_assign_value(dst, src)
+{
+    dst = src;
+    PID_range_check(dst);
+}
+inline PID_range_check(PID_vc)
+{
+    assert(((((PID_vc == PID_actuator) || (PID_vc == PID_controller)) || (PID_vc == PID_environ)) || (PID_vc == PID_env)));
+}
 
 #include "InputObserver.pml"
 

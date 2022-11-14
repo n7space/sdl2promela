@@ -1,5 +1,5 @@
 system observer;
-    /* CIF TEXT (110, 252), (459, 140) */
+    /* CIF TEXT (115, 254), (460, 140) */
     use datamodel comment 'observer.asn';
     
     signal trigger_out renames output actuator_trigger from env to actuator;
@@ -26,17 +26,17 @@ system observer;
             START;
                 /* CIF NEXTSTATE (459, 147), (70, 35) */
                 NEXTSTATE Wait;
-            /* CIF state (253, 0), (70, 35) */
-            state reached;
-            endstate;
             /* CIF state (678, 61), (70, 35) */
             state Wait;
-                /* CIF input (663, 116), (90, 35) */
+                /* CIF input (662, 116), (90, 35) */
                 input trigger_out;
-                    /* CIF output (663, 171), (90, 35) */
+                    /* CIF output (662, 171), (90, 35) */
                     output trigger_out;
-                    /* CIF NEXTSTATE (673, 221), (70, 35) */
+                    /* CIF NEXTSTATE (672, 221), (70, 35) */
                     NEXTSTATE reached;
+            endstate;
+            /* CIF state (252, 0), (70, 35) */
+            state reached;
             endstate;
         endprocess observer;
     endblock;

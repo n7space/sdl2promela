@@ -9,70 +9,70 @@ process Controller;
     dcl error MyInteger;
     dcl expected MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (320, 10), (70, 35) */
+    /* CIF START (329, 17), (70, 35) */
     START;
-        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        /* CIF NEXTSTATE (329, 67), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (852, 358), (70, 35) */
-    state Wait;
-        /* CIF input (825, 413), (121, 35) */
-        input test(test_param);
-            /* CIF decision (841, 468), (90, 50) */
-            decision test_param;
-                /* CIF ANSWER (497, 538), (70, 24) */
-                (0):
-                    /* CIF task (437, 582), (189, 35) */
-                    task work_param := {test_param};
-                /* CIF ANSWER (703, 538), (70, 24) */
-                (1):
-                    /* CIF task (637, 582), (202, 35) */
-                    task work_param := {test_param, 3};
-                /* CIF ANSWER (923, 538), (70, 24) */
-                (2):
-                    /* CIF task (850, 582), (215, 35) */
-                    task work_param := {test_param, 3, 3};
-                /* CIF ANSWER (1158, 538), (70, 24) */
-                (3):
-                    /* CIF task (1077, 582), (232, 35) */
-                    task work_param := {test_param, 3, 3, 3};
+    /* CIF state (1888, 210), (83, 35) */
+    state Operation;
+        /* CIF input (1858, 265), (143, 35) */
+        input result(result_param);
+            /* CIF decision (1845, 320), (169, 50) */
+            decision result_param = expected;
+                /* CIF ANSWER (1852, 390), (70, 23) */
+                (true):
+                /* CIF ANSWER (1942, 390), (70, 23) */
+                (false):
+                    /* CIF task (1938, 433), (76, 35) */
+                    task error := 1;
             enddecision;
-            /* CIF task (805, 633), (161, 35) */
-            task expected := test_param;
-            /* CIF output (819, 683), (133, 35) */
-            output work(work_param);
-            /* CIF NEXTSTATE (844, 738), (83, 35) */
+            /* CIF NEXTSTATE (1895, 484), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1490, 199), (83, 35) */
+    state Operation;
+        /* CIF input (1471, 254), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1490, 309), (83, 35) */
             NEXTSTATE Operation;
     endstate;
     /* CIF state (1261, 196), (70, 35) */
     state Wait;
-        /* CIF input (1223, 251), (143, 35) */
+        /* CIF input (1222, 251), (143, 35) */
         input result(result_param);
-            /* CIF task (1257, 306), (76, 35) */
+            /* CIF task (1256, 306), (76, 35) */
             task error := 1;
-            /* CIF NEXTSTATE (1260, 356), (70, 35) */
+            /* CIF NEXTSTATE (1259, 356), (70, 35) */
             NEXTSTATE Wait;
     endstate;
-    /* CIF state (1491, 199), (83, 35) */
-    state Operation;
-        /* CIF input (1472, 254), (121, 35) */
+    /* CIF state (852, 358), (70, 35) */
+    state Wait;
+        /* CIF input (824, 413), (121, 35) */
         input test(test_param);
-            /* CIF NEXTSTATE (1491, 309), (83, 35) */
-            NEXTSTATE Operation;
-    endstate;
-    /* CIF state (1889, 210), (83, 35) */
-    state Operation;
-        /* CIF input (1859, 265), (143, 35) */
-        input result(result_param);
-            /* CIF decision (1846, 320), (169, 50) */
-            decision result_param = expected;
-                /* CIF ANSWER (1852, 390), (70, 24) */
-                (true):
-                /* CIF ANSWER (1942, 390), (70, 24) */
-                (false):
-                    /* CIF task (1938, 434), (76, 35) */
-                    task error := 1;
+            /* CIF decision (840, 468), (90, 50) */
+            decision test_param;
+                /* CIF ANSWER (497, 538), (70, 23) */
+                (0):
+                    /* CIF task (437, 581), (188, 35) */
+                    task work_param := {test_param};
+                /* CIF ANSWER (703, 538), (70, 23) */
+                (1):
+                    /* CIF task (636, 581), (202, 35) */
+                    task work_param := {test_param, 3};
+                /* CIF ANSWER (923, 538), (70, 23) */
+                (2):
+                    /* CIF task (850, 581), (215, 35) */
+                    task work_param := {test_param, 3, 3};
+                /* CIF ANSWER (1158, 538), (70, 23) */
+                (3):
+                    /* CIF task (1078, 581), (229, 35) */
+                    task work_param := {test_param, 3, 3, 3};
             enddecision;
-            /* CIF NEXTSTATE (1896, 485), (70, 35) */
-            NEXTSTATE Wait;
+            /* CIF task (804, 632), (161, 35) */
+            task expected := test_param;
+            /* CIF output (818, 682), (133, 35) */
+            output work(work_param);
+            /* CIF NEXTSTATE (843, 737), (83, 35) */
+            NEXTSTATE Operation;
     endstate;
 endprocess Controller;

@@ -2,22 +2,6 @@
 process Actuator;
     state aggregation Parallel;
     substructure
-            state Right;
-            substructure
-                    /* CIF START (536, 235), (70, 35) */
-                    START;
-                        /* CIF NEXTSTATE (536, 290), (70, 35) */
-                        NEXTSTATE Wait;
-                    /* CIF state (867, 292), (70, 35) */
-                    state Wait;
-                        /* CIF input (864, 347), (74, 35) */
-                        input dummy;
-                            /* CIF output (866, 402), (70, 35) */
-                            output pong;
-                            /* CIF NEXTSTATE (866, 457), (70, 35) */
-                            NEXTSTATE Wait;
-                    endstate;
-            endsubstructure;
             state Left;
             substructure
                     /* CIF TEXT (899, 284), (267, 140) */
@@ -34,37 +18,53 @@ process Actuator;
                         NEXTSTATE Wait;
                     /* CIF state (506, 220), (70, 35) */
                     state Wait;
-                        /* CIF input (506, 275), (70, 32) */
+                        /* CIF input (506, 275), (70, 35) */
                         input ping;
-                            /* CIF decision (498, 327), (84, 50) */
+                            /* CIF decision (498, 330), (84, 50) */
                             decision data >= 10;
-                                /* CIF ANSWER (461, 397), (70, 23) */
+                                /* CIF ANSWER (461, 400), (70, 23) */
                                 (false):
-                                    /* CIF task (439, 440), (113, 35) */
+                                    /* CIF task (439, 443), (113, 35) */
                                     task data := data + 1;
-                                    /* CIF output (461, 495), (70, 35) */
+                                    /* CIF output (461, 498), (70, 35) */
                                     output pong;
-                                    /* CIF NEXTSTATE (461, 545), (70, 35) */
+                                    /* CIF NEXTSTATE (461, 548), (70, 35) */
                                     NEXTSTATE Wait;
-                                /* CIF ANSWER (563, 397), (70, 23) */
+                                /* CIF ANSWER (563, 400), (70, 23) */
                                 (true):
-                                    /* CIF output (563, 440), (70, 35) */
+                                    /* CIF output (563, 443), (70, 35) */
                                     output pong;
-                                    /* CIF NEXTSTATE (563, 490), (70, 35) */
+                                    /* CIF NEXTSTATE (563, 493), (70, 35) */
                                     NEXTSTATE Wait;
                             enddecision;
                     endstate;
             endsubstructure;
-            /* CIF state (236, 287), (70, 35) */
-            state Left;
-            endstate;
+            state Right;
+            substructure
+                    /* CIF START (536, 235), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (536, 290), (70, 35) */
+                        NEXTSTATE Wait;
+                    /* CIF state (867, 292), (70, 35) */
+                    state Wait;
+                        /* CIF input (866, 347), (70, 35) */
+                        input dummy;
+                            /* CIF output (866, 402), (70, 35) */
+                            output pong;
+                            /* CIF NEXTSTATE (866, 457), (70, 35) */
+                            NEXTSTATE Wait;
+                    endstate;
+            endsubstructure;
             /* CIF state (546, 315), (70, 35) */
             state Right;
             endstate;
+            /* CIF state (236, 287), (70, 35) */
+            state Left;
+            endstate;
     endsubstructure;
-    /* CIF START (532, 274), (70, 35) */
+    /* CIF START (540, 280), (70, 35) */
     START;
-        /* CIF NEXTSTATE (532, 324), (70, 35) */
+        /* CIF NEXTSTATE (540, 330), (70, 35) */
         NEXTSTATE Parallel;
     /* CIF state (901, 341), (70, 35) */
     state Parallel;

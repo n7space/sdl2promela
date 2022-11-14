@@ -1,5 +1,5 @@
 system observer;
-    /* CIF TEXT (144, 214), (460, 140) */
+    /* CIF TEXT (144, 214), (461, 140) */
     use datamodel comment 'observer.asn';
     
     signal ping_in(MyInteger) renames input ping from controller to actuator;
@@ -13,7 +13,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
-            /* CIF TEXT (0, 57), (222, 140) */
+            /* CIF TEXT (7, 69), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
@@ -26,11 +26,14 @@ system observer;
             START;
                 /* CIF NEXTSTATE (93, 314), (70, 35) */
                 NEXTSTATE Idle;
+            /* CIF state (361, 63), (70, 35) */
+            state error;
+            endstate;
             /* CIF state (357, 160), (70, 35) */
             state Idle;
-                /* CIF input (343, 215), (97, 35) */
+                /* CIF input (342, 215), (97, 35) */
                 input ping_in(prm);
-                    /* CIF decision (357, 270), (70, 50) */
+                    /* CIF decision (356, 270), (70, 50) */
                     decision prm = 2;
                         /* CIF ANSWER (312, 340), (70, 23) */
                         (true):
@@ -42,7 +45,7 @@ system observer;
                                     task indicator := 2;
                                 /* CIF ANSWER (246, 453), (70, 23) */
                                 (left):
-                                    /* CIF task (232, 496), (99, 35) */
+                                    /* CIF task (231, 496), (99, 35) */
                                     task indicator := 1;
                             enddecision;
                             /* CIF NEXTSTATE (312, 547), (70, 35) */
@@ -52,9 +55,6 @@ system observer;
                             /* CIF NEXTSTATE (452, 383), (70, 35) */
                             NEXTSTATE Idle;
                     enddecision;
-            endstate;
-            /* CIF state (361, 63), (70, 35) */
-            state error;
             endstate;
         endprocess observer;
     endblock;

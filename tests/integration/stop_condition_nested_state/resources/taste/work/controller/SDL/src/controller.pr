@@ -11,66 +11,13 @@ process Controller;
     
     dcl error MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (355, 31), (70, 35) */
+    /* CIF START (368, 39), (70, 35) */
     START;
-        /* CIF NEXTSTATE (355, 81), (70, 35) */
+        /* CIF NEXTSTATE (368, 89), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (1146, 211), (70, 35) */
-    state Testing;
-        /* CIF input (1146, 266), (70, 35) */
-        input ok;
-            /* CIF decision (1145, 321), (70, 50) */
-            decision ticks > 1;
-                /* CIF ANSWER (1101, 391), (70, 23) */
-                (true):
-                    /* CIF task (1079, 434), (113, 35) */
-                    task ticks := ticks - 1;
-                    /* CIF output (1101, 489), (70, 35) */
-                    output tick;
-                    /* CIF NEXTSTATE (1101, 539), (70, 35) */
-                    NEXTSTATE Testing;
-                /* CIF ANSWER (1206, 391), (70, 23) */
-                (false):
-                    /* CIF output (1206, 434), (70, 35) */
-                    output reset;
-                    /* CIF NEXTSTATE (1203, 489), (74, 35) */
-                    NEXTSTATE Reseting;
-            enddecision;
-    endstate;
-    /* CIF state (789, 212), (70, 35) */
-    state Wait;
-        /* CIF input (761, 267), (121, 35) */
-        input test(test_param);
-            /* CIF task (755, 322), (133, 35) */
-            task ticks := test_param;
-            /* CIF task (741, 377), (161, 35) */
-            task expected := test_param;
-            /* CIF output (787, 427), (70, 35) */
-            output tick;
-            /* CIF NEXTSTATE (787, 477), (70, 35) */
-            NEXTSTATE Testing;
-    endstate;
-    /* CIF state (1407, 209), (70, 35) */
-    state Testing;
-        /* CIF input (1369, 264), (143, 35) */
-        input result(result_param);
-            /* CIF task (1403, 319), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (1406, 374), (70, 35) */
-            NEXTSTATE Wait;
-    endstate;
-    /* CIF state (2134, 216), (74, 35) */
+    /* CIF state (1768, 212), (74, 35) */
     state Reseting;
-        /* CIF input (2138, 271), (70, 35) */
-        input ok;
-            /* CIF task (2134, 326), (76, 35) */
-            task error := 1;
-            /* CIF NEXTSTATE (2138, 381), (70, 35) */
-            NEXTSTATE Wait;
-    endstate;
-    /* CIF state (1769, 212), (74, 35) */
-    state Reseting;
-        /* CIF input (1735, 267), (144, 35) */
+        /* CIF input (1735, 267), (143, 35) */
         input result(result_param);
             /* CIF decision (1722, 322), (169, 50) */
             decision result_param = expected;
@@ -84,6 +31,59 @@ process Controller;
                     task error := 1;
                     /* CIF NEXTSTATE (1818, 490), (70, 35) */
                     NEXTSTATE Wait;
+            enddecision;
+    endstate;
+    /* CIF state (2133, 216), (74, 35) */
+    state Reseting;
+        /* CIF input (2138, 271), (70, 35) */
+        input ok;
+            /* CIF task (2134, 326), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (2138, 381), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (1407, 209), (70, 35) */
+    state Testing;
+        /* CIF input (1368, 264), (143, 35) */
+        input result(result_param);
+            /* CIF task (1402, 319), (76, 35) */
+            task error := 1;
+            /* CIF NEXTSTATE (1405, 374), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (789, 212), (70, 35) */
+    state Wait;
+        /* CIF input (760, 267), (121, 35) */
+        input test(test_param);
+            /* CIF task (754, 322), (133, 35) */
+            task ticks := test_param;
+            /* CIF task (740, 377), (161, 35) */
+            task expected := test_param;
+            /* CIF output (786, 427), (70, 35) */
+            output tick;
+            /* CIF NEXTSTATE (786, 477), (70, 35) */
+            NEXTSTATE Testing;
+    endstate;
+    /* CIF state (1146, 211), (70, 35) */
+    state Testing;
+        /* CIF input (1146, 266), (70, 35) */
+        input ok;
+            /* CIF decision (1145, 321), (70, 50) */
+            decision ticks > 1;
+                /* CIF ANSWER (1101, 391), (70, 23) */
+                (true):
+                    /* CIF task (1080, 434), (110, 35) */
+                    task ticks := ticks - 1;
+                    /* CIF output (1101, 489), (70, 35) */
+                    output tick;
+                    /* CIF NEXTSTATE (1101, 539), (70, 35) */
+                    NEXTSTATE Testing;
+                /* CIF ANSWER (1206, 391), (70, 23) */
+                (false):
+                    /* CIF output (1206, 434), (70, 35) */
+                    output reset;
+                    /* CIF NEXTSTATE (1203, 489), (74, 35) */
+                    NEXTSTATE Reseting;
             enddecision;
     endstate;
 endprocess Controller;

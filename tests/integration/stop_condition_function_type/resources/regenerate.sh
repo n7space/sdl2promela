@@ -10,11 +10,11 @@ fi
 
 echo "Building project"
 pushd taste
-# if ! make observer_dataview
-# then
-# 	echo "CRITICAL: Cannot build project"
-# 	exit 1
-# fi
+if ! make observer_dataview
+then
+	echo "CRITICAL: Cannot build project"
+	exit 1
+fi
 
 popd
 
