@@ -47,14 +47,14 @@ END
 Simulation-DataView DEFINITIONS ::=
 BEGIN
    IMPORTS
-      
+
       --  ASN.1 modules used by thread mmi_action
       MyInteger FROM INPUTMONITORING-DATAVIEW
-      
-      
+
+
       --  ASN.1 modules used by thread model_trigger
       MyInteger FROM INPUTMONITORING-DATAVIEW
-      
+
       -- Import generic integer type (used for timers)
       T-UInt32 FROM TASTE-BasicTypes
       --  Import the SDL function states needed for the global system state
@@ -76,9 +76,9 @@ BEGIN
    Periodic-Events {Event-Ty, INTEGER:max} ::=
       SEQUENCE (SIZE (0 .. max)) OF Periodic-Event {Event-Ty}
 
-   
-   
-   
+
+
+
    Mmi-Event ::= CHOICE {
       msg-in CHOICE {
          action SEQUENCE { y MyInteger}
@@ -87,7 +87,7 @@ BEGIN
          trigger SEQUENCE { z MyInteger }
       }
    }
-   
+
    Model-Event ::= CHOICE {
       msg-in CHOICE {
          input-none SEQUENCE {},
@@ -97,7 +97,7 @@ BEGIN
          action SEQUENCE { y MyInteger }
       }
    }
-   
+
 
    --  Current observer state flag (used by model checkers)
    Observer-State-Kind ::= ENUMERATED {
@@ -153,3 +153,21 @@ BEGIN
 
 END
 
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+   -- Range of PID - type can be used to size arrays of PID type
+   PID-Range ::= INTEGER(0..3)
+
+   -- List of functions (instances) present in the system
+   PID ::= ENUMERATED {
+       actuator,
+       controller,
+       environ,
+
+       env
+   }
+
+END
