@@ -14,12 +14,19 @@ system Controller;
    
    
    /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal result_nested (MyNested);
+   
+   
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
    signal result_values (MyValues);
 
    signal give_me_array;
    
    
    signal give_me_data;
+   
+   
+   signal give_me_nested;
    
    
    signal give_me_values;
@@ -30,15 +37,15 @@ system Controller;
    external;
 
    channel c
-      from env to Controller with result_array, result_data, result_values;
-      from Controller to env with give_me_array, give_me_data, give_me_values;
+      from env to Controller with result_array, result_data, result_nested, result_values;
+      from Controller to env with give_me_array, give_me_data, give_me_nested, give_me_values;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with result_array, result_data, result_values;
-      from Controller to env with give_me_array, give_me_data, give_me_values;
+      from env to Controller with result_array, result_data, result_nested, result_values;
+      from Controller to env with give_me_array, give_me_data, give_me_nested, give_me_values;
       connect c and r;
 
       process Controller referenced;

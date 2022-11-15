@@ -6,6 +6,7 @@ process Controller;
     dcl param_data MyData;
     dcl param_values MyValues;
     dcl param_array MyArray;
+    dcl param_nested MyNested;
     /* CIF ENDTEXT */
     /* CIF START (468, 162), (70, 35) */
     START;
@@ -13,51 +14,45 @@ process Controller;
         output give_me_data;
         /* CIF NEXTSTATE (454, 267), (97, 35) */
         NEXTSTATE WaitForData;
-    /* CIF state (471, 356), (70, 35) */
-    state Error;
+    /* CIF state (1970, 187), (111, 35) */
+    state WaitForNested;
+        /* CIF input (1927, 242), (196, 35) */
+        input result_nested(param_nested);
+            /* CIF decision (1752, 297), (548, 50) */
+            decision param_nested.black = 7 and param_nested.red.first = 8 and param_nested.red.second = 9;
+                /* CIF ANSWER (1946, 367), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1944, 410), (72, 35) */
+                    NEXTSTATE Finished;
+                /* CIF ANSWER (2036, 367), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (2036, 410), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
     endstate;
-    /* CIF state (467, 423), (72, 35) */
-    state Finished;
-    endstate;
-    /* CIF state (1563, 184), (102, 35) */
+    /* CIF state (1562, 184), (102, 35) */
     state WaitForArray;
-        /* CIF input (1527, 239), (175, 35) */
+        /* CIF input (1526, 239), (175, 35) */
         input result_array(param_array);
-            /* CIF decision (1479, 294), (271, 50) */
+            /* CIF decision (1478, 294), (271, 50) */
             decision param_array(0) = 5 and param_array(1) = 6;
+                /* CIF ANSWER (1641, 364), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1641, 407), (70, 35) */
+                    NEXTSTATE Error;
                 /* CIF ANSWER (1536, 364), (70, 23) */
                 (true):
-                    /* CIF NEXTSTATE (1534, 407), (72, 35) */
-                    NEXTSTATE Finished;
-                /* CIF ANSWER (1626, 364), (70, 23) */
-                (false):
-                    /* CIF NEXTSTATE (1626, 407), (70, 35) */
-                    NEXTSTATE Error;
+                    /* CIF output (1511, 407), (119, 35) */
+                    output give_me_nested;
+                    /* CIF NEXTSTATE (1515, 462), (111, 35) */
+                    NEXTSTATE WaitForNested;
             enddecision;
     endstate;
-    /* CIF state (782, 149), (97, 35) */
-    state WaitForData;
-        /* CIF input (746, 204), (168, 35) */
-        input result_data(param_data);
-            /* CIF decision (678, 259), (305, 50) */
-            decision param_data.first = 2 and param_data.second = 3;
-                /* CIF ANSWER (855, 329), (70, 23) */
-                (false):
-                    /* CIF NEXTSTATE (855, 372), (70, 35) */
-                    NEXTSTATE Error;
-                /* CIF ANSWER (752, 329), (70, 23) */
-                (true):
-                    /* CIF output (729, 372), (115, 35) */
-                    output give_me_values;
-                    /* CIF NEXTSTATE (732, 427), (108, 35) */
-                    NEXTSTATE WaitForValues;
-            enddecision;
-    endstate;
-    /* CIF state (1163, 180), (108, 35) */
+    /* CIF state (1162, 180), (108, 35) */
     state WaitForValues;
-        /* CIF input (1122, 235), (190, 35) */
+        /* CIF input (1121, 235), (190, 35) */
         input result_values(param_values);
-            /* CIF decision (1137, 290), (160, 50) */
+            /* CIF decision (1136, 290), (160, 50) */
             decision present(param_values);
                 /* CIF ANSWER (1275, 360), (70, 23) */
                 (left):
@@ -79,5 +74,29 @@ process Controller;
                             NEXTSTATE Error;
                     enddecision;
             enddecision;
+    endstate;
+    /* CIF state (781, 149), (97, 35) */
+    state WaitForData;
+        /* CIF input (745, 204), (168, 35) */
+        input result_data(param_data);
+            /* CIF decision (677, 259), (305, 50) */
+            decision param_data.first = 2 and param_data.second = 3;
+                /* CIF ANSWER (855, 329), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (855, 372), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (752, 329), (70, 23) */
+                (true):
+                    /* CIF output (729, 372), (115, 35) */
+                    output give_me_values;
+                    /* CIF NEXTSTATE (732, 427), (108, 35) */
+                    NEXTSTATE WaitForValues;
+            enddecision;
+    endstate;
+    /* CIF state (466, 423), (72, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (471, 356), (70, 35) */
+    state Error;
     endstate;
 endprocess Controller;

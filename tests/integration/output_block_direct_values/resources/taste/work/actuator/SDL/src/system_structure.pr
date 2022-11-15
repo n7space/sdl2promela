@@ -11,6 +11,9 @@ system Actuator;
    signal give_me_data;
    
    
+   signal give_me_nested;
+   
+   
    signal give_me_values;
 
    /* CIF Keep Specific Geode PARAMNAMES p1 */
@@ -22,6 +25,10 @@ system Actuator;
    
    
    /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal result_nested (MyNested);
+   
+   
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
    signal result_values (MyValues);
 
    -- For internal use, return the PID of the caller
@@ -30,15 +37,15 @@ system Actuator;
    external;
 
    channel c
-      from env to Actuator with give_me_array, give_me_data, give_me_values;
-      from Actuator to env with result_array, result_data, result_values;
+      from env to Actuator with give_me_array, give_me_data, give_me_nested, give_me_values;
+      from Actuator to env with result_array, result_data, result_nested, result_values;
    endchannel;
 
    block Actuator;
 
       signalroute r
-      from env to Actuator with give_me_array, give_me_data, give_me_values;
-      from Actuator to env with result_array, result_data, result_values;
+      from env to Actuator with give_me_array, give_me_data, give_me_nested, give_me_values;
+      from Actuator to env with result_array, result_data, result_nested, result_values;
       connect c and r;
 
       process Actuator referenced;

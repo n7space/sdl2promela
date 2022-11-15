@@ -15,6 +15,11 @@ BEGIN
 
    MyArray ::= SEQUENCE (SIZE(2)) OF MyInteger
 
+
+   MyNested ::= SEQUENCE {
+       black MyInteger,
+       red MyData
+   }
 END
 
 
