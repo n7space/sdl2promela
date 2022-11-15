@@ -1,0 +1,34 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF START (343, 44), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (343, 94), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1072, 174), (70, 35) */
+    state Wait;
+        /* CIF input (1052, 229), (109, 35) */
+        input give_me_array;
+            /* CIF output (1041, 284), (131, 35) */
+            output result_array({5, 6});
+            /* CIF NEXTSTATE (1072, 334), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (827, 163), (70, 35) */
+    state Wait;
+        /* CIF input (804, 218), (115, 35) */
+        input give_me_values;
+            /* CIF output (784, 273), (154, 35) */
+            output result_values(right : 4);
+            /* CIF NEXTSTATE (827, 328), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+    /* CIF state (587, 149), (70, 35) */
+    state Wait;
+        /* CIF input (569, 204), (105, 35) */
+        input give_me_data;
+            /* CIF output (521, 259), (200, 35) */
+            output result_data({first 2, second 3});
+            /* CIF NEXTSTATE (587, 309), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
