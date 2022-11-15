@@ -1,0 +1,24 @@
+OUTPUT-BLOCK-DIRECT-VALUES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyData ::= SEQUENCE {
+       first MyInteger,
+       second MyInteger
+   }
+
+   MyValues ::= CHOICE {
+       left MyInteger,
+       right MyInteger
+   }
+
+   MyArray ::= SEQUENCE (SIZE(2)) OF MyInteger
+
+
+   MyNested ::= SEQUENCE {
+       black MyInteger,
+       red MyData
+   }
+END
+

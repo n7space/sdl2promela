@@ -74,6 +74,7 @@ SEQUENCEOF_TYPE_NAME = "SequenceOfType"
 IA5_STRING_TYPE_NAME = "IA5StringType"
 OCTET_STRING_TYPE_NAME = "OctetStringType"
 BIT_STRING_TYPE_NAME = "BitStringType"
+CHOICE_TYPE_NAME = "ChoiceType"
 
 
 class Context:
@@ -103,6 +104,8 @@ class Context:
 
     state_aggregation: bool
 
+    _temporary_variable_counter: int
+
     def __init__(self, sdl_model: sdlmodel.Model):
         self.sdl_model = sdl_model
         self.is_observer = False
@@ -111,6 +114,7 @@ class Context:
         self.loop_level = 0
         self.missing_type = None
         self.state_aggregation = False
+        self._temporary_variable_counter = 0
 
     def push_parent(self, parent: Any):
         """
@@ -156,6 +160,32 @@ class Context:
         Decrement loop_level counter.
         """
         self.loop_level = self.loop_level - 1
+
+    def generate_temporary_variable(self) -> str:
+        result = f"_tmp_{self._temporary_variable_counter}"
+        self._temporary_variable_counter = self._temporary_variable_counter + 1
+        return result
+
+
+def check_type_is_complex(context: Context, t: Asn1Type) -> bool:
+    while True:
+        if t.kind == "ReferenceType":
+            t = resolve_asn1_type(context.sdl_model.types, t)
+        else:
+            if t.kind == SEQUENCE_TYPE_NAME:
+                return True
+            elif t.kind == SEQUENCEOF_TYPE_NAME:
+                return True
+            elif t.kind == IA5_STRING_TYPE_NAME:
+                return True
+            elif t.kind == OCTET_STRING_TYPE_NAME:
+                return True
+            elif t.kind == BIT_STRING_TYPE_NAME:
+                return True
+            elif t.kind == CHOICE_TYPE_NAME:
+                return True
+            else:
+                return False
 
 
 def __escapeIv(name: str) -> str:
@@ -2177,8 +2207,46 @@ def __generate_statement(
     if len(output.parameters) == 0:
         return CallBuilder().withTarget(name).build()
     else:
-        parameter_name = __generate_expression(context, output.parameters[0])
-        return CallBuilder().withTarget(name).withParameter(parameter_name).build()
+        if check_type_is_complex(context, output.parameters[0].type) and not isinstance(
+            output.parameters[0], sdlmodel.VariableReference
+        ):
+            output_name = output.name.lower()
+            if output_name not in context.sdl_model.outputs:
+                raise Exception(
+                    f"Cannot find signal with name {output_name}, while translating output block"
+                )
+            output_parameter_type = context.sdl_model.outputs[output_name]
+            if output_parameter_type is None:
+                raise Exception(
+                    f"The output signal with name {output_name}, has not parameters, but some were given"
+                )
+            statements: List[promelamodel.Statement] = []
+            tmp_variable_name = context.generate_temporary_variable()
+            statements.append(
+                VariableDeclarationBuilder(
+                    tmp_variable_name, __type_name(output_parameter_type)
+                ).build()
+            )
+            tmp_variable_ref = sdlmodel.VariableReference(tmp_variable_name)
+            tmp_variable_ref.type = output_parameter_type
+            statements.extend(
+                __generate_assignment(
+                    context,
+                    tmp_variable_ref,
+                    output.parameters[0],
+                    output_parameter_type,
+                )
+            )
+            statements.append(
+                CallBuilder()
+                .withTarget(name)
+                .withParameter(__generate_expression(context, tmp_variable_ref))
+                .build()
+            )
+            return promelamodel.StatementsWrapper(statements)
+        else:
+            parameter_name = __generate_expression(context, output.parameters[0])
+            return CallBuilder().withTarget(name).withParameter(parameter_name).build()
 
 
 def __should_generate_transition_stop(transition: sdlmodel.Transition) -> bool:

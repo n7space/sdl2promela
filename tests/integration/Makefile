@@ -70,7 +70,8 @@ TESTS= \
 	case_insensitive \
 	same_parameter_in_two_procedures \
 	procedure_inout_parameter \
-	state_recent
+	state_recent \
+	output_block_direct_values
 
 .PHONY: $(TESTS) check
 
