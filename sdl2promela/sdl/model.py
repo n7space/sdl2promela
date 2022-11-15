@@ -1438,6 +1438,8 @@ class Model:
     """List of Ingore states for observers."""
     inputs: Dict[str, Input]
     """Map associating input signal names with the signals themselves."""
+    outputs: Dict[str, Optional[Asn1Type]]
+    """Map associating output signal names with the parameter types."""
     transitions: Dict[int, Transition]
     """Map associating transition IDs with the transitions themselves."""
     continuous_signals: Dict[str, List[ContinuousSignal]]
@@ -1498,6 +1500,7 @@ class Model:
         self.successstates = self.source.successstates
         self.ignorestates = self.source.ignorestates
         self.inputs = {}
+        self.outputs = {}
         self.continuous_signals = {}
         self.transitions = {}
         self.observer_attachments = []
@@ -1522,6 +1525,7 @@ class Model:
         self.__gather_named_transition_ids()
         self.__gather_aggregates()
         self.__gather_monitors()
+        self.__gather_outputs()
 
     def __gather_states(self):
         # Source state names from mapping, as they should be already flattened
@@ -1681,6 +1685,13 @@ class Model:
         for i in range(0, len(self.source.transitions)):
             self.transitions[i] = self.__convert_transition(self.source.transitions[i])
             self.transitions[i].id = i
+
+    def __gather_outputs(self):
+        for ou in self.source.output_signals:
+            if "type" in ou:
+                self.outputs[ou["name"].lower()] = ou["type"]
+            else:
+                self.outputs[ou["name"].lower()] = None
 
     def __gather_floating_labels(self):
         for src_label in self.source.content.floating_labels:
