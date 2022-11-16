@@ -1,0 +1,99 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (490, 49), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl parameters MyCommand;
+    dcl z MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (421, 369), (70, 35) */
+    START;
+        /* CIF task (367, 424), (177, 35) */
+        task parameters := {lhs 0, rhs 0};
+        /* CIF output (380, 479), (151, 35) */
+        output calculate(parameters);
+        /* CIF NEXTSTATE (398, 529), (115, 35) */
+        NEXTSTATE WaitForResultA;
+    /* CIF state (1039, 370), (115, 35) */
+    state WaitForResultB;
+        /* CIF input (1061, 425), (71, 35) */
+        input result(z);
+            /* CIF decision (1058, 480), (78, 50) */
+            decision z = 'ffff'H;
+                /* CIF ANSWER (1180, 550), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1180, 593), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (1017, 550), (70, 23) */
+                (true):
+                    /* CIF task (934, 593), (234, 35) */
+                    task parameters := {lhs 'ffff'H, rhs 'ffff'H};
+                    /* CIF output (976, 648), (151, 35) */
+                    output calculate(parameters);
+                    /* CIF NEXTSTATE (994, 703), (114, 35) */
+                    NEXTSTATE WaitForResultC;
+            enddecision;
+    endstate;
+    /* CIF state (1400, 373), (114, 35) */
+    state WaitForResultC;
+        /* CIF input (1422, 428), (71, 35) */
+        input result(z);
+            /* CIF decision (1423, 483), (70, 50) */
+            decision z = 0;
+                /* CIF ANSWER (1545, 553), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1545, 596), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (1378, 553), (70, 23) */
+                (true):
+                    /* CIF task (1291, 596), (243, 35) */
+                    task parameters := {lhs 'ffff'H, rhs '5555'H};
+                    /* CIF output (1337, 651), (151, 35) */
+                    output calculate(parameters);
+                    /* CIF NEXTSTATE (1354, 706), (116, 35) */
+                    NEXTSTATE WaitForResultD;
+            enddecision;
+    endstate;
+    /* CIF state (657, 370), (115, 35) */
+    state WaitForResultA;
+        /* CIF input (679, 425), (71, 35) */
+        input result(z);
+            /* CIF decision (680, 480), (70, 50) */
+            decision z = 0;
+                /* CIF ANSWER (784, 550), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (784, 593), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (635, 550), (70, 23) */
+                (true):
+                    /* CIF task (566, 593), (206, 35) */
+                    task parameters := {lhs 'ffff'H, rhs 0};
+                    /* CIF output (594, 648), (151, 35) */
+                    output calculate(parameters);
+                    /* CIF NEXTSTATE (612, 703), (115, 35) */
+                    NEXTSTATE WaitForResultB;
+            enddecision;
+    endstate;
+    /* CIF state (1776, 372), (116, 35) */
+    state WaitForResultD;
+        /* CIF input (1799, 427), (71, 35) */
+        input result(z);
+            /* CIF decision (1792, 482), (84, 50) */
+            decision z = 'aaaa'H;
+                /* CIF ANSWER (1755, 552), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1753, 595), (72, 35) */
+                    NEXTSTATE Finished;
+                /* CIF ANSWER (1845, 552), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1845, 595), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (924, 164), (72, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (946, 60), (70, 35) */
+    state Error;
+    endstate;
+endprocess Controller;

@@ -131,6 +131,13 @@ class OctetStringValue(Expression):
     def __str__(self):
         return f"OctetStringValue(elements={self.elements})"
 
+    def integer_value(self) -> int:
+        """Return integer value of OCTET STRING."""
+        result: int = 0
+        for e in self.elements:
+            result = (result << 8) + e
+        return result
+
 
 class BitStringValue(Expression):
     """Bit String literal from OpenGEODE."""
