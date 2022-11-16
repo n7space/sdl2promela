@@ -1748,11 +1748,13 @@ def __generate_assignment(
     elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
     elif finalType.kind == "IntegerType":
-        return [__build_assignment(
-            __generate_variable_name(context, left, True),
-            promelamodel.IntegerValue(right.integer_value()),
-            left_type,
-        )]
+        return [
+            __build_assignment(
+                __generate_variable_name(context, left, True),
+                promelamodel.IntegerValue(right.integer_value()),
+                left_type,
+            )
+        ]
     else:
         raise Exception(f"Unsupported assignment: {finalType.kind} Octet String Value")
 
