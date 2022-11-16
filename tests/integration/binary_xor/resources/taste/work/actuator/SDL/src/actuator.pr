@@ -1,0 +1,24 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (469, 385), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl command MyCommand;
+    dcl z MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1008, 263), (70, 35) */
+    state Wait;
+        /* CIF input (972, 318), (141, 35) */
+        input calculate(command);
+            /* CIF task (929, 373), (227, 35) */
+            task z := command.lhs xor command.rhs;
+            /* CIF output (1007, 428), (71, 35) */
+            output result(z);
+            /* CIF NEXTSTATE (1008, 483), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

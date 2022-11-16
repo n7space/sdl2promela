@@ -43,6 +43,8 @@ class BinaryOperator(Enum):
     """Boolean and operator."""
     OR = 13
     """Boolean or operator."""
+    XOR = 14
+    """Binary XOR ^."""
 
 
 class BinaryExpression(Expression):

@@ -1,0 +1,11 @@
+BINARY-XOR-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 65535)
+
+   MyCommand ::= SEQUENCE {
+       lhs MyInteger,
+       rhs MyInteger
+   }
+
+END

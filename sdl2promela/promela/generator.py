@@ -127,6 +127,8 @@ def generate(context: Context, expression: model.BinaryExpression):
         context.output(" && ")
     elif expression.operator == model.BinaryOperator.OR:
         context.output(" || ")
+    elif expression.operator == model.BinaryOperator.XOR:
+        context.output(" ^ ")
     generate(context, expression.right)
     context.output(")")
 

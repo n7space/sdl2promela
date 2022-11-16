@@ -71,7 +71,8 @@ TESTS= \
 	same_parameter_in_two_procedures \
 	procedure_inout_parameter \
 	state_recent \
-	output_block_direct_values
+	output_block_direct_values \
+	binary_xor
 
 .PHONY: $(TESTS) check
 

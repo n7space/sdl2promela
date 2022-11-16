@@ -59,6 +59,7 @@ __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.REM: promelamodel.BinaryOperator.MODULO,
     sdlmodel.BinaryOperator.OR: promelamodel.BinaryOperator.OR,
     sdlmodel.BinaryOperator.AND: promelamodel.BinaryOperator.AND,
+    sdlmodel.BinaryOperator.XOR: promelamodel.BinaryOperator.XOR,
 }
 
 CHOICE_DATA_MEMBER_NAME = "data"
@@ -167,25 +168,40 @@ class Context:
         return result
 
 
-def check_type_is_complex(context: Context, t: Asn1Type) -> bool:
+def _get_type_kind(context: Context, t: Asn1Type) -> str:
     while True:
         if t.kind == "ReferenceType":
             t = resolve_asn1_type(context.sdl_model.types, t)
         else:
-            if t.kind == SEQUENCE_TYPE_NAME:
-                return True
-            elif t.kind == SEQUENCEOF_TYPE_NAME:
-                return True
-            elif t.kind == IA5_STRING_TYPE_NAME:
-                return True
-            elif t.kind == OCTET_STRING_TYPE_NAME:
-                return True
-            elif t.kind == BIT_STRING_TYPE_NAME:
-                return True
-            elif t.kind == CHOICE_TYPE_NAME:
-                return True
-            else:
-                return False
+            return t.kind
+
+
+def _check_type_is_complex(context: Context, t: Asn1Type) -> bool:
+    kind = _get_type_kind(context, t)
+    if kind == SEQUENCE_TYPE_NAME:
+        return True
+    elif kind == SEQUENCEOF_TYPE_NAME:
+        return True
+    elif kind == IA5_STRING_TYPE_NAME:
+        return True
+    elif kind == OCTET_STRING_TYPE_NAME:
+        return True
+    elif kind == BIT_STRING_TYPE_NAME:
+        return True
+    elif kind == CHOICE_TYPE_NAME:
+        return True
+    else:
+        return False
+
+
+def _check_type_is_boolean(context: Context, t: Asn1Type) -> bool:
+    kind = _get_type_kind(context, t)
+    return kind == "BooleanType"
+
+
+def _check_type_is_integer(context: Context, t: Asn1Type) -> bool:
+    kind = _get_type_kind(context, t)
+    return kind == "IntegerType"
 
 
 def __escapeIv(name: str) -> str:
@@ -680,6 +696,16 @@ def __generate_expression(context: Context, constant: sdlmodel.RealConstant):
     return promelamodel.FloatValue(float(constant.value))
 
 
+@dispatch(Context, sdlmodel.OctetStringValue)
+def __generate_expression(context: Context, constant: sdlmodel.OctetStringValue):
+    if _check_type_is_integer(context, constant.type):
+        return promelamodel.IntegerValue(constant.integer_value())
+    else:
+        raise NotImplementedError(
+            "OCTET STRING literal is supported in expressions only as INTEGER"
+        )
+
+
 @dispatch(Context, sdlmodel.BooleanConstant)
 def __generate_expression(context: Context, constant: sdlmodel.BooleanConstant):
     return promelamodel.BooleanValue(constant.value)
@@ -725,30 +751,43 @@ def __generate_expression(context: Context, expression: sdlmodel.BinaryExpressio
     if expression.operator == sdlmodel.BinaryOperator.ASSIGN:
         pass
     elif expression.operator == sdlmodel.BinaryOperator.XOR:
-        return (
-            BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
-            .withLeft(
-                BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+        if _check_type_is_boolean(context, expression.type):
+            return (
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
                 .withLeft(
-                    UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
-                    .withExpression(__generate_expression(context, expression.left))
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+                    .withLeft(
+                        UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
+                        .withExpression(__generate_expression(context, expression.left))
+                        .build()
+                    )
+                    .withRight(__generate_expression(context, expression.right))
                     .build()
                 )
+                .withRight(
+                    BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
+                    .withLeft(__generate_expression(context, expression.left))
+                    .withRight(
+                        UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
+                        .withExpression(
+                            __generate_expression(context, expression.right)
+                        )
+                        .build()
+                    )
+                    .build()
+                )
+                .build()
+            )
+        else:
+            return (
+                BinaryExpressionBuilder(
+                    __get_promela_binary_operator(expression.operator)
+                )
+                .withLeft(__generate_expression(context, expression.left))
                 .withRight(__generate_expression(context, expression.right))
                 .build()
             )
-            .withRight(
-                BinaryExpressionBuilder(promelamodel.BinaryOperator.AND)
-                .withLeft(__generate_expression(context, expression.left))
-                .withRight(
-                    UnaryExpressionBuilder(promelamodel.UnaryOperator.NOT)
-                    .withExpression(__generate_expression(context, expression.right))
-                    .build()
-                )
-                .build()
-            )
-            .build()
-        )
+
     elif expression.operator == sdlmodel.BinaryOperator.IMPLIES:
         return (
             BinaryExpressionBuilder(promelamodel.BinaryOperator.OR)
@@ -1708,6 +1747,12 @@ def __generate_assignment(
         return statements
     elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
+    elif finalType.kind == "IntegerType":
+        return [__build_assignment(
+            __generate_variable_name(context, left, True),
+            promelamodel.IntegerValue(right.integer_value()),
+            left_type,
+        )]
     else:
         raise Exception(f"Unsupported assignment: {finalType.kind} Octet String Value")
 
@@ -2207,9 +2252,9 @@ def __generate_statement(
     if len(output.parameters) == 0:
         return CallBuilder().withTarget(name).build()
     else:
-        if check_type_is_complex(context, output.parameters[0].type) and not isinstance(
-            output.parameters[0], sdlmodel.VariableReference
-        ):
+        if _check_type_is_complex(
+            context, output.parameters[0].type
+        ) and not isinstance(output.parameters[0], sdlmodel.VariableReference):
             output_name = output.name.lower()
             if output_name not in context.sdl_model.outputs:
                 raise Exception(
