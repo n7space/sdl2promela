@@ -759,7 +759,10 @@ class ObservedSignalKind(Enum):
     """Output Observer, inspecting and mutating output from a function."""
 
     CONTINUOUS_SIGNAL = 3
-    """Continuous cignal observer, reaction to change in system state."""
+    """Continuous signal observer, reaction to change in system state."""
+
+    UNHANDLED_INPUT = 4
+    """Unhandled input, inspecting signal loss."""
 
 
 class ObserverAttachmentInfo:
@@ -780,12 +783,19 @@ class ObserverAttachmentInfo:
     recipientName: str
     """Name of the Recipient."""
 
+    unhandled_input: bool
+    """Detection of unhandled input, in such case the originalSignalName may be empty."""
+
     def __init__(self):
         self.observerSignalName = ""
         self.originalSignalName = ""
         self.kind = None
         self.senderName = None
         self.recipientName = None
+        self.unhandled_input = False
+
+    def __str__(self):
+        return f"ObserverAttachmentInfo(observerSignalName={self.observerSignalName}, originalSignalName={self.originalSignalName}, kind={self.kind}, senderName={self.senderName}, recipientName={self.recipientName})"
 
 
 class VariableInfo:
@@ -1600,6 +1610,9 @@ class Model:
         elif astItem.type == lexer.FROM:
             # FROM is assumed to be a simple function name
             info.senderName = astItem.children[0].text
+            return
+        elif astItem.type == lexer.UNHANDLED:
+            info.kind = ObservedSignalKind.UNHANDLED_INPUT
             return
         if astItem.children is None:
             return
