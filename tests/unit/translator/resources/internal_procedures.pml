@@ -14,11 +14,13 @@ inline Host_0_multireturn(multireturn_param_returns, multireturn_param_a)
     goto Host_0_multireturn_0_end;
   fi;
   Host_0_multireturn_0_end:
+  skip;
 }
 inline Host_0_proc()
 {
   MyInteger_assign_value(global_state.host.y, (global_state.host.a + global_state.host.b));
   Host_0_proc_0_end:
+  skip;
 }
 inline Host_0_procWithArguments(procwitharguments_param_returns, procwitharguments_param_p1, procwitharguments_param_p2, procwitharguments_r)
 {
@@ -30,6 +32,7 @@ inline Host_0_procWithArguments(procwitharguments_param_returns, procwithargumen
   MyInteger_assign_value(procwitharguments_param_returns, procwitharguments_r);
   goto Host_0_procWithArguments_0_end;
   Host_0_procWithArguments_0_end:
+  skip;
 }
 inline Host_0_procWithLocalVariables()
 {
@@ -39,11 +42,13 @@ inline Host_0_procWithLocalVariables()
   MyInteger_assign_value(procwithlocalvariables_l2, global_state.host.b);
   MyInteger_assign_value(global_state.host.y, (procwithlocalvariables_l1 + procwithlocalvariables_l2));
   Host_0_procWithLocalVariables_0_end:
+  skip;
 }
 inline Host_0_procWithOutput()
 {
   Host_0_RI_0_action(global_state.host.y);
   Host_0_procWithOutput_0_end:
+  skip;
 }
 inline Host_0_transition(id)
 {
