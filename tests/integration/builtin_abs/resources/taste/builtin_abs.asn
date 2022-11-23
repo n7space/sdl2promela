@@ -1,0 +1,7 @@
+BUILTIN-ABS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (-100 .. 100)
+
+END
+

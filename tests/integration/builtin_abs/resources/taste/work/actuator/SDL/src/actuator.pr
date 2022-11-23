@@ -1,0 +1,26 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (471, 352), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    dcl ret MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1129, 241), (70, 35) */
+    state Wait;
+        /* CIF input (1116, 296), (91, 35) */
+        input test(param);
+            /* CIF task (1101, 351), (122, 35) */
+            task ret := abs(param);
+            /* CIF task (1112, 406), (100, 35) */
+            task 'ret := param';
+            /* CIF output (1120, 456), (83, 35) */
+            output result(ret);
+            /* CIF NEXTSTATE (1127, 511), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
