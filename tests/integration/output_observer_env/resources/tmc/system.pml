@@ -3,8 +3,8 @@
 #include "Observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Observer_Context observer;
     Controller_Context controller;
+    Observer_Context observer;
     AggregateTimerData timers;
 }
 

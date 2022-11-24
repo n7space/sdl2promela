@@ -96,10 +96,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

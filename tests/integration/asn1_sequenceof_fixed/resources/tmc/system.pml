@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
@@ -143,10 +143,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

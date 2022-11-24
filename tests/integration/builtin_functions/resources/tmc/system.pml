@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
@@ -49,8 +49,8 @@ chan Controller_result_int_channel = [1] of {MyInteger};
 MyInteger Controller_result_int_signal_parameter;
 bool Controller_result_int_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_test_derived_length(actuator_test_derived_length_p1)
 {
     Actuator_test_derived_length_channel!actuator_test_derived_length_p1;
@@ -452,10 +452,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

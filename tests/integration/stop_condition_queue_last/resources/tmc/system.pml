@@ -26,8 +26,8 @@ MySequenceDataType Actuator_test_sequence_signal_parameter;
 bool Actuator_test_sequence_channel_used = 0;
 chan Controller_result_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_test_array(actuator_test_array_p1)
 {
     Actuator_test_array_channel!actuator_test_array_p1;
@@ -226,10 +226,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

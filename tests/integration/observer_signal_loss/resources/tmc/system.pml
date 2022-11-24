@@ -6,11 +6,11 @@
 #include "Uh_signal_observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Uh_global_observer_Context uh_global_observer;
-    Uh_function_observer_Context uh_function_observer;
-    Uh_signal_observer_Context uh_signal_observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    Uh_function_observer_Context uh_function_observer;
+    Uh_global_observer_Context uh_global_observer;
+    Uh_signal_observer_Context uh_signal_observer;
     AggregateTimerData timers;
 }
 
@@ -25,8 +25,8 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 chan Uh_global_observer_lock = [1] of {int};
 chan Uh_function_observer_lock = [1] of {int};
 chan Uh_signal_observer_lock = [1] of {int};
@@ -171,10 +171,10 @@ init
         Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
-        Uh_global_observer_0_init();
-        Uh_global_observer_lock!1;
         Uh_function_observer_0_init();
         Uh_function_observer_lock!1;
+        Uh_global_observer_0_init();
+        Uh_global_observer_lock!1;
         Uh_signal_observer_0_init();
         Uh_signal_observer_lock!1;
         inited = 1;

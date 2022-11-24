@@ -5,10 +5,10 @@
 #include "Zero_observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Change_observer_Context change_observer;
-    Zero_observer_Context zero_observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    Change_observer_Context change_observer;
+    Zero_observer_Context zero_observer;
     AggregateTimerData timers;
 }
 
@@ -30,8 +30,8 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Change_observer_lock = [1] of {int};
 chan Zero_observer_lock = [1] of {int};
 inline Change_observer_0_RI_0_f1_in(change_observer_actuator_p1)
@@ -241,10 +241,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         Change_observer_0_init();
         Change_observer_lock!1;
         Zero_observer_0_init();

@@ -5,8 +5,8 @@
 #include "env_inlines.pml"
 typedef system_state {
     Controller_Context controller;
-    Actuator_Context up;
     Actuator_Context down;
+    Actuator_Context up;
     AggregateTimerData timers;
 }
 
@@ -27,9 +27,9 @@ chan Up_check_channel = [1] of {MyInteger};
 MyInteger Up_check_signal_parameter;
 bool Up_check_channel_used = 0;
 system_state global_state;
-chan Down_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 chan Up_lock = [1] of {int};
+chan Down_lock = [1] of {int};
 inline Down_0_RI_0_result(controller_down_result_p1)
 {
     Controller_down_result_channel!controller_down_result_p1;
@@ -220,10 +220,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Down_0_init();
-        Down_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Down_0_init();
+        Down_lock!1;
         Up_0_init();
         Up_lock!1;
         inited = 1;

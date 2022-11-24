@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
