@@ -19,11 +19,15 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_check(actuator_check_p1)
 {
     Actuator_check_channel!actuator_check_p1;
+}
+inline Actuator_0_PI_0_check_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -39,9 +43,17 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
 }
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
+}
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
+}
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -131,10 +143,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Actuator_0_init();
-        Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         inited = 1;
     }
 }

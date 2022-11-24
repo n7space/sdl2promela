@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Actuator_Context actuator;
     Controller_Context controller;
+    Actuator_Context actuator;
     AggregateTimerData timers;
 }
 
@@ -49,47 +49,87 @@ chan Controller_result_int_channel = [1] of {MyInteger};
 MyInteger Controller_result_int_signal_parameter;
 bool Controller_result_int_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_test_derived_length(actuator_test_derived_length_p1)
 {
     Actuator_test_derived_length_channel!actuator_test_derived_length_p1;
+}
+inline Actuator_0_PI_0_test_derived_length_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_exist(actuator_test_exist_p1)
 {
     Actuator_test_exist_channel!actuator_test_exist_p1;
 }
+inline Actuator_0_PI_0_test_exist_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_length(actuator_test_length_p1)
 {
     Actuator_test_length_channel!actuator_test_length_p1;
+}
+inline Actuator_0_PI_0_test_length_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_length_derived_fixed(actuator_test_length_derived_fixed_p1)
 {
     Actuator_test_length_derived_fixed_channel!actuator_test_length_derived_fixed_p1;
 }
+inline Actuator_0_PI_0_test_length_derived_fixed_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_length_fixed(actuator_test_length_fixed_p1)
 {
     Actuator_test_length_fixed_channel!actuator_test_length_fixed_p1;
+}
+inline Actuator_0_PI_0_test_length_fixed_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_num(actuator_test_num_p1)
 {
     Actuator_test_num_channel!actuator_test_num_p1;
 }
+inline Actuator_0_PI_0_test_num_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_present(actuator_test_present_p1)
 {
     Actuator_test_present_channel!actuator_test_present_p1;
+}
+inline Actuator_0_PI_0_test_present_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_to_enum(actuator_test_to_enum_p1)
 {
     Actuator_test_to_enum_channel!actuator_test_to_enum_p1;
 }
+inline Actuator_0_PI_0_test_to_enum_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_to_selector(actuator_test_to_selector_p1)
 {
     Actuator_test_to_selector_channel!actuator_test_to_selector_p1;
 }
+inline Actuator_0_PI_0_test_to_selector_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_val(actuator_test_val_p1)
 {
     Actuator_test_val_channel!actuator_test_val_p1;
+}
+inline Actuator_0_PI_0_test_val_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -105,13 +145,25 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
 }
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_result_enum(controller_result_enum_p1)
 {
     Controller_result_enum_channel!controller_result_enum_p1;
 }
+inline Controller_0_PI_0_result_enum_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_result_int(controller_result_int_p1)
 {
     Controller_result_int_channel!controller_result_int_p1;
+}
+inline Controller_0_PI_0_result_int_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -400,10 +452,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Actuator_0_init();
-        Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         inited = 1;
     }
 }

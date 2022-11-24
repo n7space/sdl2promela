@@ -25,8 +25,8 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Uh_global_observer_lock = [1] of {int};
 chan Uh_function_observer_lock = [1] of {int};
 chan Uh_signal_observer_lock = [1] of {int};
@@ -167,10 +167,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         Uh_global_observer_0_init();
         Uh_global_observer_lock!1;
         Uh_function_observer_0_init();

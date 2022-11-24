@@ -22,15 +22,23 @@ chan Controller_pong_enum_channel = [1] of {MyParam};
 MyParam Controller_pong_enum_signal_parameter;
 bool Controller_pong_enum_channel_used = 0;
 system_state global_state;
-chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
+chan Actuator_lock = [1] of {int};
 inline Controller_0_RI_0_ping(actuator_ping_p1)
 {
     Actuator_ping_channel!actuator_ping_p1;
 }
+inline Actuator_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_ping_enum(actuator_ping_enum_p1)
 {
     Actuator_ping_enum_channel!actuator_ping_enum_p1;
+}
+inline Actuator_0_PI_0_ping_enum_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -46,9 +54,17 @@ inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
 }
+inline Controller_0_PI_0_pong_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong_enum(controller_pong_enum_p1)
 {
     Controller_pong_enum_channel!controller_pong_enum_p1;
+}
+inline Controller_0_PI_0_pong_enum_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -148,10 +164,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Actuator_0_init();
-        Actuator_lock!1;
         Controller_0_init();
         Controller_lock!1;
+        Actuator_0_init();
+        Actuator_lock!1;
         inited = 1;
     }
 }

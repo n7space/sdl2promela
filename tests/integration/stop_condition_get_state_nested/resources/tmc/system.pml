@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
@@ -18,6 +18,10 @@ inline Controller_0_RI_0_ping()
 {
     int dummy;
     Actuator_ping_channel!dummy;
+}
+inline Actuator_0_PI_0_ping_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -33,6 +37,10 @@ inline Actuator_0_RI_0_pong()
 {
     int dummy;
     Controller_pong_channel!dummy;
+}
+inline Controller_0_PI_0_pong_unhandled_input()
+{
+    skip;
 }
 inline Controller_check_queue()
 {

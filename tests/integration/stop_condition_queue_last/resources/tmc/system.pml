@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
@@ -32,21 +32,41 @@ inline Controller_0_RI_0_test_array(actuator_test_array_p1)
 {
     Actuator_test_array_channel!actuator_test_array_p1;
 }
+inline Actuator_0_PI_0_test_array_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_choice(actuator_test_choice_p1)
 {
     Actuator_test_choice_channel!actuator_test_choice_p1;
+}
+inline Actuator_0_PI_0_test_choice_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_integer(actuator_test_integer_p1)
 {
     Actuator_test_integer_channel!actuator_test_integer_p1;
 }
+inline Actuator_0_PI_0_test_integer_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_optional(actuator_test_optional_p1)
 {
     Actuator_test_optional_channel!actuator_test_optional_p1;
 }
+inline Actuator_0_PI_0_test_optional_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_test_sequence(actuator_test_sequence_p1)
 {
     Actuator_test_sequence_channel!actuator_test_sequence_p1;
+}
+inline Actuator_0_PI_0_test_sequence_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -62,6 +82,10 @@ inline Actuator_0_RI_0_result()
 {
     int dummy;
     Controller_result_channel!dummy;
+}
+inline Controller_0_PI_0_result_unhandled_input()
+{
+    skip;
 }
 inline Controller_check_queue()
 {

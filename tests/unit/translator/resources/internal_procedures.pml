@@ -81,6 +81,6 @@ inline Host_0_PI_0_trigger(input_param)
     MyInteger_assign_value(global_state.host.x, input_param);
     Host_0_transition(1);
   ::else->
-    skip;
+    Host_0_PI_0_trigger_unhandled_input(input_param);
   fi;
 }

@@ -16,6 +16,10 @@ inline Environment_0_RI_0_readValue(controller_readValue_p1)
 {
     Controller_readValue_channel!controller_readValue_p1;
 }
+inline Controller_0_PI_0_readValue_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_check_queue()
 {
     atomic {

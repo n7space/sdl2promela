@@ -15,6 +15,11 @@ inline Flowcontrol_0_RI_0_result(controller_result_p1)
     environment_result_channel!controller_result_p1;
 }
 
+inline Flowcontrol_0_PI_0_work_unhandled_input(input_param)
+{
+    skip;
+}
+
 active proctype environment_result() priority 2
 {
     inited;

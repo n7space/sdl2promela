@@ -33,6 +33,10 @@ inline Controller_0_RI_0_ping(actuator_ping_p1)
 {
     Actuator_ping_channel!actuator_ping_p1;
 }
+inline Actuator_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_check_queue()
 {
     atomic {
@@ -47,9 +51,17 @@ inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
 }
+inline Controller_0_PI_0_pong_unhandled_input(p1)
+{
+    skip;
+}
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
+}
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -66,7 +78,7 @@ active proctype Actuator_ping() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Actuator_ping_channel) || nempty(Actuator_observer_ping_channel));
+        (nempty(Actuator_observer_ping_channel) || nempty(Actuator_ping_channel));
         Actuator_lock?_;
 Actuator_ping_loop:
         if

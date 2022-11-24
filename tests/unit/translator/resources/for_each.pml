@@ -115,7 +115,7 @@ inline Taskwithloop_0_PI_0_check_variable(input_param)
     MyData_assign_value(global_state.taskwithloop.variable_param, input_param);
     Taskwithloop_0_transition(1);
   ::else->
-    skip;
+    Taskwithloop_0_PI_0_check_variable_unhandled_input(input_param);
   fi;
 }
 inline Taskwithloop_0_PI_0_check_fixed(input_param)
@@ -125,7 +125,7 @@ inline Taskwithloop_0_PI_0_check_fixed(input_param)
     MyArray_assign_value(global_state.taskwithloop.fixed_param, input_param);
     Taskwithloop_0_transition(2);
   ::else->
-    skip;
+    Taskwithloop_0_PI_0_check_fixed_unhandled_input(input_param);
   fi;
 }
 inline Taskwithloop_0_PI_0_check_child(input_param)
@@ -135,7 +135,7 @@ inline Taskwithloop_0_PI_0_check_child(input_param)
     MyRecord_assign_value(global_state.taskwithloop.child_param, input_param);
     Taskwithloop_0_transition(3);
   ::else->
-    skip;
+    Taskwithloop_0_PI_0_check_child_unhandled_input(input_param);
   fi;
 }
 inline Taskwithloop_0_PI_0_nested()
@@ -144,6 +144,6 @@ inline Taskwithloop_0_PI_0_nested()
   ::(global_state.taskwithloop.state == Taskwithloop_States_wait)->
     Taskwithloop_0_transition(4);
   ::else->
-    skip;
+    Taskwithloop_0_PI_0_nested_unhandled_input();
   fi;
 }

@@ -72,7 +72,8 @@ TESTS= \
 	procedure_inout_parameter \
 	state_recent \
 	output_block_direct_values \
-	binary_xor
+	binary_xor \
+	observer_signal_loss
 
 .PHONY: $(TESTS) check
 

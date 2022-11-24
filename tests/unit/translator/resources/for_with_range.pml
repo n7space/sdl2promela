@@ -92,6 +92,6 @@ inline Taskwithloop_0_PI_0_trigger()
   ::(global_state.taskwithloop.state == Taskwithloop_States_wait)->
     Taskwithloop_0_transition(1);
   ::else->
-    skip;
+    Taskwithloop_0_PI_0_trigger_unhandled_input();
   fi;
 }

@@ -25,6 +25,10 @@ inline Controller_0_RI_0_check(actuator_check_p1)
 {
     Actuator_check_channel!actuator_check_p1;
 }
+inline Actuator_0_PI_0_check_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_check_queue()
 {
     atomic {
@@ -39,9 +43,17 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
 }
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
+}
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
+}
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

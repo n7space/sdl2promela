@@ -22,7 +22,7 @@ inline Complexassignment_0_transition(id)
       transition_id = -1;
       goto continuous_signals;
     fi;
-    continuous_signals: 
+    continuous_signals:
   od;
 }
 inline Complexassignment_0_init()
@@ -36,6 +36,6 @@ inline Complexassignment_0_PI_0_tc(input_param)
     SystemCommand_assign_value(global_state.complexassignment.cmd, input_param);
     Complexassignment_0_transition(1);
   ::else->
-    skip;
+    Complexassignment_0_PI_0_tc_unhandled_input(input_param);
   fi;
 }

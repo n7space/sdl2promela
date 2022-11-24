@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Actuator_Context actuator;
     Controller_Context controller;
+    Actuator_Context actuator;
     AggregateTimerData timers;
 }
 
@@ -22,6 +22,10 @@ inline Controller_0_RI_0_calculate(actuator_calculate_p1)
 {
     Actuator_calculate_channel!actuator_calculate_p1;
 }
+inline Actuator_0_PI_0_calculate_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_check_queue()
 {
     atomic {
@@ -35,6 +39,10 @@ inline Actuator_0_get_sender(Actuator_sender_arg)
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
+}
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

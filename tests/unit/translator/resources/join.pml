@@ -35,6 +35,6 @@ inline Complexsdl_0_PI_0_impulse(input_param)
     MyInteger_assign_value(global_state.complexsdl.tmp, input_param);
     Complexsdl_0_transition(1);
   ::else->
-    skip;
+    Complexsdl_0_PI_0_impulse_unhandled_input(input_param);
   fi;
 }

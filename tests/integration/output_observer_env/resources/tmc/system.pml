@@ -27,6 +27,10 @@ inline Environ_0_RI_0_ping(controller_ping_p1)
 {
     Controller_ping_channel!controller_ping_p1;
 }
+inline Controller_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_check_queue()
 {
     atomic {
@@ -46,7 +50,7 @@ active proctype Controller_ping() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Controller_ping_channel) || nempty(Controller_observer_ping_channel));
+        (nempty(Controller_observer_ping_channel) || nempty(Controller_ping_channel));
         Controller_lock?_;
 Controller_ping_loop:
         if

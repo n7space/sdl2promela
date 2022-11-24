@@ -18,6 +18,10 @@ inline Egse_0_RI_0_tc(controller_tc_p1)
 {
     controller_tc_channel!controller_tc_p1;
 }
+inline Controller_0_PI_0_tc_unhandled_input(input_param)
+{
+    skip;
+}
 active proctype egse_tm() priority 1
 {
     inited;

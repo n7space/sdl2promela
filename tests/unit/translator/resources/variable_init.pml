@@ -51,6 +51,6 @@ inline Actuator_0_PI_0_ping()
   ::(global_state.actuator.state == Actuator_States_wait)->
     Actuator_0_transition(2);
   ::else->
-    skip;
+    Actuator_0_PI_0_ping_unhandled_input();
   fi;
 }

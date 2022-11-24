@@ -5,8 +5,8 @@
 #include "env_inlines.pml"
 typedef system_state {
     Controller_Context controller;
-    Actuator_Context down;
     Actuator_Context up;
+    Actuator_Context down;
     AggregateTimerData timers;
 }
 
@@ -27,20 +27,32 @@ chan Up_check_channel = [1] of {MyInteger};
 MyInteger Up_check_signal_parameter;
 bool Up_check_channel_used = 0;
 system_state global_state;
+chan Down_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 chan Up_lock = [1] of {int};
-chan Down_lock = [1] of {int};
 inline Down_0_RI_0_result(controller_down_result_p1)
 {
     Controller_down_result_channel!controller_down_result_p1;
+}
+inline Controller_0_PI_0_down_result_unhandled_input(p1)
+{
+    skip;
 }
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
 }
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
+}
 inline Up_0_RI_0_result(controller_up_result_p1)
 {
     Controller_up_result_channel!controller_up_result_p1;
+}
+inline Controller_0_PI_0_up_result_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -56,6 +68,10 @@ inline Controller_0_RI_0_down_check(down_check_p1)
 {
     Down_check_channel!down_check_p1;
 }
+inline Down_0_PI_0_check_unhandled_input(p1)
+{
+    skip;
+}
 inline Down_check_queue()
 {
     atomic {
@@ -69,6 +85,10 @@ inline Down_0_get_sender(Down_sender_arg)
 inline Controller_0_RI_0_up_check(up_check_p1)
 {
     Up_check_channel!up_check_p1;
+}
+inline Up_0_PI_0_check_unhandled_input(p1)
+{
+    skip;
 }
 inline Up_check_queue()
 {
@@ -200,12 +220,12 @@ init
 {
     atomic {
         global_dataview_init();
+        Down_0_init();
+        Down_lock!1;
         Controller_0_init();
         Controller_lock!1;
         Up_0_init();
         Up_lock!1;
-        Down_0_init();
-        Down_lock!1;
         inited = 1;
     }
 }

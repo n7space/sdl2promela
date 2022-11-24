@@ -24,6 +24,18 @@ inline Controller_0_RI_0_work(actuator_work_p1)
 {
     actuator_work_channel!actuator_work_p1;
 }
+inline Actuator_0_PI_0_work_unhandled_input(input_param)
+{
+    skip;
+}
+inline Controller_0_PI_0_error_unhandled_input()
+{
+    skip;
+}
+inline Controller_0_PI_0_result_unhandled_input(input_param)
+{
+    skip;
+}
 active proctype controller_result() priority 2
 {
     inited;

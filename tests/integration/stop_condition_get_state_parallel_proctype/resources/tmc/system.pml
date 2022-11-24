@@ -20,6 +20,10 @@ inline Inst_0_RI_0_ping()
     int dummy;
     Actuator_ping_channel!dummy;
 }
+inline Actuator_0_PI_0_ping_unhandled_input()
+{
+    skip;
+}
 inline Actuator_check_queue()
 {
     atomic {
@@ -35,10 +39,18 @@ inline Actuator_0_RI_0_dummy()
     int dummy;
     Inst_dummy_channel!dummy;
 }
+inline Inst_0_PI_0_dummy_unhandled_input()
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
     Inst_pong_channel!dummy;
+}
+inline Inst_0_PI_0_pong_unhandled_input()
+{
+    skip;
 }
 inline Inst_check_queue()
 {

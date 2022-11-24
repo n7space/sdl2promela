@@ -36,6 +36,6 @@ inline Simplechoiceaccess_0_PI_0_ping(input_param)
     MyUnion_assign_value(global_state.simplechoiceaccess.my_data, input_param);
     Simplechoiceaccess_0_transition(1);
   ::else->
-    skip;
+    Simplechoiceaccess_0_PI_0_ping_unhandled_input(input_param);
   fi;
 }

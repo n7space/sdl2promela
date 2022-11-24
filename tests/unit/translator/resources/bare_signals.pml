@@ -32,7 +32,7 @@ inline Bare_signals_0_PI_0_signal_1()
   ::(global_state.bare_signals.state == Bare_signals_States_state_1)->
     Bare_signals_0_transition(1);
   ::else->
-    skip;
+    Bare_signals_0_PI_0_signal_1_unhandled_input();
   fi;
 }
 inline Bare_signals_0_PI_0_signal_2()
@@ -41,6 +41,6 @@ inline Bare_signals_0_PI_0_signal_2()
   ::(global_state.bare_signals.state == Bare_signals_States_state_2)->
     Bare_signals_0_transition(2);
   ::else->
-    skip;
+    Bare_signals_0_PI_0_signal_2_unhandled_input();
   fi;
 }

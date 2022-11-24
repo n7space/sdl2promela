@@ -20,6 +20,10 @@ inline Controller_0_RI_0_tm()
     int dummy;
     gui_tm_channel!dummy;
 }
+inline Controller_0_PI_0_tc_unhandled_input()
+{
+	skip;
+}
 active proctype controller_tc() priority 1
 {
     inited;

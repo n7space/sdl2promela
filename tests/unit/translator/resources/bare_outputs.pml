@@ -29,6 +29,6 @@ inline Bare_outputs_0_PI_0_signal_in()
   ::(global_state.bare_outputs.state == Bare_outputs_States_state_1)->
     Bare_outputs_0_transition(1);
   ::else->
-    skip;
+    Bare_outputs_0_PI_0_signal_in_unhandled_input();
   fi;
 }
