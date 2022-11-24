@@ -1,0 +1,42 @@
+system uh_signal_observer;
+    /* CIF TEXT (144, 214), (405, 140) */
+    use datamodel comment 'observer.asn';
+    
+    signal uh(MyInteger) renames unhandled input ping to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to uh_signal_observer with uh;
+    endchannel;
+    block uh_signal_observer;
+        signalroute r
+            from env to uh_signal_observer with uh;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process uh_signal_observer;
+            /* CIF TEXT (0, 57), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            /* CIF ENDTEXT */
+            /* CIF START (298, 314), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (298, 369), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (102, 323), (92, 35) */
+            state InvalidState;
+            endstate;
+            /* CIF state (572, 346), (70, 35) */
+            state Idle;
+                /* CIF input (572, 401), (70, 35) */
+                input uh(prm);
+                    /* CIF NEXTSTATE (560, 456), (92, 35) */
+                    NEXTSTATE InvalidState;
+            endstate;
+            /* CIF state (538, 87), (70, 35) */
+            state error;
+            endstate;
+        endprocess uh_signal_observer;
+    endblock;
+endsystem;

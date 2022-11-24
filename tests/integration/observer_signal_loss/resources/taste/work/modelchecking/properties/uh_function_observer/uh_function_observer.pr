@@ -1,0 +1,42 @@
+system uh_function_observer;
+    /* CIF TEXT (144, 214), (315, 140) */
+    use datamodel comment 'observer.asn';
+    
+    signal uh renames unhandled input to controller;
+    /* CIF ENDTEXT */
+    channel c
+        from env to uh_function_observer with uh;
+    endchannel;
+    block uh_function_observer;
+        signalroute r
+            from env to uh_function_observer with uh;
+        connect c and r;
+        /* CIF PROCESS (257, 87), (152, 75) */
+        process uh_function_observer;
+            /* CIF TEXT (0, 57), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            /* CIF ENDTEXT */
+            /* CIF START (128, 269), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (128, 324), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (362, 277), (70, 35) */
+            state Idle;
+                /* CIF input (362, 332), (70, 35) */
+                input uh;
+                    /* CIF NEXTSTATE (350, 387), (92, 35) */
+                    NEXTSTATE InvalidState;
+            endstate;
+            /* CIF state (536, 110), (92, 35) */
+            state InvalidState;
+            endstate;
+            /* CIF state (257, 0), (70, 35) */
+            state error;
+            endstate;
+        endprocess uh_function_observer;
+    endblock;
+endsystem;

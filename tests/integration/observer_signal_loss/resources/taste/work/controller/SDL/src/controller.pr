@@ -1,0 +1,49 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (1087, 114), (267, 140) */
+    -- Text area for declarations and comments
+    dcl test_param MyTestInteger;
+    
+    dcl param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (651, 55), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (651, 105), (70, 35) */
+        NEXTSTATE Idle;
+    /* CIF state (1492, 326), (100, 35) */
+    state Confirmation;
+        /* CIF input (1482, 381), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1493, 436), (100, 35) */
+            NEXTSTATE Confirmation;
+    endstate;
+    /* CIF state (1231, 310), (70, 35) */
+    state Test;
+        /* CIF input (1204, 365), (121, 35) */
+        input test(test_param);
+            /* CIF NEXTSTATE (1230, 420), (70, 35) */
+            NEXTSTATE Test;
+    endstate;
+    /* CIF state (722, 311), (70, 35) */
+    state Idle;
+        /* CIF input (694, 366), (121, 35) */
+        input test(test_param);
+            /* CIF task (673, 421), (164, 35) */
+            task param := test_param + 2;
+            /* CIF output (708, 476), (94, 35) */
+            output ping(param);
+            /* CIF NEXTSTATE (720, 526), (70, 35) */
+            NEXTSTATE Test;
+    endstate;
+    /* CIF state (998, 312), (70, 35) */
+    state Test;
+        /* CIF input (982, 367), (98, 35) */
+        input pong(param);
+            /* CIF task (966, 422), (131, 35) */
+            task param := param - 1;
+            /* CIF output (984, 477), (94, 35) */
+            output ping(param);
+            /* CIF NEXTSTATE (981, 527), (100, 35) */
+            NEXTSTATE Confirmation;
+    endstate;
+endprocess Controller;
