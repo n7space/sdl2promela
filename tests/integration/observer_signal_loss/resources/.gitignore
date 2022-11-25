@@ -37,21 +37,21 @@ taste/work/modelchecking/*
 taste/work/modelchecking/properties/*
 !taste/work/modelchecking/properties/uh_signal_observer
 taste/work/modelchecking/properties/uh_signal_observer/*
-!taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer.asn
+!taste/work/modelchecking/properties/uh_signal_observer/observer.asn
 !taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer_datamodel.asn
 !taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer.pr
 
 # Except uh_signal_observer
 !taste/work/modelchecking/properties/uh_function_observer
 taste/work/modelchecking/properties/uh_function_observer/*
-!taste/work/modelchecking/properties/uh_function_observer/uh_function_observer.asn
+!taste/work/modelchecking/properties/uh_function_observer/observer.asn
 !taste/work/modelchecking/properties/uh_function_observer/uh_function_observer_datamodel.asn
 !taste/work/modelchecking/properties/uh_function_observer/uh_function_observer.pr
 
 # Except uh_signal_observer
 !taste/work/modelchecking/properties/uh_global_observer
 taste/work/modelchecking/properties/uh_global_observer/*
-!taste/work/modelchecking/properties/uh_global_observer/uh_global_observer.asn
+!taste/work/modelchecking/properties/uh_global_observer/observer.asn
 !taste/work/modelchecking/properties/uh_global_observer/uh_global_observer_datamodel.asn
 !taste/work/modelchecking/properties/uh_global_observer/uh_global_observer.pr
 
