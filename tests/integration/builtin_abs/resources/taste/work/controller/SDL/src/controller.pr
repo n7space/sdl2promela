@@ -1,0 +1,79 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (378, 399), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl val MyInteger;
+    dcl ret MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (794, 257), (70, 35) */
+    START;
+        /* CIF task (793, 312), (71, 35) */
+        task val := 99;
+        /* CIF output (793, 367), (71, 35) */
+        output test(val);
+        /* CIF NEXTSTATE (771, 417), (115, 35) */
+        NEXTSTATE WaitForPositive;
+    /* CIF state (951, 166), (115, 35) */
+    state WaitForPositive;
+        /* CIF input (967, 221), (83, 35) */
+        input result(ret);
+            /* CIF decision (974, 276), (70, 50) */
+            decision ret = 99;
+                /* CIF ANSWER (1036, 346), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1036, 389), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (929, 346), (70, 23) */
+                (true):
+                    /* CIF task (926, 389), (74, 35) */
+                    task val := -98;
+                    /* CIF output (928, 444), (71, 35) */
+                    output test(val);
+                    /* CIF NEXTSTATE (902, 499), (122, 35) */
+                    NEXTSTATE WaitForNegative;
+            enddecision;
+    endstate;
+    /* CIF state (1633, 170), (96, 35) */
+    state WaitForZero;
+        /* CIF input (1640, 225), (83, 35) */
+        input result(ret);
+            /* CIF decision (1647, 280), (70, 50) */
+            decision ret = 0;
+                /* CIF ANSWER (1602, 350), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1600, 393), (72, 35) */
+                    NEXTSTATE Finished;
+                /* CIF ANSWER (1692, 350), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1692, 393), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (1282, 174), (122, 35) */
+    state WaitForNegative;
+        /* CIF input (1302, 229), (83, 35) */
+        input result(ret);
+            /* CIF decision (1309, 284), (70, 50) */
+            decision ret = 98;
+                /* CIF ANSWER (1371, 354), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1371, 397), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (1264, 354), (70, 23) */
+                (true):
+                    /* CIF task (1264, 397), (70, 35) */
+                    task val := 0;
+                    /* CIF output (1263, 452), (71, 35) */
+                    output test(val);
+                    /* CIF NEXTSTATE (1251, 507), (96, 35) */
+                    NEXTSTATE WaitForZero;
+            enddecision;
+    endstate;
+    /* CIF state (585, 292), (72, 35) */
+    state Finished;
+    endstate;
+    /* CIF state (593, 204), (70, 35) */
+    state Error;
+    endstate;
+endprocess Controller;
