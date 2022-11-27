@@ -967,6 +967,10 @@ def __generate_procedure_inline(
             __get_procedure_inline_end_label_name(context, procedure.name)
         )
     )
+    # After the label should be at least one statement.
+    # In case of inline it is not always possible to detect if something is called after.
+    # Therefore skip is added.
+    blockBuilder.withStatement(promelamodel.Skip())
     builder.withDefinition(blockBuilder.build())
     context.pop_parent()
     return builder.build()
