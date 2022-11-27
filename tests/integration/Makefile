@@ -73,6 +73,7 @@ TESTS= \
 	state_recent \
 	output_block_direct_values \
 	binary_xor \
+	builtin_abs \
 	observer_signal_loss
 
 .PHONY: $(TESTS) check

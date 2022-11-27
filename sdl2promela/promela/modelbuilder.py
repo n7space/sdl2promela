@@ -517,6 +517,16 @@ class BinaryExpressionBuilder:
         self.expression.right = right
         return self
 
+    def withSkipParentheses(self, skip: bool = True) -> "BinaryExpressionBuilder":
+        """
+        Set skip parentheses in expression.
+
+        :param skip: Flag to set.
+        :returns: The buider itself (for call chaining).
+        """
+        self.expression.skip_parentheses = skip
+        return self
+
 
 class UnaryExpressionBuilder:
     """Unary expression builder."""

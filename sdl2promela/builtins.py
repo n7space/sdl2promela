@@ -1,3 +1,4 @@
+import copy
 from typing import List, Dict, Optional
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
@@ -8,6 +9,7 @@ from .promela.modelbuilder import (
     MemberAccessBuilder,
     VariableReferenceBuilder,
     BinaryExpressionBuilder,
+    ConditionalExpressionBuilder,
 )
 
 __BUILTIN_NAMES = [
@@ -21,6 +23,7 @@ __BUILTIN_NAMES = [
     "exist",
     "float",
     "fix",
+    "abs",
 ]
 
 
@@ -191,6 +194,36 @@ def __translate_fix(
     return parameters[0]
 
 
+def __translate_abs(
+    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+) -> promelamodel.Expression:
+    __check_parameters(parameters, 1, "abs")
+    return (
+        ConditionalExpressionBuilder()
+        .withCondition(
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.LESS)
+            .withLeft(copy.deepcopy(parameters[0]))
+            .withRight(promelamodel.IntegerValue(0))
+            .build()
+        )
+        .withTrueExpression(
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
+            .withLeft(promelamodel.IntegerValue(0))
+            .withRight(copy.deepcopy(parameters[0]))
+            .withSkipParentheses()
+            .build()
+        )
+        .withFalseExpression(
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+            .withLeft(promelamodel.IntegerValue(0))
+            .withRight(copy.deepcopy(parameters[0]))
+            .withSkipParentheses()
+            .build()
+        )
+        .build()
+    )
+
+
 def is_builtin(call_name: str) -> bool:
     """
     Is the given call referring to a built-in function?
@@ -234,6 +267,8 @@ def translate_builtin(
         return __translate_float(call, parameters)
     elif call.name.lower() == "fix":
         return __translate_fix(call, parameters)
+    elif call.name.lower() == "abs":
+        return __translate_abs(call, parameters)
     raise NotImplementedError(f"Builtin {call.name} is not yet implemented")
 
 

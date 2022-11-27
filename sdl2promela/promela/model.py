@@ -56,11 +56,21 @@ class BinaryExpression(Expression):
     """Left side of the expression."""
     right: Expression
     """Right side of the expression."""
+    skip_parentheses: bool
+    """
+    Special field for generation of valid conditional expression (-> :).
+    The values in conditional expression cannot be parsed properly if they have
+    parentheses at the beginning and the conditional expression is used as a
+    parameter for inline call. (like _assign_value).
+    Therefore, this special flag is necessary to generate code for builtin
+    'abs' function, which can be parsed by spin.
+    """
 
     def __init__(self):
         self.operator = None
         self.left = None
         self.right = None
+        self.skip_parentheses = False
 
 
 class UnaryOperator(Enum):

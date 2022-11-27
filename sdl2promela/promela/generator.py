@@ -99,7 +99,8 @@ def generate(context, element):
 
 @dispatch(Context, model.BinaryExpression)
 def generate(context: Context, expression: model.BinaryExpression):
-    context.output("(")
+    if not expression.skip_parentheses:
+        context.output("(")
     generate(context, expression.left)
     if expression.operator == model.BinaryOperator.ADD:
         context.output(" + ")
@@ -130,7 +131,8 @@ def generate(context: Context, expression: model.BinaryExpression):
     elif expression.operator == model.BinaryOperator.XOR:
         context.output(" ^ ")
     generate(context, expression.right)
-    context.output(")")
+    if not expression.skip_parentheses:
+        context.output(")")
 
 
 @dispatch(Context, model.Label)
