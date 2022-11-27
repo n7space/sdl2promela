@@ -20,8 +20,8 @@ bool Actuator_test_state_list_channel_used = 0;
 chan Actuator_test_state_list2_channel = [1] of {int};
 chan Controller_result_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_test_excluded_state()
 {
     int dummy;

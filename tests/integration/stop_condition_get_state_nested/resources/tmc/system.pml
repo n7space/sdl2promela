@@ -12,8 +12,8 @@ int inited;
 chan Actuator_ping_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_ping()
 {
     int dummy;

@@ -1,8 +1,8 @@
 #include "dataview.pml"
 #include "actuator.pml"
 #include "controller.pml"
-#include "Uh_global_observer.pml"
 #include "Uh_function_observer.pml"
+#include "Uh_global_observer.pml"
 #include "Uh_signal_observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
@@ -25,10 +25,10 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
-chan Uh_global_observer_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Uh_function_observer_lock = [1] of {int};
+chan Uh_global_observer_lock = [1] of {int};
 chan Uh_signal_observer_lock = [1] of {int};
 inline Controller_0_RI_0_ping(actuator_ping_p1)
 {

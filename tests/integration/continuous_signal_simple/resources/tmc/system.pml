@@ -19,8 +19,8 @@ chan Controller_test_channel = [1] of {MyTestInteger};
 MyTestInteger Controller_test_signal_parameter;
 bool Controller_test_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_check(actuator_check_p1)
 {
     Actuator_check_channel!actuator_check_p1;

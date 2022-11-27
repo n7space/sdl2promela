@@ -22,8 +22,8 @@ chan Controller_pong_enum_channel = [1] of {MyParam};
 MyParam Controller_pong_enum_signal_parameter;
 bool Controller_pong_enum_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_ping(actuator_ping_p1)
 {
     Actuator_ping_channel!actuator_ping_p1;

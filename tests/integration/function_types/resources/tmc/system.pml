@@ -28,8 +28,8 @@ MyInteger Up_check_signal_parameter;
 bool Up_check_channel_used = 0;
 system_state global_state;
 chan Controller_lock = [1] of {int};
-chan Up_lock = [1] of {int};
 chan Down_lock = [1] of {int};
+chan Up_lock = [1] of {int};
 inline Down_0_RI_0_result(controller_down_result_p1)
 {
     Controller_down_result_channel!controller_down_result_p1;

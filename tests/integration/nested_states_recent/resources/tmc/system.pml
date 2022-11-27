@@ -18,8 +18,8 @@ chan Controller_status_channel = [2] of {MyStatus};
 MyStatus Controller_status_signal_parameter;
 bool Controller_status_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_reset()
 {
     int dummy;

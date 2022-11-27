@@ -16,8 +16,8 @@ chan Controller_result_channel = [1] of {MyInteger};
 MyInteger Controller_result_signal_parameter;
 bool Controller_result_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_calculate(actuator_calculate_p1)
 {
     Actuator_calculate_channel!actuator_calculate_p1;
