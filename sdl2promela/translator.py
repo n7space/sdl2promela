@@ -333,6 +333,17 @@ def __get_input_function_name(context: Context, input: sdlmodel.Input) -> str:
     )
 
 
+def __get_unhandled_input_function_name(context: Context, input: sdlmodel.Input) -> str:
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "PI"
+        + SEPARATOR
+        + input.name
+        + "_unhandled_input"
+    )
+
+
 def __get_init_function_name(context: Context) -> str:
     return context.sdl_model.process_name.capitalize() + SEPARATOR + __INIT
 
@@ -1190,9 +1201,26 @@ def __generate_input_function(
             context, statename, input, switch_builder, None
         )
 
-    switch_builder.withAlternative(
-        AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
-    )
+    if context.is_observer:
+        switch_builder.withAlternative(
+            AlternativeBuilder().withStatements([promelamodel.Skip()]).build()
+        )
+    else:
+        unhandled_input_call_builder = CallBuilder().withTarget(
+            __get_unhandled_input_function_name(context, input)
+        )
+        for parameter in input.parameters:
+            unhandled_input_call_builder.withParameter(
+                VariableReferenceBuilder(
+                    __get_parameter_name(parameter.target_variable)
+                ).build()
+            )
+
+        switch_builder.withAlternative(
+            AlternativeBuilder()
+            .withStatements([unhandled_input_call_builder.build()])
+            .build()
+        )
 
     blockBuilder.withStatements([switch_builder.build()])
     builder.withDefinition(blockBuilder.build())

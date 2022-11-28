@@ -20,10 +20,18 @@ inline Controller_0_RI_0_ping()
     int dummy;
     Actuator_ping_channel!dummy;
 }
+inline Actuator_0_PI_0_ping_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_test()
 {
     int dummy;
     Actuator_test_channel!dummy;
+}
+inline Actuator_0_PI_0_test_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -39,6 +47,10 @@ inline Actuator_0_RI_0_pong()
 {
     int dummy;
     Controller_pong_channel!dummy;
+}
+inline Controller_0_PI_0_pong_unhandled_input()
+{
+    skip;
 }
 inline Controller_check_queue()
 {

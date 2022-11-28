@@ -16,6 +16,11 @@ inline Actuator_0_RI_0_response(param)
     printf("Result: %d\n", param);
 }
 
+inline Actuator_0_PI_0_impulse_unhandled_input(input_param)
+{
+    skip;
+}
+
 typedef Actuator_Context_auxilary {
     byte data[5];
     int length;

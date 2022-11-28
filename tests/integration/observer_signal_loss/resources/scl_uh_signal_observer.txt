@@ -1,0 +1,1 @@
+never get_state(uh_signal_observer) = InvalidState;

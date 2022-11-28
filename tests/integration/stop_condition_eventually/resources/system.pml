@@ -32,6 +32,22 @@ inline Controller_0_RI_0_restart(actuator_restart_p1)
 {
     actuator_restart_channel!actuator_restart_p1;
 }
+inline Actuator_0_PI_0_restart_unhandled_input(input_param)
+{
+    skip;
+}
+inline Actuator_0_PI_0_tick_unhandled_input()
+{
+    skip;
+}
+inline Controller_0_PI_0_calculate_unhandled_input(input_param)
+{
+    skip;
+}
+inline Controller_0_PI_0_finished_unhandled_input(input_param)
+{
+    skip;
+}
 active proctype env_calculate()
 {
     inited;

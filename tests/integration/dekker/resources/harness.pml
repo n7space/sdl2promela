@@ -23,7 +23,18 @@ inline Lock_0_RI_0_WantToEnter(LockB_RemoteWantsToEnter_p1) {
 inline Lock_0_RI_0_SetTurn(LockB_RemoteSetsTurn_p1) {
     skip;
 }
-
+inline Lock_0_PI_0_RemoteSetsTurn_unhandled_input(input_param)
+{
+	skip;
+}
+inline Lock_0_PI_0_RemoteWantsToEnter_unhandled_input(input_param)
+{
+	skip;
+}
+inline Lock_0_PI_0_WriteRequest_unhandled_input(input_param)
+{
+	skip;
+}
 init
 {
     Lock_0_init();

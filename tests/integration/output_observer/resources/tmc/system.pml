@@ -4,9 +4,9 @@
 #include "Observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Observer_Context observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    Observer_Context observer;
     AggregateTimerData timers;
 }
 
@@ -19,8 +19,8 @@ chan Controller_pong_channel = [1] of {MyInteger};
 MyInteger Controller_pong_signal_parameter;
 bool Controller_pong_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Observer_0_RI_0_ping_in(observer_actuator_p1)
 {
@@ -29,6 +29,10 @@ inline Observer_0_RI_0_ping_in(observer_actuator_p1)
 inline Controller_0_RI_0_ping(actuator_ping_p1)
 {
     Actuator_ping_channel!actuator_ping_p1;
+}
+inline Actuator_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -43,6 +47,10 @@ inline Actuator_0_get_sender(Actuator_sender_arg)
 inline Actuator_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
+}
+inline Controller_0_PI_0_pong_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -59,7 +67,7 @@ active proctype Actuator_ping() priority 1
     inited;
     do
     ::  atomic {
-        (nempty(Actuator_ping_channel) || nempty(Actuator_observer_ping_channel));
+        (nempty(Actuator_observer_ping_channel) || nempty(Actuator_ping_channel));
         Actuator_lock?_;
 Actuator_ping_loop:
         if
@@ -110,10 +118,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         Observer_0_init();
         Observer_lock!1;
         inited = 1;

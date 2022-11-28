@@ -20,30 +20,50 @@ bool Actuator_test_state_list_channel_used = 0;
 chan Actuator_test_state_list2_channel = [1] of {int};
 chan Controller_result_channel = [1] of {int};
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_test_excluded_state()
 {
     int dummy;
     Actuator_test_excluded_state_channel!dummy;
 }
+inline Actuator_0_PI_0_test_excluded_state_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_test_simple_state(actuator_test_simple_state_p1)
 {
     Actuator_test_simple_state_channel!actuator_test_simple_state_p1;
+}
+inline Actuator_0_PI_0_test_simple_state_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_star()
 {
     int dummy;
     Actuator_test_star_channel!dummy;
 }
+inline Actuator_0_PI_0_test_star_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_test_state_list(actuator_test_state_list_p1)
 {
     Actuator_test_state_list_channel!actuator_test_state_list_p1;
+}
+inline Actuator_0_PI_0_test_state_list_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_0_RI_0_test_state_list2()
 {
     int dummy;
     Actuator_test_state_list2_channel!dummy;
+}
+inline Actuator_0_PI_0_test_state_list2_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -59,6 +79,10 @@ inline Actuator_0_RI_0_result()
 {
     int dummy;
     Controller_result_channel!dummy;
+}
+inline Controller_0_PI_0_result_unhandled_input()
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -196,10 +220,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }

@@ -33,7 +33,12 @@ inline Bare_outputs_0_RI_0_signal_out()
     signal_out_channel!var0;
 }
 
-// This represents the provided interface's thread
+inline Bare_outputs_0_PI_0_signal_in_unhandled_input()
+{
+    skip;
+}
+
+/* This represents the provided interface's thread */
 active proctype proc_bare_outputs_singnal_in()
 {
     inited;

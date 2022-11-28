@@ -5,10 +5,10 @@
 #include "Zero_observer.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Change_observer_Context change_observer;
-    Zero_observer_Context zero_observer;
     Actuator_Context actuator;
     Controller_Context controller;
+    Change_observer_Context change_observer;
+    Zero_observer_Context zero_observer;
     AggregateTimerData timers;
 }
 
@@ -54,9 +54,17 @@ inline Controller_0_RI_0_f1(actuator_f1_p1)
 {
     Actuator_f1_channel!actuator_f1_p1;
 }
+inline Actuator_0_PI_0_f1_unhandled_input(p1)
+{
+    skip;
+}
 inline Controller_0_RI_0_f2(actuator_f2_p1)
 {
     Actuator_f2_channel!actuator_f2_p1;
+}
+inline Actuator_0_PI_0_f2_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -72,9 +80,17 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
 }
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
+}
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
+}
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

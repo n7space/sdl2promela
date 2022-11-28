@@ -3,8 +3,8 @@
 #include "controller.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context controller;
     Actuator_Context actuator;
+    Controller_Context controller;
     AggregateTimerData timers;
 }
 
@@ -33,20 +33,36 @@ inline Controller_0_RI_0_give_me_array()
     int dummy;
     Actuator_give_me_array_channel!dummy;
 }
+inline Actuator_0_PI_0_give_me_array_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_give_me_data()
 {
     int dummy;
     Actuator_give_me_data_channel!dummy;
+}
+inline Actuator_0_PI_0_give_me_data_unhandled_input()
+{
+    skip;
 }
 inline Controller_0_RI_0_give_me_nested()
 {
     int dummy;
     Actuator_give_me_nested_channel!dummy;
 }
+inline Actuator_0_PI_0_give_me_nested_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_give_me_values()
 {
     int dummy;
     Actuator_give_me_values_channel!dummy;
+}
+inline Actuator_0_PI_0_give_me_values_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -62,17 +78,33 @@ inline Actuator_0_RI_0_result_array(controller_result_array_p1)
 {
     Controller_result_array_channel!controller_result_array_p1;
 }
+inline Controller_0_PI_0_result_array_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_result_data(controller_result_data_p1)
 {
     Controller_result_data_channel!controller_result_data_p1;
+}
+inline Controller_0_PI_0_result_data_unhandled_input(p1)
+{
+    skip;
 }
 inline Actuator_0_RI_0_result_nested(controller_result_nested_p1)
 {
     Controller_result_nested_channel!controller_result_nested_p1;
 }
+inline Controller_0_PI_0_result_nested_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_result_values(controller_result_values_p1)
 {
     Controller_result_values_channel!controller_result_values_p1;
+}
+inline Controller_0_PI_0_result_values_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

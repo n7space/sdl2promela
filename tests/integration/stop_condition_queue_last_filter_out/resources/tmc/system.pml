@@ -23,6 +23,10 @@ inline Controller_0_RI_0_ping(actuator_ping_p1)
 {
     Actuator_ping_channel!actuator_ping_p1;
 }
+inline Actuator_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_check_queue()
 {
     atomic {
@@ -38,9 +42,17 @@ inline Actuator_0_RI_0_pong()
     int dummy;
     Controller_pong_channel!dummy;
 }
+inline Controller_0_PI_0_pong_unhandled_input()
+{
+    skip;
+}
 inline Environ_0_RI_0_test(controller_test_p1)
 {
     Controller_test_channel!controller_test_p1;
+}
+inline Controller_0_PI_0_test_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

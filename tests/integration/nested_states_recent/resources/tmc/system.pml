@@ -25,10 +25,18 @@ inline Controller_0_RI_0_reset()
     int dummy;
     Actuator_reset_channel!dummy;
 }
+inline Actuator_0_PI_0_reset_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_tick()
 {
     int dummy;
     Actuator_tick_channel!dummy;
+}
+inline Actuator_0_PI_0_tick_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -44,9 +52,17 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
 }
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuator_0_RI_0_status(controller_status_p1)
 {
     Controller_status_channel!controller_status_p1;
+}
+inline Controller_0_PI_0_status_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

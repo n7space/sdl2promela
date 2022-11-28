@@ -21,7 +21,7 @@ inline Sharedmemory_0_transition(id)
       global_state.sharedmemory.state = Sharedmemory_States_idle;
       goto continuous_signals;
     fi;
-    continuous_signals: 
+    continuous_signals:
   od;
 }
 inline Sharedmemory_0_init()
@@ -35,7 +35,7 @@ inline Sharedmemory_0_PI_0_MemWriteA(input_param)
     T_WriteAccess_assign_value(global_state.sharedmemory.writeaccess, input_param);
     Sharedmemory_0_transition(2);
   ::else->
-    skip;
+    Sharedmemory_0_PI_0_MemWriteA_unhandled_input(input_param);
   fi;
 }
 inline Sharedmemory_0_PI_0_MemWriteB(input_param)
@@ -45,6 +45,6 @@ inline Sharedmemory_0_PI_0_MemWriteB(input_param)
     T_WriteAccess_assign_value(global_state.sharedmemory.writeaccess, input_param);
     Sharedmemory_0_transition(1);
   ::else->
-    skip;
+    Sharedmemory_0_PI_0_MemWriteB_unhandled_input(input_param);
   fi;
 }

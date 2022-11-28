@@ -26,6 +26,18 @@ inline Controller_0_RI_0_test()
     int dummy;
     actuator_test_channel!dummy;
 }
+inline Controller_0_PI_0_fail_unhandled_input()
+{
+    skip;
+}
+inline Controller_0_PI_0_success_unhandled_input()
+{
+    skip;
+}
+inline Actuator_0_PI_0_test_unhandled_input()
+{
+    skip;
+}
 active proctype controller_success() priority 1
 {
     inited;

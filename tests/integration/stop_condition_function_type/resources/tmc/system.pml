@@ -22,6 +22,10 @@ inline Controller_0_RI_0_ping(actuatorinst_ping_p1)
 {
     Actuatorinst_ping_channel!actuatorinst_ping_p1;
 }
+inline Actuatorinst_0_PI_0_ping_unhandled_input(p1)
+{
+    skip;
+}
 inline Actuatorinst_check_queue()
 {
     atomic {
@@ -35,6 +39,10 @@ inline Actuatorinst_0_get_sender(Actuatorinst_sender_arg)
 inline Actuatorinst_0_RI_0_pong(controller_pong_p1)
 {
     Controller_pong_channel!controller_pong_p1;
+}
+inline Controller_0_PI_0_pong_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {

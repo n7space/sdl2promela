@@ -3,8 +3,8 @@
 #include "inst.pml"
 #include "env_inlines.pml"
 typedef system_state {
-    Controller_Context inst;
     Actuator_Context actuator;
+    Controller_Context inst;
     AggregateTimerData timers;
 }
 
@@ -13,12 +13,16 @@ chan Actuator_ping_channel = [1] of {int};
 chan Inst_dummy_channel = [1] of {int};
 chan Inst_pong_channel = [1] of {int};
 system_state global_state;
-chan Inst_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Inst_lock = [1] of {int};
 inline Inst_0_RI_0_ping()
 {
     int dummy;
     Actuator_ping_channel!dummy;
+}
+inline Actuator_0_PI_0_ping_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -35,10 +39,18 @@ inline Actuator_0_RI_0_dummy()
     int dummy;
     Inst_dummy_channel!dummy;
 }
+inline Inst_0_PI_0_dummy_unhandled_input()
+{
+    skip;
+}
 inline Actuator_0_RI_0_pong()
 {
     int dummy;
     Inst_pong_channel!dummy;
+}
+inline Inst_0_PI_0_pong_unhandled_input()
+{
+    skip;
 }
 inline Inst_check_queue()
 {
@@ -114,10 +126,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Inst_0_init();
-        Inst_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Inst_0_init();
+        Inst_lock!1;
         inited = 1;
     }
 }

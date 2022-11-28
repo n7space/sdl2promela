@@ -16,22 +16,34 @@ chan Controller_result_channel = [1] of {MyStatus};
 MyStatus Controller_result_signal_parameter;
 bool Controller_result_channel_used = 0;
 system_state global_state;
-chan Controller_lock = [1] of {int};
 chan Actuator_lock = [1] of {int};
+chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_tick()
 {
     int dummy;
     Actuator_tick_channel!dummy;
+}
+inline Actuator_0_PI_0_tick_unhandled_input()
+{
+    skip;
 }
 inline Controller_0_RI_0_tick_left()
 {
     int dummy;
     Actuator_tick_left_channel!dummy;
 }
+inline Actuator_0_PI_0_tick_left_unhandled_input()
+{
+    skip;
+}
 inline Controller_0_RI_0_tick_right()
 {
     int dummy;
     Actuator_tick_right_channel!dummy;
+}
+inline Actuator_0_PI_0_tick_right_unhandled_input()
+{
+    skip;
 }
 inline Actuator_check_queue()
 {
@@ -46,6 +58,10 @@ inline Actuator_0_get_sender(Actuator_sender_arg)
 inline Actuator_0_RI_0_result(controller_result_p1)
 {
     Controller_result_channel!controller_result_p1;
+}
+inline Controller_0_PI_0_result_unhandled_input(p1)
+{
+    skip;
 }
 inline Controller_check_queue()
 {
@@ -142,10 +158,10 @@ init
 {
     atomic {
         global_dataview_init();
-        Controller_0_init();
-        Controller_lock!1;
         Actuator_0_init();
         Actuator_lock!1;
+        Controller_0_init();
+        Controller_lock!1;
         inited = 1;
     }
 }
