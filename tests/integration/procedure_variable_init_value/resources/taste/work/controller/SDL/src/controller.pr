@@ -1,0 +1,59 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (437, 379), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    dcl result MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (619, 99), (70, 35) */
+    START;
+        /* CIF task (611, 154), (84, 35) */
+        task param := 2;
+        /* CIF output (606, 209), (94, 35) */
+        output ping(param);
+        /* CIF NEXTSTATE (611, 259), (84, 35) */
+        NEXTSTATE FirstCheck;
+    /* CIF state (887, 146), (84, 35) */
+    state FirstCheck;
+        /* CIF input (882, 201), (95, 35) */
+        input pong(result);
+            /* CIF decision (895, 256), (70, 50) */
+            decision result;
+                /* CIF ANSWER (850, 326), (70, 23) */
+                (4):
+                    /* CIF task (842, 369), (84, 35) */
+                    task param := 5;
+                    /* CIF output (837, 419), (94, 35) */
+                    output ping(param);
+                    /* CIF NEXTSTATE (834, 474), (101, 35) */
+                    NEXTSTATE SecondCheck;
+                /* CIF ANSWER (940, 326), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (940, 369), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
+    /* CIF state (1243, 148), (101, 35) */
+    state SecondCheck;
+        /* CIF input (1246, 203), (95, 35) */
+        input pong(result);
+            /* CIF decision (1259, 258), (70, 50) */
+            decision result;
+                /* CIF ANSWER (1214, 328), (70, 23) */
+                (10):
+                    /* CIF NEXTSTATE (1214, 371), (70, 35) */
+                    NEXTSTATE finished;
+                /* CIF ANSWER (1304, 328), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (1304, 371), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
+    /* CIF state (466, 174), (70, 35) */
+    state finished;
+    endstate;
+    /* CIF state (455, 98), (70, 35) */
+    state error;
+    endstate;
+endprocess Controller;

@@ -1,0 +1,44 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (445, 449), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl input_val MyInteger;
+    dcl output_val MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF procedure (551, 227), (70, 35) */
+    procedure test;
+        /* CIF TEXT (153, 223), (267, 140) */
+        -- Text area for declarations and comments
+        
+        fpar
+          out result MyInteger,
+          in coeff MyInteger;
+        
+        dcl auxilary MyInteger := 2;
+        /* CIF ENDTEXT */
+        /* CIF START (663, 242), (70, 35) */
+        START;
+            /* CIF task (615, 297), (164, 35) */
+            task result := coeff * auxilary;
+            /* CIF task (621, 352), (152, 35) */
+            task auxilary := auxilary + 2;
+            /* CIF return (680, 407), (35, 35) */
+            return ;
+    endprocedure;
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (908, 245), (70, 35) */
+    state Wait;
+        /* CIF input (885, 300), (111, 35) */
+        input ping(input_val);
+            /* CIF PROCEDURECALL (851, 355), (179, 35) */
+            call test(output_val, input_val);
+            /* CIF output (878, 405), (125, 35) */
+            output pong(output_val);
+            /* CIF NEXTSTATE (906, 460), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

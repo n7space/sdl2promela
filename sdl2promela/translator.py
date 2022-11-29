@@ -928,13 +928,25 @@ def __generate_procedure_inline(
     builder = InlineBuilder()
     builder.withName(__get_procedure_inline_name(context, procedure.name))
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
-    for localVariable, localVariableTypeObject in procedure.variables.items():
+    for localVariable, localVariableInfo in procedure.variables.items():
+        localVariableName = __get_procedure_local_variable_name(context, localVariable)
         blockBuilder.withStatement(
             VariableDeclarationBuilder(
-                __get_procedure_local_variable_name(context, localVariable),
-                __type_name(localVariableTypeObject[0]),
+                localVariableName,
+                __type_name(localVariableInfo.type),
             ).build()
         )
+        if localVariableInfo.value is not None:
+            variable_ref = sdlmodel.VariableReference(localVariableName)
+            variable_ref.type = localVariableInfo.type
+            blockBuilder.withStatements(
+                __generate_assignment(
+                    context,
+                    variable_ref,
+                    localVariableInfo.value,
+                    localVariableInfo.type,
+                )
+            )
     # Procedure return, if any, is handled via the first parameter
     if procedure.returnType is not None:
         builder.withParameter(__get_procedure_inline_return_name(context))

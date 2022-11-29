@@ -275,9 +275,9 @@ def test_model_reads_internal_procedures():
     assert len(procWithLocalVariables.parameters) == 0
     assert len(procWithLocalVariables.variables) == 2
     assert procWithLocalVariables.variables["l1"] is not None
-    assert procWithLocalVariables.variables["l1"][0].ReferencedTypeName == "MyInteger"
+    assert procWithLocalVariables.variables["l1"].type.ReferencedTypeName == "MyInteger"
     assert procWithLocalVariables.variables["l2"] is not None
-    assert procWithLocalVariables.variables["l2"][0].ReferencedTypeName == "MyInteger"
+    assert procWithLocalVariables.variables["l2"].type.ReferencedTypeName == "MyInteger"
     assert len(procWithLocalVariables.transition.actions) > 0
 
     procWithOutput = model.procedures["procWithOutput"]
