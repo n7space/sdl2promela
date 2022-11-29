@@ -74,7 +74,8 @@ TESTS= \
 	output_block_direct_values \
 	binary_xor \
 	builtin_abs \
-	observer_signal_loss
+	observer_signal_loss \
+	procedure_variable_init_value
 
 .PHONY: $(TESTS) check
 
