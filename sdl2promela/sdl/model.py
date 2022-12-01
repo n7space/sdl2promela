@@ -681,6 +681,22 @@ class FloatingLabel:
         self.actions = []
 
 
+class VariableInfo:
+    """
+    Holds information about type and initial value of variable.
+    """
+
+    type: Asn1Type
+    """Type of variable from opengeode."""
+
+    value: Optional[Expression]
+    """Optional initial value of variable."""
+
+    def __init__(self, type, value):
+        self.type = type
+        self.value = value
+
+
 class ProcedureParameterDirection(Enum):
     """Direction of a procedure parameter."""
 
@@ -731,11 +747,11 @@ class Procedure:
     transition: Transition
     """Procedure actions."""
 
-    variables: Dict[str, Tuple[Asn1Type, Any]]
+    variables: Dict[str, VariableInfo]
     """
     All variables defined in the procedure, the key is a variable name,
-    The value is a tuple where first element is type and the second
-    is initial variable value.
+    The value is an object where field 'type' is type and optional field 'value'
+    is initial value of variable.
     """
 
     returnType: Asn1Type
@@ -796,22 +812,6 @@ class ObserverAttachmentInfo:
 
     def __str__(self):
         return f"ObserverAttachmentInfo(observerSignalName={self.observerSignalName}, originalSignalName={self.originalSignalName}, kind={self.kind}, senderName={self.senderName}, recipientName={self.recipientName})"
-
-
-class VariableInfo:
-    """
-    Holds information about type and initial value of variable.
-    """
-
-    type: Asn1Type
-    """Type of variable from opengeode."""
-
-    value: Optional[Expression]
-    """Optional initial value of variable."""
-
-    def __init__(self, type, value):
-        self.type = type
-        self.value = value
 
 
 def appendAllActions(destination, source):
@@ -1728,7 +1728,13 @@ class Model:
                 continue
             procedure = Procedure()
             procedure.name = src_procedure.inputString
-            procedure.variables = src_procedure.variables
+            for variable_name, info in src_procedure.variables.items():
+                if info[1] is None:
+                    procedure.variables[variable_name] = VariableInfo(info[0], None)
+                else:
+                    procedure.variables[variable_name] = VariableInfo(
+                        info[0], convert(info[1])
+                    )
             procedure.returnType = src_procedure.return_type
             for src_parameter in src_procedure.fpar:
                 parameter = ProcedureParameter()
