@@ -1,0 +1,50 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF procedure (415, 467), (126, 35) */
+    procedure test_unprotected;
+        /* CIF TEXT (135, 284), (267, 140) */
+        -- Text area for declarations and comments
+        
+        fpar
+          out result MyInteger,
+          in lhs MyInteger,
+          in rhs MyInteger;
+        /* CIF ENDTEXT */
+        /* CIF START (837, 241), (70, 35) */
+        START;
+            /* CIF task (811, 296), (121, 35) */
+            task result := lhs * rhs;
+            /* CIF return (854, 351), (35, 35) */
+            return ;
+    endprocedure;
+    /* CIF procedure (441, 279), (111, 35) */
+    procedure test_protected;
+        /* CIF TEXT (238, 204), (267, 140) */
+        -- Text area for declarations and comments
+        
+        fpar
+          out result MyInteger,
+          in lhs MyInteger,
+          in rhs MyInteger;
+        /* CIF ENDTEXT */
+        /* CIF START (789, 265), (70, 35) */
+        START;
+            /* CIF task (762, 320), (122, 35) */
+            task result := lhs + rhs;
+            /* CIF return (806, 375), (35, 35) */
+            return ;
+    endprocedure;
+    /* CIF START (1065, 125), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (1065, 175), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (819, 157), (70, 35) */
+    state Wait;
+        /* CIF input (819, 212), (70, 35) */
+        input ping;
+            /* CIF output (819, 267), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (819, 322), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

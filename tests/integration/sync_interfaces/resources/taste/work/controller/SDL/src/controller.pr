@@ -1,0 +1,77 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (364, 444), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl lhs_param MyInteger;
+    dcl rhs_param MyInteger;
+    dcl actuator_result MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (622, 132), (70, 35) */
+    START;
+        /* CIF output (622, 187), (70, 35) */
+        output ping;
+        /* CIF NEXTSTATE (603, 237), (106, 35) */
+        NEXTSTATE TestProtected;
+    /* CIF state (1452, 167), (123, 35) */
+    state TestUnprotected;
+        /* CIF input (1479, 222), (70, 35) */
+        input pong;
+            /* CIF task (1460, 277), (107, 35) */
+            task lhs_param := 3;
+            /* CIF task (1459, 332), (108, 35) */
+            task rhs_param := 4;
+            /* CIF PROCEDURECALL (1333, 387), (360, 35) */
+            call test_unprotected(actuator_result, lhs_param, rhs_param);
+            /* CIF decision (1457, 442), (113, 50) */
+            decision actuator_result;
+                /* CIF ANSWER (1434, 512), (70, 23) */
+                (12):
+                    /* CIF output (1434, 555), (70, 35) */
+                    output ping;
+                    /* CIF NEXTSTATE (1405, 610), (126, 35) */
+                    NEXTSTATE WaitForResponse;
+                /* CIF ANSWER (1543, 512), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (1543, 555), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
+    /* CIF state (1915, 178), (126, 35) */
+    state WaitForResponse;
+        /* CIF input (1944, 233), (70, 35) */
+        input pong;
+            /* CIF NEXTSTATE (1943, 288), (70, 35) */
+            NEXTSTATE finished;
+    endstate;
+    /* CIF state (952, 153), (106, 35) */
+    state TestProtected;
+        /* CIF input (971, 208), (70, 35) */
+        input pong;
+            /* CIF task (952, 263), (107, 35) */
+            task lhs_param := 2;
+            /* CIF task (951, 318), (108, 35) */
+            task rhs_param := 3;
+            /* CIF PROCEDURECALL (833, 373), (345, 35) */
+            call test_protected(actuator_result, lhs_param, rhs_param);
+            /* CIF decision (949, 428), (113, 50) */
+            decision actuator_result;
+                /* CIF ANSWER (926, 498), (70, 23) */
+                (5):
+                    /* CIF output (926, 541), (70, 35) */
+                    output ping;
+                    /* CIF NEXTSTATE (899, 596), (123, 35) */
+                    NEXTSTATE TestUnprotected;
+                /* CIF ANSWER (1033, 498), (70, 23) */
+                else:
+                    /* CIF NEXTSTATE (1033, 541), (70, 35) */
+                    NEXTSTATE error;
+            enddecision;
+    endstate;
+    /* CIF state (429, 206), (70, 35) */
+    state finished;
+    endstate;
+    /* CIF state (429, 96), (70, 35) */
+    state error;
+    endstate;
+endprocess Controller;
