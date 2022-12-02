@@ -736,9 +736,14 @@ class ProcedureParameter:
 
 
 class ProcedureType(Enum):
+    """Type of procedure."""
+
     INTERNAL = 1
+    """Internal procedure, used and defined only internally."""
     EXTERNAL = 2
+    """External procedure, used internally, defined outside."""
     EXPORTED = 3
+    """Exported procedure, used outside, defined internally."""
 
 
 class Procedure:
@@ -764,6 +769,7 @@ class Procedure:
     """Procedure return type. Can be None."""
 
     type: ProcedureType
+    """Type of procedure."""
 
     def __init__(self):
         self.name = ""
