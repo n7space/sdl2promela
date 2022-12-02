@@ -26,7 +26,7 @@ inline Controller_check_queue()
         empty(Controller_readValue_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

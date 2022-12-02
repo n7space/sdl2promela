@@ -38,7 +38,7 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -64,7 +64,7 @@ inline Controller_check_queue()
         (empty(Controller_pong_channel) && empty(Controller_test_channel));
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

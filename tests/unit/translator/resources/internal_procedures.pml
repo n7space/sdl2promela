@@ -52,27 +52,27 @@ inline Host_0_procWithOutput()
 }
 inline Host_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int host_transition_id;
+  host_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(host_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(host_transition_id == 0)->
+      host_transition_id = -1;
       global_state.host.state = Host_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto host_continuous_signals;
+    ::(host_transition_id == 1)->
       Host_0_proc();
       Host_0_procWithArguments(global_state.host.r, 1, global_state.host.b, global_state.host.y);
       Host_0_procWithLocalVariables();
       Host_0_procWithOutput();
       Host_0_multireturn(global_state.host.r, global_state.host.a);
-      transition_id = -1;
+      host_transition_id = -1;
       global_state.host.state = Host_States_wait;
-      goto continuous_signals;
+      goto host_continuous_signals;
     fi;
-    continuous_signals:
+    host_continuous_signals:
   od;
 }
 inline Host_0_init()

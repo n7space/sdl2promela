@@ -30,8 +30,7 @@ chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_give_me_array()
 {
-    int dummy;
-    Actuator_give_me_array_channel!dummy;
+    Actuator_give_me_array_channel!0;
 }
 inline Actuator_0_PI_0_give_me_array_unhandled_input()
 {
@@ -39,8 +38,7 @@ inline Actuator_0_PI_0_give_me_array_unhandled_input()
 }
 inline Controller_0_RI_0_give_me_data()
 {
-    int dummy;
-    Actuator_give_me_data_channel!dummy;
+    Actuator_give_me_data_channel!0;
 }
 inline Actuator_0_PI_0_give_me_data_unhandled_input()
 {
@@ -48,8 +46,7 @@ inline Actuator_0_PI_0_give_me_data_unhandled_input()
 }
 inline Controller_0_RI_0_give_me_nested()
 {
-    int dummy;
-    Actuator_give_me_nested_channel!dummy;
+    Actuator_give_me_nested_channel!0;
 }
 inline Actuator_0_PI_0_give_me_nested_unhandled_input()
 {
@@ -57,8 +54,7 @@ inline Actuator_0_PI_0_give_me_nested_unhandled_input()
 }
 inline Controller_0_RI_0_give_me_values()
 {
-    int dummy;
-    Actuator_give_me_values_channel!dummy;
+    Actuator_give_me_values_channel!0;
 }
 inline Actuator_0_PI_0_give_me_values_unhandled_input()
 {
@@ -70,7 +66,7 @@ inline Actuator_check_queue()
         (empty(Actuator_give_me_array_channel) && (empty(Actuator_give_me_data_channel) && (empty(Actuator_give_me_nested_channel) && empty(Actuator_give_me_values_channel))));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -112,7 +108,7 @@ inline Controller_check_queue()
         (empty(Controller_result_array_channel) && (empty(Controller_result_data_channel) && (empty(Controller_result_nested_channel) && empty(Controller_result_values_channel))));
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

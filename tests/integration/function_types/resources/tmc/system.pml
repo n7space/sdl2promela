@@ -60,7 +60,7 @@ inline Controller_check_queue()
         (empty(Controller_down_result_channel) && (empty(Controller_test_channel) && empty(Controller_up_result_channel)));
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }
@@ -78,7 +78,7 @@ inline Down_check_queue()
         empty(Down_check_channel);
     }
 }
-inline Down_0_get_sender(Down_sender_arg)
+inline Down_0_RI_0_get_sender(Down_sender_arg)
 {
     skip;
 }
@@ -96,7 +96,7 @@ inline Up_check_queue()
         empty(Up_check_channel);
     }
 }
-inline Up_0_get_sender(Up_sender_arg)
+inline Up_0_RI_0_get_sender(Up_sender_arg)
 {
     skip;
 }

@@ -34,15 +34,12 @@ from .utils import Asn1Type
 
 __TRANSITION_TYPE_NAME = "int"
 __TRANSITION_ARGUMENT = "id"
-__TRANSITION_ID = "transition_id"
-__OBSERVER_TRANSITION_ID = "observer_transition_id"
 __INVALID_ID = "-1"
 __STATE_VARIABLE = "state"
 __INIT = "init"
 __STATES_SEPARATOR = "_States_"
 __GLOBAL_STATE = "global_state"
 __NEXT_TRANSITION_LABEL_NAME = "next_transition"
-__LABEL_CONTINUOUS_SIGNALS = "continuous_signals"
 
 __BINARY_OPERATOR_DICTIONARY = {
     sdlmodel.BinaryOperator.EQUAL: promelamodel.BinaryOperator.EQUAL,
@@ -163,9 +160,39 @@ class Context:
         self.loop_level = self.loop_level - 1
 
     def generate_temporary_variable(self) -> str:
+        """
+        Generate name for temporary variable.
+
+        :returns: Unique name for temporary variable.
+        """
         result = f"_tmp_{self._temporary_variable_counter}"
         self._temporary_variable_counter = self._temporary_variable_counter + 1
         return result
+
+    def get_transition_variable(self) -> str:
+        """
+        Getter for name of variable transition.
+
+        :reutnrs: Name of transition id variable associated with SDL process.
+        """
+
+        return self.sdl_model.process_name.lower() + "_transition_id"
+
+    def get_observer_transition_variable(self) -> str:
+        """
+        Getter for name of variable transition for observer.
+
+        :reutnrs: Name of transition id variable associated with observer SDL.
+        """
+        return self.sdl_model.process_name.lower() + "_observer_transition_id"
+
+    def get_continuous_signals_label(self) -> str:
+        """
+        Getter for name label for continuous_signals
+
+        :reutnrs: Name of label.
+        """
+        return self.sdl_model.process_name.lower() + "_continuous_signals"
 
 
 def _get_type_kind(context: Context, t: Asn1Type) -> str:
@@ -259,6 +286,26 @@ def __get_implicit_variable_name(context: Context, variable_name: str) -> str:
 
 def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
     return context.sdl_model.process_name.capitalize() + SEPARATOR + procedure_name
+
+
+def __get_exported_procedure_inline_name(context: Context, procedure_name: str) -> str:
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "PI"
+        + SEPARATOR
+        + procedure_name
+    )
+
+
+def __get_external_procedure_inline_name(context: Context, procedure_name: str) -> str:
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "RI"
+        + SEPARATOR
+        + procedure_name
+    )
 
 
 def __get_procedure_inline_end_label_name(context: Context, procedure_name: str) -> str:
@@ -523,10 +570,10 @@ def __build_assignment(
         return AssignmentBuilder().withTarget(left).withSource(right).build()
 
 
-def __terminate_transition_statement():
+def __terminate_transition_statement(context: Context):
     return (
         AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+        .withTarget(VariableReferenceBuilder(context.get_transition_variable()).build())
         .withSource(promelamodel.IntegerValue(int(__INVALID_ID)))
         .build()
     )
@@ -926,7 +973,12 @@ def __generate_procedure_inline(
     """
     context.push_parent(procedure)
     builder = InlineBuilder()
-    builder.withName(__get_procedure_inline_name(context, procedure.name))
+
+    if procedure.type == sdlmodel.ProcedureType.EXPORTED:
+        builder.withName(__get_exported_procedure_inline_name(context, procedure.name))
+    else:
+        builder.withName(__get_procedure_inline_name(context, procedure.name))
+
     blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
     for localVariable, localVariableInfo in procedure.variables.items():
         localVariableName = __get_procedure_local_variable_name(context, localVariable)
@@ -990,6 +1042,18 @@ def __generate_procedure_inline(
             __get_procedure_inline_end_label_name(context, procedure.name)
         )
     )
+    if procedure.type == sdlmodel.ProcedureType.EXPORTED:
+        # in case when this is an exported procedure, the continuous signals needs to be called
+        transition_function_name = __get_transition_function_name(context)
+        blockBuilder.withStatements(
+            [
+                CallBuilder()
+                .withTarget(transition_function_name)
+                .withParameter(promelamodel.IntegerValue(-1))
+                .build()
+            ]
+        )
+
     # After the label should be at least one statement.
     # In case of inline it is not always possible to detect if something is called after.
     # Therefore skip is added.
@@ -2118,8 +2182,8 @@ def __generate_statement(
     statements: List[promelamodel.Statement] = []
     if next_state.state_name == "":
         if not context.state_aggregation:
-            statements.append(__terminate_transition_statement())
-            statements.append(promelamodel.GoTo(__LABEL_CONTINUOUS_SIGNALS))
+            statements.append(__terminate_transition_statement(context))
+            statements.append(promelamodel.GoTo(context.get_continuous_signals_label()))
         return promelamodel.StatementsWrapper(statements)
 
     if next_state.substate:
@@ -2131,7 +2195,7 @@ def __generate_statement(
 
     state_name = __get_state_name(context, state)
     if not context.state_aggregation:
-        statements.append(__terminate_transition_statement())
+        statements.append(__terminate_transition_statement(context))
     statements.append(
         AssignmentBuilder()
         .withTarget(VariableReferenceBuilder(state_variable).build())
@@ -2139,7 +2203,7 @@ def __generate_statement(
         .build()
     )
     if not context.state_aggregation:
-        statements.append(promelamodel.GoTo(__LABEL_CONTINUOUS_SIGNALS))
+        statements.append(promelamodel.GoTo(context.get_continuous_signals_label()))
     return promelamodel.StatementsWrapper(statements)
 
 
@@ -2169,7 +2233,7 @@ def __generate_statement(
                     .build()
                 )
             statements.append(inlineCall.build())
-            statements.append(__terminate_transition_statement())
+            statements.append(__terminate_transition_statement(context))
             return (
                 BlockBuilder(promelamodel.BlockType.BLOCK)
                 .withStatements(statements)
@@ -2189,7 +2253,7 @@ def __generate_statement(
         transition_id = next_transition.transition_id
     return (
         AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+        .withTarget(VariableReferenceBuilder(context.get_transition_variable()).build())
         .withSource(VariableReferenceBuilder(str(transition_id)).build())
         .build()
     )
@@ -2224,7 +2288,11 @@ def __generate_statement(
             .withStatements(
                 [
                     AssignmentBuilder()
-                    .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+                    .withTarget(
+                        VariableReferenceBuilder(
+                            context.get_transition_variable()
+                        ).build()
+                    )
                     .withSource(promelamodel.IntegerValue(transition_id))
                     .build()
                 ]
@@ -2234,7 +2302,7 @@ def __generate_statement(
 
     builder.withAlternative(
         AlternativeBuilder()
-        .withStatements([__terminate_transition_statement()])
+        .withStatements([__terminate_transition_statement(context)])
         .build()
     )
 
@@ -2283,8 +2351,24 @@ def __generate_statement(
         procedure_name = __get_procedure_inline_name(context, f"{timer_name}_reset")
         return CallBuilder().withTarget(procedure_name).build()
     else:
+        procedure_inline_name = __get_procedure_inline_name(context, call.name)
+        if call.name.lower() in context.sdl_model.procedures:
+            if (
+                context.sdl_model.procedures[call.name.lower()].type
+                == sdlmodel.ProcedureType.EXTERNAL
+            ):
+                procedure_inline_name = __get_external_procedure_inline_name(
+                    context, call.name
+                )
+            if (
+                context.sdl_model.procedures[call.name.lower()].type
+                == sdlmodel.ProcedureType.EXPORTED
+            ):
+                procedure_inline_name = __get_exported_procedure_inline_name(
+                    context, call.name
+                )
         inlineCall = CallBuilder()
-        inlineCall.withTarget(__get_procedure_inline_name(context, call.name))
+        inlineCall.withTarget(procedure_inline_name)
         for parameter in call.parameters:
             inlineCall.withParameter(__generate_expression(context, parameter))
         return inlineCall.build()
@@ -2358,7 +2442,7 @@ def __generate_transition(
         if not isinstance(transition.parent, sdlmodel.Procedure):
             # Procedures do not change the current transition
             if __should_generate_transition_stop(transition):
-                statements.append(__terminate_transition_statement())
+                statements.append(__terminate_transition_statement(context))
 
     context.pop_parent()
     return statements
@@ -2435,7 +2519,7 @@ def __generate_continuous_signals_block(context: Context) -> promelamodel.Statem
     for name, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
             statements = __generate_continuous_signals_alternative(
-                context, __TRANSITION_ID, signals, False
+                context, context.get_transition_variable(), signals, False
             )
             state = context.sdl_model.states[name]
             state_name = __get_state_name(context, state)
@@ -2468,17 +2552,23 @@ def __generate_continuous_signals_block_for_observer(
             statements: List[promelamodel.Statement] = []
             statements.append(
                 AssignmentBuilder()
-                .withTarget(VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build())
+                .withTarget(
+                    VariableReferenceBuilder(
+                        context.get_observer_transition_variable()
+                    ).build()
+                )
                 .withSource(promelamodel.IntegerValue(-1))
                 .build()
             )
             statements.extend(
                 __generate_continuous_signals_alternative(
-                    context, __OBSERVER_TRANSITION_ID, signals, True
+                    context, context.get_observer_transition_variable(), signals, True
                 )
             )
             transition_inline = __get_transition_function_name(context)
-            param = VariableReferenceBuilder(__OBSERVER_TRANSITION_ID).build()
+            param = VariableReferenceBuilder(
+                context.get_observer_transition_variable()
+            ).build()
             statements.append(
                 CallBuilder().withTarget(transition_inline).withParameter(param).build()
             )
@@ -2534,7 +2624,9 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
         AlternativeBuilder()
         .withCondition(
             BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
-            .withLeft(VariableReferenceBuilder(__TRANSITION_ID).build())
+            .withLeft(
+                VariableReferenceBuilder(context.get_transition_variable()).build()
+            )
             .withRight(VariableReferenceBuilder(__INVALID_ID).build())
             .build()
         )
@@ -2547,7 +2639,9 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
             AlternativeBuilder()
             .withCondition(
                 BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
-                .withLeft(VariableReferenceBuilder(__TRANSITION_ID).build())
+                .withLeft(
+                    VariableReferenceBuilder(context.get_transition_variable()).build()
+                )
                 .withRight(VariableReferenceBuilder(str(id)).build())
                 .build()
             )
@@ -2557,7 +2651,7 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
 
     statements: List[promelamodel.Statement] = []
     statements.append(switch_builder.build())
-    statements.append(promelamodel.Label(__LABEL_CONTINUOUS_SIGNALS))
+    statements.append(promelamodel.Label(context.get_continuous_signals_label()))
     continuous_signals_present = False
     for _, signals in context.sdl_model.continuous_signals.items():
         if len(signals) > 0:
@@ -2578,9 +2672,13 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
 
     blockBuilder.withStatements(
         [
-            VariableDeclarationBuilder(__TRANSITION_ID, __TRANSITION_TYPE_NAME).build(),
+            VariableDeclarationBuilder(
+                context.get_transition_variable(), __TRANSITION_TYPE_NAME
+            ).build(),
             AssignmentBuilder()
-            .withTarget(VariableReferenceBuilder(__TRANSITION_ID).build())
+            .withTarget(
+                VariableReferenceBuilder(context.get_transition_variable()).build()
+            )
             .withSource(VariableReferenceBuilder(__TRANSITION_ARGUMENT).build())
             .build(),
             do_builder.build(),
@@ -2604,7 +2702,7 @@ def __generate_observer_check_inline(context: Context) -> promelamodel.Inline:
     if continuous_signals_present:
         blockBuilder.withStatement(
             VariableDeclarationBuilder(
-                __OBSERVER_TRANSITION_ID, __TRANSITION_TYPE_NAME
+                context.get_observer_transition_variable(), __TRANSITION_TYPE_NAME
             ).build()
         )
         blockBuilder.withStatement(
@@ -2670,7 +2768,8 @@ def translate(
         )
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
-        builder.withInline(__generate_procedure_inline(context, procedure))
+        if procedure.type != sdlmodel.ProcedureType.EXTERNAL:
+            builder.withInline(__generate_procedure_inline(context, procedure))
     for aggregate_name, transitions in sdl_model.aggregates.items():
         builder.withInline(
             __generate_aggregate_inline(context, aggregate_name, transitions)

@@ -24,8 +24,7 @@ chan Controller_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Controller_0_RI_0_dummy()
 {
-    int dummy;
-    Actuator_dummy_channel!dummy;
+    Actuator_dummy_channel!0;
 }
 inline Actuator_0_PI_0_dummy_unhandled_input()
 {
@@ -45,7 +44,7 @@ inline Actuator_check_queue()
         (empty(Actuator_dummy_channel) && empty(Actuator_ping_channel));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -63,7 +62,7 @@ inline Controller_check_queue()
         empty(Controller_pong_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

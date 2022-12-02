@@ -1,16 +1,16 @@
 inline Complexsdl_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int complexsdl_transition_id;
+  complexsdl_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(complexsdl_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(complexsdl_transition_id == 0)->
+      complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto complexsdl_continuous_signals;
+    ::(complexsdl_transition_id == 1)->
       {
         global_state.complexsdl.octfix.data[0] = 0;
         global_state.complexsdl.octfix.data[1] = 0;
@@ -23,11 +23,11 @@ inline Complexsdl_0_transition(id)
       MyInteger_assign_value(global_state.complexsdl.tmp, 2);
       MyInteger_assign_value(global_state.complexsdl.tmp, global_state.complexsdl.octvar.length);
       Complexsdl_0_RI_0_response(global_state.complexsdl.tmp);
-      transition_id = -1;
+      complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
-      goto continuous_signals;
+      goto complexsdl_continuous_signals;
     fi;
-    continuous_signals:
+    complexsdl_continuous_signals:
   od;
 }
 inline Complexsdl_0_init()

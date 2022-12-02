@@ -137,7 +137,7 @@ inline Actuator_check_queue()
         (empty(Actuator_test_derived_length_channel) && (empty(Actuator_test_exist_channel) && (empty(Actuator_test_length_channel) && (empty(Actuator_test_length_derived_fixed_channel) && (empty(Actuator_test_length_fixed_channel) && (empty(Actuator_test_num_channel) && (empty(Actuator_test_present_channel) && (empty(Actuator_test_to_enum_channel) && (empty(Actuator_test_to_selector_channel) && empty(Actuator_test_val_channel))))))))));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -171,7 +171,7 @@ inline Controller_check_queue()
         (empty(Controller_result_channel) && (empty(Controller_result_enum_channel) && empty(Controller_result_int_channel)));
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

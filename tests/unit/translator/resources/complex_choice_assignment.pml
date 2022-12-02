@@ -1,16 +1,16 @@
 inline Complexassignment_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int complexassignment_transition_id;
+  complexassignment_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(complexassignment_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(complexassignment_transition_id == 0)->
+      complexassignment_transition_id = -1;
       global_state.complexassignment.state = Complexassignment_States_idle;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto complexassignment_continuous_signals;
+    ::(complexassignment_transition_id == 1)->
       {
         DataItem_assign_value(global_state.complexassignment.x, global_state.complexassignment.cmd.data.goToOperational.threshold2);
         {
@@ -19,10 +19,10 @@ inline Complexassignment_0_transition(id)
           DataItem_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold2, 1);
         }
       }
-      transition_id = -1;
-      goto continuous_signals;
+      complexassignment_transition_id = -1;
+      goto complexassignment_continuous_signals;
     fi;
-    continuous_signals:
+    complexassignment_continuous_signals:
   od;
 }
 inline Complexassignment_0_init()

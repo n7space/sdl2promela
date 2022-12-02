@@ -36,8 +36,7 @@ inline Observer_0_RI_0_trigger_out()
 }
 inline Controller_0_RI_0_ping()
 {
-    int dummy;
-    Actuator_ping_channel!dummy;
+    Actuator_ping_channel!0;
 }
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
@@ -53,14 +52,13 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
 inline Actuator_0_RI_0_pong()
 {
-    int dummy;
-    Controller_pong_channel!dummy;
+    Controller_pong_channel!0;
 }
 inline Controller_0_PI_0_pong_unhandled_input()
 {
@@ -72,7 +70,7 @@ inline Controller_check_queue()
         empty(Controller_pong_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }
