@@ -3329,10 +3329,10 @@ inline Actuator_Context_sender_range_check(Actuator_Context_sender_vc)
 }
 inline Actuator_Context_work_param_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_1;
+    for(i_1 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_1] = src.data[i_1];
     }
 }
 inline Actuator_Context_result_param_assign_value(dst, src)
@@ -3399,10 +3399,10 @@ inline Controller_Context_test_param_range_check(Controller_Context_test_param_v
 }
 inline Controller_Context_work_param_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_1;
+    for(i_1 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_1] = src.data[i_1];
     }
 }
 inline Controller_Context_result_param_assign_value(dst, src)
@@ -3463,10 +3463,10 @@ inline MyTestInteger_range_check(MyTestInteger_vc)
 }
 inline MyTestParam_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_0;
+    for(i_0 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_0] = src.data[i_0];
     }
 }
 inline T_Int32_assign_value(dst, src)
@@ -3551,10 +3551,10 @@ inline Actuator_Event_msg_in_input_none_assign_value(dst, src)
 }
 inline Actuator_Event_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_3;
+    for(i_3 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_3] = src.data[i_3];
     }
 }
 inline Actuator_Event_msg_in_work_assign_value(dst, src)
@@ -3670,10 +3670,10 @@ inline Controller_event_msg_in_selection_assign_value(dst, src)
 }
 inline Controller_Event_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_3;
+    for(i_3 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_3] = src.data[i_3];
     }
 }
 inline Controller_Event_msg_out_work_assign_value(dst, src)
@@ -3766,10 +3766,10 @@ inline Function_Event_actuator_msg_in_input_none_assign_value(dst, src)
 }
 inline Function_Event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_4;
+    for(i_4 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_4] = src.data[i_4];
     }
 }
 inline Function_Event_actuator_msg_in_work_assign_value(dst, src)
@@ -3885,10 +3885,10 @@ inline Function_event_controller_msg_in_selection_assign_value(dst, src)
 }
 inline Function_Event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_4;
+    for(i_4 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_4] = src.data[i_4];
     }
 }
 inline Function_Event_controller_msg_out_work_assign_value(dst, src)
@@ -3987,14 +3987,14 @@ inline Function_event_selection_assign_value(dst, src)
 inline Named_Function_Event_id_assign_value(dst, src)
 {
     Named_Function_Event_id_size_check(src.length);
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_1] = src.data[i_1];
     }
-    for(i : src.length .. 79)
+    for(i_1 : src.length .. 79)
     {
-        dst.data[i] = 0;
+        dst.data[i_1] = 0;
     }
     dst.length = src.length;
 }
@@ -4008,10 +4008,10 @@ inline Named_Function_Event_event_actuator_msg_in_input_none_assign_value(dst, s
 }
 inline Named_Function_Event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_5;
+    for(i_5 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_5] = src.data[i_5];
     }
 }
 inline Named_Function_Event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -4127,10 +4127,10 @@ inline Named_function_event_event_controller_msg_in_selection_assign_value(dst, 
 }
 inline Named_Function_Event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_5;
+    for(i_5 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_5] = src.data[i_5];
     }
 }
 inline Named_Function_Event_event_controller_msg_out_work_assign_value(dst, src)
@@ -4255,10 +4255,10 @@ inline Interface_Event_event_actuator_msg_in_input_none_assign_value(dst, src)
 }
 inline Interface_Event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_5;
+    for(i_5 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_5] = src.data[i_5];
     }
 }
 inline Interface_Event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -4374,10 +4374,10 @@ inline Interface_event_event_controller_msg_in_selection_assign_value(dst, src)
 }
 inline Interface_Event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_5;
+    for(i_5 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_5] = src.data[i_5];
     }
 }
 inline Interface_Event_event_controller_msg_out_work_assign_value(dst, src)
@@ -4511,10 +4511,10 @@ inline Observable_Event_input_event_event_actuator_msg_in_input_none_assign_valu
 }
 inline Observable_Event_input_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_input_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -4630,10 +4630,10 @@ inline Observable_event_input_event_event_controller_msg_in_selection_assign_val
 }
 inline Observable_Event_input_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_input_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -4759,10 +4759,10 @@ inline Observable_Event_output_event_event_actuator_msg_in_input_none_assign_val
 }
 inline Observable_Event_output_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_output_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -4878,10 +4878,10 @@ inline Observable_event_output_event_event_controller_msg_in_selection_assign_va
 }
 inline Observable_Event_output_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_output_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -5007,10 +5007,10 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_input_none_assign_
 }
 inline Observable_Event_unhandled_input_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_unhandled_input_event_actuator_msg_in_work_assign_value(dst, src)
@@ -5126,10 +5126,10 @@ inline Observable_event_unhandled_input_event_controller_msg_in_selection_assign
 }
 inline Observable_Event_unhandled_input_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_6;
+    for(i_6 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_6] = src.data[i_6];
     }
 }
 inline Observable_Event_unhandled_input_event_controller_msg_out_work_assign_value(dst, src)
@@ -5285,10 +5285,10 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_input_none_assign_value(
 }
 inline Events_Ty_elem_input_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_input_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -5404,10 +5404,10 @@ inline Events_ty_elem_input_event_event_controller_msg_in_selection_assign_value
 }
 inline Events_Ty_elem_input_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_input_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -5533,10 +5533,10 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_input_none_assign_value
 }
 inline Events_Ty_elem_output_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_output_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -5652,10 +5652,10 @@ inline Events_ty_elem_output_event_event_controller_msg_in_selection_assign_valu
 }
 inline Events_Ty_elem_output_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_output_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -5781,10 +5781,10 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_input_none_assign_va
 }
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_work_assign_value(dst, src)
@@ -5900,10 +5900,10 @@ inline Events_ty_elem_unhandled_input_event_controller_msg_in_selection_assign_v
 }
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_7;
+    for(i_7 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_7] = src.data[i_7];
     }
 }
 inline Events_Ty_elem_unhandled_input_event_controller_msg_out_work_assign_value(dst, src)
@@ -6033,14 +6033,14 @@ inline Events_ty_elem_selection_assign_value(dst, src)
 }
 inline Events_Ty_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_0;
+    for(i_0 : 0 .. (src.length - 1))
     {
-        Events_Ty_elem_assign_value(dst.data[i], src.data[i]);
+        Events_Ty_elem_assign_value(dst.data[i_0], src.data[i_0]);
     }
-    for(i : src.length .. 9)
+    for(i_0 : src.length .. 9)
     {
-        Events_Ty_elem_init_value(dst.data[i]);
+        Events_Ty_elem_init_value(dst.data[i_0]);
     }
     dst.length = src.length;
 }
@@ -6098,10 +6098,10 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_input_
 }
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -6217,10 +6217,10 @@ inline System_state_actuator_queue_elem_input_event_event_controller_msg_in_sele
 }
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -6346,10 +6346,10 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_input
 }
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -6465,10 +6465,10 @@ inline System_state_actuator_queue_elem_output_event_event_controller_msg_in_sel
 }
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -6594,10 +6594,10 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_in
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_work_assign_value(dst, src)
@@ -6713,10 +6713,10 @@ inline System_state_actuator_queue_elem_unhandled_input_event_controller_msg_in_
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_work_assign_value(dst, src)
@@ -6846,14 +6846,14 @@ inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 }
 inline System_State_actuator_queue_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        System_State_actuator_queue_elem_assign_value(dst.data[i], src.data[i]);
+        System_State_actuator_queue_elem_assign_value(dst.data[i_1], src.data[i_1]);
     }
-    for(i : src.length .. 1)
+    for(i_1 : src.length .. 1)
     {
-        System_State_actuator_queue_elem_init_value(dst.data[i]);
+        System_State_actuator_queue_elem_init_value(dst.data[i_1]);
     }
     dst.length = src.length;
 }
@@ -6893,10 +6893,10 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_inpu
 }
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -7012,10 +7012,10 @@ inline System_state_controller_queue_elem_input_event_event_controller_msg_in_se
 }
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_input_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -7141,10 +7141,10 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_inp
 }
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_work_assign_value(dst, src)
@@ -7260,10 +7260,10 @@ inline System_state_controller_queue_elem_output_event_event_controller_msg_in_s
 }
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_output_event_event_controller_msg_out_work_assign_value(dst, src)
@@ -7389,10 +7389,10 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 }
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_work_assign_value(dst, src)
@@ -7508,10 +7508,10 @@ inline System_state_controller_queue_elem_unhandled_input_event_controller_msg_i
 }
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_work_p1_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_8;
+    for(i_8 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_8] = src.data[i_8];
     }
 }
 inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_work_assign_value(dst, src)
@@ -7641,14 +7641,14 @@ inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 }
 inline System_State_controller_queue_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        System_State_controller_queue_elem_assign_value(dst.data[i], src.data[i]);
+        System_State_controller_queue_elem_assign_value(dst.data[i_1], src.data[i_1]);
     }
-    for(i : src.length .. 1)
+    for(i_1 : src.length .. 1)
     {
-        System_State_controller_queue_elem_init_value(dst.data[i]);
+        System_State_controller_queue_elem_init_value(dst.data[i_1]);
     }
     dst.length = src.length;
 }
@@ -7685,10 +7685,10 @@ inline System_State_actuator_sender_range_check(System_State_actuator_sender_vc)
 }
 inline System_State_actuator_work_param_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_2;
+    for(i_2 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_2] = src.data[i_2];
     }
 }
 inline System_State_actuator_result_param_assign_value(dst, src)
@@ -7746,10 +7746,10 @@ inline System_State_controller_test_param_range_check(System_State_controller_te
 }
 inline System_State_controller_work_param_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. 3)
+    int i_2;
+    for(i_2 : 0 .. 3)
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_2] = src.data[i_2];
     }
 }
 inline System_State_controller_result_param_assign_value(dst, src)

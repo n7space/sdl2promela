@@ -1,23 +1,23 @@
 inline Complexsdl_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int complexsdl_transition_id;
+  complexsdl_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(complexsdl_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(complexsdl_transition_id == 0)->
+      complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto complexsdl_continuous_signals;
+    ::(complexsdl_transition_id == 1)->
       if
       ::((global_state.complexsdl.tmp == 1) == true)->
         goto right_action;
       ::((global_state.complexsdl.tmp == 1) == false)->
         goto leftaction;
       fi;
-    ::(transition_id == 2)->
+    ::(complexsdl_transition_id == 2)->
       if
       ::((global_state.complexsdl.tmp == 0) == true)->
         goto leftaction;
@@ -25,19 +25,19 @@ inline Complexsdl_0_transition(id)
         goto right_action;
       fi;
     fi;
-    continuous_signals:
+    complexsdl_continuous_signals:
     goto next_transition;
     right_action:
     Complexsdl_0_RI_0_response(1);
-    transition_id = -1;
+    complexsdl_transition_id = -1;
     global_state.complexsdl.state = Complexsdl_States_wait;
-    goto continuous_signals;
+    goto complexsdl_continuous_signals;
     goto next_transition;
     leftaction:
     Complexsdl_0_RI_0_response(0);
-    transition_id = -1;
+    complexsdl_transition_id = -1;
     global_state.complexsdl.state = Complexsdl_States_one;
-    goto continuous_signals;
+    goto complexsdl_continuous_signals;
     goto next_transition;
     next_transition:
   od;

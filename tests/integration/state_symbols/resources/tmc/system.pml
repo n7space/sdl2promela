@@ -24,8 +24,7 @@ chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 inline Controller_0_RI_0_test_excluded_state()
 {
-    int dummy;
-    Actuator_test_excluded_state_channel!dummy;
+    Actuator_test_excluded_state_channel!0;
 }
 inline Actuator_0_PI_0_test_excluded_state_unhandled_input()
 {
@@ -41,8 +40,7 @@ inline Actuator_0_PI_0_test_simple_state_unhandled_input(p1)
 }
 inline Controller_0_RI_0_test_star()
 {
-    int dummy;
-    Actuator_test_star_channel!dummy;
+    Actuator_test_star_channel!0;
 }
 inline Actuator_0_PI_0_test_star_unhandled_input()
 {
@@ -58,8 +56,7 @@ inline Actuator_0_PI_0_test_state_list_unhandled_input(p1)
 }
 inline Controller_0_RI_0_test_state_list2()
 {
-    int dummy;
-    Actuator_test_state_list2_channel!dummy;
+    Actuator_test_state_list2_channel!0;
 }
 inline Actuator_0_PI_0_test_state_list2_unhandled_input()
 {
@@ -71,14 +68,13 @@ inline Actuator_check_queue()
         (empty(Actuator_test_excluded_state_channel) && (empty(Actuator_test_simple_state_channel) && (empty(Actuator_test_star_channel) && (empty(Actuator_test_state_list_channel) && empty(Actuator_test_state_list2_channel)))));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
 inline Actuator_0_RI_0_result()
 {
-    int dummy;
-    Controller_result_channel!dummy;
+    Controller_result_channel!0;
 }
 inline Controller_0_PI_0_result_unhandled_input()
 {
@@ -90,7 +86,7 @@ inline Controller_check_queue()
         empty(Controller_result_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

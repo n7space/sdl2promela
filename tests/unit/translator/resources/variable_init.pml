@@ -1,36 +1,36 @@
 inline Actuator_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int actuator_transition_id;
+  actuator_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(actuator_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(actuator_transition_id == 0)->
+      actuator_transition_id = -1;
       global_state.actuator.state = Actuator_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
-      transition_id = -1;
+      goto actuator_continuous_signals;
+    ::(actuator_transition_id == 1)->
+      actuator_transition_id = -1;
       global_state.actuator.state = Actuator_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 2)->
+      goto actuator_continuous_signals;
+    ::(actuator_transition_id == 2)->
       Actuator_0_RI_0_pong();
-      transition_id = 3;
-    ::(transition_id == 3)->
-      transition_id = -1;
+      actuator_transition_id = 3;
+    ::(actuator_transition_id == 3)->
+      actuator_transition_id = -1;
       global_state.actuator.state = Actuator_States_nested_0_a;
-      goto continuous_signals;
-    ::(transition_id == 4)->
+      goto actuator_continuous_signals;
+    ::(actuator_transition_id == 4)->
       Actuator_0_RI_0_pong();
-      transition_id = 1;
-    ::(transition_id == 5)->
+      actuator_transition_id = 1;
+    ::(actuator_transition_id == 5)->
       Actuator_0_RI_0_pong();
-      transition_id = -1;
+      actuator_transition_id = -1;
       global_state.actuator.state = Actuator_States_nested_0_b;
-      goto continuous_signals;
+      goto actuator_continuous_signals;
     fi;
-    continuous_signals:
+    actuator_continuous_signals:
   od;
 }
 inline Actuator_0_init()

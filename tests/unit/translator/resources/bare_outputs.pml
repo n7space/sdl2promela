@@ -1,22 +1,22 @@
 inline Bare_outputs_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int bare_outputs_transition_id;
+  bare_outputs_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(bare_outputs_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(bare_outputs_transition_id == 0)->
+      bare_outputs_transition_id = -1;
       global_state.bare_outputs.state = Bare_outputs_States_state_1;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto bare_outputs_continuous_signals;
+    ::(bare_outputs_transition_id == 1)->
       Bare_outputs_0_RI_0_signal_out();
-      transition_id = -1;
+      bare_outputs_transition_id = -1;
       global_state.bare_outputs.state = Bare_outputs_States_state_1;
-      goto continuous_signals;
+      goto bare_outputs_continuous_signals;
     fi;
-    continuous_signals:
+    bare_outputs_continuous_signals:
   od;
 }
 inline Bare_outputs_0_init()

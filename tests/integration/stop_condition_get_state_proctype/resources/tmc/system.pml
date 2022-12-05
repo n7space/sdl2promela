@@ -16,8 +16,7 @@ chan Actuator_lock = [1] of {int};
 chan Inst_lock = [1] of {int};
 inline Inst_0_RI_0_ping()
 {
-    int dummy;
-    Actuator_ping_channel!dummy;
+    Actuator_ping_channel!0;
 }
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
@@ -29,14 +28,13 @@ inline Actuator_check_queue()
         empty(Actuator_ping_channel);
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
 inline Actuator_0_RI_0_pong()
 {
-    int dummy;
-    Inst_pong_channel!dummy;
+    Inst_pong_channel!0;
 }
 inline Inst_0_PI_0_pong_unhandled_input()
 {
@@ -48,7 +46,7 @@ inline Inst_check_queue()
         empty(Inst_pong_channel);
     }
 }
-inline Inst_0_get_sender(Inst_sender_arg)
+inline Inst_0_RI_0_get_sender(Inst_sender_arg)
 {
     skip;
 }

@@ -35,8 +35,7 @@ inline Actuator_0_PI_0_ping_unhandled_input(p1)
 }
 inline Controller_0_RI_0_reset()
 {
-    int dummy;
-    Actuator_reset_channel!dummy;
+    Actuator_reset_channel!0;
 }
 inline Actuator_0_PI_0_reset_unhandled_input()
 {
@@ -48,7 +47,7 @@ inline Actuator_check_queue()
         (empty(Actuator_ping_channel) && empty(Actuator_reset_channel));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -74,7 +73,7 @@ inline Controller_check_queue()
         (empty(Controller_pong_channel) && empty(Controller_test_channel));
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

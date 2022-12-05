@@ -735,6 +735,17 @@ class ProcedureParameter:
         self.typeObject = None
 
 
+class ProcedureType(Enum):
+    """Type of procedure."""
+
+    INTERNAL = 1
+    """Internal procedure, used and defined only internally."""
+    EXTERNAL = 2
+    """External procedure, used internally, defined outside."""
+    EXPORTED = 3
+    """Exported procedure, used outside, defined internally."""
+
+
 class Procedure:
     """SDL procedure."""
 
@@ -757,12 +768,16 @@ class Procedure:
     returnType: Asn1Type
     """Procedure return type. Can be None."""
 
+    type: ProcedureType
+    """Type of procedure."""
+
     def __init__(self):
         self.name = ""
         self.parameters = []
         self.variables = {}
         self.transition = None
         self.returnType = None
+        self.type = ProcedureType.INTERNAL
 
 
 class ObservedSignalKind(Enum):
@@ -1649,8 +1664,16 @@ class Model:
     def __gather_inputs(self):
         # Gather all inputs and their parameters
         for inputSignal in self.source.input_signals:
+            input_name = inputSignal["name"]
+            ignore_input = False
+            for proc in self.source.procedures:
+                # Ignore inputs that are procedures
+                if proc.inputString.lower() == input_name.lower():
+                    ignore_input = True
+            if ignore_input:
+                continue
             input = Input()
-            input.name = inputSignal["name"]
+            input.name = input_name
             # If signal has property "type" it has a parameter
             # parameter name for signals is irrevelant for generation of promela
             if "type" in inputSignal:
@@ -1724,10 +1747,15 @@ class Model:
 
     def __gather_procedures(self):
         for src_procedure in self.source.procedures:
-            if src_procedure.external:
+            if src_procedure.referenced:
+                # If procedure is referenced
                 continue
             procedure = Procedure()
             procedure.name = src_procedure.inputString
+            if src_procedure.external:
+                procedure.type = ProcedureType.EXTERNAL
+            if src_procedure.exported:
+                procedure.type = ProcedureType.EXPORTED
             for variable_name, info in src_procedure.variables.items():
                 if info[1] is None:
                     procedure.variables[variable_name] = VariableInfo(info[0], None)
@@ -1746,12 +1774,17 @@ class Model:
                 )
                 parameter.typeObject = src_parameter["type"]
                 procedure.parameters.append(parameter)
-            if src_procedure.transitions[0] is not None:
-                procedure.transition = self.__convert_transition(
-                    src_procedure.transitions[0]
-                )
-                procedure.transition.parent = procedure
-            self.procedures[procedure.name] = procedure
+            if not src_procedure.external:
+                # External procedures cannot have body
+                # This block is executed only for non external procedures
+                if src_procedure.transitions[0] is not None:
+                    procedure.transition = self.__convert_transition(
+                        src_procedure.transitions[0]
+                    )
+                    procedure.transition.parent = procedure
+            if procedure.name.lower() in self.procedures:
+                raise Exception(f"Duplicated procedure {procedure.name}")
+            self.procedures[procedure.name.lower()] = procedure
 
     def __gather_named_transition_ids(self):
         for name, val in self.source.mapping.items():

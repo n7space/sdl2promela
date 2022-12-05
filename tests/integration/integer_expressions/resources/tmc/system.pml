@@ -43,7 +43,7 @@ inline Actuator_check_queue()
         (empty(Actuator_check_binary_channel) && empty(Actuator_check_unary_channel));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
@@ -61,7 +61,7 @@ inline Controller_check_queue()
         empty(Controller_result_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

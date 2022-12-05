@@ -1,16 +1,16 @@
 inline Simplechoiceaccess_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int simplechoiceaccess_transition_id;
+  simplechoiceaccess_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(simplechoiceaccess_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(simplechoiceaccess_transition_id == 0)->
+      simplechoiceaccess_transition_id = -1;
       global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto simplechoiceaccess_continuous_signals;
+    ::(simplechoiceaccess_transition_id == 1)->
       if
       ::(global_state.simplechoiceaccess.my_data.selection == MyUnion_packet_PRESENT)->
         MyInteger_assign_value(global_state.simplechoiceaccess.my_int, global_state.simplechoiceaccess.my_data.data.packet);
@@ -18,11 +18,11 @@ inline Simplechoiceaccess_0_transition(id)
         MyInteger_assign_value(global_state.simplechoiceaccess.my_int, 0);
       fi;
       Simplechoiceaccess_0_RI_0_pong(global_state.simplechoiceaccess.my_int);
-      transition_id = -1;
+      simplechoiceaccess_transition_id = -1;
       global_state.simplechoiceaccess.state = Simplechoiceaccess_States_wait;
-      goto continuous_signals;
+      goto simplechoiceaccess_continuous_signals;
     fi;
-    continuous_signals:
+    simplechoiceaccess_continuous_signals:
   od;
 }
 inline Simplechoiceaccess_0_init()

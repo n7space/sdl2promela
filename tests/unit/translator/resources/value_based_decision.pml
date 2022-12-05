@@ -1,28 +1,28 @@
 inline Complexsdl_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int complexsdl_transition_id;
+  complexsdl_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(complexsdl_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(complexsdl_transition_id == 0)->
+      complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto complexsdl_continuous_signals;
+    ::(complexsdl_transition_id == 1)->
       if
       ::(global_state.complexsdl.tmp > 0)->
-        transition_id = -1;
+        complexsdl_transition_id = -1;
         global_state.complexsdl.state = Complexsdl_States_wait;
-        goto continuous_signals;
+        goto complexsdl_continuous_signals;
       ::(global_state.complexsdl.tmp == 0)->
-        transition_id = -1;
+        complexsdl_transition_id = -1;
         global_state.complexsdl.state = Complexsdl_States_wait;
-        goto continuous_signals;
+        goto complexsdl_continuous_signals;
       fi;
     fi;
-    continuous_signals:
+    complexsdl_continuous_signals:
   od;
 }
 inline Complexsdl_0_init()

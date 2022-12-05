@@ -1,16 +1,16 @@
 inline Taskwithloop_0_transition(id)
 {
-  int transition_id;
-  transition_id = id;
+  int taskwithloop_transition_id;
+  taskwithloop_transition_id = id;
   do
   ::if
-    ::(transition_id == -1)->
+    ::(taskwithloop_transition_id == -1)->
       break;
-    ::(transition_id == 0)->
-      transition_id = -1;
+    ::(taskwithloop_transition_id == 0)->
+      taskwithloop_transition_id = -1;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 1)->
+      goto taskwithloop_continuous_signals;
+    ::(taskwithloop_transition_id == 1)->
       MyInteger_assign_value(global_state.taskwithloop.result_param, 0);
       {
         MyInteger each;
@@ -22,10 +22,10 @@ inline Taskwithloop_0_transition(id)
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
-      transition_id = -1;
+      taskwithloop_transition_id = -1;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 2)->
+      goto taskwithloop_continuous_signals;
+    ::(taskwithloop_transition_id == 2)->
       MyInteger_assign_value(global_state.taskwithloop.result_param, 0);
       {
         MyInteger each;
@@ -37,10 +37,10 @@ inline Taskwithloop_0_transition(id)
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
-      transition_id = -1;
+      taskwithloop_transition_id = -1;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 3)->
+      goto taskwithloop_continuous_signals;
+    ::(taskwithloop_transition_id == 3)->
       MyInteger_assign_value(global_state.taskwithloop.result_param, 0);
       {
         MyInteger each;
@@ -52,10 +52,10 @@ inline Taskwithloop_0_transition(id)
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
-      transition_id = -1;
+      taskwithloop_transition_id = -1;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
-      goto continuous_signals;
-    ::(transition_id == 4)->
+      goto taskwithloop_continuous_signals;
+    ::(taskwithloop_transition_id == 4)->
       MyInteger_assign_value(global_state.taskwithloop.result_param, 0);
       {
         MyInteger_assign_value(global_state.taskwithloop.nested_param.data[0].data[0], 2);
@@ -97,11 +97,11 @@ inline Taskwithloop_0_transition(id)
         };
       }
       Taskwithloop_0_RI_0_result(global_state.taskwithloop.result_param);
-      transition_id = -1;
+      taskwithloop_transition_id = -1;
       global_state.taskwithloop.state = Taskwithloop_States_wait;
-      goto continuous_signals;
+      goto taskwithloop_continuous_signals;
     fi;
-    continuous_signals:
+    taskwithloop_continuous_signals:
   od;
 }
 inline Taskwithloop_0_init()

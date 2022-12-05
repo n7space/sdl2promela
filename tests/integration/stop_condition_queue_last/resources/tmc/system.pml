@@ -74,14 +74,13 @@ inline Actuator_check_queue()
         (empty(Actuator_test_array_channel) && (empty(Actuator_test_choice_channel) && (empty(Actuator_test_integer_channel) && (empty(Actuator_test_optional_channel) && empty(Actuator_test_sequence_channel)))));
     }
 }
-inline Actuator_0_get_sender(Actuator_sender_arg)
+inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
 inline Actuator_0_RI_0_result()
 {
-    int dummy;
-    Controller_result_channel!dummy;
+    Controller_result_channel!0;
 }
 inline Controller_0_PI_0_result_unhandled_input()
 {
@@ -93,7 +92,7 @@ inline Controller_check_queue()
         empty(Controller_result_channel);
     }
 }
-inline Controller_0_get_sender(Controller_sender_arg)
+inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }

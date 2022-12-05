@@ -4067,14 +4067,14 @@ inline Function_event_selection_assign_value(dst, src)
 inline Named_Function_Event_id_assign_value(dst, src)
 {
     Named_Function_Event_id_size_check(src.length);
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        dst.data[i] = src.data[i];
+        dst.data[i_1] = src.data[i_1];
     }
-    for(i : src.length .. 79)
+    for(i_1 : src.length .. 79)
     {
-        dst.data[i] = 0;
+        dst.data[i_1] = 0;
     }
     dst.length = src.length;
 }
@@ -6049,14 +6049,14 @@ inline Events_ty_elem_selection_assign_value(dst, src)
 }
 inline Events_Ty_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_0;
+    for(i_0 : 0 .. (src.length - 1))
     {
-        Events_Ty_elem_assign_value(dst.data[i], src.data[i]);
+        Events_Ty_elem_assign_value(dst.data[i_0], src.data[i_0]);
     }
-    for(i : src.length .. 9)
+    for(i_0 : src.length .. 9)
     {
-        Events_Ty_elem_init_value(dst.data[i]);
+        Events_Ty_elem_init_value(dst.data[i_0]);
     }
     dst.length = src.length;
 }
@@ -6838,14 +6838,14 @@ inline System_state_actuator_queue_elem_selection_assign_value(dst, src)
 }
 inline System_State_actuator_queue_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        System_State_actuator_queue_elem_assign_value(dst.data[i], src.data[i]);
+        System_State_actuator_queue_elem_assign_value(dst.data[i_1], src.data[i_1]);
     }
-    for(i : src.length .. 1)
+    for(i_1 : src.length .. 1)
     {
-        System_State_actuator_queue_elem_init_value(dst.data[i]);
+        System_State_actuator_queue_elem_init_value(dst.data[i_1]);
     }
     dst.length = src.length;
 }
@@ -7609,14 +7609,14 @@ inline System_state_controller_queue_elem_selection_assign_value(dst, src)
 }
 inline System_State_controller_queue_assign_value(dst, src)
 {
-    int i;
-    for(i : 0 .. (src.length - 1))
+    int i_1;
+    for(i_1 : 0 .. (src.length - 1))
     {
-        System_State_controller_queue_elem_assign_value(dst.data[i], src.data[i]);
+        System_State_controller_queue_elem_assign_value(dst.data[i_1], src.data[i_1]);
     }
-    for(i : src.length .. 1)
+    for(i_1 : src.length .. 1)
     {
-        System_State_controller_queue_elem_init_value(dst.data[i]);
+        System_State_controller_queue_elem_init_value(dst.data[i_1]);
     }
     dst.length = src.length;
 }
