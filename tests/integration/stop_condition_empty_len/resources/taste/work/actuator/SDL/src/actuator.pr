@@ -4,6 +4,15 @@ process Actuator;
     START;
         /* CIF NEXTSTATE (342, 80), (70, 35) */
         NEXTSTATE Wait;
+    /* CIF state (1151, 156), (70, 35) */
+    state Wait;
+        /* CIF input (1145, 211), (81, 35) */
+        input testSignal;
+            /* CIF output (1151, 266), (70, 35) */
+            output pong;
+            /* CIF NEXTSTATE (1151, 321), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
     /* CIF state (823, 137), (70, 35) */
     state Wait;
         /* CIF input (823, 192), (70, 35) */
@@ -11,15 +20,6 @@ process Actuator;
             /* CIF output (823, 247), (70, 35) */
             output pong;
             /* CIF NEXTSTATE (823, 302), (70, 35) */
-            NEXTSTATE Wait;
-    endstate;
-    /* CIF state (1151, 156), (70, 35) */
-    state Wait;
-        /* CIF input (1151, 211), (70, 35) */
-        input test;
-            /* CIF output (1151, 266), (70, 35) */
-            output pong;
-            /* CIF NEXTSTATE (1151, 321), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

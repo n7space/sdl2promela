@@ -8,7 +8,7 @@ system Actuator;
    signal ping;
    
    
-   signal test;
+   signal testSignal;
 
    signal pong;
 
@@ -18,14 +18,14 @@ system Actuator;
    external;
 
    channel c
-      from env to Actuator with ping, test;
+      from env to Actuator with ping, testSignal;
       from Actuator to env with pong;
    endchannel;
 
    block Actuator;
 
       signalroute r
-      from env to Actuator with ping, test;
+      from env to Actuator with ping, testSignal;
       from Actuator to env with pong;
       connect c and r;
 
