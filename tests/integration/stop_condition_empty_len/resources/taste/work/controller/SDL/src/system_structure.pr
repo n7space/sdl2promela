@@ -10,7 +10,7 @@ system Controller;
    signal ping;
    
    
-   signal test;
+   signal testSignal;
 
    -- For internal use, return the PID of the caller
    procedure get_sender;
@@ -19,14 +19,14 @@ system Controller;
 
    channel c
       from env to Controller with pong;
-      from Controller to env with ping, test;
+      from Controller to env with ping, testSignal;
    endchannel;
 
    block Controller;
 
       signalroute r
       from env to Controller with pong;
-      from Controller to env with ping, test;
+      from Controller to env with ping, testSignal;
       connect c and r;
 
       process Controller referenced;

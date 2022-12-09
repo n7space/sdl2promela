@@ -1,1 +1,1 @@
-always empty(actuator.test);
+always empty(actuator.TestSignal);

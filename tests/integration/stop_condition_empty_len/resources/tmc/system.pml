@@ -10,7 +10,7 @@ typedef system_state {
 
 int inited;
 chan Actuator_ping_channel = [2] of {int};
-chan Actuator_test_channel = [2] of {int};
+chan Actuator_testsignal_channel = [2] of {int};
 chan Controller_pong_channel = [2] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
@@ -21,20 +21,22 @@ inline Controller_0_RI_0_ping()
 }
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
+    printf("unhandled_input actuator ping\n");
     skip;
 }
-inline Controller_0_RI_0_test()
+inline Controller_0_RI_0_testSignal()
 {
-    Actuator_test_channel!0;
+    Actuator_testsignal_channel!0;
 }
-inline Actuator_0_PI_0_test_unhandled_input()
+inline Actuator_0_PI_0_testSignal_unhandled_input()
 {
+    printf("unhandled_input actuator testSignal\n");
     skip;
 }
 inline Actuator_check_queue()
 {
     atomic {
-        (empty(Actuator_ping_channel) && empty(Actuator_test_channel));
+        (empty(Actuator_ping_channel) && empty(Actuator_testsignal_channel));
     }
 }
 inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
@@ -47,6 +49,7 @@ inline Actuator_0_RI_0_pong()
 }
 inline Controller_0_PI_0_pong_unhandled_input()
 {
+    printf("unhandled_input controller pong\n");
     skip;
 }
 inline Controller_check_queue()
@@ -79,20 +82,20 @@ Actuator_ping_loop:
     }
     od;
 }
-active proctype Actuator_test() priority 1
+active proctype Actuator_testSignal() priority 1
 {
     inited;
     do
     ::  atomic {
-        nempty(Actuator_test_channel);
+        nempty(Actuator_testsignal_channel);
         Actuator_lock?_;
-Actuator_test_loop:
+Actuator_testsignal_loop:
         if
-        ::  nempty(Actuator_test_channel);
-            Actuator_test_channel?_;
-            Actuator_0_PI_0_test();
-            goto Actuator_test_loop;
-        ::  empty(Actuator_test_channel);
+        ::  nempty(Actuator_testsignal_channel);
+            Actuator_testsignal_channel?_;
+            Actuator_0_PI_0_testSignal();
+            goto Actuator_testsignal_loop;
+        ::  empty(Actuator_testsignal_channel);
             skip;
         fi;
         Actuator_lock!1;

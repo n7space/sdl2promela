@@ -70,8 +70,8 @@
 #define Actuator_event_msg_in_selection_input_none_PRESENT 1
 #define Actuator_Event_msg_in_ping_PRESENT 2
 #define Actuator_event_msg_in_selection_ping_PRESENT 2
-#define Actuator_Event_msg_in_test_PRESENT 3
-#define Actuator_event_msg_in_selection_test_PRESENT 3
+#define Actuator_Event_msg_in_testsignal_PRESENT 3
+#define Actuator_event_msg_in_selection_testsignal_PRESENT 3
 #define Actuator_Event_msg_in_PRESENT 1
 #define Actuator_event_selection_msg_in_PRESENT 1
 #define Actuator_Event_msg_out_NONE 0
@@ -90,8 +90,8 @@
 #define Controller_Event_msg_out_NONE 0
 #define Controller_Event_msg_out_ping_PRESENT 1
 #define Controller_event_msg_out_selection_ping_PRESENT 1
-#define Controller_Event_msg_out_test_PRESENT 2
-#define Controller_event_msg_out_selection_test_PRESENT 2
+#define Controller_Event_msg_out_testsignal_PRESENT 2
+#define Controller_event_msg_out_selection_testsignal_PRESENT 2
 #define Controller_Event_msg_out_PRESENT 2
 #define Controller_event_selection_msg_out_PRESENT 2
 #define Observer_State_Kind_regular_state 0
@@ -105,8 +105,8 @@
 #define Function_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Function_Event_actuator_msg_in_ping_PRESENT 2
 #define Function_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Function_Event_actuator_msg_in_test_PRESENT 3
-#define Function_event_actuator_msg_in_selection_test_PRESENT 3
+#define Function_Event_actuator_msg_in_testsignal_PRESENT 3
+#define Function_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Function_Event_actuator_msg_in_PRESENT 1
 #define Function_event_actuator_selection_msg_in_PRESENT 1
 #define Function_Event_actuator_msg_out_NONE 0
@@ -127,8 +127,8 @@
 #define Function_Event_controller_msg_out_NONE 0
 #define Function_Event_controller_msg_out_ping_PRESENT 1
 #define Function_event_controller_msg_out_selection_ping_PRESENT 1
-#define Function_Event_controller_msg_out_test_PRESENT 2
-#define Function_event_controller_msg_out_selection_test_PRESENT 2
+#define Function_Event_controller_msg_out_testsignal_PRESENT 2
+#define Function_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Function_Event_controller_msg_out_PRESENT 2
 #define Function_event_controller_selection_msg_out_PRESENT 2
 #define Function_Event_controller_PRESENT 2
@@ -140,8 +140,8 @@
 #define Named_function_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Named_Function_Event_event_actuator_msg_in_ping_PRESENT 2
 #define Named_function_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Named_Function_Event_event_actuator_msg_in_test_PRESENT 3
-#define Named_function_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Named_Function_Event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Named_function_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Named_Function_Event_event_actuator_msg_in_PRESENT 1
 #define Named_function_event_event_actuator_selection_msg_in_PRESENT 1
 #define Named_Function_Event_event_actuator_msg_out_NONE 0
@@ -162,8 +162,8 @@
 #define Named_Function_Event_event_controller_msg_out_NONE 0
 #define Named_Function_Event_event_controller_msg_out_ping_PRESENT 1
 #define Named_function_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Named_Function_Event_event_controller_msg_out_test_PRESENT 2
-#define Named_function_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Named_Function_Event_event_controller_msg_out_testsignal_PRESENT 2
+#define Named_function_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Named_Function_Event_event_controller_msg_out_PRESENT 2
 #define Named_function_event_event_controller_selection_msg_out_PRESENT 2
 #define Named_Function_Event_event_controller_PRESENT 2
@@ -181,8 +181,8 @@
 #define Interface_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Interface_Event_event_actuator_msg_in_ping_PRESENT 2
 #define Interface_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Interface_Event_event_actuator_msg_in_test_PRESENT 3
-#define Interface_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Interface_Event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Interface_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Interface_Event_event_actuator_msg_in_PRESENT 1
 #define Interface_event_event_actuator_selection_msg_in_PRESENT 1
 #define Interface_Event_event_actuator_msg_out_NONE 0
@@ -203,8 +203,8 @@
 #define Interface_Event_event_controller_msg_out_NONE 0
 #define Interface_Event_event_controller_msg_out_ping_PRESENT 1
 #define Interface_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Interface_Event_event_controller_msg_out_test_PRESENT 2
-#define Interface_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Interface_Event_event_controller_msg_out_testsignal_PRESENT 2
+#define Interface_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Interface_Event_event_controller_msg_out_PRESENT 2
 #define Interface_event_event_controller_selection_msg_out_PRESENT 2
 #define Interface_Event_event_controller_PRESENT 2
@@ -227,8 +227,8 @@
 #define Observable_event_input_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Observable_Event_input_event_event_actuator_msg_in_ping_PRESENT 2
 #define Observable_event_input_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Observable_Event_input_event_event_actuator_msg_in_test_PRESENT 3
-#define Observable_event_input_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Observable_Event_input_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Observable_event_input_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Observable_Event_input_event_event_actuator_msg_in_PRESENT 1
 #define Observable_event_input_event_event_actuator_selection_msg_in_PRESENT 1
 #define Observable_Event_input_event_event_actuator_msg_out_NONE 0
@@ -249,8 +249,8 @@
 #define Observable_Event_input_event_event_controller_msg_out_NONE 0
 #define Observable_Event_input_event_event_controller_msg_out_ping_PRESENT 1
 #define Observable_event_input_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Observable_Event_input_event_event_controller_msg_out_test_PRESENT 2
-#define Observable_event_input_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Observable_Event_input_event_event_controller_msg_out_testsignal_PRESENT 2
+#define Observable_event_input_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Observable_Event_input_event_event_controller_msg_out_PRESENT 2
 #define Observable_event_input_event_event_controller_selection_msg_out_PRESENT 2
 #define Observable_Event_input_event_event_controller_PRESENT 2
@@ -270,8 +270,8 @@
 #define Observable_event_output_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Observable_Event_output_event_event_actuator_msg_in_ping_PRESENT 2
 #define Observable_event_output_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Observable_Event_output_event_event_actuator_msg_in_test_PRESENT 3
-#define Observable_event_output_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Observable_Event_output_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Observable_event_output_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Observable_Event_output_event_event_actuator_msg_in_PRESENT 1
 #define Observable_event_output_event_event_actuator_selection_msg_in_PRESENT 1
 #define Observable_Event_output_event_event_actuator_msg_out_NONE 0
@@ -292,8 +292,8 @@
 #define Observable_Event_output_event_event_controller_msg_out_NONE 0
 #define Observable_Event_output_event_event_controller_msg_out_ping_PRESENT 1
 #define Observable_event_output_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Observable_Event_output_event_event_controller_msg_out_test_PRESENT 2
-#define Observable_event_output_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Observable_Event_output_event_event_controller_msg_out_testsignal_PRESENT 2
+#define Observable_event_output_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Observable_Event_output_event_event_controller_msg_out_PRESENT 2
 #define Observable_event_output_event_event_controller_selection_msg_out_PRESENT 2
 #define Observable_Event_output_event_event_controller_PRESENT 2
@@ -313,8 +313,8 @@
 #define Observable_event_unhandled_input_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Observable_Event_unhandled_input_event_actuator_msg_in_ping_PRESENT 2
 #define Observable_event_unhandled_input_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Observable_Event_unhandled_input_event_actuator_msg_in_test_PRESENT 3
-#define Observable_event_unhandled_input_event_actuator_msg_in_selection_test_PRESENT 3
+#define Observable_Event_unhandled_input_event_actuator_msg_in_testsignal_PRESENT 3
+#define Observable_event_unhandled_input_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Observable_Event_unhandled_input_event_actuator_msg_in_PRESENT 1
 #define Observable_event_unhandled_input_event_actuator_selection_msg_in_PRESENT 1
 #define Observable_Event_unhandled_input_event_actuator_msg_out_NONE 0
@@ -335,8 +335,8 @@
 #define Observable_Event_unhandled_input_event_controller_msg_out_NONE 0
 #define Observable_Event_unhandled_input_event_controller_msg_out_ping_PRESENT 1
 #define Observable_event_unhandled_input_event_controller_msg_out_selection_ping_PRESENT 1
-#define Observable_Event_unhandled_input_event_controller_msg_out_test_PRESENT 2
-#define Observable_event_unhandled_input_event_controller_msg_out_selection_test_PRESENT 2
+#define Observable_Event_unhandled_input_event_controller_msg_out_testsignal_PRESENT 2
+#define Observable_event_unhandled_input_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Observable_Event_unhandled_input_event_controller_msg_out_PRESENT 2
 #define Observable_event_unhandled_input_event_controller_selection_msg_out_PRESENT 2
 #define Observable_Event_unhandled_input_event_controller_PRESENT 2
@@ -361,8 +361,8 @@
 #define Events_ty_elem_input_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Events_Ty_elem_input_event_event_actuator_msg_in_ping_PRESENT 2
 #define Events_ty_elem_input_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Events_Ty_elem_input_event_event_actuator_msg_in_test_PRESENT 3
-#define Events_ty_elem_input_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Events_Ty_elem_input_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Events_ty_elem_input_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Events_Ty_elem_input_event_event_actuator_msg_in_PRESENT 1
 #define Events_ty_elem_input_event_event_actuator_selection_msg_in_PRESENT 1
 #define Events_Ty_elem_input_event_event_actuator_msg_out_NONE 0
@@ -383,8 +383,8 @@
 #define Events_Ty_elem_input_event_event_controller_msg_out_NONE 0
 #define Events_Ty_elem_input_event_event_controller_msg_out_ping_PRESENT 1
 #define Events_ty_elem_input_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Events_Ty_elem_input_event_event_controller_msg_out_test_PRESENT 2
-#define Events_ty_elem_input_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Events_Ty_elem_input_event_event_controller_msg_out_testsignal_PRESENT 2
+#define Events_ty_elem_input_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Events_Ty_elem_input_event_event_controller_msg_out_PRESENT 2
 #define Events_ty_elem_input_event_event_controller_selection_msg_out_PRESENT 2
 #define Events_Ty_elem_input_event_event_controller_PRESENT 2
@@ -404,8 +404,8 @@
 #define Events_ty_elem_output_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Events_Ty_elem_output_event_event_actuator_msg_in_ping_PRESENT 2
 #define Events_ty_elem_output_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Events_Ty_elem_output_event_event_actuator_msg_in_test_PRESENT 3
-#define Events_ty_elem_output_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define Events_Ty_elem_output_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define Events_ty_elem_output_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Events_Ty_elem_output_event_event_actuator_msg_in_PRESENT 1
 #define Events_ty_elem_output_event_event_actuator_selection_msg_in_PRESENT 1
 #define Events_Ty_elem_output_event_event_actuator_msg_out_NONE 0
@@ -426,8 +426,8 @@
 #define Events_Ty_elem_output_event_event_controller_msg_out_NONE 0
 #define Events_Ty_elem_output_event_event_controller_msg_out_ping_PRESENT 1
 #define Events_ty_elem_output_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define Events_Ty_elem_output_event_event_controller_msg_out_test_PRESENT 2
-#define Events_ty_elem_output_event_event_controller_msg_out_selection_test_PRESENT 2
+#define Events_Ty_elem_output_event_event_controller_msg_out_testsignal_PRESENT 2
+#define Events_ty_elem_output_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Events_Ty_elem_output_event_event_controller_msg_out_PRESENT 2
 #define Events_ty_elem_output_event_event_controller_selection_msg_out_PRESENT 2
 #define Events_Ty_elem_output_event_event_controller_PRESENT 2
@@ -447,8 +447,8 @@
 #define Events_ty_elem_unhandled_input_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT 2
 #define Events_ty_elem_unhandled_input_event_actuator_msg_in_selection_ping_PRESENT 2
-#define Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_PRESENT 3
-#define Events_ty_elem_unhandled_input_event_actuator_msg_in_selection_test_PRESENT 3
+#define Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT 3
+#define Events_ty_elem_unhandled_input_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define Events_Ty_elem_unhandled_input_event_actuator_msg_in_PRESENT 1
 #define Events_ty_elem_unhandled_input_event_actuator_selection_msg_in_PRESENT 1
 #define Events_Ty_elem_unhandled_input_event_actuator_msg_out_NONE 0
@@ -469,8 +469,8 @@
 #define Events_Ty_elem_unhandled_input_event_controller_msg_out_NONE 0
 #define Events_Ty_elem_unhandled_input_event_controller_msg_out_ping_PRESENT 1
 #define Events_ty_elem_unhandled_input_event_controller_msg_out_selection_ping_PRESENT 1
-#define Events_Ty_elem_unhandled_input_event_controller_msg_out_test_PRESENT 2
-#define Events_ty_elem_unhandled_input_event_controller_msg_out_selection_test_PRESENT 2
+#define Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT 2
+#define Events_ty_elem_unhandled_input_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define Events_Ty_elem_unhandled_input_event_controller_msg_out_PRESENT 2
 #define Events_ty_elem_unhandled_input_event_controller_selection_msg_out_PRESENT 2
 #define Events_Ty_elem_unhandled_input_event_controller_PRESENT 2
@@ -495,8 +495,8 @@
 #define System_state_actuator_queue_elem_input_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_actuator_queue_elem_input_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_PRESENT 3
-#define System_state_actuator_queue_elem_input_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_actuator_queue_elem_input_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_actuator_queue_elem_input_event_event_actuator_msg_in_PRESENT 1
 #define System_state_actuator_queue_elem_input_event_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_actuator_queue_elem_input_event_event_actuator_msg_out_NONE 0
@@ -517,8 +517,8 @@
 #define System_State_actuator_queue_elem_input_event_event_controller_msg_out_NONE 0
 #define System_State_actuator_queue_elem_input_event_event_controller_msg_out_ping_PRESENT 1
 #define System_state_actuator_queue_elem_input_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_PRESENT 2
-#define System_state_actuator_queue_elem_input_event_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_actuator_queue_elem_input_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_actuator_queue_elem_input_event_event_controller_msg_out_PRESENT 2
 #define System_state_actuator_queue_elem_input_event_event_controller_selection_msg_out_PRESENT 2
 #define System_State_actuator_queue_elem_input_event_event_controller_PRESENT 2
@@ -538,8 +538,8 @@
 #define System_state_actuator_queue_elem_output_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_actuator_queue_elem_output_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_PRESENT 3
-#define System_state_actuator_queue_elem_output_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_actuator_queue_elem_output_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_actuator_queue_elem_output_event_event_actuator_msg_in_PRESENT 1
 #define System_state_actuator_queue_elem_output_event_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_actuator_queue_elem_output_event_event_actuator_msg_out_NONE 0
@@ -560,8 +560,8 @@
 #define System_State_actuator_queue_elem_output_event_event_controller_msg_out_NONE 0
 #define System_State_actuator_queue_elem_output_event_event_controller_msg_out_ping_PRESENT 1
 #define System_state_actuator_queue_elem_output_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_PRESENT 2
-#define System_state_actuator_queue_elem_output_event_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_actuator_queue_elem_output_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_actuator_queue_elem_output_event_event_controller_msg_out_PRESENT 2
 #define System_state_actuator_queue_elem_output_event_event_controller_selection_msg_out_PRESENT 2
 #define System_State_actuator_queue_elem_output_event_event_controller_PRESENT 2
@@ -581,8 +581,8 @@
 #define System_state_actuator_queue_elem_unhandled_input_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_actuator_queue_elem_unhandled_input_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_PRESENT 3
-#define System_state_actuator_queue_elem_unhandled_input_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_actuator_queue_elem_unhandled_input_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_PRESENT 1
 #define System_state_actuator_queue_elem_unhandled_input_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_out_NONE 0
@@ -603,8 +603,8 @@
 #define System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_NONE 0
 #define System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_ping_PRESENT 1
 #define System_state_actuator_queue_elem_unhandled_input_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_PRESENT 2
-#define System_state_actuator_queue_elem_unhandled_input_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_actuator_queue_elem_unhandled_input_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_PRESENT 2
 #define System_state_actuator_queue_elem_unhandled_input_event_controller_selection_msg_out_PRESENT 2
 #define System_State_actuator_queue_elem_unhandled_input_event_controller_PRESENT 2
@@ -629,8 +629,8 @@
 #define System_state_controller_queue_elem_input_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_controller_queue_elem_input_event_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_controller_queue_elem_input_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_PRESENT 3
-#define System_state_controller_queue_elem_input_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_controller_queue_elem_input_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_controller_queue_elem_input_event_event_actuator_msg_in_PRESENT 1
 #define System_state_controller_queue_elem_input_event_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_controller_queue_elem_input_event_event_actuator_msg_out_NONE 0
@@ -651,8 +651,8 @@
 #define System_State_controller_queue_elem_input_event_event_controller_msg_out_NONE 0
 #define System_State_controller_queue_elem_input_event_event_controller_msg_out_ping_PRESENT 1
 #define System_state_controller_queue_elem_input_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_controller_queue_elem_input_event_event_controller_msg_out_test_PRESENT 2
-#define System_state_controller_queue_elem_input_event_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_controller_queue_elem_input_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_controller_queue_elem_input_event_event_controller_msg_out_PRESENT 2
 #define System_state_controller_queue_elem_input_event_event_controller_selection_msg_out_PRESENT 2
 #define System_State_controller_queue_elem_input_event_event_controller_PRESENT 2
@@ -672,8 +672,8 @@
 #define System_state_controller_queue_elem_output_event_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_controller_queue_elem_output_event_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_controller_queue_elem_output_event_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_PRESENT 3
-#define System_state_controller_queue_elem_output_event_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_controller_queue_elem_output_event_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_controller_queue_elem_output_event_event_actuator_msg_in_PRESENT 1
 #define System_state_controller_queue_elem_output_event_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_controller_queue_elem_output_event_event_actuator_msg_out_NONE 0
@@ -694,8 +694,8 @@
 #define System_State_controller_queue_elem_output_event_event_controller_msg_out_NONE 0
 #define System_State_controller_queue_elem_output_event_event_controller_msg_out_ping_PRESENT 1
 #define System_state_controller_queue_elem_output_event_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_controller_queue_elem_output_event_event_controller_msg_out_test_PRESENT 2
-#define System_state_controller_queue_elem_output_event_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_controller_queue_elem_output_event_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_controller_queue_elem_output_event_event_controller_msg_out_PRESENT 2
 #define System_state_controller_queue_elem_output_event_event_controller_selection_msg_out_PRESENT 2
 #define System_State_controller_queue_elem_output_event_event_controller_PRESENT 2
@@ -715,8 +715,8 @@
 #define System_state_controller_queue_elem_unhandled_input_event_actuator_msg_in_selection_input_none_PRESENT 1
 #define System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT 2
 #define System_state_controller_queue_elem_unhandled_input_event_actuator_msg_in_selection_ping_PRESENT 2
-#define System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_PRESENT 3
-#define System_state_controller_queue_elem_unhandled_input_event_actuator_msg_in_selection_test_PRESENT 3
+#define System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT 3
+#define System_state_controller_queue_elem_unhandled_input_event_actuator_msg_in_selection_testsignal_PRESENT 3
 #define System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_PRESENT 1
 #define System_state_controller_queue_elem_unhandled_input_event_actuator_selection_msg_in_PRESENT 1
 #define System_State_controller_queue_elem_unhandled_input_event_actuator_msg_out_NONE 0
@@ -737,8 +737,8 @@
 #define System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_NONE 0
 #define System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_ping_PRESENT 1
 #define System_state_controller_queue_elem_unhandled_input_event_controller_msg_out_selection_ping_PRESENT 1
-#define System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_PRESENT 2
-#define System_state_controller_queue_elem_unhandled_input_event_controller_msg_out_selection_test_PRESENT 2
+#define System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT 2
+#define System_state_controller_queue_elem_unhandled_input_event_controller_msg_out_selection_testsignal_PRESENT 2
 #define System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_PRESENT 2
 #define System_state_controller_queue_elem_unhandled_input_event_controller_selection_msg_out_PRESENT 2
 #define System_State_controller_queue_elem_unhandled_input_event_controller_PRESENT 2
@@ -768,7 +768,7 @@ typedef Actuator_Event_msg_in_ping {
     bit dummy;
 }
 
-typedef Actuator_Event_msg_in_test {
+typedef Actuator_Event_msg_in_testsignal {
     bit dummy;
 }
 
@@ -806,7 +806,7 @@ typedef Controller_Event_msg_out_ping {
     bit dummy;
 }
 
-typedef Controller_Event_msg_out_test {
+typedef Controller_Event_msg_out_testsignal {
     bit dummy;
 }
 
@@ -818,7 +818,7 @@ typedef Events_Ty_elem_input_event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_input_event_event_actuator_msg_in_test {
+typedef Events_Ty_elem_input_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -838,7 +838,7 @@ typedef Events_Ty_elem_input_event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_input_event_event_controller_msg_out_test {
+typedef Events_Ty_elem_input_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -854,7 +854,7 @@ typedef Events_Ty_elem_output_event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_output_event_event_actuator_msg_in_test {
+typedef Events_Ty_elem_output_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -874,7 +874,7 @@ typedef Events_Ty_elem_output_event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_output_event_event_controller_msg_out_test {
+typedef Events_Ty_elem_output_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -890,7 +890,7 @@ typedef Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_unhandled_input_event_actuator_msg_in_test {
+typedef Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -910,7 +910,7 @@ typedef Events_Ty_elem_unhandled_input_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Events_Ty_elem_unhandled_input_event_controller_msg_out_test {
+typedef Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -922,7 +922,7 @@ typedef Function_Event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Function_Event_actuator_msg_in_test {
+typedef Function_Event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -942,7 +942,7 @@ typedef Function_Event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Function_Event_controller_msg_out_test {
+typedef Function_Event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -954,7 +954,7 @@ typedef Interface_Event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Interface_Event_event_actuator_msg_in_test {
+typedef Interface_Event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -974,7 +974,7 @@ typedef Interface_Event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Interface_Event_event_controller_msg_out_test {
+typedef Interface_Event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -986,7 +986,7 @@ typedef Named_Function_Event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Named_Function_Event_event_actuator_msg_in_test {
+typedef Named_Function_Event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1006,7 +1006,7 @@ typedef Named_Function_Event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Named_Function_Event_event_controller_msg_out_test {
+typedef Named_Function_Event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1023,7 +1023,7 @@ typedef Observable_Event_input_event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Observable_Event_input_event_event_actuator_msg_in_test {
+typedef Observable_Event_input_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1043,7 +1043,7 @@ typedef Observable_Event_input_event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Observable_Event_input_event_event_controller_msg_out_test {
+typedef Observable_Event_input_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1059,7 +1059,7 @@ typedef Observable_Event_output_event_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Observable_Event_output_event_event_actuator_msg_in_test {
+typedef Observable_Event_output_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1079,7 +1079,7 @@ typedef Observable_Event_output_event_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Observable_Event_output_event_event_controller_msg_out_test {
+typedef Observable_Event_output_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1095,7 +1095,7 @@ typedef Observable_Event_unhandled_input_event_actuator_msg_in_ping {
     bit dummy;
 }
 
-typedef Observable_Event_unhandled_input_event_actuator_msg_in_test {
+typedef Observable_Event_unhandled_input_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1115,7 +1115,7 @@ typedef Observable_Event_unhandled_input_event_controller_msg_out_ping {
     bit dummy;
 }
 
-typedef Observable_Event_unhandled_input_event_controller_msg_out_test {
+typedef Observable_Event_unhandled_input_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1133,7 +1133,7 @@ typedef System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping 
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test {
+typedef System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1153,7 +1153,7 @@ typedef System_State_actuator_queue_elem_input_event_event_controller_msg_out_pi
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_input_event_event_controller_msg_out_test {
+typedef System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1169,7 +1169,7 @@ typedef System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test {
+typedef System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1189,7 +1189,7 @@ typedef System_State_actuator_queue_elem_output_event_event_controller_msg_out_p
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_output_event_event_controller_msg_out_test {
+typedef System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1205,7 +1205,7 @@ typedef System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_p
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test {
+typedef System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1225,7 +1225,7 @@ typedef System_State_actuator_queue_elem_unhandled_input_event_controller_msg_ou
     bit dummy;
 }
 
-typedef System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test {
+typedef System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1243,7 +1243,7 @@ typedef System_State_controller_queue_elem_input_event_event_actuator_msg_in_pin
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_input_event_event_actuator_msg_in_test {
+typedef System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1263,7 +1263,7 @@ typedef System_State_controller_queue_elem_input_event_event_controller_msg_out_
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_input_event_event_controller_msg_out_test {
+typedef System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1279,7 +1279,7 @@ typedef System_State_controller_queue_elem_output_event_event_actuator_msg_in_pi
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_output_event_event_actuator_msg_in_test {
+typedef System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1299,7 +1299,7 @@ typedef System_State_controller_queue_elem_output_event_event_controller_msg_out
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_output_event_event_controller_msg_out_test {
+typedef System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1315,7 +1315,7 @@ typedef System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test {
+typedef System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal {
     bit dummy;
 }
 
@@ -1335,7 +1335,7 @@ typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_
     bit dummy;
 }
 
-typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test {
+typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal {
     bit dummy;
 }
 
@@ -1363,7 +1363,7 @@ typedef TimerData {
 typedef Actuator_Event_msg_in_data {
     Actuator_Event_msg_in_input_none input_none;
     Actuator_Event_msg_in_ping ping;
-    Actuator_Event_msg_in_test test;
+    Actuator_Event_msg_in_testsignal testsignal;
 }
 
 typedef Actuator_Event_msg_out_data {
@@ -1383,13 +1383,13 @@ typedef Controller_Event_msg_in_data {
 
 typedef Controller_Event_msg_out_data {
     Controller_Event_msg_out_ping ping;
-    Controller_Event_msg_out_test test;
+    Controller_Event_msg_out_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_input_event_event_actuator_msg_in_data {
     Events_Ty_elem_input_event_event_actuator_msg_in_input_none input_none;
     Events_Ty_elem_input_event_event_actuator_msg_in_ping ping;
-    Events_Ty_elem_input_event_event_actuator_msg_in_test test;
+    Events_Ty_elem_input_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_input_event_event_actuator_msg_out_data {
@@ -1403,13 +1403,13 @@ typedef Events_Ty_elem_input_event_event_controller_msg_in_data {
 
 typedef Events_Ty_elem_input_event_event_controller_msg_out_data {
     Events_Ty_elem_input_event_event_controller_msg_out_ping ping;
-    Events_Ty_elem_input_event_event_controller_msg_out_test test;
+    Events_Ty_elem_input_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_output_event_event_actuator_msg_in_data {
     Events_Ty_elem_output_event_event_actuator_msg_in_input_none input_none;
     Events_Ty_elem_output_event_event_actuator_msg_in_ping ping;
-    Events_Ty_elem_output_event_event_actuator_msg_in_test test;
+    Events_Ty_elem_output_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_output_event_event_actuator_msg_out_data {
@@ -1423,13 +1423,13 @@ typedef Events_Ty_elem_output_event_event_controller_msg_in_data {
 
 typedef Events_Ty_elem_output_event_event_controller_msg_out_data {
     Events_Ty_elem_output_event_event_controller_msg_out_ping ping;
-    Events_Ty_elem_output_event_event_controller_msg_out_test test;
+    Events_Ty_elem_output_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_unhandled_input_event_actuator_msg_in_data {
     Events_Ty_elem_unhandled_input_event_actuator_msg_in_input_none input_none;
     Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping ping;
-    Events_Ty_elem_unhandled_input_event_actuator_msg_in_test test;
+    Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Events_Ty_elem_unhandled_input_event_actuator_msg_out_data {
@@ -1443,13 +1443,13 @@ typedef Events_Ty_elem_unhandled_input_event_controller_msg_in_data {
 
 typedef Events_Ty_elem_unhandled_input_event_controller_msg_out_data {
     Events_Ty_elem_unhandled_input_event_controller_msg_out_ping ping;
-    Events_Ty_elem_unhandled_input_event_controller_msg_out_test test;
+    Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Function_Event_actuator_msg_in_data {
     Function_Event_actuator_msg_in_input_none input_none;
     Function_Event_actuator_msg_in_ping ping;
-    Function_Event_actuator_msg_in_test test;
+    Function_Event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Function_Event_actuator_msg_out_data {
@@ -1463,13 +1463,13 @@ typedef Function_Event_controller_msg_in_data {
 
 typedef Function_Event_controller_msg_out_data {
     Function_Event_controller_msg_out_ping ping;
-    Function_Event_controller_msg_out_test test;
+    Function_Event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Interface_Event_event_actuator_msg_in_data {
     Interface_Event_event_actuator_msg_in_input_none input_none;
     Interface_Event_event_actuator_msg_in_ping ping;
-    Interface_Event_event_actuator_msg_in_test test;
+    Interface_Event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Interface_Event_event_actuator_msg_out_data {
@@ -1483,13 +1483,13 @@ typedef Interface_Event_event_controller_msg_in_data {
 
 typedef Interface_Event_event_controller_msg_out_data {
     Interface_Event_event_controller_msg_out_ping ping;
-    Interface_Event_event_controller_msg_out_test test;
+    Interface_Event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Named_Function_Event_event_actuator_msg_in_data {
     Named_Function_Event_event_actuator_msg_in_input_none input_none;
     Named_Function_Event_event_actuator_msg_in_ping ping;
-    Named_Function_Event_event_actuator_msg_in_test test;
+    Named_Function_Event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Named_Function_Event_event_actuator_msg_out_data {
@@ -1503,13 +1503,13 @@ typedef Named_Function_Event_event_controller_msg_in_data {
 
 typedef Named_Function_Event_event_controller_msg_out_data {
     Named_Function_Event_event_controller_msg_out_ping ping;
-    Named_Function_Event_event_controller_msg_out_test test;
+    Named_Function_Event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Observable_Event_input_event_event_actuator_msg_in_data {
     Observable_Event_input_event_event_actuator_msg_in_input_none input_none;
     Observable_Event_input_event_event_actuator_msg_in_ping ping;
-    Observable_Event_input_event_event_actuator_msg_in_test test;
+    Observable_Event_input_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Observable_Event_input_event_event_actuator_msg_out_data {
@@ -1523,13 +1523,13 @@ typedef Observable_Event_input_event_event_controller_msg_in_data {
 
 typedef Observable_Event_input_event_event_controller_msg_out_data {
     Observable_Event_input_event_event_controller_msg_out_ping ping;
-    Observable_Event_input_event_event_controller_msg_out_test test;
+    Observable_Event_input_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Observable_Event_output_event_event_actuator_msg_in_data {
     Observable_Event_output_event_event_actuator_msg_in_input_none input_none;
     Observable_Event_output_event_event_actuator_msg_in_ping ping;
-    Observable_Event_output_event_event_actuator_msg_in_test test;
+    Observable_Event_output_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Observable_Event_output_event_event_actuator_msg_out_data {
@@ -1543,13 +1543,13 @@ typedef Observable_Event_output_event_event_controller_msg_in_data {
 
 typedef Observable_Event_output_event_event_controller_msg_out_data {
     Observable_Event_output_event_event_controller_msg_out_ping ping;
-    Observable_Event_output_event_event_controller_msg_out_test test;
+    Observable_Event_output_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef Observable_Event_unhandled_input_event_actuator_msg_in_data {
     Observable_Event_unhandled_input_event_actuator_msg_in_input_none input_none;
     Observable_Event_unhandled_input_event_actuator_msg_in_ping ping;
-    Observable_Event_unhandled_input_event_actuator_msg_in_test test;
+    Observable_Event_unhandled_input_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef Observable_Event_unhandled_input_event_actuator_msg_out_data {
@@ -1563,13 +1563,13 @@ typedef Observable_Event_unhandled_input_event_controller_msg_in_data {
 
 typedef Observable_Event_unhandled_input_event_controller_msg_out_data {
     Observable_Event_unhandled_input_event_controller_msg_out_ping ping;
-    Observable_Event_unhandled_input_event_controller_msg_out_test test;
+    Observable_Event_unhandled_input_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_input_event_event_actuator_msg_in_data {
     System_State_actuator_queue_elem_input_event_event_actuator_msg_in_input_none input_none;
     System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping ping;
-    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test test;
+    System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_input_event_event_actuator_msg_out_data {
@@ -1583,13 +1583,13 @@ typedef System_State_actuator_queue_elem_input_event_event_controller_msg_in_dat
 
 typedef System_State_actuator_queue_elem_input_event_event_controller_msg_out_data {
     System_State_actuator_queue_elem_input_event_event_controller_msg_out_ping ping;
-    System_State_actuator_queue_elem_input_event_event_controller_msg_out_test test;
+    System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_output_event_event_actuator_msg_in_data {
     System_State_actuator_queue_elem_output_event_event_actuator_msg_in_input_none input_none;
     System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping ping;
-    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test test;
+    System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_output_event_event_actuator_msg_out_data {
@@ -1603,13 +1603,13 @@ typedef System_State_actuator_queue_elem_output_event_event_controller_msg_in_da
 
 typedef System_State_actuator_queue_elem_output_event_event_controller_msg_out_data {
     System_State_actuator_queue_elem_output_event_event_controller_msg_out_ping ping;
-    System_State_actuator_queue_elem_output_event_event_controller_msg_out_test test;
+    System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_data {
     System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_input_none input_none;
     System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_ping ping;
-    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test test;
+    System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_out_data {
@@ -1623,13 +1623,13 @@ typedef System_State_actuator_queue_elem_unhandled_input_event_controller_msg_in
 
 typedef System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_data {
     System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_ping ping;
-    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test test;
+    System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_input_event_event_actuator_msg_in_data {
     System_State_controller_queue_elem_input_event_event_actuator_msg_in_input_none input_none;
     System_State_controller_queue_elem_input_event_event_actuator_msg_in_ping ping;
-    System_State_controller_queue_elem_input_event_event_actuator_msg_in_test test;
+    System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_input_event_event_actuator_msg_out_data {
@@ -1643,13 +1643,13 @@ typedef System_State_controller_queue_elem_input_event_event_controller_msg_in_d
 
 typedef System_State_controller_queue_elem_input_event_event_controller_msg_out_data {
     System_State_controller_queue_elem_input_event_event_controller_msg_out_ping ping;
-    System_State_controller_queue_elem_input_event_event_controller_msg_out_test test;
+    System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_output_event_event_actuator_msg_in_data {
     System_State_controller_queue_elem_output_event_event_actuator_msg_in_input_none input_none;
     System_State_controller_queue_elem_output_event_event_actuator_msg_in_ping ping;
-    System_State_controller_queue_elem_output_event_event_actuator_msg_in_test test;
+    System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_output_event_event_actuator_msg_out_data {
@@ -1663,13 +1663,13 @@ typedef System_State_controller_queue_elem_output_event_event_controller_msg_in_
 
 typedef System_State_controller_queue_elem_output_event_event_controller_msg_out_data {
     System_State_controller_queue_elem_output_event_event_controller_msg_out_ping ping;
-    System_State_controller_queue_elem_output_event_event_controller_msg_out_test test;
+    System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_data {
     System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_input_none input_none;
     System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_ping ping;
-    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test test;
+    System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal testsignal;
 }
 
 typedef System_State_controller_queue_elem_unhandled_input_event_actuator_msg_out_data {
@@ -1683,7 +1683,7 @@ typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_
 
 typedef System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_data {
     System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_ping ping;
-    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test test;
+    System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal testsignal;
 }
 
 typedef System_State_timers {
@@ -2809,7 +2809,7 @@ inline Actuator_Event_msg_in_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Actuator_Event_msg_in_test_assign_value(dst, src)
+inline Actuator_Event_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -2821,8 +2821,8 @@ inline Actuator_Event_msg_in_assign_value(dst, src)
         Actuator_Event_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Actuator_Event_msg_in_ping_PRESENT);
         Actuator_Event_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Actuator_Event_msg_in_test_PRESENT);
-        Actuator_Event_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Actuator_Event_msg_in_testsignal_PRESENT);
+        Actuator_Event_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -2893,7 +2893,7 @@ inline Controller_Event_msg_out_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Controller_Event_msg_out_test_assign_value(dst, src)
+inline Controller_Event_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -2903,8 +2903,8 @@ inline Controller_Event_msg_out_assign_value(dst, src)
     if
     ::  (dst.selection == Controller_Event_msg_out_ping_PRESENT);
         Controller_Event_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Controller_Event_msg_out_test_PRESENT);
-        Controller_Event_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Controller_Event_msg_out_testsignal_PRESENT);
+        Controller_Event_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -2946,7 +2946,7 @@ inline Function_Event_actuator_msg_in_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Function_Event_actuator_msg_in_test_assign_value(dst, src)
+inline Function_Event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -2958,8 +2958,8 @@ inline Function_Event_actuator_msg_in_assign_value(dst, src)
         Function_Event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Function_Event_actuator_msg_in_ping_PRESENT);
         Function_Event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Function_Event_actuator_msg_in_test_PRESENT);
-        Function_Event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Function_Event_actuator_msg_in_testsignal_PRESENT);
+        Function_Event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3030,7 +3030,7 @@ inline Function_Event_controller_msg_out_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Function_Event_controller_msg_out_test_assign_value(dst, src)
+inline Function_Event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3040,8 +3040,8 @@ inline Function_Event_controller_msg_out_assign_value(dst, src)
     if
     ::  (dst.selection == Function_Event_controller_msg_out_ping_PRESENT);
         Function_Event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Function_Event_controller_msg_out_test_PRESENT);
-        Function_Event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Function_Event_controller_msg_out_testsignal_PRESENT);
+        Function_Event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3108,7 +3108,7 @@ inline Named_Function_Event_event_actuator_msg_in_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Named_Function_Event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Named_Function_Event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3120,8 +3120,8 @@ inline Named_Function_Event_event_actuator_msg_in_assign_value(dst, src)
         Named_Function_Event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Named_Function_Event_event_actuator_msg_in_ping_PRESENT);
         Named_Function_Event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Named_Function_Event_event_actuator_msg_in_test_PRESENT);
-        Named_Function_Event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Named_Function_Event_event_actuator_msg_in_testsignal_PRESENT);
+        Named_Function_Event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3192,7 +3192,7 @@ inline Named_Function_Event_event_controller_msg_out_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Named_Function_Event_event_controller_msg_out_test_assign_value(dst, src)
+inline Named_Function_Event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3202,8 +3202,8 @@ inline Named_Function_Event_event_controller_msg_out_assign_value(dst, src)
     if
     ::  (dst.selection == Named_Function_Event_event_controller_msg_out_ping_PRESENT);
         Named_Function_Event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Named_Function_Event_event_controller_msg_out_test_PRESENT);
-        Named_Function_Event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Named_Function_Event_event_controller_msg_out_testsignal_PRESENT);
+        Named_Function_Event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3275,7 +3275,7 @@ inline Interface_Event_event_actuator_msg_in_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Interface_Event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Interface_Event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3287,8 +3287,8 @@ inline Interface_Event_event_actuator_msg_in_assign_value(dst, src)
         Interface_Event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Interface_Event_event_actuator_msg_in_ping_PRESENT);
         Interface_Event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Interface_Event_event_actuator_msg_in_test_PRESENT);
-        Interface_Event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Interface_Event_event_actuator_msg_in_testsignal_PRESENT);
+        Interface_Event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3359,7 +3359,7 @@ inline Interface_Event_event_controller_msg_out_ping_assign_value(dst, src)
 {
     skip;
 }
-inline Interface_Event_event_controller_msg_out_test_assign_value(dst, src)
+inline Interface_Event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3369,8 +3369,8 @@ inline Interface_Event_event_controller_msg_out_assign_value(dst, src)
     if
     ::  (dst.selection == Interface_Event_event_controller_msg_out_ping_PRESENT);
         Interface_Event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Interface_Event_event_controller_msg_out_test_PRESENT);
-        Interface_Event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Interface_Event_event_controller_msg_out_testsignal_PRESENT);
+        Interface_Event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3451,7 +3451,7 @@ inline Observable_Event_input_event_event_actuator_msg_in_ping_assign_value(dst,
 {
     skip;
 }
-inline Observable_Event_input_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Observable_Event_input_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3463,8 +3463,8 @@ inline Observable_Event_input_event_event_actuator_msg_in_assign_value(dst, src)
         Observable_Event_input_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Observable_Event_input_event_event_actuator_msg_in_ping_PRESENT);
         Observable_Event_input_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_input_event_event_actuator_msg_in_test_PRESENT);
-        Observable_Event_input_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_input_event_event_actuator_msg_in_testsignal_PRESENT);
+        Observable_Event_input_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3535,7 +3535,7 @@ inline Observable_Event_input_event_event_controller_msg_out_ping_assign_value(d
 {
     skip;
 }
-inline Observable_Event_input_event_event_controller_msg_out_test_assign_value(dst, src)
+inline Observable_Event_input_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3545,8 +3545,8 @@ inline Observable_Event_input_event_event_controller_msg_out_assign_value(dst, s
     if
     ::  (dst.selection == Observable_Event_input_event_event_controller_msg_out_ping_PRESENT);
         Observable_Event_input_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_input_event_event_controller_msg_out_test_PRESENT);
-        Observable_Event_input_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_input_event_event_controller_msg_out_testsignal_PRESENT);
+        Observable_Event_input_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3619,7 +3619,7 @@ inline Observable_Event_output_event_event_actuator_msg_in_ping_assign_value(dst
 {
     skip;
 }
-inline Observable_Event_output_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Observable_Event_output_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3631,8 +3631,8 @@ inline Observable_Event_output_event_event_actuator_msg_in_assign_value(dst, src
         Observable_Event_output_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Observable_Event_output_event_event_actuator_msg_in_ping_PRESENT);
         Observable_Event_output_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_output_event_event_actuator_msg_in_test_PRESENT);
-        Observable_Event_output_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_output_event_event_actuator_msg_in_testsignal_PRESENT);
+        Observable_Event_output_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3703,7 +3703,7 @@ inline Observable_Event_output_event_event_controller_msg_out_ping_assign_value(
 {
     skip;
 }
-inline Observable_Event_output_event_event_controller_msg_out_test_assign_value(dst, src)
+inline Observable_Event_output_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3713,8 +3713,8 @@ inline Observable_Event_output_event_event_controller_msg_out_assign_value(dst, 
     if
     ::  (dst.selection == Observable_Event_output_event_event_controller_msg_out_ping_PRESENT);
         Observable_Event_output_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_output_event_event_controller_msg_out_test_PRESENT);
-        Observable_Event_output_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_output_event_event_controller_msg_out_testsignal_PRESENT);
+        Observable_Event_output_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3787,7 +3787,7 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_ping_assign_value(
 {
     skip;
 }
-inline Observable_Event_unhandled_input_event_actuator_msg_in_test_assign_value(dst, src)
+inline Observable_Event_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3799,8 +3799,8 @@ inline Observable_Event_unhandled_input_event_actuator_msg_in_assign_value(dst, 
         Observable_Event_unhandled_input_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Observable_Event_unhandled_input_event_actuator_msg_in_ping_PRESENT);
         Observable_Event_unhandled_input_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_unhandled_input_event_actuator_msg_in_test_PRESENT);
-        Observable_Event_unhandled_input_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_unhandled_input_event_actuator_msg_in_testsignal_PRESENT);
+        Observable_Event_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3871,7 +3871,7 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_ping_assign_val
 {
     skip;
 }
-inline Observable_Event_unhandled_input_event_controller_msg_out_test_assign_value(dst, src)
+inline Observable_Event_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3881,8 +3881,8 @@ inline Observable_Event_unhandled_input_event_controller_msg_out_assign_value(ds
     if
     ::  (dst.selection == Observable_Event_unhandled_input_event_controller_msg_out_ping_PRESENT);
         Observable_Event_unhandled_input_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Observable_Event_unhandled_input_event_controller_msg_out_test_PRESENT);
-        Observable_Event_unhandled_input_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Observable_Event_unhandled_input_event_controller_msg_out_testsignal_PRESENT);
+        Observable_Event_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -3985,7 +3985,7 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_ping_assign_value(dst, s
 {
     skip;
 }
-inline Events_Ty_elem_input_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Events_Ty_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -3997,8 +3997,8 @@ inline Events_Ty_elem_input_event_event_actuator_msg_in_assign_value(dst, src)
         Events_Ty_elem_input_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Events_Ty_elem_input_event_event_actuator_msg_in_ping_PRESENT);
         Events_Ty_elem_input_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_input_event_event_actuator_msg_in_test_PRESENT);
-        Events_Ty_elem_input_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_input_event_event_actuator_msg_in_testsignal_PRESENT);
+        Events_Ty_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4069,7 +4069,7 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_ping_assign_value(dst
 {
     skip;
 }
-inline Events_Ty_elem_input_event_event_controller_msg_out_test_assign_value(dst, src)
+inline Events_Ty_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4079,8 +4079,8 @@ inline Events_Ty_elem_input_event_event_controller_msg_out_assign_value(dst, src
     if
     ::  (dst.selection == Events_Ty_elem_input_event_event_controller_msg_out_ping_PRESENT);
         Events_Ty_elem_input_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_input_event_event_controller_msg_out_test_PRESENT);
-        Events_Ty_elem_input_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_input_event_event_controller_msg_out_testsignal_PRESENT);
+        Events_Ty_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4153,7 +4153,7 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_ping_assign_value(dst, 
 {
     skip;
 }
-inline Events_Ty_elem_output_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline Events_Ty_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4165,8 +4165,8 @@ inline Events_Ty_elem_output_event_event_actuator_msg_in_assign_value(dst, src)
         Events_Ty_elem_output_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Events_Ty_elem_output_event_event_actuator_msg_in_ping_PRESENT);
         Events_Ty_elem_output_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_output_event_event_actuator_msg_in_test_PRESENT);
-        Events_Ty_elem_output_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_output_event_event_actuator_msg_in_testsignal_PRESENT);
+        Events_Ty_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4237,7 +4237,7 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_ping_assign_value(ds
 {
     skip;
 }
-inline Events_Ty_elem_output_event_event_controller_msg_out_test_assign_value(dst, src)
+inline Events_Ty_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4247,8 +4247,8 @@ inline Events_Ty_elem_output_event_event_controller_msg_out_assign_value(dst, sr
     if
     ::  (dst.selection == Events_Ty_elem_output_event_event_controller_msg_out_ping_PRESENT);
         Events_Ty_elem_output_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_output_event_event_controller_msg_out_test_PRESENT);
-        Events_Ty_elem_output_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_output_event_event_controller_msg_out_testsignal_PRESENT);
+        Events_Ty_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4321,7 +4321,7 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping_assign_value(ds
 {
     skip;
 }
-inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst, src)
+inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4333,8 +4333,8 @@ inline Events_Ty_elem_unhandled_input_event_actuator_msg_in_assign_value(dst, sr
         Events_Ty_elem_unhandled_input_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT);
         Events_Ty_elem_unhandled_input_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_PRESENT);
-        Events_Ty_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT);
+        Events_Ty_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4405,7 +4405,7 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_ping_assign_value
 {
     skip;
 }
-inline Events_Ty_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst, src)
+inline Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4415,8 +4415,8 @@ inline Events_Ty_elem_unhandled_input_event_controller_msg_out_assign_value(dst,
     if
     ::  (dst.selection == Events_Ty_elem_unhandled_input_event_controller_msg_out_ping_PRESENT);
         Events_Ty_elem_unhandled_input_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == Events_Ty_elem_unhandled_input_event_controller_msg_out_test_PRESENT);
-        Events_Ty_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT);
+        Events_Ty_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4558,7 +4558,7 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping_a
 {
     skip;
 }
-inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4570,8 +4570,8 @@ inline System_State_actuator_queue_elem_input_event_event_actuator_msg_in_assign
         System_State_actuator_queue_elem_input_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping_PRESENT);
         System_State_actuator_queue_elem_input_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_PRESENT);
-        System_State_actuator_queue_elem_input_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_actuator_queue_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4642,7 +4642,7 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_pin
 {
     skip;
 }
-inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4652,8 +4652,8 @@ inline System_State_actuator_queue_elem_input_event_event_controller_msg_out_ass
     if
     ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_controller_msg_out_ping_PRESENT);
         System_State_actuator_queue_elem_input_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_PRESENT);
-        System_State_actuator_queue_elem_input_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal_PRESENT);
+        System_State_actuator_queue_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4726,7 +4726,7 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping_
 {
     skip;
 }
-inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4738,8 +4738,8 @@ inline System_State_actuator_queue_elem_output_event_event_actuator_msg_in_assig
         System_State_actuator_queue_elem_output_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping_PRESENT);
         System_State_actuator_queue_elem_output_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_PRESENT);
-        System_State_actuator_queue_elem_output_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_actuator_queue_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4810,7 +4810,7 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_pi
 {
     skip;
 }
-inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4820,8 +4820,8 @@ inline System_State_actuator_queue_elem_output_event_event_controller_msg_out_as
     if
     ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_controller_msg_out_ping_PRESENT);
         System_State_actuator_queue_elem_output_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_PRESENT);
-        System_State_actuator_queue_elem_output_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal_PRESENT);
+        System_State_actuator_queue_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4894,7 +4894,7 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_pi
 {
     skip;
 }
-inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4906,8 +4906,8 @@ inline System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_as
         System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT);
         System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_PRESENT);
-        System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_actuator_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -4978,7 +4978,7 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
 {
     skip;
 }
-inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -4988,8 +4988,8 @@ inline System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out
     if
     ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_ping_PRESENT);
         System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_PRESENT);
-        System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT);
+        System_State_actuator_queue_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5113,7 +5113,7 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_ping
 {
     skip;
 }
-inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5125,8 +5125,8 @@ inline System_State_controller_queue_elem_input_event_event_actuator_msg_in_assi
         System_State_controller_queue_elem_input_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_controller_queue_elem_input_event_event_actuator_msg_in_ping_PRESENT);
         System_State_controller_queue_elem_input_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_PRESENT);
-        System_State_controller_queue_elem_input_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_controller_queue_elem_input_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5197,7 +5197,7 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_p
 {
     skip;
 }
-inline System_State_controller_queue_elem_input_event_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5207,8 +5207,8 @@ inline System_State_controller_queue_elem_input_event_event_controller_msg_out_a
     if
     ::  (dst.selection == System_State_controller_queue_elem_input_event_event_controller_msg_out_ping_PRESENT);
         System_State_controller_queue_elem_input_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_input_event_event_controller_msg_out_test_PRESENT);
-        System_State_controller_queue_elem_input_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal_PRESENT);
+        System_State_controller_queue_elem_input_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5281,7 +5281,7 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_pin
 {
     skip;
 }
-inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5293,8 +5293,8 @@ inline System_State_controller_queue_elem_output_event_event_actuator_msg_in_ass
         System_State_controller_queue_elem_output_event_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_controller_queue_elem_output_event_event_actuator_msg_in_ping_PRESENT);
         System_State_controller_queue_elem_output_event_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_PRESENT);
-        System_State_controller_queue_elem_output_event_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_controller_queue_elem_output_event_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5365,7 +5365,7 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
 {
     skip;
 }
-inline System_State_controller_queue_elem_output_event_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5375,8 +5375,8 @@ inline System_State_controller_queue_elem_output_event_event_controller_msg_out_
     if
     ::  (dst.selection == System_State_controller_queue_elem_output_event_event_controller_msg_out_ping_PRESENT);
         System_State_controller_queue_elem_output_event_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_output_event_event_controller_msg_out_test_PRESENT);
-        System_State_controller_queue_elem_output_event_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal_PRESENT);
+        System_State_controller_queue_elem_output_event_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5449,7 +5449,7 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
 {
     skip;
 }
-inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5461,8 +5461,8 @@ inline System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_
         System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_input_none_assign_value(dst.data.input_none, src.data.input_none);
     ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_ping_PRESENT);
         System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_PRESENT);
-        System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_PRESENT);
+        System_State_controller_queue_elem_unhandled_input_event_actuator_msg_in_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;
@@ -5533,7 +5533,7 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
 {
     skip;
 }
-inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst, src)
+inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst, src)
 {
     skip;
 }
@@ -5543,8 +5543,8 @@ inline System_State_controller_queue_elem_unhandled_input_event_controller_msg_o
     if
     ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_ping_PRESENT);
         System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_ping_assign_value(dst.data.ping, src.data.ping);
-    ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_PRESENT);
-        System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_test_assign_value(dst.data.test, src.data.test);
+    ::  (dst.selection == System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal_PRESENT);
+        System_State_controller_queue_elem_unhandled_input_event_controller_msg_out_testsignal_assign_value(dst.data.testsignal, src.data.testsignal);
     ::  else;
         skip;
     fi;

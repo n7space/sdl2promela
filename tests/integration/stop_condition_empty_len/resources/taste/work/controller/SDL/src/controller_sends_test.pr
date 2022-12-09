@@ -10,8 +10,8 @@ process Controller;
     state Second;
         /* CIF input (947, 187), (70, 35) */
         input pong;
-            /* CIF output (947, 242), (70, 35) */
-            output test;
+            /* CIF output (941, 242), (81, 35) */
+            output testSignal;
             /* CIF NEXTSTATE (947, 297), (70, 35) */
             NEXTSTATE First;
     endstate;
