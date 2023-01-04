@@ -76,7 +76,10 @@ TESTS= \
 	builtin_abs \
 	observer_signal_loss \
 	procedure_variable_init_value \
-	sync_interfaces
+	sync_interfaces \
+	observer_compatibility_empty \
+	observer_compatibility_param \
+	observer_compatibility_optional_param
 
 .PHONY: $(TESTS) check
 

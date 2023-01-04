@@ -1,0 +1,55 @@
+system observer;
+    /* CIF TEXT (144, 214), (280, 140) */
+    use datamodel comment 'observer.asn';
+    
+    exported procedure observe;
+       fpar in/out model           System_State,
+                 in/out last_event  Observable_Event;
+    referenced;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with observe;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with observe;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (0, 57), (222, 140) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            successstates reached;
+            /* CIF ENDTEXT */
+            /* CIF START (376, 64), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (376, 119), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (554, 149), (70, 35) */
+            state Idle;
+                /* CIF provided (455, 204), (267, 35) */
+                provided input pong(v) from actuator to controller;
+                    /* CIF decision (554, 259), (70, 50) */
+                    decision v = 0;
+                        /* CIF ANSWER (509, 329), (70, 23) */
+                        (true):
+                            /* CIF NEXTSTATE (509, 372), (70, 35) */
+                            NEXTSTATE error;
+                        /* CIF ANSWER (599, 329), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (598, 372), (70, 35) */
+                            NEXTSTATE reached;
+                    enddecision;
+            endstate;
+            /* CIF state (870, 67), (70, 35) */
+            state reached;
+            endstate;
+            /* CIF state (685, 50), (70, 35) */
+            state error;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;

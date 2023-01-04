@@ -1,0 +1,36 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (353, 298), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl coeff MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (665, 106), (70, 35) */
+    START;
+        /* CIF task (661, 161), (77, 35) */
+        task coeff := 1;
+        /* CIF output (655, 216), (88, 35) */
+        output ping(coeff);
+        /* CIF NEXTSTATE (665, 266), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1040, 104), (70, 35) */
+    state Wait;
+        /* CIF input (1028, 159), (93, 35) */
+        input pong(coeff);
+            /* CIF decision (1037, 214), (74, 50) */
+            decision coeff = 5;
+                /* CIF ANSWER (974, 284), (70, 23) */
+                (true):
+                    /* CIF task (970, 327), (77, 35) */
+                    task coeff := 1;
+                /* CIF ANSWER (1085, 284), (70, 23) */
+                (false):
+                    /* CIF task (1059, 327), (121, 35) */
+                    task coeff := coeff + 1;
+            enddecision;
+            /* CIF output (1030, 378), (88, 35) */
+            output ping(coeff);
+            /* CIF NEXTSTATE (1040, 433), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Controller;
