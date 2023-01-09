@@ -479,6 +479,18 @@ def __is_system_state_monitor_variable(context: Context, variable: str) -> bool:
     return False
 
 
+def __is_alias_variable(context: Context, variable: str) -> bool:
+    return variable in context.sdl_model.aliases
+
+
+def __get_variable_name_from_alias(
+    context: Context, variable: str
+) -> Union[promelamodel.VariableReference, promelamodel.MemberAccess]:
+    return __generate_variable_name(
+        context, context.sdl_model.aliases[variable].target, True
+    )
+
+
 def __get_variable_name(
     context: Context, variable: str
 ) -> Union[promelamodel.VariableReference, promelamodel.MemberAccess]:
@@ -495,6 +507,8 @@ def __get_variable_name(
         return VariableReferenceBuilder(
             __get_implicit_variable_name(context, variable.lower())
         ).build()
+    elif __is_alias_variable(context, variable):
+        return __get_variable_name_from_alias(context, variable)
     elif __is_system_state_monitor_variable(context, variable):
         return VariableReferenceBuilder(__GLOBAL_STATE).build()
     elif __is_procedure_variable(context, variable):
