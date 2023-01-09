@@ -1,0 +1,94 @@
+system observer;
+    /* CIF TEXT (144, 214), (467, 140) */
+    use datamodel comment 'observer.asn';
+    
+    exported procedure observe;
+       fpar in/out model           System_State,
+                 in/out last_event  Observable_Event;
+    referenced;
+    
+    signal my_ping(MyInteger) renames input ping from controller to actuator;
+    /* CIF ENDTEXT */
+    channel c
+        from env to observer with observe, my_ping;
+    endchannel;
+    block observer;
+        signalroute r
+            from env to observer with observe, my_ping;
+        connect c and r;
+        /* CIF PROCESS (259, 87), (150, 75) */
+        process observer;
+            /* CIF TEXT (30, 85), (336, 158) */
+            monitor st System_State;
+            
+            monitor event Observable_Event;
+            
+            errorstates error;
+            
+            dcl act_param MyInteger renames st.actuator.param;
+            dcl act_seq MySeq renames st.actuator.seq;
+            dcl act_arr MyArray renames st.actuator.arr;
+            dcl act_alt MyUnion renames st.actuator.alt;
+            /* CIF ENDTEXT */
+            /* CIF START (676, 51), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (676, 106), (70, 35) */
+                NEXTSTATE Idle;
+            /* CIF state (516, 134), (70, 35) */
+            state Idle;
+                /* CIF input (485, 189), (131, 35) */
+                input my_ping(a_param);
+                    /* CIF decision (476, 244), (148, 50) */
+                    decision act_param = a_param;
+                        /* CIF ANSWER (705, 314), (70, 23) */
+                        (false):
+                            /* CIF NEXTSTATE (705, 357), (70, 35) */
+                            NEXTSTATE error;
+                        /* CIF ANSWER (471, 314), (70, 23) */
+                        (true):
+                            /* CIF decision (426, 357), (159, 50) */
+                            decision act_seq.first = a_param;
+                                /* CIF ANSWER (624, 427), (70, 23) */
+                                (false):
+                                    /* CIF NEXTSTATE (624, 470), (70, 35) */
+                                    NEXTSTATE error;
+                                /* CIF ANSWER (426, 427), (70, 23) */
+                                (true):
+                                    /* CIF decision (389, 470), (143, 50) */
+                                    decision act_arr(0) = a_param;
+                                        /* CIF ANSWER (543, 540), (70, 23) */
+                                        (false):
+                                            /* CIF NEXTSTATE (543, 583), (70, 35) */
+                                            NEXTSTATE error;
+                                        /* CIF ANSWER (381, 540), (70, 23) */
+                                        (true):
+                                            /* CIF decision (356, 583), (119, 50) */
+                                            decision present(act_alt);
+                                                /* CIF ANSWER (336, 653), (70, 23) */
+                                                (left):
+                                                    /* CIF decision (295, 696), (151, 50) */
+                                                    decision act_alt.left = a_param;
+                                                        /* CIF ANSWER (381, 766), (70, 23) */
+                                                        (false):
+                                                            /* CIF NEXTSTATE (381, 809), (70, 35) */
+                                                            NEXTSTATE error;
+                                                        /* CIF ANSWER (291, 766), (70, 23) */
+                                                        (true):
+                                                            /* CIF NEXTSTATE (291, 809), (70, 35) */
+                                                            NEXTSTATE Idle;
+                                                    enddecision;
+                                                /* CIF ANSWER (462, 653), (70, 23) */
+                                                else:
+                                                    /* CIF NEXTSTATE (462, 696), (70, 35) */
+                                                    NEXTSTATE error;
+                                            enddecision;
+                                    enddecision;
+                            enddecision;
+                    enddecision;
+            endstate;
+            /* CIF state (283, 32), (70, 35) */
+            state error;
+            endstate;
+        endprocess observer;
+    endblock;
+endsystem;
