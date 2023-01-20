@@ -697,6 +697,32 @@ class VariableInfo:
         self.value = value
 
 
+class AliasInfo:
+    """
+    Holds information about variable alias.
+    """
+
+    name: str
+    """
+    Name of the alias.
+    """
+
+    type: Asn1Type
+    """
+    Type of target variable.
+    """
+
+    target: Union[VariableReference, MemberAccess, ArrayAccess]
+    """
+    Reference to target variable.
+    """
+
+    def __init__(self, name, type, target):
+        self.name = name
+        self.type = type
+        self.target = target
+
+
 class ProcedureParameterDirection(Enum):
     """Direction of a procedure parameter."""
 
@@ -1534,6 +1560,10 @@ class Model:
     The value is a tuple where first element is type and the second
     is initial variable value.
     """
+    aliases: Dict[str, AliasInfo]
+    """
+    Aliases to variables
+    """
     constants: List[str]
     """
     Names of ASN.1 constants.
@@ -1586,6 +1616,7 @@ class Model:
         self.observer_attachments = []
         self.types = getattr(self.source.DV, "types", {})
         self.variables = {}
+        self.aliases = {}
         self.procedures = {}
         self.implicit_variables = {}
         self.named_transition_ids = {}
@@ -1595,6 +1626,7 @@ class Model:
 
         self.__gather_states()
         self.__gather_constants()
+        self.__gather_aliases()
         self.__gather_variables()
         self.__gather_timers()
         self.__gather_inputs()
@@ -1705,7 +1737,7 @@ class Model:
         if parameter_name not in self.source.aliases.keys():
             # OpenGEODE creates aliases for implicit parameters
             return
-        declared_type = self.variables[parameter_name]
+        declared_type = self.aliases[parameter_name]
         if parameter_name in self.implicit_variables:
             if declared_type != self.implicit_variables[parameter_name]:
                 raise Exception(
@@ -1937,6 +1969,10 @@ class Model:
                     info[0],
                     convert(info[1]),
                 )
+
+    def __gather_aliases(self):
+        for name, expr in self.source.aliases.items():
+            self.aliases[name] = AliasInfo(name, expr[0], convert(expr[1]))
 
     def __gather_constants(self):
         # 'variables' is a dict with values defined in ASN.1 model

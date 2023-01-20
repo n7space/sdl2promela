@@ -77,6 +77,7 @@ TESTS= \
 	observer_signal_loss \
 	procedure_variable_init_value \
 	sync_interfaces \
+	variable_alias \
 	observer_compatibility_empty \
 	observer_compatibility_param \
 	observer_compatibility_optional_param

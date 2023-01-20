@@ -1,0 +1,36 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF TEXT (393, 360), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl apollo MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (479, 117), (70, 35) */
+    START;
+        /* CIF task (472, 172), (83, 35) */
+        task apollo := 1;
+        /* CIF output (467, 227), (93, 35) */
+        output ping(apollo);
+        /* CIF NEXTSTATE (479, 277), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (776, 94), (70, 35) */
+    state Wait;
+        /* CIF input (761, 149), (98, 35) */
+        input pong(apollo);
+            /* CIF decision (770, 204), (80, 50) */
+            decision apollo = 8;
+                /* CIF ANSWER (731, 274), (70, 23) */
+                (true):
+                    /* CIF task (724, 317), (83, 35) */
+                    task apollo := 1;
+                /* CIF ANSWER (843, 274), (70, 23) */
+                (false):
+                    /* CIF task (812, 317), (133, 35) */
+                    task apollo := apollo + 1;
+            enddecision;
+            /* CIF output (764, 368), (93, 35) */
+            output ping(apollo);
+            /* CIF NEXTSTATE (776, 423), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Controller;
