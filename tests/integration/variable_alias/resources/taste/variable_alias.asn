@@ -1,0 +1,19 @@
+VARIABLE-ALIAS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MySeq ::= SEQUENCE {
+       first MyInteger,
+       second MyInteger
+   }
+
+   MyArray ::= SEQUENCE (SIZE(2)) OF MyInteger
+
+   MyUnion ::= CHOICE {
+       left MyInteger,
+       right MySeq
+   }
+
+END
+

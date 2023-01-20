@@ -1,0 +1,32 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Actuator;
+    /* CIF TEXT (356, 352), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    
+    dcl seq MySeq;
+    dcl arr MyArray;
+    dcl alt MyUnion;
+    
+    /* CIF ENDTEXT */
+    /* CIF START (412, 58), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (412, 108), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (712, 67), (70, 35) */
+    state Wait;
+        /* CIF input (699, 122), (94, 35) */
+        input ping(param);
+            /* CIF task (645, 177), (202, 35) */
+            task seq := { first param, second 11};
+            /* CIF task (672, 232), (149, 35) */
+            task arr := {param, param };
+            /* CIF task (685, 287), (122, 35) */
+            task alt := left : param;
+            /* CIF output (697, 342), (98, 35) */
+            output pong(param);
+            /* CIF NEXTSTATE (712, 397), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;
