@@ -1490,6 +1490,18 @@ def _create_observer_info_from_signal_description(desc: str) -> ObserverAttachme
     return info
 
 
+def _get_signal_sender_and_recipient(words: List[str]) -> Tuple[str, str]:
+    senderName = None
+    recipientName = None
+    if words[0].lower() == "from":
+        senderName = words[1]
+        if words[2].lower() == "to":
+            recipientName = words[3]
+    elif words[0].lower() == "to":
+        recipientName = words[1]
+    return (senderName, recipientName)
+
+
 def _parse_observer_continuous_signal_with_parameters(
     desc: str,
 ) -> Tuple[ObserverAttachmentInfo, str]:
@@ -1508,12 +1520,7 @@ def _parse_observer_continuous_signal_with_parameters(
 
     second_part = desc[close_position + 1 :]
     words = second_part.split()
-    if words[0].lower() == "from":
-        info.senderName = words[1]
-        if words[2].lower() == "to":
-            info.recipientName = words[3]
-    elif words[0].lower() == "to":
-        info.recipientName = words[1]
+    info.senderName, info.recipientName = _get_signal_sender_and_recipient(words)
 
     info.unhandled_input = False
     return (info, parameter)
@@ -1527,12 +1534,9 @@ def _parse_observer_continuous_signal_without_parameters(
     info.originalSignalName = words[1]
     info.observerSignalName = f"obs_{words[1]}"
 
-    if words[2].lower() == "from":
-        info.senderName = words[3]
-        if words[4].lower() == "to":
-            info.recipientName = words[5]
-    elif words[2].lower() == "to":
-        info.recipientName = words[3]
+    info.senderName, info.recipientName = _get_signal_sender_and_recipient(
+        words[2:]
+    )  # skip first two words: input/output signal
 
     info.unhandled_input = False
     return (info, "")
