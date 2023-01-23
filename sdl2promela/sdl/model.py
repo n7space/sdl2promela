@@ -1477,52 +1477,101 @@ def convert(source: ogAST.Decision) -> Action:
     return None
 
 
-def _parseObserverInput(desc: str) -> Tuple[ObserverAttachmentInfo, str]:
+def _create_observer_info_from_signal_description(desc: str) -> ObserverAttachmentInfo:
     info = ObserverAttachmentInfo()
-    parameter = ""
+
     if desc.lower().startswith("input"):
         info.kind = ObservedSignalKind.INPUT
     elif desc.lower().startswith("output"):
         info.kind = ObservedSignalKind.OUTPUT
     else:
         raise ValueError("Cannot parse continuous signal")
+
+    return info
+
+
+def _parse_observer_continuous_signal_with_parameters(
+    desc: str,
+) -> Tuple[ObserverAttachmentInfo, str]:
+    info = _create_observer_info_from_signal_description(desc)
+    parameter = ""
+    # If desc contains '(', then it contains parameter
+    # and needs to be parsed differently
+    open_position = desc.index("(")
+    close_position = desc.index(")", open_position + 1)
+    first_part = desc[0:open_position]
+    words = first_part.split()
+    info.originalSignalName = words[1]
+    info.observerSignalName = f"obs_{words[1]}"
+
+    parameter = desc[open_position + 1 : close_position]
+
+    second_part = desc[close_position + 1 :]
+    words = second_part.split()
+    if words[0].lower() == "from":
+        info.senderName = words[1]
+        if words[2].lower() == "to":
+            info.recipientName = words[3]
+    elif words[0].lower() == "to":
+        info.recipientName = words[1]
+
+    info.unhandled_input = False
+    return (info, parameter)
+
+
+def _parse_observer_continuous_signal_without_parameters(
+    desc: str,
+) -> Tuple[ObserverAttachmentInfo, str]:
+    info = _create_observer_info_from_signal_description(desc)
+    words = desc.split()
+    info.originalSignalName = words[1]
+    info.observerSignalName = f"obs_{words[1]}"
+
+    if words[2].lower() == "from":
+        info.senderName = words[3]
+        if words[4].lower() == "to":
+            info.recipientName = words[5]
+    elif words[2].lower() == "to":
+        info.recipientName = words[3]
+
+    info.unhandled_input = False
+    return (info, "")
+
+
+def _parse_observer_continuous_signal(desc: str) -> Tuple[ObserverAttachmentInfo, str]:
     try:
         if "(" in desc:
-            # If desc contains '(', then it contains parameter
-            # and needs to be parsed differently
-            open_position = desc.index("(")
-            close_position = desc.index(")", open_position + 1)
-            first_part = desc[0:open_position]
-            words = first_part.split()
-            info.originalSignalName = words[1]
-            info.observerSignalName = f"obs_{words[1]}"
-
-            parameter = desc[open_position + 1 : close_position]
-
-            second_part = desc[close_position + 1 :]
-            words = second_part.split()
-            if words[0].lower() == "from":
-                info.senderName = words[1]
-                if words[2].lower() == "to":
-                    info.recipientName = words[3]
-            elif words[0].lower() == "to":
-                info.recipientName = words[1]
+            return _parse_observer_continuous_signal_with_parameters(desc)
         else:
-            words = desc.split()
-            info.originalSignalName = words[1]
-            info.observerSignalName = f"obs_{words[1]}"
-
-            if words[2].lower() == "from":
-                info.senderName = words[3]
-                if words[4].lower() == "to":
-                    info.recipientName = words[5]
-            elif words[2].lower() == "to":
-                info.recipientName = words[3]
-
-        info.unhandled_input = False
-        return (info, parameter)
+            return _parse_observer_continuous_signal_without_parameters(desc)
     except ValueError:
         raise ValueError("Cannot parse continuous signal")
+
+
+def _find_signal_parameter(
+    types: Dict[str, Asn1Type], process_name: str, signal_name: str, is_input: bool
+) -> Asn1Type:
+    if is_input:
+        type_name = "{}-Event-msg-in".format(process_name.capitalize())
+    else:
+        type_name = "{}-Event-msg-out".format(process_name.captitalize())
+
+    if type_name not in types:
+        raise Exception(f"The process {process_name} cannot be found")
+    type = types[type_name].type
+    candidates = [
+        elem for elem in type.Children.keys() if elem.lower() == signal_name.lower()
+    ]
+    if len(candidates) != 1:
+        raise Exception(
+            f"The signal {signal_name} cannot be found in process {process_name}"
+        )
+    param_desc = type.Children[candidates[0]].type
+    param_type = types[param_desc.ReferencedTypeName].type
+    parameter_type = None
+    if len(param_type.Children) > 0:
+        parameter_type = param_type.Children[list(param_type.Children.keys())[0]]
+    return parameter_type
 
 
 class Model:
@@ -1664,7 +1713,9 @@ class Model:
                 if signal.inputString.startswith(
                     "input"
                 ) or signal.inputString.startswith("output"):
-                    # This is observer "input"
+                    # This is observer continuous signal specified to intercept
+                    # the signal from the model
+                    # skip it here and parse in __gather_inputs
                     continue
                 cs = ContinuousSignal()
                 cs.trigger = convert(signal.trigger.question)
@@ -1813,45 +1864,17 @@ class Model:
                     self.__parse_observer_input(signal, state)
 
     def __parse_observer_input(self, signal: ogAST.ContinuousSignal, state: str):
-        info, parameter = _parseObserverInput(signal.inputString)
+        info, parameter = _parse_observer_continuous_signal(signal.inputString)
         self.observer_attachments.append(info)
         parameter_type = None
         if info.recipientName is not None:
-            type_name = "{}-Event-msg-in".format(info.recipientName.capitalize())
-            if type_name not in self.types:
-                raise Exception("Something is broken")
-            type = self.types[type_name].type
-            candidates = [
-                elem
-                for elem in type.Children.keys()
-                if elem.lower() == info.originalSignalName.lower()
-            ]
-            if len(candidates) != 1:
-                raise Exception("Something is broken")
-            param_desc = type.Children[candidates[0]].type
-            param_type = self.types[param_desc.ReferencedTypeName].type
-            if len(param_type.Children) > 0:
-                parameter_type = param_type.Children[
-                    list(param_type.Children.keys())[0]
-                ]
+            parameter_type = _find_signal_parameter(
+                self.types, info.recipientName, info.originalSignalName, True
+            )
         else:
-            type_name = "{}-Event-msg-out".format(info.senderName.captitalize())
-            if type_name not in self.types:
-                raise Exception("Something is broken")
-            type = self.types[type_name].type
-            candidates = [
-                elem
-                for elem in type.Children.keys()
-                if elem.lower() == info.originalSignalName.lower()
-            ]
-            if len(candidates) != 1:
-                raise Exception("Something is broken")
-            param_desc = type.Children[candidates[0]].type
-            param_type = self.types[param_desc.ReferencedTypeName].type
-            if len(param_type.Children) > 0:
-                parameter_type = param_type.Children[
-                    list(param_type.Children.keys())[0]
-                ]
+            parameter_type = _find_signal_parameter(
+                self.types, info.senderName, info.originalSignalName, False
+            )
 
         input = Input()
         if parameter_type is not None:
