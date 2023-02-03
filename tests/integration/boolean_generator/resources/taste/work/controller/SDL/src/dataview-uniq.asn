@@ -36,7 +36,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        controller,
+       
        environment,
+       
        
        env
    }

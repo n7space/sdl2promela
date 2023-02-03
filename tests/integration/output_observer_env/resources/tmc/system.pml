@@ -29,6 +29,7 @@ inline Environ_0_RI_0_ping(controller_ping_p1)
 }
 inline Controller_0_PI_0_ping_unhandled_input(p1)
 {
+    printf("unhandled_input controller ping\n");
     skip;
 }
 inline Controller_check_queue()

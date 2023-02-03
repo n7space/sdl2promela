@@ -57,6 +57,7 @@ inline Controller_0_RI_0_test_derived_length(actuator_test_derived_length_p1)
 }
 inline Actuator_0_PI_0_test_derived_length_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_derived_length\n");
     skip;
 }
 inline Controller_0_RI_0_test_exist(actuator_test_exist_p1)
@@ -65,6 +66,7 @@ inline Controller_0_RI_0_test_exist(actuator_test_exist_p1)
 }
 inline Actuator_0_PI_0_test_exist_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_exist\n");
     skip;
 }
 inline Controller_0_RI_0_test_length(actuator_test_length_p1)
@@ -73,6 +75,7 @@ inline Controller_0_RI_0_test_length(actuator_test_length_p1)
 }
 inline Actuator_0_PI_0_test_length_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_length\n");
     skip;
 }
 inline Controller_0_RI_0_test_length_derived_fixed(actuator_test_length_derived_fixed_p1)
@@ -81,6 +84,7 @@ inline Controller_0_RI_0_test_length_derived_fixed(actuator_test_length_derived_
 }
 inline Actuator_0_PI_0_test_length_derived_fixed_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_length_derived_fixed\n");
     skip;
 }
 inline Controller_0_RI_0_test_length_fixed(actuator_test_length_fixed_p1)
@@ -89,6 +93,7 @@ inline Controller_0_RI_0_test_length_fixed(actuator_test_length_fixed_p1)
 }
 inline Actuator_0_PI_0_test_length_fixed_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_length_fixed\n");
     skip;
 }
 inline Controller_0_RI_0_test_num(actuator_test_num_p1)
@@ -97,6 +102,7 @@ inline Controller_0_RI_0_test_num(actuator_test_num_p1)
 }
 inline Actuator_0_PI_0_test_num_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_num\n");
     skip;
 }
 inline Controller_0_RI_0_test_present(actuator_test_present_p1)
@@ -105,6 +111,7 @@ inline Controller_0_RI_0_test_present(actuator_test_present_p1)
 }
 inline Actuator_0_PI_0_test_present_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_present\n");
     skip;
 }
 inline Controller_0_RI_0_test_to_enum(actuator_test_to_enum_p1)
@@ -113,6 +120,7 @@ inline Controller_0_RI_0_test_to_enum(actuator_test_to_enum_p1)
 }
 inline Actuator_0_PI_0_test_to_enum_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_to_enum\n");
     skip;
 }
 inline Controller_0_RI_0_test_to_selector(actuator_test_to_selector_p1)
@@ -121,6 +129,7 @@ inline Controller_0_RI_0_test_to_selector(actuator_test_to_selector_p1)
 }
 inline Actuator_0_PI_0_test_to_selector_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_to_selector\n");
     skip;
 }
 inline Controller_0_RI_0_test_val(actuator_test_val_p1)
@@ -129,6 +138,7 @@ inline Controller_0_RI_0_test_val(actuator_test_val_p1)
 }
 inline Actuator_0_PI_0_test_val_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_val\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -147,6 +157,7 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 }
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Actuator_0_RI_0_result_enum(controller_result_enum_p1)
@@ -155,6 +166,7 @@ inline Actuator_0_RI_0_result_enum(controller_result_enum_p1)
 }
 inline Controller_0_PI_0_result_enum_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_enum\n");
     skip;
 }
 inline Actuator_0_RI_0_result_int(controller_result_int_p1)
@@ -163,6 +175,7 @@ inline Actuator_0_RI_0_result_int(controller_result_int_p1)
 }
 inline Controller_0_PI_0_result_int_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_int\n");
     skip;
 }
 inline Controller_check_queue()

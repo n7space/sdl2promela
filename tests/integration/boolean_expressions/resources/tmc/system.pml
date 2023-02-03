@@ -27,6 +27,7 @@ inline Controller_0_RI_0_check_binary(actuator_check_binary_p1)
 }
 inline Actuator_0_PI_0_check_binary_unhandled_input(p1)
 {
+    printf("unhandled_input actuator check_binary\n");
     skip;
 }
 inline Controller_0_RI_0_check_unary(actuator_check_unary_p1)
@@ -35,6 +36,7 @@ inline Controller_0_RI_0_check_unary(actuator_check_unary_p1)
 }
 inline Actuator_0_PI_0_check_unary_unhandled_input(p1)
 {
+    printf("unhandled_input actuator check_unary\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -53,6 +55,7 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 }
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Controller_check_queue()

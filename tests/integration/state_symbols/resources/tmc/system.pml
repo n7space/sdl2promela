@@ -28,6 +28,7 @@ inline Controller_0_RI_0_test_excluded_state()
 }
 inline Actuator_0_PI_0_test_excluded_state_unhandled_input()
 {
+    printf("unhandled_input actuator test_excluded_state\n");
     skip;
 }
 inline Controller_0_RI_0_test_simple_state(actuator_test_simple_state_p1)
@@ -36,6 +37,7 @@ inline Controller_0_RI_0_test_simple_state(actuator_test_simple_state_p1)
 }
 inline Actuator_0_PI_0_test_simple_state_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_simple_state\n");
     skip;
 }
 inline Controller_0_RI_0_test_star()
@@ -44,6 +46,7 @@ inline Controller_0_RI_0_test_star()
 }
 inline Actuator_0_PI_0_test_star_unhandled_input()
 {
+    printf("unhandled_input actuator test_star\n");
     skip;
 }
 inline Controller_0_RI_0_test_state_list(actuator_test_state_list_p1)
@@ -52,6 +55,7 @@ inline Controller_0_RI_0_test_state_list(actuator_test_state_list_p1)
 }
 inline Actuator_0_PI_0_test_state_list_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_state_list\n");
     skip;
 }
 inline Controller_0_RI_0_test_state_list2()
@@ -60,6 +64,7 @@ inline Controller_0_RI_0_test_state_list2()
 }
 inline Actuator_0_PI_0_test_state_list2_unhandled_input()
 {
+    printf("unhandled_input actuator test_state_list2\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -78,6 +83,7 @@ inline Actuator_0_RI_0_result()
 }
 inline Controller_0_PI_0_result_unhandled_input()
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Controller_check_queue()

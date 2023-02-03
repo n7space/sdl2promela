@@ -36,6 +36,7 @@ inline Down_0_RI_0_result(controller_down_result_p1)
 }
 inline Controller_0_PI_0_down_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller down_result\n");
     skip;
 }
 inline Environ_0_RI_0_test(controller_test_p1)
@@ -44,6 +45,7 @@ inline Environ_0_RI_0_test(controller_test_p1)
 }
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
+    printf("unhandled_input controller test\n");
     skip;
 }
 inline Up_0_RI_0_result(controller_up_result_p1)
@@ -52,6 +54,7 @@ inline Up_0_RI_0_result(controller_up_result_p1)
 }
 inline Controller_0_PI_0_up_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller up_result\n");
     skip;
 }
 inline Controller_check_queue()
@@ -70,6 +73,7 @@ inline Controller_0_RI_0_down_check(down_check_p1)
 }
 inline Down_0_PI_0_check_unhandled_input(p1)
 {
+    printf("unhandled_input down check\n");
     skip;
 }
 inline Down_check_queue()
@@ -88,6 +92,7 @@ inline Controller_0_RI_0_up_check(up_check_p1)
 }
 inline Up_0_PI_0_check_unhandled_input(p1)
 {
+    printf("unhandled_input up check\n");
     skip;
 }
 inline Up_check_queue()

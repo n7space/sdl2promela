@@ -21,6 +21,7 @@ inline Inst_0_RI_0_ping()
 }
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
+    printf("unhandled_input actuator ping\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -39,6 +40,7 @@ inline Actuator_0_RI_0_dummy()
 }
 inline Inst_0_PI_0_dummy_unhandled_input()
 {
+    printf("unhandled_input inst dummy\n");
     skip;
 }
 inline Actuator_0_RI_0_pong()
@@ -47,6 +49,7 @@ inline Actuator_0_RI_0_pong()
 }
 inline Inst_0_PI_0_pong_unhandled_input()
 {
+    printf("unhandled_input inst pong\n");
     skip;
 }
 inline Inst_check_queue()

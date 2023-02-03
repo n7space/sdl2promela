@@ -15,7 +15,8 @@ Zero-observer-States ::= ENUMERATED {wait}
 Zero-observer-Context ::= SEQUENCE {
    state Zero-observer-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 Zero-Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), f1-present(2), f2-present(3)}

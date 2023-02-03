@@ -15,7 +15,8 @@ Change-observer-States ::= ENUMERATED {wait}
 Change-observer-Context ::= SEQUENCE {
    state Change-observer-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 Change-Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), f1-present(2), f2-present(3)}

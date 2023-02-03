@@ -24,6 +24,7 @@ inline Controller_0_RI_0_tick()
 }
 inline Actuator_0_PI_0_tick_unhandled_input()
 {
+    printf("unhandled_input actuator tick\n");
     skip;
 }
 inline Controller_0_RI_0_tick_left()
@@ -32,6 +33,7 @@ inline Controller_0_RI_0_tick_left()
 }
 inline Actuator_0_PI_0_tick_left_unhandled_input()
 {
+    printf("unhandled_input actuator tick_left\n");
     skip;
 }
 inline Controller_0_RI_0_tick_right()
@@ -40,6 +42,7 @@ inline Controller_0_RI_0_tick_right()
 }
 inline Actuator_0_PI_0_tick_right_unhandled_input()
 {
+    printf("unhandled_input actuator tick_right\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -58,6 +61,7 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 }
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Controller_check_queue()

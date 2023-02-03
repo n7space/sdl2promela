@@ -70,6 +70,7 @@ typedef Inputobserver_Context {
     Inputobserver_Context_state state;
     Inputobserver_Context_init_done init_done;
     PID sender;
+    PID offspring;
     Inputobserver_Context_received_action received_action;
     Inputobserver_Context_received_trigger received_trigger;
 }

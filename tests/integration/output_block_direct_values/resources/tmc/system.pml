@@ -34,6 +34,7 @@ inline Controller_0_RI_0_give_me_array()
 }
 inline Actuator_0_PI_0_give_me_array_unhandled_input()
 {
+    printf("unhandled_input actuator give_me_array\n");
     skip;
 }
 inline Controller_0_RI_0_give_me_data()
@@ -42,6 +43,7 @@ inline Controller_0_RI_0_give_me_data()
 }
 inline Actuator_0_PI_0_give_me_data_unhandled_input()
 {
+    printf("unhandled_input actuator give_me_data\n");
     skip;
 }
 inline Controller_0_RI_0_give_me_nested()
@@ -50,6 +52,7 @@ inline Controller_0_RI_0_give_me_nested()
 }
 inline Actuator_0_PI_0_give_me_nested_unhandled_input()
 {
+    printf("unhandled_input actuator give_me_nested\n");
     skip;
 }
 inline Controller_0_RI_0_give_me_values()
@@ -58,6 +61,7 @@ inline Controller_0_RI_0_give_me_values()
 }
 inline Actuator_0_PI_0_give_me_values_unhandled_input()
 {
+    printf("unhandled_input actuator give_me_values\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -76,6 +80,7 @@ inline Actuator_0_RI_0_result_array(controller_result_array_p1)
 }
 inline Controller_0_PI_0_result_array_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_array\n");
     skip;
 }
 inline Actuator_0_RI_0_result_data(controller_result_data_p1)
@@ -84,6 +89,7 @@ inline Actuator_0_RI_0_result_data(controller_result_data_p1)
 }
 inline Controller_0_PI_0_result_data_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_data\n");
     skip;
 }
 inline Actuator_0_RI_0_result_nested(controller_result_nested_p1)
@@ -92,6 +98,7 @@ inline Actuator_0_RI_0_result_nested(controller_result_nested_p1)
 }
 inline Controller_0_PI_0_result_nested_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_nested\n");
     skip;
 }
 inline Actuator_0_RI_0_result_values(controller_result_values_p1)
@@ -100,6 +107,7 @@ inline Actuator_0_RI_0_result_values(controller_result_values_p1)
 }
 inline Controller_0_PI_0_result_values_unhandled_input(p1)
 {
+    printf("unhandled_input controller result_values\n");
     skip;
 }
 inline Controller_check_queue()

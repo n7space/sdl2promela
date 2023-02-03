@@ -56,6 +56,7 @@ inline Controller_0_RI_0_f1(actuator_f1_p1)
 }
 inline Actuator_0_PI_0_f1_unhandled_input(p1)
 {
+    printf("unhandled_input actuator f1\n");
     skip;
 }
 inline Controller_0_RI_0_f2(actuator_f2_p1)
@@ -64,6 +65,7 @@ inline Controller_0_RI_0_f2(actuator_f2_p1)
 }
 inline Actuator_0_PI_0_f2_unhandled_input(p1)
 {
+    printf("unhandled_input actuator f2\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -82,6 +84,7 @@ inline Actuator_0_RI_0_result(controller_result_p1)
 }
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Environ_0_RI_0_test(controller_test_p1)
@@ -90,6 +93,7 @@ inline Environ_0_RI_0_test(controller_test_p1)
 }
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
+    printf("unhandled_input controller test\n");
     skip;
 }
 inline Controller_check_queue()

@@ -24,6 +24,7 @@ inline Controller_0_RI_0_ping(actuatorinst_ping_p1)
 }
 inline Actuatorinst_0_PI_0_ping_unhandled_input(p1)
 {
+    printf("unhandled_input actuatorinst ping\n");
     skip;
 }
 inline Actuatorinst_check_queue()
@@ -42,6 +43,7 @@ inline Actuatorinst_0_RI_0_pong(controller_pong_p1)
 }
 inline Controller_0_PI_0_pong_unhandled_input(p1)
 {
+    printf("unhandled_input controller pong\n");
     skip;
 }
 inline Controller_check_queue()
