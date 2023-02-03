@@ -1,3 +1,5 @@
+EXECUTION_LOG=execution_log.txt
+
 TESTS= \
 	simplesignals \
 	parameterless \
@@ -85,6 +87,11 @@ TESTS= \
 .PHONY: $(TESTS) check
 
 check: $(TESTS)
+	@python3 summary.py
+	@rm $(EXECUTION_LOG)
 
 $(TESTS):
+	@echo $@ >> execution_log.txt
+	@date +%s >> execution_log.txt
 	${MAKE} -C $@ check
+	@date +%s >> execution_log.txt
