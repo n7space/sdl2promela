@@ -36,6 +36,7 @@ inline Controller_0_RI_0_ping(actuator_ping_p1)
 }
 inline Actuator_0_PI_0_ping_unhandled_input(p1)
 {
+    printf("unhandled_input actuator ping\n");
     Uh_signal_observer_lock?_;
     Uh_signal_observer_0_PI_0_uh(p1);
     Uh_signal_observer_lock!1;
@@ -59,6 +60,7 @@ inline Actuator_0_RI_0_pong(controller_pong_p1)
 }
 inline Controller_0_PI_0_pong_unhandled_input(p1)
 {
+    printf("unhandled_input controller pong\n");
     Uh_function_observer_lock?_;
     Uh_function_observer_0_PI_0_uh();
     Uh_function_observer_lock!1;
@@ -72,6 +74,7 @@ inline Environ_0_RI_0_test(controller_test_p1)
 }
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
+    printf("unhandled_input controller test\n");
     Uh_function_observer_lock?_;
     Uh_function_observer_0_PI_0_uh();
     Uh_function_observer_lock!1;

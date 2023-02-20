@@ -25,6 +25,7 @@ inline Controller_0_RI_0_disable()
 }
 inline Actuator_0_PI_0_disable_unhandled_input()
 {
+    printf("unhandled_input actuator disable\n");
     skip;
 }
 inline Controller_0_RI_0_ping(actuator_ping_p1)
@@ -33,6 +34,7 @@ inline Controller_0_RI_0_ping(actuator_ping_p1)
 }
 inline Actuator_0_PI_0_ping_unhandled_input(p1)
 {
+    printf("unhandled_input actuator ping\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -51,6 +53,7 @@ inline Actuator_0_RI_0_pong(controller_pong_p1)
 }
 inline Controller_0_PI_0_pong_unhandled_input(p1)
 {
+    printf("unhandled_input controller pong\n");
     skip;
 }
 inline Controller_check_queue()

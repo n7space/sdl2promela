@@ -15,7 +15,8 @@ Observer-States ::= ENUMERATED {wait}
 Observer-Context ::= SEQUENCE {
    state Observer-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2)}

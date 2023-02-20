@@ -11,12 +11,13 @@ IMPORTS
    Actuator-Event, Controller-Event, Environ-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
-Uh-signal-observer-States ::= ENUMERATED {idle, invalidstate, error}
+Uh-signal-observer-States ::= ENUMERATED {invalidstate, idle, error}
 
 Uh-signal-observer-Context ::= SEQUENCE {
    state Uh-signal-observer-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 Uh-Signal-Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2)}

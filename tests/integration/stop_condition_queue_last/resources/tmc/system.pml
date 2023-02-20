@@ -34,6 +34,7 @@ inline Controller_0_RI_0_test_array(actuator_test_array_p1)
 }
 inline Actuator_0_PI_0_test_array_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_array\n");
     skip;
 }
 inline Controller_0_RI_0_test_choice(actuator_test_choice_p1)
@@ -42,6 +43,7 @@ inline Controller_0_RI_0_test_choice(actuator_test_choice_p1)
 }
 inline Actuator_0_PI_0_test_choice_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_choice\n");
     skip;
 }
 inline Controller_0_RI_0_test_integer(actuator_test_integer_p1)
@@ -50,6 +52,7 @@ inline Controller_0_RI_0_test_integer(actuator_test_integer_p1)
 }
 inline Actuator_0_PI_0_test_integer_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_integer\n");
     skip;
 }
 inline Controller_0_RI_0_test_optional(actuator_test_optional_p1)
@@ -58,6 +61,7 @@ inline Controller_0_RI_0_test_optional(actuator_test_optional_p1)
 }
 inline Actuator_0_PI_0_test_optional_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_optional\n");
     skip;
 }
 inline Controller_0_RI_0_test_sequence(actuator_test_sequence_p1)
@@ -66,6 +70,7 @@ inline Controller_0_RI_0_test_sequence(actuator_test_sequence_p1)
 }
 inline Actuator_0_PI_0_test_sequence_unhandled_input(p1)
 {
+    printf("unhandled_input actuator test_sequence\n");
     skip;
 }
 inline Actuator_check_queue()
@@ -84,6 +89,7 @@ inline Actuator_0_RI_0_result()
 }
 inline Controller_0_PI_0_result_unhandled_input()
 {
+    printf("unhandled_input controller result\n");
     skip;
 }
 inline Controller_check_queue()

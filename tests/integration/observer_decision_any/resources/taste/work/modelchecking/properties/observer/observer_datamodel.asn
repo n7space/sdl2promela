@@ -10,12 +10,13 @@ IMPORTS
    Actuator-Event, Controller-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
-Observer-States ::= ENUMERATED {idle, error}
+Observer-States ::= ENUMERATED {error, idle}
 
 Observer-Context ::= SEQUENCE {
    state Observer-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    indicator MyInteger
 }
 

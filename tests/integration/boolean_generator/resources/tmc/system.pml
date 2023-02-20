@@ -7,23 +7,24 @@ typedef system_state {
 }
 
 int inited;
-chan Controller_readValue_channel = [1] of {MyBool};
+chan Controller_readvalue_channel = [1] of {MyBool};
 MyBool Controller_readvalue_signal_parameter;
 bool Controller_readvalue_channel_used = 0;
 system_state global_state;
 chan Controller_lock = [1] of {int};
 inline Environment_0_RI_0_readValue(controller_readValue_p1)
 {
-    Controller_readValue_channel!controller_readValue_p1;
+    Controller_readvalue_channel!controller_readValue_p1;
 }
 inline Controller_0_PI_0_readValue_unhandled_input(p1)
 {
+    printf("unhandled_input controller readValue\n");
     skip;
 }
 inline Controller_check_queue()
 {
     atomic {
-        empty(Controller_readValue_channel);
+        empty(Controller_readvalue_channel);
     }
 }
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
@@ -35,16 +36,16 @@ active proctype Controller_readValue() priority 1
     inited;
     do
     ::  atomic {
-        nempty(Controller_readValue_channel);
+        nempty(Controller_readvalue_channel);
         Controller_lock?_;
 Controller_readvalue_loop:
         if
-        ::  nempty(Controller_readValue_channel);
-            Controller_readValue_channel?Controller_readvalue_signal_parameter;
+        ::  nempty(Controller_readvalue_channel);
+            Controller_readvalue_channel?Controller_readvalue_signal_parameter;
             Controller_readvalue_channel_used = 1;
             Controller_0_PI_0_readValue(Controller_readvalue_signal_parameter);
             goto Controller_readvalue_loop;
-        ::  empty(Controller_readValue_channel);
+        ::  empty(Controller_readvalue_channel);
             skip;
         fi;
         Controller_lock!1;

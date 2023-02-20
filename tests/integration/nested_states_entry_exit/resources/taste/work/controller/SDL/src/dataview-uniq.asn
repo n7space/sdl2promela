@@ -44,7 +44,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        actuator,
+       
        controller,
+       
        
        env
    }

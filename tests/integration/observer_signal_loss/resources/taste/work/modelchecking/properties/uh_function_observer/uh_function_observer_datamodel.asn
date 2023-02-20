@@ -16,7 +16,8 @@ Uh-function-observer-States ::= ENUMERATED {invalidstate, idle, error}
 Uh-function-observer-Context ::= SEQUENCE {
    state Uh-function-observer-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 Uh-Function-Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2)}
