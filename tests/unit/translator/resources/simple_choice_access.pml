@@ -12,9 +12,9 @@ inline Simplechoiceaccess_0_transition(id)
       goto simplechoiceaccess_continuous_signals;
     ::(simplechoiceaccess_transition_id == 1)->
       if
-      ::(global_state.simplechoiceaccess.my_data.selection == MyUnion_packet_PRESENT)->
+      ::(global_state.simplechoiceaccess.my_data.selection == Simplechoiceaccess_Myunion_Selection_packet_present)->
         MyInteger_assign_value(global_state.simplechoiceaccess.my_int, global_state.simplechoiceaccess.my_data.data.packet);
-      ::(global_state.simplechoiceaccess.my_data.selection == MyUnion_dummy_PRESENT)->
+      ::(global_state.simplechoiceaccess.my_data.selection == Simplechoiceaccess_Myunion_Selection_dummy_present)->
         MyInteger_assign_value(global_state.simplechoiceaccess.my_int, 0);
       fi;
       Simplechoiceaccess_0_RI_0_pong(global_state.simplechoiceaccess.my_int);
