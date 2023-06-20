@@ -244,7 +244,7 @@ def __fix_type_name(name: str) -> str:
     * the suffix selection is lowercase, shall be capitalized like in observer.asn
     """
     tmp = name[0].upper() + name[1:]
-    return tmp.replace('_selection', '_Selection')
+    return tmp.replace("_selection", "_Selection")
 
 
 def __type_name(datatype: Any) -> str:
