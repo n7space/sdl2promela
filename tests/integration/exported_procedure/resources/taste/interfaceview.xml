@@ -1,0 +1,94 @@
+<InterfaceView version="1.2" asn1file="exported_procedure.acn" UiFile="interfaceview.ui.xml">
+<Function id="{8aa385a0-ebd2-40de-a2a3-effbf480e419}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" startup_priority="1" instances_max="1" instances_min="1">
+<Provided_Interface id="{cb2699d5-b64d-418d-9a97-ae744960f18c}" name="test" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+</Provided_Interface>
+
+<Provided_Interface id="{de5b759b-5473-4ee3-a5df-aca8fecc0faa}" name="from_proc" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+</Provided_Interface>
+
+<Provided_Interface id="{3e288351-1fc3-4085-97a1-bc716dd333b7}" name="from_trans" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+</Provided_Interface>
+
+<Required_Interface id="{af1ac162-9bfe-4f6c-a5a8-6779028f8156}" name="check_sync" kind="Protected" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0">
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface id="{0d6c8d2b-9f0f-4905-87f2-065498a4ecf6}" name="dummy" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function id="{f168eb2a-6b34-4176-9221-249ada85721a}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" startup_priority="1" instances_max="1" instances_min="1">
+<Provided_Interface id="{edbfbce6-d51a-48d6-a742-01ec847ace6f}" name="check_sync" kind="Protected" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0">
+</Provided_Interface>
+
+<Provided_Interface id="{0271a778-9ccd-4d2b-968e-1d219e2a6402}" name="dummy" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
+</Provided_Interface>
+
+<Required_Interface id="{8362a4b6-d74b-4b24-adc1-dd0c877c73f2}" name="from_proc" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+<Required_Interface id="{e0990729-8dec-41da-8c5e-054bf0425878}" name="from_trans" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+    <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function id="{4c7eb777-d8f4-405b-82ff-0bf2674f33d1}" name="environ" is_type="NO" language="GUI" default_implementation="default" fixed_system_element="NO" required_system_element="NO" startup_priority="1" instances_max="1" instances_min="1">
+<Required_Interface id="{f2f20cd5-79f1-49b6-b018-e23573731bc6}" name="test" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="2" queue_size="1" miat="0" stack_size="1024">
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Connection id="{f7cb6565-a546-4d74-848d-dd8fc93c482c}" name="environ_test____controller_test" required_system_element="NO">
+    <Source func_name="environ" ri_name="test" />
+    <Target func_name="controller" pi_name="test" />
+</Connection>
+
+<Connection id="{27d9c9d9-2e97-47c4-ba4a-d4e27e21cd21}" name="controller_check_sync____actuator_check_sync" required_system_element="NO">
+    <Source func_name="controller" ri_name="check_sync" />
+    <Target func_name="actuator" pi_name="check_sync" />
+</Connection>
+
+<Connection id="{3b191f00-bee5-49ce-a977-0ef5b3b67d2b}" name="actuator_from_trans____controller_from_trans" required_system_element="NO">
+    <Source func_name="actuator" ri_name="from_trans" />
+    <Target func_name="controller" pi_name="from_trans" />
+</Connection>
+
+<Connection id="{54cf5a40-0db5-4ea2-bdac-ac693bbe87a6}" name="controller_dummy____actuator_dummy" required_system_element="NO">
+    <Source func_name="controller" ri_name="dummy" />
+    <Target func_name="actuator" pi_name="dummy" />
+</Connection>
+
+<Connection id="{366263a4-be6c-400d-acd4-350d5d202330}" name="actuator_from_proc____controller_from_proc" required_system_element="NO">
+    <Source func_name="actuator" ri_name="from_proc" />
+    <Target func_name="controller" pi_name="from_proc" />
+</Connection>
+
+<Comment id="{76f49ef3-9b32-42ec-bb52-8a7c56150ab1}" name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
+</Comment>
+
+<Layer name="default" is_visible="true"/>
+
+</InterfaceView>

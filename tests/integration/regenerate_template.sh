@@ -43,7 +43,7 @@ fi
 
 # after generation of observer.asn
 # this loop copies it into all observers subdirectories
-local src=`find work/simulation -name 'observer.asn' -type f`
+src=`find work/simulation -name 'observer.asn' -type f`
 for dst in `find work/modelchecking -name observer.asn`
 do
 	cp -v "$src" "$dst"

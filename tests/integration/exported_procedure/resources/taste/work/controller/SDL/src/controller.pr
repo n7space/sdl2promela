@@ -1,0 +1,99 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (385, 195), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1372, 170), (98, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForBoth;
+        /* CIF input (1354, 225), (134, 35) */
+        input from_trans(param);
+            /* CIF decision (1381, 280), (81, 50) */
+            decision param = 2;
+                /* CIF ANSWER (1342, 350), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1329, 393), (96, 35) */
+                    NEXTSTATE WaitForProc;
+                /* CIF ANSWER (1432, 350), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1432, 393), (70, 35) */
+                    NEXTSTATE Failure;
+            enddecision;
+    endstate;
+    /* CIF state (862, 550), (101, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForTrans;
+        /* CIF input (845, 605), (134, 35) */
+        input from_trans(param);
+            /* CIF decision (872, 660), (81, 50) */
+            decision param = 2;
+                /* CIF ANSWER (833, 730), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (833, 773), (70, 35) */
+                    NEXTSTATE Success;
+                /* CIF ANSWER (923, 730), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (923, 773), (70, 35) */
+                    NEXTSTATE Failure;
+            enddecision;
+    endstate;
+    /* CIF state (1074, 154), (98, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForBoth;
+        /* CIF input (1058, 209), (130, 35) */
+        input from_proc(param);
+            /* CIF decision (1083, 264), (81, 50) */
+            decision param = 1;
+                /* CIF ANSWER (1044, 334), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1028, 377), (101, 35) */
+                    NEXTSTATE WaitForTrans;
+                /* CIF ANSWER (1134, 334), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1134, 377), (70, 35) */
+                    NEXTSTATE Failure;
+            enddecision;
+    endstate;
+    /* CIF state (1168, 550), (96, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForProc;
+        /* CIF input (1149, 605), (130, 35) */
+        input from_proc(param);
+            /* CIF decision (1174, 660), (81, 50) */
+            decision param = 1;
+                /* CIF ANSWER (1135, 730), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1135, 773), (70, 35) */
+                    NEXTSTATE Success;
+                /* CIF ANSWER (1225, 730), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1225, 773), (70, 35) */
+                    NEXTSTATE Failure;
+            enddecision;
+    endstate;
+    /* CIF state (598, 461), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Failure;
+    endstate;
+    /* CIF state (613, 377), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Success;
+    endstate;
+    /* CIF state (802, 112), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Wait;
+        /* CIF input (802, 167), (70, 35) */
+        input test;
+            /* CIF output (792, 222), (88, 35) */
+            output check_sync;
+            /* CIF NEXTSTATE (787, 277), (98, 35) */
+            NEXTSTATE WaitForBoth;
+    endstate;
+endprocess Controller;

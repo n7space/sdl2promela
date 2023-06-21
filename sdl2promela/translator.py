@@ -1,4 +1,4 @@
-from typing import List, Union, Any, Optional, Tuple
+from typing import List, Union, Any, Optional, Tuple, Dict
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -235,13 +235,27 @@ def __escapeIv(name: str) -> str:
     return name.capitalize()
 
 
+def __fix_type_name(name: str) -> str:
+    """
+    Fix type name parsed by opengeode to name compatible with observer.asn
+    and dataview.pml.
+    At this moment two fixes are required:
+    * the name is not always capitalized, so the first character have to be upcase
+    * the suffix selection is lowercase, shall be capitalized like in observer.asn
+    """
+    tmp = name[0].upper() + name[1:]
+    return tmp.replace("_selection", "_Selection")
+
+
 def __type_name(datatype: Any) -> str:
     if datatype.kind == "ReferenceType":
-        return datatype.ReferencedTypeName.replace("-", "_")
+        res = datatype.ReferencedTypeName.replace("-", "_")
+        return __fix_type_name(res)
     if datatype.kind == "IntegerType":
         return "int"
     if datatype.kind == "EnumeratedType":
-        return datatype.value.replace("-", "_")
+        res = datatype.value.replace("-", "_")
+        return __fix_type_name(res)
 
     raise NotImplementedError(f"__type_name is not implemented for {datatype.kind}")
 
@@ -295,6 +309,20 @@ def __get_exported_procedure_inline_name(context: Context, procedure_name: str) 
         + "PI"
         + SEPARATOR
         + procedure_name
+    )
+
+
+def __get_exported_procedure_transition_inline_name(
+    context: Context, procedure_name: str
+) -> str:
+    return (
+        context.sdl_model.process_name.capitalize()
+        + SEPARATOR
+        + "PI"
+        + SEPARATOR
+        + procedure_name
+        + SEPARATOR
+        + "Transition"
     )
 
 
@@ -796,7 +824,8 @@ def __generate_expression(context: Context, constant: sdlmodel.ConstantReference
 @dispatch(Context, sdlmodel.EnumValue)
 def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
     basic_type = find_basic_type(context.sdl_model.source.dataview, enumValue.type)
-    if enumValue.type.kind == "EnumeratedType":
+    finalType = resolve_asn1_type(context.sdl_model.types, basic_type)
+    if basic_type.kind == "EnumeratedType" and context.missing_type is not None:
         type_name = __type_name(context.missing_type)
     else:
         type_name = __type_name(enumValue.type)
@@ -804,7 +833,7 @@ def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
     candidates = [v for k, v in basic_type.EnumValues.items() if k.lower() == enumerant]
     if len(candidates) != 1:
         raise Exception(f"Invalid enum value {enumValue.value}")
-    value = "{}_{}".format(type_name, candidates[0].EnumID)
+    value = "{}_{}".format(type_name, candidates[0].EnumID.lower())
     return VariableReferenceBuilder(value).build()
 
 
@@ -933,7 +962,7 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
         if expression.parameters[0] is None:
             raise ValueError("Present queried entity is missing.")
         context.missing_type = expression.parameters[0].type
-        return (
+        result = (
             MemberAccessBuilder()
             .withUtypeReference(
                 __generate_expression(context, expression.parameters[0])
@@ -941,6 +970,8 @@ def __generate_expression(context: Context, expression: sdlmodel.ProcedureCall):
             .withMember(VariableReferenceBuilder(CHOICE_SELECTION_MEMBER_NAME).build())
             .build()
         )
+        context.missing_type = None
+        return result
 
     elif builtins.is_builtin(expression.name):
         parameters = []
@@ -977,6 +1008,45 @@ def __get_remote_function_name(context: Context, output: sdlmodel.Output) -> str
         + SEPARATOR
         + output.name
     )
+
+
+def __generate_procedure_transition_inline(
+    context: Context, procedure: sdlmodel.Procedure
+) -> promelamodel.Inline:
+    """
+    Generate inline with transition for exported SDL procedure.
+    """
+    builder = InlineBuilder()
+    # builder.withName(__get_input_function_name(context, input))
+    builder.withName(
+        __get_exported_procedure_transition_inline_name(context, procedure.name)
+    )
+    blockBuilder = BlockBuilder(promelamodel.BlockType.BLOCK)
+
+    switch_builder = SwitchBuilder()
+
+    # All state names
+    all_states = set(
+        name for name in context.sdl_model.states.keys() if not name.endswith("START")
+    )
+    # Top level States i.e. states, which are not inside 'parallel states'
+    top_level_states = {
+        name
+        for name in all_states
+        if name not in context.sdl_model.input_parallel_states
+    }
+
+    # Generate a call to execute transition inline.
+    # The execution id depends on current state, which includes parallel states.
+    # Start from top_level state: i.e. the variable 'state' in process context.
+    for statename in sorted(top_level_states):
+        generate_transition_state_switch(
+            context, statename, procedure.transitions, [], switch_builder, None
+        )
+
+    blockBuilder.withStatements([switch_builder.build()])
+    builder.withDefinition(blockBuilder.build())
+    return builder.build()
 
 
 def __generate_procedure_inline(
@@ -1057,16 +1127,25 @@ def __generate_procedure_inline(
         )
     )
     if procedure.type == sdlmodel.ProcedureType.EXPORTED:
+        # the exported procedure may contain transition
         # in case when this is an exported procedure, the continuous signals needs to be called
-        transition_function_name = __get_transition_function_name(context)
-        blockBuilder.withStatements(
-            [
-                CallBuilder()
-                .withTarget(transition_function_name)
-                .withParameter(promelamodel.IntegerValue(-1))
-                .build()
-            ]
-        )
+        if procedure.transitions:
+            transition_function_name = __get_exported_procedure_transition_inline_name(
+                context, procedure.name
+            )
+            blockBuilder.withStatements(
+                [CallBuilder().withTarget(transition_function_name).build()]
+            )
+        else:
+            transition_function_name = __get_transition_function_name(context)
+            blockBuilder.withStatements(
+                [
+                    CallBuilder()
+                    .withTarget(transition_function_name)
+                    .withParameter(promelamodel.IntegerValue(-1))
+                    .build()
+                ]
+            )
 
     # After the label should be at least one statement.
     # In case of inline it is not always possible to detect if something is called after.
@@ -1110,7 +1189,8 @@ def __get_exit_procedures(
 def __generate_execute_transition(
     context: Context,
     statename: str,
-    input: sdlmodel.Input,
+    transitions: Dict[sdlmodel.State, sdlmodel.InputBlock],
+    parameters: List[sdlmodel.Parameter],
     builder: SwitchBuilder,
     parallel_parent: Optional[str],
 ) -> bool:
@@ -1135,12 +1215,12 @@ def __generate_execute_transition(
     key.name = statename
     transition_function_name = __get_transition_function_name(context)
 
-    if key not in input.transitions:
+    if key not in transitions:
         # The Input does not contains a transition for the statename
         # Do not generate anything
         return False
 
-    input_block = input.transitions[key]
+    input_block = transitions[key]
     statements: List[promelamodel.Statement] = []
 
     # Generate assignment of signal parameters into variables
@@ -1150,7 +1230,7 @@ def __generate_execute_transition(
             __build_assignment(
                 __generate_variable_name(context, target_variable_ref, True),
                 VariableReferenceBuilder(
-                    __get_parameter_name(input.parameters[0].target_variable)
+                    __get_parameter_name(parameters[0].target_variable)
                 ).build(),
                 variable.type,
             )
@@ -1189,7 +1269,8 @@ def __generate_execute_transition(
 def generate_transition_state_switch(
     context: Context,
     statename: str,
-    input: sdlmodel.Input,
+    transitions: Dict[sdlmodel.State, sdlmodel.InputBlock],
+    parameters: List[sdlmodel.Parameter],
     builder: SwitchBuilder,
     parallel_parent: Optional[str],
 ) -> bool:
@@ -1223,7 +1304,12 @@ def generate_transition_state_switch(
         for parent in aggregate:
             for child_state in parent.mapping.keys():
                 if generate_transition_state_switch(
-                    context, child_state, input, nested_switch_builder, parent.statename
+                    context,
+                    child_state,
+                    transitions,
+                    parameters,
+                    nested_switch_builder,
+                    parent.statename,
                 ):
                     generated = True
 
@@ -1252,12 +1338,12 @@ def generate_transition_state_switch(
             # If there's no transitions substates in aggregate
             # then check if there is a transition for aggregate
             return __generate_execute_transition(
-                context, statename, input, builder, parallel_parent
+                context, statename, transitions, parameters, builder, parallel_parent
             )
 
     else:
         return __generate_execute_transition(
-            context, statename, input, builder, parallel_parent
+            context, statename, transitions, parameters, builder, parallel_parent
         )
 
 
@@ -1288,7 +1374,12 @@ def __generate_input_function(
     # Start from top_level state: i.e. the variable 'state' in process context.
     for statename in sorted(top_level_states):
         generate_transition_state_switch(
-            context, statename, input, switch_builder, None
+            context,
+            statename,
+            input.transitions,
+            input.parameters,
+            switch_builder,
+            None,
         )
 
     if context.is_observer:
@@ -1962,7 +2053,10 @@ def __generate_assignment(
 
     for name, dataType in finalType.Children.items():
         is_optional = dataType.Optional == "True"
-        if not is_optional and name not in right.elements:
+        candidates = [
+            x for x in right.elements if x.lower() == name.replace("-", "_").lower()
+        ]
+        if not is_optional and len(candidates) == 0:
             raise Exception(
                 f"Invalid assignment to {finalType.CName}: missing required member {name}"
             )
@@ -2783,6 +2877,13 @@ def translate(
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
         if procedure.type != sdlmodel.ProcedureType.EXTERNAL:
+            if (
+                procedure.type == sdlmodel.ProcedureType.EXPORTED
+                and procedure.transitions
+            ):
+                builder.withInline(
+                    __generate_procedure_transition_inline(context, procedure)
+                )
             builder.withInline(__generate_procedure_inline(context, procedure))
     for aggregate_name, transitions in sdl_model.aggregates.items():
         builder.withInline(

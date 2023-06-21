@@ -797,6 +797,12 @@ class Procedure:
     type: ProcedureType
     """Type of procedure."""
 
+    transitions: Dict[State, InputBlock]
+    """
+    For ProcedureType.EXPORTED: a dict with transitions, which shall be executed
+    after procedure main transition.
+    """
+
     def __init__(self):
         self.name = ""
         self.parameters = []
@@ -804,6 +810,7 @@ class Procedure:
         self.transition = None
         self.returnType = None
         self.type = ProcedureType.INTERNAL
+        self.transitions = {}
 
 
 class ObservedSignalKind(Enum):
@@ -1849,12 +1856,17 @@ class Model:
                 # Iterate over all possible input signals
                 # and add transitions
                 for single_input in input_block.inputlist:
-                    trigger = self.inputs[single_input]
-                    block = InputBlock(id)
-                    block.target_variables = [
-                        VariableReference(param) for param in input_block.parameters
-                    ]
-                    trigger.transitions[target] = block
+                    if single_input in self.inputs:
+                        trigger = self.inputs[single_input]
+                        block = InputBlock(id)
+                        block.target_variables = [
+                            VariableReference(param) for param in input_block.parameters
+                        ]
+                        trigger.transitions[target] = block
+                    else:
+                        # transition for exported procedure
+                        # see __gather_procedures
+                        pass
         self.__gather_observer_inputs()
 
     def __gather_observer_inputs(self):
@@ -1963,6 +1975,22 @@ class Model:
                     procedure.transition.parent = procedure
             if procedure.name.lower() in self.procedures:
                 raise Exception(f"Duplicated procedure {procedure.name}")
+
+            for state_name, input_list in self.source.mapping.items():
+                target = self.states[state_name]
+                if not isinstance(input_list, List):  # Special START symbol
+                    continue
+                for input_block in input_list:
+                    id = input_block.transition_id
+                    self.__handle_implicit_variable_declarations(input_block)
+                    # One Input block may refer to multiple signals,
+                    # Using '*' or ','
+                    # Iterate over all possible input signals
+                    # and add transitions
+                    for single_input in input_block.inputlist:
+                        if single_input.lower() == procedure.name.lower():
+                            procedure.transitions[target] = InputBlock(id)
+
             self.procedures[procedure.name.lower()] = procedure
 
     def __gather_named_transition_ids(self):
