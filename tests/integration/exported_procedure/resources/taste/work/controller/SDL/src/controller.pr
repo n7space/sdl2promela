@@ -1,0 +1,53 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1409, 375), (96, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForProc;
+        /* CIF input (1414, 430), (84, 35) */
+        input from_proc;
+            /* CIF NEXTSTATE (1422, 485), (70, 35) */
+            NEXTSTATE Success;
+    endstate;
+    /* CIF state (1405, 137), (98, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForBoth;
+        /* CIF input (1410, 192), (88, 35) */
+        input from_trans;
+            /* CIF NEXTSTATE (1407, 247), (96, 35) */
+            NEXTSTATE WaitForProc;
+    endstate;
+    /* CIF state (1127, 124), (98, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForBoth;
+        /* CIF input (1134, 179), (84, 35) */
+        input from_proc;
+            /* CIF NEXTSTATE (1126, 234), (101, 35) */
+            NEXTSTATE WaitForTrans;
+    endstate;
+    /* CIF state (1131, 369), (101, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForTrans;
+        /* CIF input (1137, 424), (88, 35) */
+        input from_trans;
+            /* CIF NEXTSTATE (1147, 479), (70, 35) */
+            NEXTSTATE Success;
+    endstate;
+    /* CIF state (802, 112), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Wait;
+        /* CIF input (802, 167), (70, 35) */
+        input test;
+            /* CIF output (792, 222), (88, 35) */
+            output check_sync;
+            /* CIF NEXTSTATE (787, 277), (98, 35) */
+            NEXTSTATE WaitForBoth;
+    endstate;
+    /* CIF state (613, 377), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Success;
+    endstate;
+endprocess Controller;
