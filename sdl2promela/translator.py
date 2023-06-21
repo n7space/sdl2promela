@@ -1230,9 +1230,7 @@ def __generate_execute_transition(
             __build_assignment(
                 __generate_variable_name(context, target_variable_ref, True),
                 VariableReferenceBuilder(
-                    __get_parameter_name(
-                        parameters[0].target_variable
-                    )  # input.parameters[0].target_variable)
+                    __get_parameter_name(parameters[0].target_variable)
                 ).build(),
                 variable.type,
             )
@@ -2055,13 +2053,13 @@ def __generate_assignment(
 
     for name, dataType in finalType.Children.items():
         is_optional = dataType.Optional == "True"
-        # candidates = [
-        #     x for x in right.elements if x.lower() == name.replace("-", "_").lower()
-        # ]
-        # if not is_optional and len(candidates) == 0:
-        #     raise Exception(
-        #         f"Invalid assignment to {finalType.CName}: missing required member {name}"
-        #     )
+        candidates = [
+            x for x in right.elements if x.lower() == name.replace("-", "_").lower()
+        ]
+        if not is_optional and len(candidates) == 0:
+            raise Exception(
+                f"Invalid assignment to {finalType.CName}: missing required member {name}"
+            )
 
         if name in right.elements:
             field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name))
