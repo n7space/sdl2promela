@@ -5,10 +5,12 @@ use Datamodel;
 
 system Controller;
 
-   signal from_proc;
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal from_proc (MyInteger);
    
    
-   signal from_trans;
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal from_trans (MyInteger);
    
    
    signal test;

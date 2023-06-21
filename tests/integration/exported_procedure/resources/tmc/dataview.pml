@@ -3,11 +3,13 @@
 #define Actuator_Context_init_done bool
 #define Actuator_Context_sender int
 #define Actuator_Context_offspring int
+#define Actuator_Context_param int
 #define Controller_States int
 #define Controller_Context_state int
 #define Controller_Context_init_done bool
 #define Controller_Context_sender int
 #define Controller_Context_offspring int
+#define Controller_Context_param int
 #define MyInteger int
 #define T_Int32 int
 #define T_UInt32 int
@@ -28,16 +30,18 @@
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_environ 2
 #define Actuator_Context_offspring_env 3
-#define Controller_States_waitfortrans 0
-#define Controller_States_waitforproc 1
-#define Controller_States_wait 2
-#define Controller_States_success 3
-#define Controller_States_waitforboth 4
-#define Controller_Context_state_waitfortrans 0
-#define Controller_Context_state_waitforproc 1
-#define Controller_Context_state_wait 2
-#define Controller_Context_state_success 3
-#define Controller_Context_state_waitforboth 4
+#define Controller_States_success 0
+#define Controller_States_waitforboth 1
+#define Controller_States_waitforproc 2
+#define Controller_States_waitfortrans 3
+#define Controller_States_wait 4
+#define Controller_States_failure 5
+#define Controller_Context_state_success 0
+#define Controller_Context_state_waitforboth 1
+#define Controller_Context_state_waitforproc 2
+#define Controller_Context_state_waitfortrans 3
+#define Controller_Context_state_wait 4
+#define Controller_Context_state_failure 5
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_environ 2
@@ -55,6 +59,7 @@ typedef Actuator_Context {
     Actuator_Context_init_done init_done;
     Actuator_Context_sender sender;
     Actuator_Context_offspring offspring;
+    Actuator_Context_param param;
 }
 
 typedef AggregateTimerData_actuator {
@@ -74,6 +79,7 @@ typedef Controller_Context {
     Controller_Context_init_done init_done;
     Controller_Context_sender sender;
     Controller_Context_offspring offspring;
+    Controller_Context_param param;
 }
 
 typedef T_Null_Record {
@@ -136,12 +142,22 @@ inline Actuator_Context_offspring_range_check(Actuator_Context_offspring_vc)
 {
     assert(((((Actuator_Context_offspring_vc == Actuator_Context_offspring_actuator) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_controller)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_environ)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_env)));
 }
+inline Actuator_Context_param_assign_value(dst, src)
+{
+    dst = src;
+    Actuator_Context_param_range_check(dst);
+}
+inline Actuator_Context_param_range_check(Actuator_Context_param_vc)
+{
+    assert(((Actuator_Context_param_vc >= 0) && (Actuator_Context_param_vc <= 10000)));
+}
 inline Actuator_Context_assign_value(dst, src)
 {
     Actuator_Context_state_assign_value(dst.state, src.state);
     Actuator_Context_init_done_assign_value(dst.init_done, src.init_done);
     Actuator_Context_sender_assign_value(dst.sender, src.sender);
     Actuator_Context_offspring_assign_value(dst.offspring, src.offspring);
+    Actuator_Context_param_assign_value(dst.param, src.param);
 }
 inline Controller_States_assign_value(dst, src)
 {
@@ -150,7 +166,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((Controller_States_vc == Controller_States_waitfortrans) || (Controller_States_vc == Controller_States_waitforproc)) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_success)) || (Controller_States_vc == Controller_States_waitforboth)));
+    assert(((((((Controller_States_vc == Controller_States_success) || (Controller_States_vc == Controller_States_waitforboth)) || (Controller_States_vc == Controller_States_waitforproc)) || (Controller_States_vc == Controller_States_waitfortrans)) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_failure)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -159,7 +175,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((Controller_Context_state_vc == Controller_Context_state_waitfortrans) || (Controller_Context_state_vc == Controller_Context_state_waitforproc)) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_success)) || (Controller_Context_state_vc == Controller_Context_state_waitforboth)));
+    assert(((((((Controller_Context_state_vc == Controller_Context_state_success) || (Controller_Context_state_vc == Controller_Context_state_waitforboth)) || (Controller_Context_state_vc == Controller_Context_state_waitforproc)) || (Controller_Context_state_vc == Controller_Context_state_waitfortrans)) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_failure)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {
@@ -188,12 +204,22 @@ inline Controller_Context_offspring_range_check(Controller_Context_offspring_vc)
 {
     assert(((((Controller_Context_offspring_vc == Controller_Context_offspring_actuator) || (Controller_Context_offspring_vc == Controller_Context_offspring_controller)) || (Controller_Context_offspring_vc == Controller_Context_offspring_environ)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
 }
+inline Controller_Context_param_assign_value(dst, src)
+{
+    dst = src;
+    Controller_Context_param_range_check(dst);
+}
+inline Controller_Context_param_range_check(Controller_Context_param_vc)
+{
+    assert(((Controller_Context_param_vc >= 0) && (Controller_Context_param_vc <= 10000)));
+}
 inline Controller_Context_assign_value(dst, src)
 {
     Controller_Context_state_assign_value(dst.state, src.state);
     Controller_Context_init_done_assign_value(dst.init_done, src.init_done);
     Controller_Context_sender_assign_value(dst.sender, src.sender);
     Controller_Context_offspring_assign_value(dst.offspring, src.offspring);
+    Controller_Context_param_assign_value(dst.param, src.param);
 }
 inline MyInteger_assign_value(dst, src)
 {

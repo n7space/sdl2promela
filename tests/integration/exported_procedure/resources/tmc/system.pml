@@ -10,8 +10,12 @@ typedef system_state {
 
 int inited;
 chan Actuator_dummy_channel = [1] of {int};
-chan Controller_from_proc_channel = [1] of {int};
-chan Controller_from_trans_channel = [1] of {int};
+chan Controller_from_proc_channel = [1] of {MyInteger};
+MyInteger Controller_from_proc_signal_parameter;
+bool Controller_from_proc_channel_used = 0;
+chan Controller_from_trans_channel = [1] of {MyInteger};
+MyInteger Controller_from_trans_signal_parameter;
+bool Controller_from_trans_channel_used = 0;
 chan Controller_test_channel = [1] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
@@ -21,13 +25,13 @@ inline Actuator_0_PI_0_dummy_unhandled_input()
     printf("unhandled_input actuator dummy\n");
     skip;
 }
-inline Actuator_0_RI_0_from_proc()
+inline Actuator_0_RI_0_from_proc(actuator_from_proc_Actuator_from_proc_p1)
 {
-    Controller_from_proc_channel!0;
+    Controller_from_proc_channel!actuator_from_proc_Actuator_from_proc_p1;
 }
-inline Actuator_0_RI_0_from_trans()
+inline Actuator_0_RI_0_from_trans(actuator_from_trans_Actuator_from_trans_p1)
 {
-    Controller_from_trans_channel!0;
+    Controller_from_trans_channel!actuator_from_trans_Actuator_from_trans_p1;
 }
 inline Actuator_check_queue()
 {
@@ -39,12 +43,12 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Controller_0_PI_0_from_proc_unhandled_input()
+inline Controller_0_PI_0_from_proc_unhandled_input(p1)
 {
     printf("unhandled_input controller from_proc\n");
     skip;
 }
-inline Controller_0_PI_0_from_trans_unhandled_input()
+inline Controller_0_PI_0_from_trans_unhandled_input(p1)
 {
     printf("unhandled_input controller from_trans\n");
     skip;
@@ -108,8 +112,9 @@ active proctype Controller_from_proc() priority 2
 Controller_from_proc_loop:
         if
         ::  nempty(Controller_from_proc_channel);
-            Controller_from_proc_channel?_;
-            Controller_0_PI_0_from_proc();
+            Controller_from_proc_channel?Controller_from_proc_signal_parameter;
+            Controller_from_proc_channel_used = 1;
+            Controller_0_PI_0_from_proc(Controller_from_proc_signal_parameter);
             goto Controller_from_proc_loop;
         ::  empty(Controller_from_proc_channel);
             skip;
@@ -128,8 +133,9 @@ active proctype Controller_from_trans() priority 2
 Controller_from_trans_loop:
         if
         ::  nempty(Controller_from_trans_channel);
-            Controller_from_trans_channel?_;
-            Controller_0_PI_0_from_trans();
+            Controller_from_trans_channel?Controller_from_trans_signal_parameter;
+            Controller_from_trans_channel_used = 1;
+            Controller_0_PI_0_from_trans(Controller_from_trans_signal_parameter);
             goto Controller_from_trans_loop;
         ::  empty(Controller_from_trans_channel);
             skip;

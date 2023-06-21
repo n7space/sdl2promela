@@ -14,10 +14,12 @@ system Actuator;
    
    signal dummy;
 
-   signal from_proc;
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal from_proc (MyInteger);
    
    
-   signal from_trans;
+   /* CIF Keep Specific Geode PARAMNAMES p1 */
+   signal from_trans (MyInteger);
 
    -- For internal use, return the PID of the caller
    procedure get_sender;

@@ -1,13 +1,21 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF procedure (1094, 94), (88, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (370, 272), (267, 140) */
+    -- Text area for declarations and comments
+    
+    dcl param MyInteger := 0;
+    /* CIF ENDTEXT */
+    /* CIF procedure (1093, 94), (88, 35) */
     /* CIF Keep Specific Geode Partition 'default' */
     procedure check_sync;
-        /* CIF START (680, 135), (70, 35) */
+        /* CIF START (858, 198), (70, 35) */
         START;
-            /* CIF output (672, 190), (84, 35) */
-            output from_proc;
-            /* CIF return (697, 240), (35, 35) */
+            /* CIF task (825, 253), (135, 35) */
+            task param := param + 1;
+            /* CIF output (827, 303), (130, 35) */
+            output from_proc(param);
+            /* CIF return (875, 353), (35, 35) */
             return ;
     endprocedure;
     /* CIF START (320, 10), (70, 35) */
@@ -17,11 +25,13 @@ process Actuator;
     /* CIF state (765, 115), (70, 35) */
     /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
-        /* CIF input (755, 170), (88, 35) */
+        /* CIF input (754, 170), (88, 35) */
         input check_sync;
-            /* CIF output (755, 225), (88, 35) */
-            output from_trans;
-            /* CIF NEXTSTATE (764, 280), (70, 35) */
+            /* CIF task (731, 225), (135, 35) */
+            task param := param + 1;
+            /* CIF output (731, 275), (134, 35) */
+            output from_trans(param);
+            /* CIF NEXTSTATE (764, 330), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;
