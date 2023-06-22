@@ -61,6 +61,10 @@ BEGIN
 
    MyVariableOctetString ::= OCTET STRING (SIZE(0..2))
 
+   LongSequence ::= SEQUENCE {
+      long-name MyInteger
+   }
+
    myIntegerInitVal MyInteger ::= 3
 
    my-DataInitVal MyData ::= {1, 7}
