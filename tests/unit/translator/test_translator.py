@@ -150,3 +150,7 @@ def test_translates_lowercase_process_name():
 
 def test_translates_double_label():
     translate_and_verify("double_label.pr", "double_label.pml")
+
+
+def test_sequence_field_escape():
+    translate_and_verify("sequence_field_escape.pr", "sequence_field_escape.pml")
