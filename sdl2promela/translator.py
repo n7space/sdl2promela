@@ -2061,15 +2061,17 @@ def __generate_assignment(
                 f"Invalid assignment to {finalType.CName}: missing required member {name}"
             )
 
-        if name in right.elements:
-            field = sdlmodel.MemberAccess(left, sdlmodel.VariableReference(name))
-            field.type = right.elements[name].type
+        if len(candidates) == 1:
+            field = sdlmodel.MemberAccess(
+                left, sdlmodel.VariableReference(candidates[0])
+            )
+            field.type = right.elements[candidates[0]].type
 
             statements.extend(
                 __generate_assignment(
                     context,
                     field,
-                    right.elements[name],
+                    right.elements[candidates[0]],
                     dataType.type,
                 )
             )
