@@ -299,7 +299,9 @@ def __get_implicit_variable_name(context: Context, variable_name: str) -> str:
 
 
 def __get_procedure_inline_name(context: Context, procedure_name: str) -> str:
-    return context.sdl_model.process_name.capitalize() + SEPARATOR + procedure_name
+    return (
+        context.sdl_model.process_name.capitalize() + SEPARATOR + procedure_name.lower()
+    )
 
 
 def __get_exported_procedure_inline_name(context: Context, procedure_name: str) -> str:
@@ -308,7 +310,7 @@ def __get_exported_procedure_inline_name(context: Context, procedure_name: str) 
         + SEPARATOR
         + "PI"
         + SEPARATOR
-        + procedure_name
+        + procedure_name.lower()
     )
 
 
@@ -320,7 +322,7 @@ def __get_exported_procedure_transition_inline_name(
         + SEPARATOR
         + "PI"
         + SEPARATOR
-        + procedure_name
+        + procedure_name.lower()
         + SEPARATOR
         + "Transition"
     )
@@ -332,7 +334,7 @@ def __get_external_procedure_inline_name(context: Context, procedure_name: str) 
         + SEPARATOR
         + "RI"
         + SEPARATOR
-        + procedure_name
+        + procedure_name.lower()
     )
 
 
