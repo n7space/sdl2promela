@@ -41,12 +41,12 @@
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_environ 2
 #define Actuator_Context_offspring_env 3
-#define Controller_States_wait 0
-#define Controller_States_operationa 1
-#define Controller_States_operationb 2
-#define Controller_Context_state_wait 0
-#define Controller_Context_state_operationa 1
-#define Controller_Context_state_operationb 2
+#define Controller_States_operationb 0
+#define Controller_States_wait 1
+#define Controller_States_operationa 2
+#define Controller_Context_state_operationb 0
+#define Controller_Context_state_wait 1
+#define Controller_Context_state_operationa 2
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_environ 2
@@ -198,7 +198,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((Controller_States_vc == Controller_States_wait) || (Controller_States_vc == Controller_States_operationa)) || (Controller_States_vc == Controller_States_operationb)));
+    assert((((Controller_States_vc == Controller_States_operationb) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_operationa)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -207,7 +207,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((Controller_Context_state_vc == Controller_Context_state_wait) || (Controller_Context_state_vc == Controller_Context_state_operationa)) || (Controller_Context_state_vc == Controller_Context_state_operationb)));
+    assert((((Controller_Context_state_vc == Controller_Context_state_operationb) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_operationa)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

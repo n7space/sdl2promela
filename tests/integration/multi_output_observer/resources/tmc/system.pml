@@ -14,13 +14,13 @@ typedef system_state {
 
 int inited;
 chan Actuator_change_observer_f1_channel = [1] of {MyInteger};
-chan Actuator_zero_observer_f1_channel = [1] of {MyInteger};
-chan Actuator_change_observer_f2_channel = [1] of {MyInteger};
-chan Actuator_zero_observer_f2_channel = [1] of {MyInteger};
 chan Actuator_f1_channel = [1] of {MyInteger};
+chan Actuator_zero_observer_f1_channel = [1] of {MyInteger};
 MyInteger Actuator_f1_signal_parameter;
 bool Actuator_f1_channel_used = 0;
+chan Actuator_change_observer_f2_channel = [1] of {MyInteger};
 chan Actuator_f2_channel = [1] of {MyInteger};
+chan Actuator_zero_observer_f2_channel = [1] of {MyInteger};
 MyInteger Actuator_f2_signal_parameter;
 bool Actuator_f2_channel_used = 0;
 chan Controller_result_channel = [1] of {MyInteger};
@@ -34,39 +34,35 @@ chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 chan Change_observer_lock = [1] of {int};
 chan Zero_observer_lock = [1] of {int};
-inline Change_observer_0_RI_0_f1_in(change_observer_actuator_p1)
-{
-    Actuator_change_observer_f1_channel!change_observer_actuator_p1;
-}
 inline Zero_observer_0_RI_0_f1_in(zero_observer_actuator_p1)
 {
     Actuator_zero_observer_f1_channel!zero_observer_actuator_p1;
 }
-inline Change_observer_0_RI_0_f2_in(change_observer_actuator_p1)
+inline Change_observer_0_RI_0_f1_in(change_observer_actuator_p1)
 {
-    Actuator_change_observer_f2_channel!change_observer_actuator_p1;
+    Actuator_change_observer_f1_channel!change_observer_actuator_p1;
 }
 inline Zero_observer_0_RI_0_f2_in(zero_observer_actuator_p1)
 {
     Actuator_zero_observer_f2_channel!zero_observer_actuator_p1;
 }
-inline Controller_0_RI_0_f1(actuator_f1_p1)
+inline Change_observer_0_RI_0_f2_in(change_observer_actuator_p1)
 {
-    Actuator_f1_channel!actuator_f1_p1;
+    Actuator_change_observer_f2_channel!change_observer_actuator_p1;
 }
 inline Actuator_0_PI_0_f1_unhandled_input(p1)
 {
     printf("unhandled_input actuator f1\n");
     skip;
 }
-inline Controller_0_RI_0_f2(actuator_f2_p1)
-{
-    Actuator_f2_channel!actuator_f2_p1;
-}
 inline Actuator_0_PI_0_f2_unhandled_input(p1)
 {
     printf("unhandled_input actuator f2\n");
     skip;
+}
+inline Actuator_0_RI_0_result(actuator_result_Actuator_result_p1)
+{
+    Controller_result_channel!actuator_result_Actuator_result_p1;
 }
 inline Actuator_check_queue()
 {
@@ -78,23 +74,23 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result(controller_result_p1)
-{
-    Controller_result_channel!controller_result_p1;
-}
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
     printf("unhandled_input controller result\n");
     skip;
 }
-inline Environ_0_RI_0_test(controller_test_p1)
-{
-    Controller_test_channel!controller_test_p1;
-}
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
     printf("unhandled_input controller test\n");
     skip;
+}
+inline Controller_0_RI_0_f1(controller_f1_Controller_f1_p1)
+{
+    Actuator_f1_channel!controller_f1_Controller_f1_p1;
+}
+inline Controller_0_RI_0_f2(controller_f2_Controller_f2_p1)
+{
+    Actuator_f2_channel!controller_f2_Controller_f2_p1;
 }
 inline Controller_check_queue()
 {
@@ -105,6 +101,10 @@ inline Controller_check_queue()
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
+{
+    Controller_test_channel!environ_test_Environ_test_p1;
 }
 active proctype Actuator_f1() priority 1
 {

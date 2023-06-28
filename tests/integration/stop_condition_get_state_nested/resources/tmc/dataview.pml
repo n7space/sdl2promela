@@ -18,12 +18,12 @@
 #define PID int
 #define TimerData_timer_enabled bool
 #define TimerData_interval int
-#define Actuator_States_nested_0_second 0
-#define Actuator_States_nested_0_first 1
-#define Actuator_States_wait 2
-#define Actuator_Context_state_nested_0_second 0
-#define Actuator_Context_state_nested_0_first 1
-#define Actuator_Context_state_wait 2
+#define Actuator_States_wait 0
+#define Actuator_States_nested_0_second 1
+#define Actuator_States_nested_0_first 2
+#define Actuator_Context_state_wait 0
+#define Actuator_Context_state_nested_0_second 1
+#define Actuator_Context_state_nested_0_first 2
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
 #define Actuator_Context_sender_env 2
@@ -89,7 +89,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert((((Actuator_States_vc == Actuator_States_nested_0_second) || (Actuator_States_vc == Actuator_States_nested_0_first)) || (Actuator_States_vc == Actuator_States_wait)));
+    assert((((Actuator_States_vc == Actuator_States_wait) || (Actuator_States_vc == Actuator_States_nested_0_second)) || (Actuator_States_vc == Actuator_States_nested_0_first)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -98,7 +98,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert((((Actuator_Context_state_vc == Actuator_Context_state_nested_0_second) || (Actuator_Context_state_vc == Actuator_Context_state_nested_0_first)) || (Actuator_Context_state_vc == Actuator_Context_state_wait)));
+    assert((((Actuator_Context_state_vc == Actuator_Context_state_wait) || (Actuator_Context_state_vc == Actuator_Context_state_nested_0_second)) || (Actuator_Context_state_vc == Actuator_Context_state_nested_0_first)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {

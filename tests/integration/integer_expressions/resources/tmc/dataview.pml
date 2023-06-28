@@ -49,32 +49,32 @@
 #define Actuator_Context_integer_binary_oper_o_divide 3
 #define Actuator_Context_integer_binary_oper_o_modulo 4
 #define Actuator_Context_integer_binary_oper_o_remainder 5
-#define Controller_States_checkmodulo 0
-#define Controller_States_checknegation2 1
-#define Controller_States_checkdivide1 2
-#define Controller_States_checkdivide2 3
-#define Controller_States_checkmultiply2 4
-#define Controller_States_checkmultiply1 5
-#define Controller_States_checkminus2 6
-#define Controller_States_checkremainder 7
-#define Controller_States_checkminus1 8
-#define Controller_States_error 9
+#define Controller_States_checkminus2 0
+#define Controller_States_checkdivide1 1
+#define Controller_States_checkmultiply1 2
+#define Controller_States_checkminus1 3
+#define Controller_States_checknegation1 4
+#define Controller_States_checkplus2 5
+#define Controller_States_checknegation2 6
+#define Controller_States_error 7
+#define Controller_States_checkremainder 8
+#define Controller_States_checkmultiply2 9
 #define Controller_States_checkplus1 10
-#define Controller_States_checkplus2 11
-#define Controller_States_checknegation1 12
-#define Controller_Context_state_checkmodulo 0
-#define Controller_Context_state_checknegation2 1
-#define Controller_Context_state_checkdivide1 2
-#define Controller_Context_state_checkdivide2 3
-#define Controller_Context_state_checkmultiply2 4
-#define Controller_Context_state_checkmultiply1 5
-#define Controller_Context_state_checkminus2 6
-#define Controller_Context_state_checkremainder 7
-#define Controller_Context_state_checkminus1 8
-#define Controller_Context_state_error 9
+#define Controller_States_checkmodulo 11
+#define Controller_States_checkdivide2 12
+#define Controller_Context_state_checkminus2 0
+#define Controller_Context_state_checkdivide1 1
+#define Controller_Context_state_checkmultiply1 2
+#define Controller_Context_state_checkminus1 3
+#define Controller_Context_state_checknegation1 4
+#define Controller_Context_state_checkplus2 5
+#define Controller_Context_state_checknegation2 6
+#define Controller_Context_state_error 7
+#define Controller_Context_state_checkremainder 8
+#define Controller_Context_state_checkmultiply2 9
 #define Controller_Context_state_checkplus1 10
-#define Controller_Context_state_checkplus2 11
-#define Controller_Context_state_checknegation1 12
+#define Controller_Context_state_checkmodulo 11
+#define Controller_Context_state_checkdivide2 12
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -292,7 +292,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((((((((((Controller_States_vc == Controller_States_checkmodulo) || (Controller_States_vc == Controller_States_checknegation2)) || (Controller_States_vc == Controller_States_checkdivide1)) || (Controller_States_vc == Controller_States_checkdivide2)) || (Controller_States_vc == Controller_States_checkmultiply2)) || (Controller_States_vc == Controller_States_checkmultiply1)) || (Controller_States_vc == Controller_States_checkminus2)) || (Controller_States_vc == Controller_States_checkremainder)) || (Controller_States_vc == Controller_States_checkminus1)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_checkplus1)) || (Controller_States_vc == Controller_States_checkplus2)) || (Controller_States_vc == Controller_States_checknegation1)));
+    assert((((((((((((((Controller_States_vc == Controller_States_checkminus2) || (Controller_States_vc == Controller_States_checkdivide1)) || (Controller_States_vc == Controller_States_checkmultiply1)) || (Controller_States_vc == Controller_States_checkminus1)) || (Controller_States_vc == Controller_States_checknegation1)) || (Controller_States_vc == Controller_States_checkplus2)) || (Controller_States_vc == Controller_States_checknegation2)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_checkremainder)) || (Controller_States_vc == Controller_States_checkmultiply2)) || (Controller_States_vc == Controller_States_checkplus1)) || (Controller_States_vc == Controller_States_checkmodulo)) || (Controller_States_vc == Controller_States_checkdivide2)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -301,7 +301,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((((((((((Controller_Context_state_vc == Controller_Context_state_checkmodulo) || (Controller_Context_state_vc == Controller_Context_state_checknegation2)) || (Controller_Context_state_vc == Controller_Context_state_checkdivide1)) || (Controller_Context_state_vc == Controller_Context_state_checkdivide2)) || (Controller_Context_state_vc == Controller_Context_state_checkmultiply2)) || (Controller_Context_state_vc == Controller_Context_state_checkmultiply1)) || (Controller_Context_state_vc == Controller_Context_state_checkminus2)) || (Controller_Context_state_vc == Controller_Context_state_checkremainder)) || (Controller_Context_state_vc == Controller_Context_state_checkminus1)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_checkplus1)) || (Controller_Context_state_vc == Controller_Context_state_checkplus2)) || (Controller_Context_state_vc == Controller_Context_state_checknegation1)));
+    assert((((((((((((((Controller_Context_state_vc == Controller_Context_state_checkminus2) || (Controller_Context_state_vc == Controller_Context_state_checkdivide1)) || (Controller_Context_state_vc == Controller_Context_state_checkmultiply1)) || (Controller_Context_state_vc == Controller_Context_state_checkminus1)) || (Controller_Context_state_vc == Controller_Context_state_checknegation1)) || (Controller_Context_state_vc == Controller_Context_state_checkplus2)) || (Controller_Context_state_vc == Controller_Context_state_checknegation2)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_checkremainder)) || (Controller_Context_state_vc == Controller_Context_state_checkmultiply2)) || (Controller_Context_state_vc == Controller_Context_state_checkplus1)) || (Controller_Context_state_vc == Controller_Context_state_checkmodulo)) || (Controller_Context_state_vc == Controller_Context_state_checkdivide2)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

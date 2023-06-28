@@ -31,14 +31,14 @@
 #define Actuator_Context_offspring_actuator 0
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_env 2
-#define Controller_States_idle 0
-#define Controller_States_wait 1
-#define Controller_States_finished 2
-#define Controller_States_error 3
-#define Controller_Context_state_idle 0
-#define Controller_Context_state_wait 1
-#define Controller_Context_state_finished 2
-#define Controller_Context_state_error 3
+#define Controller_States_finished 0
+#define Controller_States_error 1
+#define Controller_States_idle 2
+#define Controller_States_wait 3
+#define Controller_Context_state_finished 0
+#define Controller_Context_state_error 1
+#define Controller_Context_state_idle 2
+#define Controller_Context_state_wait 3
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -161,7 +161,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((((Controller_States_vc == Controller_States_idle) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_error)));
+    assert(((((Controller_States_vc == Controller_States_finished) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_idle)) || (Controller_States_vc == Controller_States_wait)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -170,7 +170,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((((Controller_Context_state_vc == Controller_Context_state_idle) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_error)));
+    assert(((((Controller_Context_state_vc == Controller_Context_state_finished) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_idle)) || (Controller_Context_state_vc == Controller_Context_state_wait)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

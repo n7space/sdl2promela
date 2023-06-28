@@ -173,10 +173,10 @@
 #define Uh_Signal_Observer_Observable_Event_Selection_input_event_present 3
 #define Uh_Signal_Observer_Observable_Event_Selection_output_event_present 4
 #define Uh_Signal_Observer_Observable_Event_Selection_unhandled_input_present 5
-#define Actuator_States_drop 0
-#define Actuator_States_wait 1
-#define Actuator_Context_state_drop 0
-#define Actuator_Context_state_wait 1
+#define Actuator_States_wait 0
+#define Actuator_States_drop 1
+#define Actuator_Context_state_wait 0
+#define Actuator_Context_state_drop 1
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
 #define Actuator_Context_sender_environ 2
@@ -185,12 +185,12 @@
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_environ 2
 #define Actuator_Context_offspring_env 3
-#define Controller_States_test 0
-#define Controller_States_confirmation 1
-#define Controller_States_idle 2
-#define Controller_Context_state_test 0
-#define Controller_Context_state_confirmation 1
-#define Controller_Context_state_idle 2
+#define Controller_States_idle 0
+#define Controller_States_test 1
+#define Controller_States_confirmation 2
+#define Controller_Context_state_idle 0
+#define Controller_Context_state_test 1
+#define Controller_Context_state_confirmation 2
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_environ 2
@@ -701,7 +701,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert(((Actuator_States_vc == Actuator_States_drop) || (Actuator_States_vc == Actuator_States_wait)));
+    assert(((Actuator_States_vc == Actuator_States_wait) || (Actuator_States_vc == Actuator_States_drop)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -710,7 +710,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert(((Actuator_Context_state_vc == Actuator_Context_state_drop) || (Actuator_Context_state_vc == Actuator_Context_state_wait)));
+    assert(((Actuator_Context_state_vc == Actuator_Context_state_wait) || (Actuator_Context_state_vc == Actuator_Context_state_drop)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {
@@ -763,7 +763,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((Controller_States_vc == Controller_States_test) || (Controller_States_vc == Controller_States_confirmation)) || (Controller_States_vc == Controller_States_idle)));
+    assert((((Controller_States_vc == Controller_States_idle) || (Controller_States_vc == Controller_States_test)) || (Controller_States_vc == Controller_States_confirmation)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -772,7 +772,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((Controller_Context_state_vc == Controller_Context_state_test) || (Controller_Context_state_vc == Controller_Context_state_confirmation)) || (Controller_Context_state_vc == Controller_Context_state_idle)));
+    assert((((Controller_Context_state_vc == Controller_Context_state_idle) || (Controller_Context_state_vc == Controller_Context_state_test)) || (Controller_Context_state_vc == Controller_Context_state_confirmation)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

@@ -12,6 +12,7 @@ Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    error MyInteger,
    param MyInteger
 }
@@ -57,7 +58,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        controller,
+       
        environ,
+       
        
        env
    }
@@ -124,6 +127,7 @@ BEGIN
    
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -134,6 +138,7 @@ BEGIN
    }
    
    Environ-Event ::= CHOICE {
+      -- Lang: GUI TRUE FALSE
       msg-in CHOICE {
          pong SEQUENCE { p1 MyInteger}
       },
@@ -196,6 +201,11 @@ BEGIN
       controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
 
       controller  Controller-Context
+   }
+
+   --  List the GUI functions (environment of the system being simulated)
+   System-GUIs ::= ENUMERATED {
+      environ
    }
 
 END

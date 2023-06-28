@@ -6,12 +6,13 @@ IMPORTS
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Actuator-States ::= ENUMERATED {wait, right, left}
+Actuator-States ::= ENUMERATED {right, wait, left}
 
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    param MyInteger
 }
 
@@ -31,6 +32,7 @@ Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    param MyInteger
 }
 
@@ -75,7 +77,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        actuator,
+       
        controller,
+       
        
        env
    }
@@ -115,6 +119,7 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -125,6 +130,7 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE {  }
@@ -192,6 +198,7 @@ BEGIN
       actuator    Actuator-Context,
       controller  Controller-Context
    }
+
 
 END
 

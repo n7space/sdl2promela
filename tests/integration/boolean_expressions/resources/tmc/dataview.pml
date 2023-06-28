@@ -47,44 +47,44 @@
 #define Actuator_Context_boolean_binary_oper_o_or 1
 #define Actuator_Context_boolean_binary_oper_o_xor 2
 #define Actuator_Context_boolean_binary_oper_o_implies 3
-#define Controller_States_checkxor2 0
-#define Controller_States_checkxor1 1
-#define Controller_States_checkimplies2 2
-#define Controller_States_checkimplies3 3
-#define Controller_States_checkand2 4
-#define Controller_States_checknot1 5
-#define Controller_States_checkxor3 6
-#define Controller_States_checkor3 7
-#define Controller_States_checkimplies4 8
-#define Controller_States_checkand4 9
-#define Controller_States_checkor4 10
-#define Controller_States_checkand1 11
-#define Controller_States_checknot2 12
-#define Controller_States_checkor1 13
-#define Controller_States_checkand3 14
-#define Controller_States_checkxor4 15
-#define Controller_States_checkimplies1 16
-#define Controller_States_error 17
-#define Controller_States_checkor2 18
-#define Controller_Context_state_checkxor2 0
-#define Controller_Context_state_checkxor1 1
-#define Controller_Context_state_checkimplies2 2
-#define Controller_Context_state_checkimplies3 3
-#define Controller_Context_state_checkand2 4
-#define Controller_Context_state_checknot1 5
-#define Controller_Context_state_checkxor3 6
-#define Controller_Context_state_checkor3 7
-#define Controller_Context_state_checkimplies4 8
-#define Controller_Context_state_checkand4 9
-#define Controller_Context_state_checkor4 10
-#define Controller_Context_state_checkand1 11
-#define Controller_Context_state_checknot2 12
-#define Controller_Context_state_checkor1 13
-#define Controller_Context_state_checkand3 14
-#define Controller_Context_state_checkxor4 15
-#define Controller_Context_state_checkimplies1 16
-#define Controller_Context_state_error 17
-#define Controller_Context_state_checkor2 18
+#define Controller_States_checkimplies2 0
+#define Controller_States_checkand1 1
+#define Controller_States_checkxor4 2
+#define Controller_States_checknot1 3
+#define Controller_States_checkxor3 4
+#define Controller_States_error 5
+#define Controller_States_checkimplies3 6
+#define Controller_States_checkor2 7
+#define Controller_States_checkand2 8
+#define Controller_States_checkand3 9
+#define Controller_States_checkxor2 10
+#define Controller_States_checkimplies1 11
+#define Controller_States_checkxor1 12
+#define Controller_States_checkimplies4 13
+#define Controller_States_checknot2 14
+#define Controller_States_checkor1 15
+#define Controller_States_checkor4 16
+#define Controller_States_checkand4 17
+#define Controller_States_checkor3 18
+#define Controller_Context_state_checkimplies2 0
+#define Controller_Context_state_checkand1 1
+#define Controller_Context_state_checkxor4 2
+#define Controller_Context_state_checknot1 3
+#define Controller_Context_state_checkxor3 4
+#define Controller_Context_state_error 5
+#define Controller_Context_state_checkimplies3 6
+#define Controller_Context_state_checkor2 7
+#define Controller_Context_state_checkand2 8
+#define Controller_Context_state_checkand3 9
+#define Controller_Context_state_checkxor2 10
+#define Controller_Context_state_checkimplies1 11
+#define Controller_Context_state_checkxor1 12
+#define Controller_Context_state_checkimplies4 13
+#define Controller_Context_state_checknot2 14
+#define Controller_Context_state_checkor1 15
+#define Controller_Context_state_checkor4 16
+#define Controller_Context_state_checkand4 17
+#define Controller_Context_state_checkor3 18
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -298,7 +298,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((((((((((((((((Controller_States_vc == Controller_States_checkxor2) || (Controller_States_vc == Controller_States_checkxor1)) || (Controller_States_vc == Controller_States_checkimplies2)) || (Controller_States_vc == Controller_States_checkimplies3)) || (Controller_States_vc == Controller_States_checkand2)) || (Controller_States_vc == Controller_States_checknot1)) || (Controller_States_vc == Controller_States_checkxor3)) || (Controller_States_vc == Controller_States_checkor3)) || (Controller_States_vc == Controller_States_checkimplies4)) || (Controller_States_vc == Controller_States_checkand4)) || (Controller_States_vc == Controller_States_checkor4)) || (Controller_States_vc == Controller_States_checkand1)) || (Controller_States_vc == Controller_States_checknot2)) || (Controller_States_vc == Controller_States_checkor1)) || (Controller_States_vc == Controller_States_checkand3)) || (Controller_States_vc == Controller_States_checkxor4)) || (Controller_States_vc == Controller_States_checkimplies1)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_checkor2)));
+    assert((((((((((((((((((((Controller_States_vc == Controller_States_checkimplies2) || (Controller_States_vc == Controller_States_checkand1)) || (Controller_States_vc == Controller_States_checkxor4)) || (Controller_States_vc == Controller_States_checknot1)) || (Controller_States_vc == Controller_States_checkxor3)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_checkimplies3)) || (Controller_States_vc == Controller_States_checkor2)) || (Controller_States_vc == Controller_States_checkand2)) || (Controller_States_vc == Controller_States_checkand3)) || (Controller_States_vc == Controller_States_checkxor2)) || (Controller_States_vc == Controller_States_checkimplies1)) || (Controller_States_vc == Controller_States_checkxor1)) || (Controller_States_vc == Controller_States_checkimplies4)) || (Controller_States_vc == Controller_States_checknot2)) || (Controller_States_vc == Controller_States_checkor1)) || (Controller_States_vc == Controller_States_checkor4)) || (Controller_States_vc == Controller_States_checkand4)) || (Controller_States_vc == Controller_States_checkor3)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -307,7 +307,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((((((((((((((((Controller_Context_state_vc == Controller_Context_state_checkxor2) || (Controller_Context_state_vc == Controller_Context_state_checkxor1)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies2)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies3)) || (Controller_Context_state_vc == Controller_Context_state_checkand2)) || (Controller_Context_state_vc == Controller_Context_state_checknot1)) || (Controller_Context_state_vc == Controller_Context_state_checkxor3)) || (Controller_Context_state_vc == Controller_Context_state_checkor3)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies4)) || (Controller_Context_state_vc == Controller_Context_state_checkand4)) || (Controller_Context_state_vc == Controller_Context_state_checkor4)) || (Controller_Context_state_vc == Controller_Context_state_checkand1)) || (Controller_Context_state_vc == Controller_Context_state_checknot2)) || (Controller_Context_state_vc == Controller_Context_state_checkor1)) || (Controller_Context_state_vc == Controller_Context_state_checkand3)) || (Controller_Context_state_vc == Controller_Context_state_checkxor4)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies1)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_checkor2)));
+    assert((((((((((((((((((((Controller_Context_state_vc == Controller_Context_state_checkimplies2) || (Controller_Context_state_vc == Controller_Context_state_checkand1)) || (Controller_Context_state_vc == Controller_Context_state_checkxor4)) || (Controller_Context_state_vc == Controller_Context_state_checknot1)) || (Controller_Context_state_vc == Controller_Context_state_checkxor3)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies3)) || (Controller_Context_state_vc == Controller_Context_state_checkor2)) || (Controller_Context_state_vc == Controller_Context_state_checkand2)) || (Controller_Context_state_vc == Controller_Context_state_checkand3)) || (Controller_Context_state_vc == Controller_Context_state_checkxor2)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies1)) || (Controller_Context_state_vc == Controller_Context_state_checkxor1)) || (Controller_Context_state_vc == Controller_Context_state_checkimplies4)) || (Controller_Context_state_vc == Controller_Context_state_checknot2)) || (Controller_Context_state_vc == Controller_Context_state_checkor1)) || (Controller_Context_state_vc == Controller_Context_state_checkor4)) || (Controller_Context_state_vc == Controller_Context_state_checkand4)) || (Controller_Context_state_vc == Controller_Context_state_checkor3)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

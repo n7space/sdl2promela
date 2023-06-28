@@ -75,12 +75,12 @@
 #define Observer_Observable_Event_Selection_input_event_present 3
 #define Observer_Observable_Event_Selection_output_event_present 4
 #define Observer_Observable_Event_Selection_unhandled_input_present 5
-#define Actuator_States_operation_0_add 0
-#define Actuator_States_disabled 1
-#define Actuator_States_operation_0_repeat 2
-#define Actuator_Context_state_operation_0_add 0
-#define Actuator_Context_state_disabled 1
-#define Actuator_Context_state_operation_0_repeat 2
+#define Actuator_States_disabled 0
+#define Actuator_States_operation_0_repeat 1
+#define Actuator_States_operation_0_add 2
+#define Actuator_Context_state_disabled 0
+#define Actuator_Context_state_operation_0_repeat 1
+#define Actuator_Context_state_operation_0_add 2
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
 #define Actuator_Context_sender_environ 2
@@ -307,7 +307,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert((((Actuator_States_vc == Actuator_States_operation_0_add) || (Actuator_States_vc == Actuator_States_disabled)) || (Actuator_States_vc == Actuator_States_operation_0_repeat)));
+    assert((((Actuator_States_vc == Actuator_States_disabled) || (Actuator_States_vc == Actuator_States_operation_0_repeat)) || (Actuator_States_vc == Actuator_States_operation_0_add)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -316,7 +316,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert((((Actuator_Context_state_vc == Actuator_Context_state_operation_0_add) || (Actuator_Context_state_vc == Actuator_Context_state_disabled)) || (Actuator_Context_state_vc == Actuator_Context_state_operation_0_repeat)));
+    assert((((Actuator_Context_state_vc == Actuator_Context_state_disabled) || (Actuator_Context_state_vc == Actuator_Context_state_operation_0_repeat)) || (Actuator_Context_state_vc == Actuator_Context_state_operation_0_add)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {

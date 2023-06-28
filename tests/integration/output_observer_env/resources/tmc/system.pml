@@ -23,14 +23,14 @@ inline Observer_0_RI_0_ping_in(observer_controller_p1)
 {
     Controller_observer_ping_channel!observer_controller_p1;
 }
-inline Environ_0_RI_0_ping(controller_ping_p1)
-{
-    Controller_ping_channel!controller_ping_p1;
-}
 inline Controller_0_PI_0_ping_unhandled_input(p1)
 {
     printf("unhandled_input controller ping\n");
     skip;
+}
+inline Controller_0_RI_0_pong(controller_pong_Controller_pong_p1)
+{
+    Environ_pong_channel!controller_pong_Controller_pong_p1;
 }
 inline Controller_check_queue()
 {
@@ -42,9 +42,9 @@ inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }
-inline Controller_0_RI_0_pong(environ_pong_p1)
+inline Environ_0_RI_0_ping(environ_ping_Environ_ping_p1)
 {
-    Environ_pong_channel!environ_pong_p1;
+    Controller_ping_channel!environ_ping_Environ_ping_p1;
 }
 active proctype Controller_ping() priority 1
 {

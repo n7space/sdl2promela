@@ -19,14 +19,14 @@ bool Controller_test_channel_used = 0;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_ping(actuator_ping_p1)
-{
-    Actuator_ping_channel!actuator_ping_p1;
-}
 inline Actuator_0_PI_0_ping_unhandled_input(p1)
 {
     printf("unhandled_input actuator ping\n");
     skip;
+}
+inline Actuator_0_RI_0_pong()
+{
+    Controller_pong_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -38,23 +38,19 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_pong()
-{
-    Controller_pong_channel!0;
-}
 inline Controller_0_PI_0_pong_unhandled_input()
 {
     printf("unhandled_input controller pong\n");
     skip;
 }
-inline Environ_0_RI_0_test(controller_test_p1)
-{
-    Controller_test_channel!controller_test_p1;
-}
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
     printf("unhandled_input controller test\n");
     skip;
+}
+inline Controller_0_RI_0_ping(controller_ping_Controller_ping_p1)
+{
+    Actuator_ping_channel!controller_ping_Controller_ping_p1;
 }
 inline Controller_check_queue()
 {
@@ -65,6 +61,10 @@ inline Controller_check_queue()
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
+{
+    Controller_test_channel!environ_test_Environ_test_p1;
 }
 active proctype Actuator_ping() priority 1
 {

@@ -1,13 +1,13 @@
 #define Actuator_States int
 #define Actuator_Context_state int
 #define Actuator_Context_init_done bool
-#define Actuator_Context_parallel_0_left_0_state int
 #define Actuator_Context_parallel_0_right_0_state int
+#define Actuator_Context_parallel_0_left_0_state int
 #define Actuator_Context_sender int
 #define Actuator_Context_offspring int
 #define Actuator_Context_result_param int
-#define Actuator_Context_parallel_0_left_0_left_result_param int
 #define Actuator_Context_parallel_0_right_0_right_result_param int
+#define Actuator_Context_parallel_0_left_0_left_result_param int
 #define Controller_States int
 #define Controller_Context_state int
 #define Controller_Context_init_done bool
@@ -27,38 +27,38 @@
 #define PID int
 #define TimerData_timer_enabled bool
 #define TimerData_interval int
-#define Actuator_States_parallel_0_left_0_wait 0
-#define Actuator_States_parallel_0_right 1
-#define Actuator_States_parallel_0_right_0_wait 2
-#define Actuator_States_state_0_end 3
-#define Actuator_States_first 4
-#define Actuator_States_parallel 5
-#define Actuator_States_parallel_0_left 6
-#define Actuator_States_wait 7
-#define Actuator_Context_state_parallel_0_left_0_wait 0
-#define Actuator_Context_state_parallel_0_right 1
-#define Actuator_Context_state_parallel_0_right_0_wait 2
-#define Actuator_Context_state_state_0_end 3
-#define Actuator_Context_state_first 4
-#define Actuator_Context_state_parallel 5
-#define Actuator_Context_state_parallel_0_left 6
-#define Actuator_Context_state_wait 7
-#define Actuator_Context_parallel_0_left_0_state_parallel_0_left_0_wait 0
-#define Actuator_Context_parallel_0_left_0_state_parallel_0_right 1
-#define Actuator_Context_parallel_0_left_0_state_parallel_0_right_0_wait 2
-#define Actuator_Context_parallel_0_left_0_state_state_0_end 3
-#define Actuator_Context_parallel_0_left_0_state_first 4
-#define Actuator_Context_parallel_0_left_0_state_parallel 5
-#define Actuator_Context_parallel_0_left_0_state_parallel_0_left 6
-#define Actuator_Context_parallel_0_left_0_state_wait 7
-#define Actuator_Context_parallel_0_right_0_state_parallel_0_left_0_wait 0
-#define Actuator_Context_parallel_0_right_0_state_parallel_0_right 1
-#define Actuator_Context_parallel_0_right_0_state_parallel_0_right_0_wait 2
-#define Actuator_Context_parallel_0_right_0_state_state_0_end 3
-#define Actuator_Context_parallel_0_right_0_state_first 4
-#define Actuator_Context_parallel_0_right_0_state_parallel 5
-#define Actuator_Context_parallel_0_right_0_state_parallel_0_left 6
-#define Actuator_Context_parallel_0_right_0_state_wait 7
+#define Actuator_States_parallel_0_left 0
+#define Actuator_States_first 1
+#define Actuator_States_parallel 2
+#define Actuator_States_wait 3
+#define Actuator_States_parallel_0_right_0_wait 4
+#define Actuator_States_parallel_0_left_0_wait 5
+#define Actuator_States_state_0_end 6
+#define Actuator_States_parallel_0_right 7
+#define Actuator_Context_state_parallel_0_left 0
+#define Actuator_Context_state_first 1
+#define Actuator_Context_state_parallel 2
+#define Actuator_Context_state_wait 3
+#define Actuator_Context_state_parallel_0_right_0_wait 4
+#define Actuator_Context_state_parallel_0_left_0_wait 5
+#define Actuator_Context_state_state_0_end 6
+#define Actuator_Context_state_parallel_0_right 7
+#define Actuator_Context_parallel_0_right_0_state_parallel_0_left 0
+#define Actuator_Context_parallel_0_right_0_state_first 1
+#define Actuator_Context_parallel_0_right_0_state_parallel 2
+#define Actuator_Context_parallel_0_right_0_state_wait 3
+#define Actuator_Context_parallel_0_right_0_state_parallel_0_right_0_wait 4
+#define Actuator_Context_parallel_0_right_0_state_parallel_0_left_0_wait 5
+#define Actuator_Context_parallel_0_right_0_state_state_0_end 6
+#define Actuator_Context_parallel_0_right_0_state_parallel_0_right 7
+#define Actuator_Context_parallel_0_left_0_state_parallel_0_left 0
+#define Actuator_Context_parallel_0_left_0_state_first 1
+#define Actuator_Context_parallel_0_left_0_state_parallel 2
+#define Actuator_Context_parallel_0_left_0_state_wait 3
+#define Actuator_Context_parallel_0_left_0_state_parallel_0_right_0_wait 4
+#define Actuator_Context_parallel_0_left_0_state_parallel_0_left_0_wait 5
+#define Actuator_Context_parallel_0_left_0_state_state_0_end 6
+#define Actuator_Context_parallel_0_left_0_state_parallel_0_right 7
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
 #define Actuator_Context_sender_env 2
@@ -70,30 +70,30 @@
 #define Actuator_Context_result_param_transition_left_parallel 2
 #define Actuator_Context_result_param_transition_right_parallel 3
 #define Actuator_Context_result_param_leave_parallel 4
-#define Actuator_Context_parallel_0_left_0_left_result_param_transition_top 0
-#define Actuator_Context_parallel_0_left_0_left_result_param_enter_parallel 1
-#define Actuator_Context_parallel_0_left_0_left_result_param_transition_left_parallel 2
-#define Actuator_Context_parallel_0_left_0_left_result_param_transition_right_parallel 3
-#define Actuator_Context_parallel_0_left_0_left_result_param_leave_parallel 4
 #define Actuator_Context_parallel_0_right_0_right_result_param_transition_top 0
 #define Actuator_Context_parallel_0_right_0_right_result_param_enter_parallel 1
 #define Actuator_Context_parallel_0_right_0_right_result_param_transition_left_parallel 2
 #define Actuator_Context_parallel_0_right_0_right_result_param_transition_right_parallel 3
 #define Actuator_Context_parallel_0_right_0_right_result_param_leave_parallel 4
-#define Controller_States_waitfortransitionrightparallel 0
-#define Controller_States_waitfortransitionleftparallel 1
-#define Controller_States_waitfortransitiontop 2
-#define Controller_States_waitforleaveparallel 3
-#define Controller_States_finished 4
-#define Controller_States_error 5
-#define Controller_States_waitforenterparallel 6
-#define Controller_Context_state_waitfortransitionrightparallel 0
-#define Controller_Context_state_waitfortransitionleftparallel 1
-#define Controller_Context_state_waitfortransitiontop 2
-#define Controller_Context_state_waitforleaveparallel 3
-#define Controller_Context_state_finished 4
-#define Controller_Context_state_error 5
-#define Controller_Context_state_waitforenterparallel 6
+#define Actuator_Context_parallel_0_left_0_left_result_param_transition_top 0
+#define Actuator_Context_parallel_0_left_0_left_result_param_enter_parallel 1
+#define Actuator_Context_parallel_0_left_0_left_result_param_transition_left_parallel 2
+#define Actuator_Context_parallel_0_left_0_left_result_param_transition_right_parallel 3
+#define Actuator_Context_parallel_0_left_0_left_result_param_leave_parallel 4
+#define Controller_States_waitforleaveparallel 0
+#define Controller_States_finished 1
+#define Controller_States_waitfortransitionleftparallel 2
+#define Controller_States_waitforenterparallel 3
+#define Controller_States_waitfortransitionrightparallel 4
+#define Controller_States_waitfortransitiontop 5
+#define Controller_States_error 6
+#define Controller_Context_state_waitforleaveparallel 0
+#define Controller_Context_state_finished 1
+#define Controller_Context_state_waitfortransitionleftparallel 2
+#define Controller_Context_state_waitforenterparallel 3
+#define Controller_Context_state_waitfortransitionrightparallel 4
+#define Controller_Context_state_waitfortransitiontop 5
+#define Controller_Context_state_error 6
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -116,13 +116,13 @@
 typedef Actuator_Context {
     Actuator_Context_state state;
     Actuator_Context_init_done init_done;
-    Actuator_Context_parallel_0_left_0_state parallel_0_left_0_state;
     Actuator_Context_parallel_0_right_0_state parallel_0_right_0_state;
+    Actuator_Context_parallel_0_left_0_state parallel_0_left_0_state;
     Actuator_Context_sender sender;
     Actuator_Context_offspring offspring;
     Actuator_Context_result_param result_param;
-    Actuator_Context_parallel_0_left_0_left_result_param parallel_0_left_0_left_result_param;
     Actuator_Context_parallel_0_right_0_right_result_param parallel_0_right_0_right_result_param;
+    Actuator_Context_parallel_0_left_0_left_result_param parallel_0_left_0_left_result_param;
 }
 
 typedef AggregateTimerData_actuator {
@@ -169,7 +169,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert(((((((((Actuator_States_vc == Actuator_States_parallel_0_left_0_wait) || (Actuator_States_vc == Actuator_States_parallel_0_right)) || (Actuator_States_vc == Actuator_States_parallel_0_right_0_wait)) || (Actuator_States_vc == Actuator_States_state_0_end)) || (Actuator_States_vc == Actuator_States_first)) || (Actuator_States_vc == Actuator_States_parallel)) || (Actuator_States_vc == Actuator_States_parallel_0_left)) || (Actuator_States_vc == Actuator_States_wait)));
+    assert(((((((((Actuator_States_vc == Actuator_States_parallel_0_left) || (Actuator_States_vc == Actuator_States_first)) || (Actuator_States_vc == Actuator_States_parallel)) || (Actuator_States_vc == Actuator_States_wait)) || (Actuator_States_vc == Actuator_States_parallel_0_right_0_wait)) || (Actuator_States_vc == Actuator_States_parallel_0_left_0_wait)) || (Actuator_States_vc == Actuator_States_state_0_end)) || (Actuator_States_vc == Actuator_States_parallel_0_right)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -178,7 +178,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert(((((((((Actuator_Context_state_vc == Actuator_Context_state_parallel_0_left_0_wait) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_right)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_right_0_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_state_0_end)) || (Actuator_Context_state_vc == Actuator_Context_state_first)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_left)) || (Actuator_Context_state_vc == Actuator_Context_state_wait)));
+    assert(((((((((Actuator_Context_state_vc == Actuator_Context_state_parallel_0_left) || (Actuator_Context_state_vc == Actuator_Context_state_first)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel)) || (Actuator_Context_state_vc == Actuator_Context_state_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_right_0_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_left_0_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_state_0_end)) || (Actuator_Context_state_vc == Actuator_Context_state_parallel_0_right)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {
@@ -189,15 +189,6 @@ inline Actuator_Context_init_done_range_check(Actuator_Context_init_done_vc)
 {
     assert(true);
 }
-inline Actuator_Context_parallel_0_left_0_state_assign_value(dst, src)
-{
-    dst = src;
-    Actuator_Context_parallel_0_left_0_state_range_check(dst);
-}
-inline Actuator_Context_parallel_0_left_0_state_range_check(Actuator_Context_parallel_0_left_0_state_vc)
-{
-    assert(((((((((Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_left_0_wait) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_right)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_right_0_wait)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_state_0_end)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_first)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_left)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_wait)));
-}
 inline Actuator_Context_parallel_0_right_0_state_assign_value(dst, src)
 {
     dst = src;
@@ -205,7 +196,16 @@ inline Actuator_Context_parallel_0_right_0_state_assign_value(dst, src)
 }
 inline Actuator_Context_parallel_0_right_0_state_range_check(Actuator_Context_parallel_0_right_0_state_vc)
 {
-    assert(((((((((Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_left_0_wait) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_right)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_right_0_wait)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_state_0_end)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_first)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_left)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_wait)));
+    assert(((((((((Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_left) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_first)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_wait)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_right_0_wait)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_left_0_wait)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_state_0_end)) || (Actuator_Context_parallel_0_right_0_state_vc == Actuator_Context_parallel_0_right_0_state_parallel_0_right)));
+}
+inline Actuator_Context_parallel_0_left_0_state_assign_value(dst, src)
+{
+    dst = src;
+    Actuator_Context_parallel_0_left_0_state_range_check(dst);
+}
+inline Actuator_Context_parallel_0_left_0_state_range_check(Actuator_Context_parallel_0_left_0_state_vc)
+{
+    assert(((((((((Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_left) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_first)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_wait)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_right_0_wait)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_left_0_wait)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_state_0_end)) || (Actuator_Context_parallel_0_left_0_state_vc == Actuator_Context_parallel_0_left_0_state_parallel_0_right)));
 }
 inline Actuator_Context_sender_assign_value(dst, src)
 {
@@ -234,15 +234,6 @@ inline Actuator_Context_result_param_range_check(Actuator_Context_result_param_v
 {
     assert((((((Actuator_Context_result_param_vc == Actuator_Context_result_param_transition_top) || (Actuator_Context_result_param_vc == Actuator_Context_result_param_enter_parallel)) || (Actuator_Context_result_param_vc == Actuator_Context_result_param_transition_left_parallel)) || (Actuator_Context_result_param_vc == Actuator_Context_result_param_transition_right_parallel)) || (Actuator_Context_result_param_vc == Actuator_Context_result_param_leave_parallel)));
 }
-inline Actuator_Context_parallel_0_left_0_left_result_param_assign_value(dst, src)
-{
-    dst = src;
-    Actuator_Context_parallel_0_left_0_left_result_param_range_check(dst);
-}
-inline Actuator_Context_parallel_0_left_0_left_result_param_range_check(Actuator_Context_parallel_0_left_0_left_result_param_vc)
-{
-    assert((((((Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_top) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_enter_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_left_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_right_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_leave_parallel)));
-}
 inline Actuator_Context_parallel_0_right_0_right_result_param_assign_value(dst, src)
 {
     dst = src;
@@ -252,17 +243,26 @@ inline Actuator_Context_parallel_0_right_0_right_result_param_range_check(Actuat
 {
     assert((((((Actuator_Context_parallel_0_right_0_right_result_param_vc == Actuator_Context_parallel_0_right_0_right_result_param_transition_top) || (Actuator_Context_parallel_0_right_0_right_result_param_vc == Actuator_Context_parallel_0_right_0_right_result_param_enter_parallel)) || (Actuator_Context_parallel_0_right_0_right_result_param_vc == Actuator_Context_parallel_0_right_0_right_result_param_transition_left_parallel)) || (Actuator_Context_parallel_0_right_0_right_result_param_vc == Actuator_Context_parallel_0_right_0_right_result_param_transition_right_parallel)) || (Actuator_Context_parallel_0_right_0_right_result_param_vc == Actuator_Context_parallel_0_right_0_right_result_param_leave_parallel)));
 }
+inline Actuator_Context_parallel_0_left_0_left_result_param_assign_value(dst, src)
+{
+    dst = src;
+    Actuator_Context_parallel_0_left_0_left_result_param_range_check(dst);
+}
+inline Actuator_Context_parallel_0_left_0_left_result_param_range_check(Actuator_Context_parallel_0_left_0_left_result_param_vc)
+{
+    assert((((((Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_top) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_enter_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_left_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_transition_right_parallel)) || (Actuator_Context_parallel_0_left_0_left_result_param_vc == Actuator_Context_parallel_0_left_0_left_result_param_leave_parallel)));
+}
 inline Actuator_Context_assign_value(dst, src)
 {
     Actuator_Context_state_assign_value(dst.state, src.state);
     Actuator_Context_init_done_assign_value(dst.init_done, src.init_done);
-    Actuator_Context_parallel_0_left_0_state_assign_value(dst.parallel_0_left_0_state, src.parallel_0_left_0_state);
     Actuator_Context_parallel_0_right_0_state_assign_value(dst.parallel_0_right_0_state, src.parallel_0_right_0_state);
+    Actuator_Context_parallel_0_left_0_state_assign_value(dst.parallel_0_left_0_state, src.parallel_0_left_0_state);
     Actuator_Context_sender_assign_value(dst.sender, src.sender);
     Actuator_Context_offspring_assign_value(dst.offspring, src.offspring);
     Actuator_Context_result_param_assign_value(dst.result_param, src.result_param);
-    Actuator_Context_parallel_0_left_0_left_result_param_assign_value(dst.parallel_0_left_0_left_result_param, src.parallel_0_left_0_left_result_param);
     Actuator_Context_parallel_0_right_0_right_result_param_assign_value(dst.parallel_0_right_0_right_result_param, src.parallel_0_right_0_right_result_param);
+    Actuator_Context_parallel_0_left_0_left_result_param_assign_value(dst.parallel_0_left_0_left_result_param, src.parallel_0_left_0_left_result_param);
 }
 inline Controller_States_assign_value(dst, src)
 {
@@ -271,7 +271,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((((Controller_States_vc == Controller_States_waitfortransitionrightparallel) || (Controller_States_vc == Controller_States_waitfortransitionleftparallel)) || (Controller_States_vc == Controller_States_waitfortransitiontop)) || (Controller_States_vc == Controller_States_waitforleaveparallel)) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_waitforenterparallel)));
+    assert((((((((Controller_States_vc == Controller_States_waitforleaveparallel) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_waitfortransitionleftparallel)) || (Controller_States_vc == Controller_States_waitforenterparallel)) || (Controller_States_vc == Controller_States_waitfortransitionrightparallel)) || (Controller_States_vc == Controller_States_waitfortransitiontop)) || (Controller_States_vc == Controller_States_error)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -280,7 +280,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((((Controller_Context_state_vc == Controller_Context_state_waitfortransitionrightparallel) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitionleftparallel)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitiontop)) || (Controller_Context_state_vc == Controller_Context_state_waitforleaveparallel)) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_waitforenterparallel)));
+    assert((((((((Controller_Context_state_vc == Controller_Context_state_waitforleaveparallel) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitionleftparallel)) || (Controller_Context_state_vc == Controller_Context_state_waitforenterparallel)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitionrightparallel)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitiontop)) || (Controller_Context_state_vc == Controller_Context_state_error)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {
