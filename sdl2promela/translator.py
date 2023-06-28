@@ -244,6 +244,10 @@ def __fix_type_name(name: str) -> str:
     * the suffix selection is lowercase, shall be capitalized like in observer.asn
     """
     tmp = name[0].upper() + name[1:]
+    if tmp.endswith("_selection") or tmp.endswith("_Selection"):
+        elements = tmp.split("_")
+        elements[0] = elements[0].capitalize()
+        tmp = "_".join(elements)
     return tmp.replace("_selection", "_Selection")
 
 
