@@ -22,7 +22,7 @@ inline Host_0_proc()
   Host_0_proc_0_end:
   skip;
 }
-inline Host_0_procWithArguments(procwitharguments_param_returns, procwitharguments_param_p1, procwitharguments_param_p2, procwitharguments_r)
+inline Host_0_procwitharguments(procwitharguments_param_returns, procwitharguments_param_p1, procwitharguments_param_p2, procwitharguments_r)
 {
   MyInteger procwitharguments_p1;
   MyInteger_assign_value(procwitharguments_p1, procwitharguments_param_p1);
@@ -34,7 +34,7 @@ inline Host_0_procWithArguments(procwitharguments_param_returns, procwithargumen
   Host_0_procWithArguments_0_end:
   skip;
 }
-inline Host_0_procWithLocalVariables()
+inline Host_0_procwithlocalvariables()
 {
   MyInteger procwithlocalvariables_l1;
   MyInteger procwithlocalvariables_l2;
@@ -44,7 +44,7 @@ inline Host_0_procWithLocalVariables()
   Host_0_procWithLocalVariables_0_end:
   skip;
 }
-inline Host_0_procWithOutput()
+inline Host_0_procwithoutput()
 {
   Host_0_RI_0_action(global_state.host.y);
   Host_0_procWithOutput_0_end:
@@ -64,9 +64,9 @@ inline Host_0_transition(id)
       goto host_continuous_signals;
     ::(host_transition_id == 1)->
       Host_0_proc();
-      Host_0_procWithArguments(global_state.host.r, 1, global_state.host.b, global_state.host.y);
-      Host_0_procWithLocalVariables();
-      Host_0_procWithOutput();
+      Host_0_procwitharguments(global_state.host.r, 1, global_state.host.b, global_state.host.y);
+      Host_0_procwithlocalvariables();
+      Host_0_procwithoutput();
       Host_0_multireturn(global_state.host.r, global_state.host.a);
       host_transition_id = -1;
       global_state.host.state = Host_States_wait;
