@@ -2884,7 +2884,7 @@ def translate(
         )
     # Inlines for procedures must be before the transitions
     for procedure in sdl_model.procedures.values():
-        if procedure.type != sdlmodel.ProcedureType.EXTERNAL and (
+        if procedure.type != sdlmodel.ProcedureType.EXTERNAL or (
             is_observer and procedure.name == "observe"
         ):
             if (
