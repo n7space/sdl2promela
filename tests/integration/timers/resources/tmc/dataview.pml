@@ -9,8 +9,8 @@
 #define Controller_Context_sender int
 #define Controller_Context_offspring int
 #define Controller_Context_reached int
-#define Demo_timer_manager_States int
-#define Demo_timer_manager_Context_state int
+#define Timer_manager_States int
+#define Timer_manager_Context_state int
 #define T_Int32 int
 #define T_UInt32 int
 #define T_Int8 int
@@ -27,29 +27,29 @@
 #define Actuator_States_wait 1
 #define Actuator_Context_state_operation 0
 #define Actuator_Context_state_wait 1
-#define Actuator_Context_sender_actuator 0
-#define Actuator_Context_sender_controller 1
-#define Actuator_Context_sender_demo_timer_manager 2
+#define Actuator_Context_sender_timer_manager 0
+#define Actuator_Context_sender_actuator 1
+#define Actuator_Context_sender_controller 2
 #define Actuator_Context_sender_env 3
-#define Actuator_Context_offspring_actuator 0
-#define Actuator_Context_offspring_controller 1
-#define Actuator_Context_offspring_demo_timer_manager 2
+#define Actuator_Context_offspring_timer_manager 0
+#define Actuator_Context_offspring_actuator 1
+#define Actuator_Context_offspring_controller 2
 #define Actuator_Context_offspring_env 3
 #define Controller_States_wait 0
 #define Controller_Context_state_wait 0
-#define Controller_Context_sender_actuator 0
-#define Controller_Context_sender_controller 1
-#define Controller_Context_sender_demo_timer_manager 2
+#define Controller_Context_sender_timer_manager 0
+#define Controller_Context_sender_actuator 1
+#define Controller_Context_sender_controller 2
 #define Controller_Context_sender_env 3
-#define Controller_Context_offspring_actuator 0
-#define Controller_Context_offspring_controller 1
-#define Controller_Context_offspring_demo_timer_manager 2
+#define Controller_Context_offspring_timer_manager 0
+#define Controller_Context_offspring_actuator 1
+#define Controller_Context_offspring_controller 2
 #define Controller_Context_offspring_env 3
-#define Demo_timer_manager_States_wait 0
-#define Demo_timer_manager_Context_state_wait 0
-#define PID_actuator 0
-#define PID_controller 1
-#define PID_demo_timer_manager 2
+#define Timer_manager_States_wait 0
+#define Timer_manager_Context_state_wait 0
+#define PID_timer_manager 0
+#define PID_actuator 1
+#define PID_controller 2
 #define PID_env 3
 typedef Actuator_Context {
     Actuator_Context_state state;
@@ -79,10 +79,6 @@ typedef Controller_Context {
     Controller_Context_reached reached;
 }
 
-typedef Demo_timer_manager_Context {
-    Demo_timer_manager_Context_state state;
-}
-
 typedef T_Null_Record {
     bit dummy;
 }
@@ -90,6 +86,10 @@ typedef T_Null_Record {
 typedef TimerData {
     TimerData_timer_enabled timer_enabled;
     TimerData_interval interval;
+}
+
+typedef Timer_manager_Context {
+    Timer_manager_Context_state state;
 }
 
 typedef AggregateTimerData_actuator {
@@ -136,7 +136,7 @@ inline Actuator_Context_sender_assign_value(dst, src)
 }
 inline Actuator_Context_sender_range_check(Actuator_Context_sender_vc)
 {
-    assert(((((Actuator_Context_sender_vc == Actuator_Context_sender_actuator) || (Actuator_Context_sender_vc == Actuator_Context_sender_controller)) || (Actuator_Context_sender_vc == Actuator_Context_sender_demo_timer_manager)) || (Actuator_Context_sender_vc == Actuator_Context_sender_env)));
+    assert(((((Actuator_Context_sender_vc == Actuator_Context_sender_timer_manager) || (Actuator_Context_sender_vc == Actuator_Context_sender_actuator)) || (Actuator_Context_sender_vc == Actuator_Context_sender_controller)) || (Actuator_Context_sender_vc == Actuator_Context_sender_env)));
 }
 inline Actuator_Context_offspring_assign_value(dst, src)
 {
@@ -145,7 +145,7 @@ inline Actuator_Context_offspring_assign_value(dst, src)
 }
 inline Actuator_Context_offspring_range_check(Actuator_Context_offspring_vc)
 {
-    assert(((((Actuator_Context_offspring_vc == Actuator_Context_offspring_actuator) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_controller)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_demo_timer_manager)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_env)));
+    assert(((((Actuator_Context_offspring_vc == Actuator_Context_offspring_timer_manager) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_actuator)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_controller)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_env)));
 }
 inline Actuator_Context_assign_value(dst, src)
 {
@@ -188,7 +188,7 @@ inline Controller_Context_sender_assign_value(dst, src)
 }
 inline Controller_Context_sender_range_check(Controller_Context_sender_vc)
 {
-    assert(((((Controller_Context_sender_vc == Controller_Context_sender_actuator) || (Controller_Context_sender_vc == Controller_Context_sender_controller)) || (Controller_Context_sender_vc == Controller_Context_sender_demo_timer_manager)) || (Controller_Context_sender_vc == Controller_Context_sender_env)));
+    assert(((((Controller_Context_sender_vc == Controller_Context_sender_timer_manager) || (Controller_Context_sender_vc == Controller_Context_sender_actuator)) || (Controller_Context_sender_vc == Controller_Context_sender_controller)) || (Controller_Context_sender_vc == Controller_Context_sender_env)));
 }
 inline Controller_Context_offspring_assign_value(dst, src)
 {
@@ -197,7 +197,7 @@ inline Controller_Context_offspring_assign_value(dst, src)
 }
 inline Controller_Context_offspring_range_check(Controller_Context_offspring_vc)
 {
-    assert(((((Controller_Context_offspring_vc == Controller_Context_offspring_actuator) || (Controller_Context_offspring_vc == Controller_Context_offspring_controller)) || (Controller_Context_offspring_vc == Controller_Context_offspring_demo_timer_manager)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
+    assert(((((Controller_Context_offspring_vc == Controller_Context_offspring_timer_manager) || (Controller_Context_offspring_vc == Controller_Context_offspring_actuator)) || (Controller_Context_offspring_vc == Controller_Context_offspring_controller)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
 }
 inline Controller_Context_reached_assign_value(dst, src)
 {
@@ -216,27 +216,27 @@ inline Controller_Context_assign_value(dst, src)
     Controller_Context_offspring_assign_value(dst.offspring, src.offspring);
     Controller_Context_reached_assign_value(dst.reached, src.reached);
 }
-inline Demo_timer_manager_States_assign_value(dst, src)
+inline Timer_manager_States_assign_value(dst, src)
 {
     dst = src;
-    Demo_timer_manager_States_range_check(dst);
+    Timer_manager_States_range_check(dst);
 }
-inline Demo_timer_manager_States_range_check(Demo_timer_manager_States_vc)
+inline Timer_manager_States_range_check(Timer_manager_States_vc)
 {
-    assert((Demo_timer_manager_States_vc == Demo_timer_manager_States_wait));
+    assert((Timer_manager_States_vc == Timer_manager_States_wait));
 }
-inline Demo_timer_manager_Context_state_assign_value(dst, src)
+inline Timer_manager_Context_state_assign_value(dst, src)
 {
     dst = src;
-    Demo_timer_manager_Context_state_range_check(dst);
+    Timer_manager_Context_state_range_check(dst);
 }
-inline Demo_timer_manager_Context_state_range_check(Demo_timer_manager_Context_state_vc)
+inline Timer_manager_Context_state_range_check(Timer_manager_Context_state_vc)
 {
-    assert((Demo_timer_manager_Context_state_vc == Demo_timer_manager_Context_state_wait));
+    assert((Timer_manager_Context_state_vc == Timer_manager_Context_state_wait));
 }
-inline Demo_timer_manager_Context_assign_value(dst, src)
+inline Timer_manager_Context_assign_value(dst, src)
 {
-    Demo_timer_manager_Context_state_assign_value(dst.state, src.state);
+    Timer_manager_Context_state_assign_value(dst.state, src.state);
 }
 inline T_Int32_assign_value(dst, src)
 {
@@ -312,7 +312,7 @@ inline PID_assign_value(dst, src)
 }
 inline PID_range_check(PID_vc)
 {
-    assert(((((PID_vc == PID_actuator) || (PID_vc == PID_controller)) || (PID_vc == PID_demo_timer_manager)) || (PID_vc == PID_env)));
+    assert(((((PID_vc == PID_timer_manager) || (PID_vc == PID_actuator)) || (PID_vc == PID_controller)) || (PID_vc == PID_env)));
 }
 inline TimerData_timer_enabled_assign_value(dst, src)
 {

@@ -29,16 +29,16 @@
 #define Actuator_Context_offspring_actuator 0
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_env 2
-#define Controller_States_testprotected 0
-#define Controller_States_finished 1
-#define Controller_States_error 2
-#define Controller_States_waitforresponse 3
-#define Controller_States_testunprotected 4
-#define Controller_Context_state_testprotected 0
-#define Controller_Context_state_finished 1
-#define Controller_Context_state_error 2
-#define Controller_Context_state_waitforresponse 3
-#define Controller_Context_state_testunprotected 4
+#define Controller_States_error 0
+#define Controller_States_testunprotected 1
+#define Controller_States_testprotected 2
+#define Controller_States_finished 3
+#define Controller_States_waitforresponse 4
+#define Controller_Context_state_error 0
+#define Controller_Context_state_testunprotected 1
+#define Controller_Context_state_testprotected 2
+#define Controller_Context_state_finished 3
+#define Controller_Context_state_waitforresponse 4
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -151,7 +151,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((Controller_States_vc == Controller_States_testprotected) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_waitforresponse)) || (Controller_States_vc == Controller_States_testunprotected)));
+    assert((((((Controller_States_vc == Controller_States_error) || (Controller_States_vc == Controller_States_testunprotected)) || (Controller_States_vc == Controller_States_testprotected)) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_waitforresponse)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -160,7 +160,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((Controller_Context_state_vc == Controller_Context_state_testprotected) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_waitforresponse)) || (Controller_Context_state_vc == Controller_Context_state_testunprotected)));
+    assert((((((Controller_Context_state_vc == Controller_Context_state_error) || (Controller_Context_state_vc == Controller_Context_state_testunprotected)) || (Controller_Context_state_vc == Controller_Context_state_testprotected)) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_waitforresponse)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

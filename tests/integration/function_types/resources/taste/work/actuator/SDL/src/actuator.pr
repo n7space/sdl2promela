@@ -1,5 +1,6 @@
 /* CIF PROCESS (250, 149), (150, 75) */
 process type Actuator;
+    /* CIF Keep Specific Geode Partition 'default' */
     /* CIF TEXT (1660, 48), (267, 140) */
     -- Text area for declarations and comments
     
@@ -10,26 +11,28 @@ process type Actuator;
     START;
         /* CIF NEXTSTATE (336, 77), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (667, 171), (70, 35) */
-    state Wait;
-        /* CIF input (626, 226), (141, 35) */
-        input check(check_param);
-            /* CIF task (553, 281), (288, 35) */
-            task result_param :=  check_param + check_param;
-            /* CIF output (625, 336), (143, 35) */
-            output result(result_param);
-            /* CIF NEXTSTATE (655, 391), (83, 35) */
-            NEXTSTATE Operation;
-    endstate;
-    /* CIF state (991, 161), (83, 35) */
+    /* CIF state (990, 161), (83, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Operation;
-        /* CIF input (962, 216), (141, 35) */
+        /* CIF input (961, 216), (141, 35) */
         input check(check_param);
-            /* CIF task (889, 271), (288, 35) */
+            /* CIF task (888, 271), (288, 35) */
             task result_param :=  check_param + check_param;
-            /* CIF output (961, 326), (143, 35) */
+            /* CIF output (960, 326), (143, 35) */
             output result(result_param);
-            /* CIF NEXTSTATE (998, 381), (70, 35) */
+            /* CIF NEXTSTATE (997, 381), (70, 35) */
             NEXTSTATE Wait;
+    endstate;
+    /* CIF state (667, 171), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Wait;
+        /* CIF input (625, 226), (141, 35) */
+        input check(check_param);
+            /* CIF task (552, 281), (288, 35) */
+            task result_param :=  check_param + check_param;
+            /* CIF output (624, 336), (143, 35) */
+            output result(result_param);
+            /* CIF NEXTSTATE (654, 391), (83, 35) */
+            NEXTSTATE Operation;
     endstate;
 endprocess type Actuator;

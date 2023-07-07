@@ -24,13 +24,13 @@
 #define PID int
 #define TimerData_timer_enabled bool
 #define TimerData_interval int
-#define Actuator_States_nested_0_green 0
-#define Actuator_States_nested_0_red 1
-#define Actuator_States_wait 2
+#define Actuator_States_nested_0_red 0
+#define Actuator_States_wait 1
+#define Actuator_States_nested_0_green 2
 #define Actuator_States_first 3
-#define Actuator_Context_state_nested_0_green 0
-#define Actuator_Context_state_nested_0_red 1
-#define Actuator_Context_state_wait 2
+#define Actuator_Context_state_nested_0_red 0
+#define Actuator_Context_state_wait 1
+#define Actuator_Context_state_nested_0_green 2
 #define Actuator_Context_state_first 3
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
@@ -46,18 +46,18 @@
 #define Actuator_Context_nested_0_result_param_enter_nested 1
 #define Actuator_Context_nested_0_result_param_transition_nested 2
 #define Actuator_Context_nested_0_result_param_leave_nested 3
-#define Controller_States_waitforleavenested 0
+#define Controller_States_waitfortransitionnested 0
 #define Controller_States_waitforenternested 1
-#define Controller_States_waitfortransitiontop 2
-#define Controller_States_waitfortransitionnested 3
-#define Controller_States_error 4
-#define Controller_States_finished 5
-#define Controller_Context_state_waitforleavenested 0
+#define Controller_States_error 2
+#define Controller_States_finished 3
+#define Controller_States_waitfortransitiontop 4
+#define Controller_States_waitforleavenested 5
+#define Controller_Context_state_waitfortransitionnested 0
 #define Controller_Context_state_waitforenternested 1
-#define Controller_Context_state_waitfortransitiontop 2
-#define Controller_Context_state_waitfortransitionnested 3
-#define Controller_Context_state_error 4
-#define Controller_Context_state_finished 5
+#define Controller_Context_state_error 2
+#define Controller_Context_state_finished 3
+#define Controller_Context_state_waitfortransitiontop 4
+#define Controller_Context_state_waitforleavenested 5
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -128,7 +128,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert(((((Actuator_States_vc == Actuator_States_nested_0_green) || (Actuator_States_vc == Actuator_States_nested_0_red)) || (Actuator_States_vc == Actuator_States_wait)) || (Actuator_States_vc == Actuator_States_first)));
+    assert(((((Actuator_States_vc == Actuator_States_nested_0_red) || (Actuator_States_vc == Actuator_States_wait)) || (Actuator_States_vc == Actuator_States_nested_0_green)) || (Actuator_States_vc == Actuator_States_first)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -137,7 +137,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert(((((Actuator_Context_state_vc == Actuator_Context_state_nested_0_green) || (Actuator_Context_state_vc == Actuator_Context_state_nested_0_red)) || (Actuator_Context_state_vc == Actuator_Context_state_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_first)));
+    assert(((((Actuator_Context_state_vc == Actuator_Context_state_nested_0_red) || (Actuator_Context_state_vc == Actuator_Context_state_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_nested_0_green)) || (Actuator_Context_state_vc == Actuator_Context_state_first)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {
@@ -200,7 +200,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((((((Controller_States_vc == Controller_States_waitforleavenested) || (Controller_States_vc == Controller_States_waitforenternested)) || (Controller_States_vc == Controller_States_waitfortransitiontop)) || (Controller_States_vc == Controller_States_waitfortransitionnested)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_finished)));
+    assert(((((((Controller_States_vc == Controller_States_waitfortransitionnested) || (Controller_States_vc == Controller_States_waitforenternested)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_waitfortransitiontop)) || (Controller_States_vc == Controller_States_waitforleavenested)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -209,7 +209,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((((((Controller_Context_state_vc == Controller_Context_state_waitforleavenested) || (Controller_Context_state_vc == Controller_Context_state_waitforenternested)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitiontop)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitionnested)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_finished)));
+    assert(((((((Controller_Context_state_vc == Controller_Context_state_waitfortransitionnested) || (Controller_Context_state_vc == Controller_Context_state_waitforenternested)) || (Controller_Context_state_vc == Controller_Context_state_error)) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_waitfortransitiontop)) || (Controller_Context_state_vc == Controller_Context_state_waitforleavenested)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

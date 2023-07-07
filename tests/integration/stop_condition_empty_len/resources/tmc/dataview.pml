@@ -26,10 +26,10 @@
 #define Actuator_Context_offspring_actuator 0
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_env 2
-#define Controller_States_first 0
-#define Controller_States_second 1
-#define Controller_Context_state_first 0
-#define Controller_Context_state_second 1
+#define Controller_States_second 0
+#define Controller_States_first 1
+#define Controller_Context_state_second 0
+#define Controller_Context_state_first 1
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -139,7 +139,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((Controller_States_vc == Controller_States_first) || (Controller_States_vc == Controller_States_second)));
+    assert(((Controller_States_vc == Controller_States_second) || (Controller_States_vc == Controller_States_first)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -148,7 +148,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((Controller_Context_state_vc == Controller_Context_state_first) || (Controller_Context_state_vc == Controller_Context_state_second)));
+    assert(((Controller_Context_state_vc == Controller_Context_state_second) || (Controller_Context_state_vc == Controller_Context_state_first)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

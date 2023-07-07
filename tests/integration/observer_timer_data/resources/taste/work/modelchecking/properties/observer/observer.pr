@@ -1,5 +1,6 @@
 system observer;
-    /* CIF TEXT (148, 214), (391, 140) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (148, 214), (390, 140) */
     use datamodel comment 'observer.asn';
     
     signal ping_in renames input ping from controller to actuator;
@@ -13,6 +14,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
+            /* CIF Keep Specific Geode Partition 'default' */
             /* CIF TEXT (6, 63), (222, 140) */
             monitor st System_State;
             
@@ -24,7 +26,12 @@ system observer;
             START;
                 /* CIF NEXTSTATE (507, 133), (70, 35) */
                 NEXTSTATE Idle;
+            /* CIF state (818, 62), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state error;
+            endstate;
             /* CIF state (253, 285), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state Idle;
                 /* CIF input (253, 340), (70, 35) */
                 input ping_in;
@@ -48,9 +55,6 @@ system observer;
                             /* CIF NEXTSTATE (363, 508), (70, 35) */
                             NEXTSTATE error;
                     enddecision;
-            endstate;
-            /* CIF state (818, 62), (70, 35) */
-            state error;
             endstate;
         endprocess observer;
     endblock;

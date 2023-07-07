@@ -12,10 +12,6 @@ MyBool Controller_readvalue_signal_parameter;
 bool Controller_readvalue_channel_used = 0;
 system_state global_state;
 chan Controller_lock = [1] of {int};
-inline Environment_0_RI_0_readValue(controller_readValue_p1)
-{
-    Controller_readvalue_channel!controller_readValue_p1;
-}
 inline Controller_0_PI_0_readValue_unhandled_input(p1)
 {
     printf("unhandled_input controller readValue\n");
@@ -30,6 +26,10 @@ inline Controller_check_queue()
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Environment_0_RI_0_readValue(environment_readValue_Environment_readValue_p1)
+{
+    Controller_readvalue_channel!environment_readValue_Environment_readValue_p1;
 }
 active proctype Controller_readValue() priority 1
 {

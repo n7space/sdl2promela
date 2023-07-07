@@ -48,16 +48,16 @@
 #define Actuator_Context_offspring_env 2
 #define Actuator_Mychoicedatatype_Selection_first_present 1
 #define Actuator_Mychoicedatatype_Selection_second_present 2
-#define Controller_States_afterinteger 0
-#define Controller_States_afterarray 1
-#define Controller_States_afterchoice 2
-#define Controller_States_aftersequence 3
-#define Controller_States_afteroptional 4
-#define Controller_Context_state_afterinteger 0
-#define Controller_Context_state_afterarray 1
-#define Controller_Context_state_afterchoice 2
-#define Controller_Context_state_aftersequence 3
-#define Controller_Context_state_afteroptional 4
+#define Controller_States_afterchoice 0
+#define Controller_States_aftersequence 1
+#define Controller_States_afterarray 2
+#define Controller_States_afteroptional 3
+#define Controller_States_afterinteger 4
+#define Controller_Context_state_afterchoice 0
+#define Controller_Context_state_aftersequence 1
+#define Controller_Context_state_afterarray 2
+#define Controller_Context_state_afteroptional 3
+#define Controller_Context_state_afterinteger 4
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -268,7 +268,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((Controller_States_vc == Controller_States_afterinteger) || (Controller_States_vc == Controller_States_afterarray)) || (Controller_States_vc == Controller_States_afterchoice)) || (Controller_States_vc == Controller_States_aftersequence)) || (Controller_States_vc == Controller_States_afteroptional)));
+    assert((((((Controller_States_vc == Controller_States_afterchoice) || (Controller_States_vc == Controller_States_aftersequence)) || (Controller_States_vc == Controller_States_afterarray)) || (Controller_States_vc == Controller_States_afteroptional)) || (Controller_States_vc == Controller_States_afterinteger)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -277,7 +277,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert((((((Controller_Context_state_vc == Controller_Context_state_afterinteger) || (Controller_Context_state_vc == Controller_Context_state_afterarray)) || (Controller_Context_state_vc == Controller_Context_state_afterchoice)) || (Controller_Context_state_vc == Controller_Context_state_aftersequence)) || (Controller_Context_state_vc == Controller_Context_state_afteroptional)));
+    assert((((((Controller_Context_state_vc == Controller_Context_state_afterchoice) || (Controller_Context_state_vc == Controller_Context_state_aftersequence)) || (Controller_Context_state_vc == Controller_Context_state_afterarray)) || (Controller_Context_state_vc == Controller_Context_state_afteroptional)) || (Controller_Context_state_vc == Controller_Context_state_afterinteger)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

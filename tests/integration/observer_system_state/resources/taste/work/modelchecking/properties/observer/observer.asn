@@ -12,6 +12,7 @@ Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    ping-param MyInteger,
    pong-param MyInteger
 }
@@ -26,12 +27,13 @@ IMPORTS
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Controller-States ::= ENUMERATED {wait, operation}
+Controller-States ::= ENUMERATED {operation, wait}
 
 Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    test-param MyTestInteger,
    ping-param MyInteger,
    pong-param MyInteger
@@ -80,8 +82,11 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        actuator,
+       
        controller,
+       
        environ,
+       
        
        env
    }
@@ -149,6 +154,7 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -159,6 +165,7 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE { p1 MyInteger},
@@ -233,6 +240,11 @@ BEGIN
 
       actuator    Actuator-Context,
       controller  Controller-Context
+   }
+
+   --  List the GUI functions (environment of the system being simulated)
+   System-GUIs ::= ENUMERATED {
+      environ
    }
 
 END

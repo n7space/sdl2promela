@@ -1,8 +1,9 @@
 system observer;
-    /* CIF TEXT (115, 254), (460, 140) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (115, 254), (527, 140) */
     use datamodel comment 'observer.asn';
     
-    signal trigger_out renames output actuator_trigger from env to actuator;
+    signal trigger_out renames output actuator_trigger from timer_manager to actuator;
     /* CIF ENDTEXT */
     channel c
         from env to observer with trigger_out;
@@ -15,7 +16,8 @@ system observer;
         connect c and r;
         /* CIF PROCESS (305, 91), (150, 75) */
         process observer;
-            /* CIF TEXT (0, 57), (222, 140) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            /* CIF TEXT (4, 57), (222, 140) */
             monitor st System_State;
             
             monitor event Observable_Event;
@@ -27,15 +29,17 @@ system observer;
                 /* CIF NEXTSTATE (459, 147), (70, 35) */
                 NEXTSTATE Wait;
             /* CIF state (678, 61), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state Wait;
-                /* CIF input (662, 116), (90, 35) */
+                /* CIF input (656, 116), (90, 35) */
                 input trigger_out;
-                    /* CIF output (662, 171), (90, 35) */
+                    /* CIF output (656, 171), (90, 35) */
                     output trigger_out;
-                    /* CIF NEXTSTATE (672, 221), (70, 35) */
+                    /* CIF NEXTSTATE (666, 221), (70, 35) */
                     NEXTSTATE reached;
             endstate;
-            /* CIF state (252, 0), (70, 35) */
+            /* CIF state (246, 0), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state reached;
             endstate;
         endprocess observer;

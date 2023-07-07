@@ -30,32 +30,28 @@ system_state global_state;
 chan Controller_lock = [1] of {int};
 chan Down_lock = [1] of {int};
 chan Up_lock = [1] of {int};
-inline Down_0_RI_0_result(controller_down_result_p1)
-{
-    Controller_down_result_channel!controller_down_result_p1;
-}
 inline Controller_0_PI_0_down_result_unhandled_input(p1)
 {
     printf("unhandled_input controller down_result\n");
     skip;
-}
-inline Environ_0_RI_0_test(controller_test_p1)
-{
-    Controller_test_channel!controller_test_p1;
 }
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
     printf("unhandled_input controller test\n");
     skip;
 }
-inline Up_0_RI_0_result(controller_up_result_p1)
-{
-    Controller_up_result_channel!controller_up_result_p1;
-}
 inline Controller_0_PI_0_up_result_unhandled_input(p1)
 {
     printf("unhandled_input controller up_result\n");
     skip;
+}
+inline Controller_0_RI_0_down_check(controller_down_check_Controller_down_check_p1)
+{
+    Down_check_channel!controller_down_check_Controller_down_check_p1;
+}
+inline Controller_0_RI_0_up_check(controller_up_check_Controller_up_check_p1)
+{
+    Up_check_channel!controller_up_check_Controller_up_check_p1;
 }
 inline Controller_check_queue()
 {
@@ -67,14 +63,14 @@ inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
 }
-inline Controller_0_RI_0_down_check(down_check_p1)
-{
-    Down_check_channel!down_check_p1;
-}
 inline Down_0_PI_0_check_unhandled_input(p1)
 {
     printf("unhandled_input down check\n");
     skip;
+}
+inline Down_0_RI_0_result(down_result_Down_result_p1)
+{
+    Controller_down_result_channel!down_result_Down_result_p1;
 }
 inline Down_check_queue()
 {
@@ -86,14 +82,18 @@ inline Down_0_RI_0_get_sender(Down_sender_arg)
 {
     skip;
 }
-inline Controller_0_RI_0_up_check(up_check_p1)
+inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
 {
-    Up_check_channel!up_check_p1;
+    Controller_test_channel!environ_test_Environ_test_p1;
 }
 inline Up_0_PI_0_check_unhandled_input(p1)
 {
     printf("unhandled_input up check\n");
     skip;
+}
+inline Up_0_RI_0_result(up_result_Up_result_p1)
+{
+    Controller_up_result_channel!up_result_Up_result_p1;
 }
 inline Up_check_queue()
 {

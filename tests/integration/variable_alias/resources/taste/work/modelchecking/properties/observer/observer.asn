@@ -12,13 +12,14 @@ Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    param MyInteger,
    seq MySeq,
    arr MyArray,
    alt MyUnion
 }
 
-Actuator-Myunion-Selection  ::= ENUMERATED {left-present(1), right-present(2)}
+Actuator-Myunion-Selection ::= ENUMERATED {left-present(1), right-present(2)}
 END
 
 Controller-Datamodel DEFINITIONS ::=
@@ -35,10 +36,11 @@ Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    apollo MyInteger
 }
 
-Controller-Myunion-Selection  ::= ENUMERATED {left-present(1), right-present(2)}
+Controller-Myunion-Selection ::= ENUMERATED {left-present(1), right-present(2)}
 END
 
 TASTE-BasicTypes DEFINITIONS ::=
@@ -92,7 +94,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        actuator,
+       
        controller,
+       
        
        env
    }
@@ -134,6 +138,7 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -144,6 +149,7 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE { p1 MyInteger}
@@ -211,6 +217,7 @@ BEGIN
       actuator    Actuator-Context,
       controller  Controller-Context
    }
+
 
 END
 

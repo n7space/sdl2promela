@@ -3,15 +3,14 @@
 #define Observer_Context_init_done bool
 #define Observer_Context_sender int
 #define Observer_Context_offspring int
+#define Observer_Timer_Manager_Event_Msg_Out_Selection int
+#define Observer_Timer_Manager_Event_Selection int
 #define Observer_Actuator_Event_Msg_In_Selection int
 #define Observer_Actuator_Event_Msg_Out_Selection int
 #define Observer_Actuator_Event_Selection int
 #define Observer_Controller_Event_Msg_In_Selection int
 #define Observer_Controller_Event_Msg_Out_Selection int
 #define Observer_Controller_Event_Selection int
-#define Observer_Demo_Timer_Manager_Event_Msg_In_Selection int
-#define Observer_Demo_Timer_Manager_Event_Msg_Out_Selection int
-#define Observer_Demo_Timer_Manager_Event_Selection int
 #define Observer_Function_Event_Selection int
 #define Observer_Observable_Event_Selection int
 #define Actuator_States int
@@ -24,8 +23,8 @@
 #define Controller_Context_init_done bool
 #define Controller_Context_sender int
 #define Controller_Context_offspring int
-#define Demo_timer_manager_States int
-#define Demo_timer_manager_Context_state int
+#define Timer_manager_States int
+#define Timer_manager_Context_state int
 #define MyInteger int
 #define T_Int32 int
 #define T_UInt32 int
@@ -38,18 +37,22 @@
 #define TimerData_interval int
 #define AggregateTimerData_actuator_trigger_timer_enabled bool
 #define AggregateTimerData_actuator_trigger_interval int
-#define Observer_States_wait 0
-#define Observer_States_reached 1
-#define Observer_Context_state_wait 0
-#define Observer_Context_state_reached 1
-#define Observer_Context_sender_actuator 0
-#define Observer_Context_sender_controller 1
-#define Observer_Context_sender_demo_timer_manager 2
+#define Observer_States_reached 0
+#define Observer_States_wait 1
+#define Observer_Context_state_reached 0
+#define Observer_Context_state_wait 1
+#define Observer_Context_sender_timer_manager 0
+#define Observer_Context_sender_actuator 1
+#define Observer_Context_sender_controller 2
 #define Observer_Context_sender_env 3
-#define Observer_Context_offspring_actuator 0
-#define Observer_Context_offspring_controller 1
-#define Observer_Context_offspring_demo_timer_manager 2
+#define Observer_Context_offspring_timer_manager 0
+#define Observer_Context_offspring_actuator 1
+#define Observer_Context_offspring_controller 2
 #define Observer_Context_offspring_env 3
+#define Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_present 1
+#define Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_reset_present 2
+#define Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_set_present 3
+#define Observer_Timer_Manager_Event_Selection_msg_out_present 1
 #define Observer_Actuator_Event_Msg_In_Selection_input_none_present 1
 #define Observer_Actuator_Event_Msg_In_Selection_ping_present 2
 #define Observer_Actuator_Event_Msg_In_Selection_trigger_present 3
@@ -61,14 +64,9 @@
 #define Observer_Controller_Event_Msg_Out_Selection_ping_present 1
 #define Observer_Controller_Event_Selection_msg_in_present 1
 #define Observer_Controller_Event_Selection_msg_out_present 2
-#define Observer_Demo_Timer_Manager_Event_Msg_In_Selection_input_none_present 1
-#define Observer_Demo_Timer_Manager_Event_Msg_In_Selection_tick_present 2
-#define Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_present 1
-#define Observer_Demo_Timer_Manager_Event_Selection_msg_in_present 1
-#define Observer_Demo_Timer_Manager_Event_Selection_msg_out_present 2
 #define Observer_Function_Event_Selection_actuator_present 1
 #define Observer_Function_Event_Selection_controller_present 2
-#define Observer_Function_Event_Selection_env_present 3
+#define Observer_Function_Event_Selection_timer_manager_present 3
 #define Observer_Observable_Event_Selection_no_event_present 1
 #define Observer_Observable_Event_Selection_system_startup_present 2
 #define Observer_Observable_Event_Selection_input_event_present 3
@@ -76,29 +74,29 @@
 #define Observer_Observable_Event_Selection_unhandled_input_present 5
 #define Actuator_States_wait 0
 #define Actuator_Context_state_wait 0
-#define Actuator_Context_sender_actuator 0
-#define Actuator_Context_sender_controller 1
-#define Actuator_Context_sender_demo_timer_manager 2
+#define Actuator_Context_sender_timer_manager 0
+#define Actuator_Context_sender_actuator 1
+#define Actuator_Context_sender_controller 2
 #define Actuator_Context_sender_env 3
-#define Actuator_Context_offspring_actuator 0
-#define Actuator_Context_offspring_controller 1
-#define Actuator_Context_offspring_demo_timer_manager 2
+#define Actuator_Context_offspring_timer_manager 0
+#define Actuator_Context_offspring_actuator 1
+#define Actuator_Context_offspring_controller 2
 #define Actuator_Context_offspring_env 3
 #define Controller_States_wait 0
 #define Controller_Context_state_wait 0
-#define Controller_Context_sender_actuator 0
-#define Controller_Context_sender_controller 1
-#define Controller_Context_sender_demo_timer_manager 2
+#define Controller_Context_sender_timer_manager 0
+#define Controller_Context_sender_actuator 1
+#define Controller_Context_sender_controller 2
 #define Controller_Context_sender_env 3
-#define Controller_Context_offspring_actuator 0
-#define Controller_Context_offspring_controller 1
-#define Controller_Context_offspring_demo_timer_manager 2
+#define Controller_Context_offspring_timer_manager 0
+#define Controller_Context_offspring_actuator 1
+#define Controller_Context_offspring_controller 2
 #define Controller_Context_offspring_env 3
-#define Demo_timer_manager_States_wait 0
-#define Demo_timer_manager_Context_state_wait 0
-#define PID_actuator 0
-#define PID_controller 1
-#define PID_demo_timer_manager 2
+#define Timer_manager_States_wait 0
+#define Timer_manager_Context_state_wait 0
+#define PID_timer_manager 0
+#define PID_actuator 1
+#define PID_controller 2
 #define PID_env 3
 typedef Actuator_Context {
     Actuator_Context_state state;
@@ -127,10 +125,6 @@ typedef Controller_Context {
     Controller_Context_offspring offspring;
 }
 
-typedef Demo_timer_manager_Context {
-    Demo_timer_manager_Context_state state;
-}
-
 typedef Observer_Context {
     Observer_Context_state state;
     Observer_Context_init_done init_done;
@@ -145,6 +139,10 @@ typedef T_Null_Record {
 typedef TimerData {
     TimerData_timer_enabled timer_enabled;
     TimerData_interval interval;
+}
+
+typedef Timer_manager_Context {
+    Timer_manager_Context_state state;
 }
 
 typedef AggregateTimerData_actuator {
@@ -164,7 +162,7 @@ inline Observer_States_assign_value(dst, src)
 }
 inline Observer_States_range_check(Observer_States_vc)
 {
-    assert(((Observer_States_vc == Observer_States_wait) || (Observer_States_vc == Observer_States_reached)));
+    assert(((Observer_States_vc == Observer_States_reached) || (Observer_States_vc == Observer_States_wait)));
 }
 inline Observer_Context_state_assign_value(dst, src)
 {
@@ -173,7 +171,7 @@ inline Observer_Context_state_assign_value(dst, src)
 }
 inline Observer_Context_state_range_check(Observer_Context_state_vc)
 {
-    assert(((Observer_Context_state_vc == Observer_Context_state_wait) || (Observer_Context_state_vc == Observer_Context_state_reached)));
+    assert(((Observer_Context_state_vc == Observer_Context_state_reached) || (Observer_Context_state_vc == Observer_Context_state_wait)));
 }
 inline Observer_Context_init_done_assign_value(dst, src)
 {
@@ -191,7 +189,7 @@ inline Observer_Context_sender_assign_value(dst, src)
 }
 inline Observer_Context_sender_range_check(Observer_Context_sender_vc)
 {
-    assert(((((Observer_Context_sender_vc == Observer_Context_sender_actuator) || (Observer_Context_sender_vc == Observer_Context_sender_controller)) || (Observer_Context_sender_vc == Observer_Context_sender_demo_timer_manager)) || (Observer_Context_sender_vc == Observer_Context_sender_env)));
+    assert(((((Observer_Context_sender_vc == Observer_Context_sender_timer_manager) || (Observer_Context_sender_vc == Observer_Context_sender_actuator)) || (Observer_Context_sender_vc == Observer_Context_sender_controller)) || (Observer_Context_sender_vc == Observer_Context_sender_env)));
 }
 inline Observer_Context_offspring_assign_value(dst, src)
 {
@@ -200,7 +198,7 @@ inline Observer_Context_offspring_assign_value(dst, src)
 }
 inline Observer_Context_offspring_range_check(Observer_Context_offspring_vc)
 {
-    assert(((((Observer_Context_offspring_vc == Observer_Context_offspring_actuator) || (Observer_Context_offspring_vc == Observer_Context_offspring_controller)) || (Observer_Context_offspring_vc == Observer_Context_offspring_demo_timer_manager)) || (Observer_Context_offspring_vc == Observer_Context_offspring_env)));
+    assert(((((Observer_Context_offspring_vc == Observer_Context_offspring_timer_manager) || (Observer_Context_offspring_vc == Observer_Context_offspring_actuator)) || (Observer_Context_offspring_vc == Observer_Context_offspring_controller)) || (Observer_Context_offspring_vc == Observer_Context_offspring_env)));
 }
 inline Observer_Context_assign_value(dst, src)
 {
@@ -208,6 +206,24 @@ inline Observer_Context_assign_value(dst, src)
     Observer_Context_init_done_assign_value(dst.init_done, src.init_done);
     Observer_Context_sender_assign_value(dst.sender, src.sender);
     Observer_Context_offspring_assign_value(dst.offspring, src.offspring);
+}
+inline Observer_Timer_Manager_Event_Msg_Out_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Observer_Timer_Manager_Event_Msg_Out_Selection_range_check(dst);
+}
+inline Observer_Timer_Manager_Event_Msg_Out_Selection_range_check(Observer_Timer_Manager_Event_Msg_Out_Selection_vc)
+{
+    assert((((Observer_Timer_Manager_Event_Msg_Out_Selection_vc == Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_present) || (Observer_Timer_Manager_Event_Msg_Out_Selection_vc == Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_reset_present)) || (Observer_Timer_Manager_Event_Msg_Out_Selection_vc == Observer_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_set_present)));
+}
+inline Observer_Timer_Manager_Event_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Observer_Timer_Manager_Event_Selection_range_check(dst);
+}
+inline Observer_Timer_Manager_Event_Selection_range_check(Observer_Timer_Manager_Event_Selection_vc)
+{
+    assert((Observer_Timer_Manager_Event_Selection_vc == Observer_Timer_Manager_Event_Selection_msg_out_present));
 }
 inline Observer_Actuator_Event_Msg_In_Selection_assign_value(dst, src)
 {
@@ -263,33 +279,6 @@ inline Observer_Controller_Event_Selection_range_check(Observer_Controller_Event
 {
     assert(((Observer_Controller_Event_Selection_vc == Observer_Controller_Event_Selection_msg_in_present) || (Observer_Controller_Event_Selection_vc == Observer_Controller_Event_Selection_msg_out_present)));
 }
-inline Observer_Demo_Timer_Manager_Event_Msg_In_Selection_assign_value(dst, src)
-{
-    dst = src;
-    Observer_Demo_Timer_Manager_Event_Msg_In_Selection_range_check(dst);
-}
-inline Observer_Demo_Timer_Manager_Event_Msg_In_Selection_range_check(Observer_Demo_Timer_Manager_Event_Msg_In_Selection_vc)
-{
-    assert(((Observer_Demo_Timer_Manager_Event_Msg_In_Selection_vc == Observer_Demo_Timer_Manager_Event_Msg_In_Selection_input_none_present) || (Observer_Demo_Timer_Manager_Event_Msg_In_Selection_vc == Observer_Demo_Timer_Manager_Event_Msg_In_Selection_tick_present)));
-}
-inline Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_assign_value(dst, src)
-{
-    dst = src;
-    Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_range_check(dst);
-}
-inline Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_range_check(Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_vc)
-{
-    assert((Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_vc == Observer_Demo_Timer_Manager_Event_Msg_Out_Selection_actuator_trigger_present));
-}
-inline Observer_Demo_Timer_Manager_Event_Selection_assign_value(dst, src)
-{
-    dst = src;
-    Observer_Demo_Timer_Manager_Event_Selection_range_check(dst);
-}
-inline Observer_Demo_Timer_Manager_Event_Selection_range_check(Observer_Demo_Timer_Manager_Event_Selection_vc)
-{
-    assert(((Observer_Demo_Timer_Manager_Event_Selection_vc == Observer_Demo_Timer_Manager_Event_Selection_msg_in_present) || (Observer_Demo_Timer_Manager_Event_Selection_vc == Observer_Demo_Timer_Manager_Event_Selection_msg_out_present)));
-}
 inline Observer_Function_Event_Selection_assign_value(dst, src)
 {
     dst = src;
@@ -297,7 +286,7 @@ inline Observer_Function_Event_Selection_assign_value(dst, src)
 }
 inline Observer_Function_Event_Selection_range_check(Observer_Function_Event_Selection_vc)
 {
-    assert((((Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_actuator_present) || (Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_controller_present)) || (Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_env_present)));
+    assert((((Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_actuator_present) || (Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_controller_present)) || (Observer_Function_Event_Selection_vc == Observer_Function_Event_Selection_timer_manager_present)));
 }
 inline Observer_Observable_Event_Selection_assign_value(dst, src)
 {
@@ -342,7 +331,7 @@ inline Actuator_Context_sender_assign_value(dst, src)
 }
 inline Actuator_Context_sender_range_check(Actuator_Context_sender_vc)
 {
-    assert(((((Actuator_Context_sender_vc == Actuator_Context_sender_actuator) || (Actuator_Context_sender_vc == Actuator_Context_sender_controller)) || (Actuator_Context_sender_vc == Actuator_Context_sender_demo_timer_manager)) || (Actuator_Context_sender_vc == Actuator_Context_sender_env)));
+    assert(((((Actuator_Context_sender_vc == Actuator_Context_sender_timer_manager) || (Actuator_Context_sender_vc == Actuator_Context_sender_actuator)) || (Actuator_Context_sender_vc == Actuator_Context_sender_controller)) || (Actuator_Context_sender_vc == Actuator_Context_sender_env)));
 }
 inline Actuator_Context_offspring_assign_value(dst, src)
 {
@@ -351,7 +340,7 @@ inline Actuator_Context_offspring_assign_value(dst, src)
 }
 inline Actuator_Context_offspring_range_check(Actuator_Context_offspring_vc)
 {
-    assert(((((Actuator_Context_offspring_vc == Actuator_Context_offspring_actuator) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_controller)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_demo_timer_manager)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_env)));
+    assert(((((Actuator_Context_offspring_vc == Actuator_Context_offspring_timer_manager) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_actuator)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_controller)) || (Actuator_Context_offspring_vc == Actuator_Context_offspring_env)));
 }
 inline Actuator_Context_assign_value(dst, src)
 {
@@ -394,7 +383,7 @@ inline Controller_Context_sender_assign_value(dst, src)
 }
 inline Controller_Context_sender_range_check(Controller_Context_sender_vc)
 {
-    assert(((((Controller_Context_sender_vc == Controller_Context_sender_actuator) || (Controller_Context_sender_vc == Controller_Context_sender_controller)) || (Controller_Context_sender_vc == Controller_Context_sender_demo_timer_manager)) || (Controller_Context_sender_vc == Controller_Context_sender_env)));
+    assert(((((Controller_Context_sender_vc == Controller_Context_sender_timer_manager) || (Controller_Context_sender_vc == Controller_Context_sender_actuator)) || (Controller_Context_sender_vc == Controller_Context_sender_controller)) || (Controller_Context_sender_vc == Controller_Context_sender_env)));
 }
 inline Controller_Context_offspring_assign_value(dst, src)
 {
@@ -403,7 +392,7 @@ inline Controller_Context_offspring_assign_value(dst, src)
 }
 inline Controller_Context_offspring_range_check(Controller_Context_offspring_vc)
 {
-    assert(((((Controller_Context_offspring_vc == Controller_Context_offspring_actuator) || (Controller_Context_offspring_vc == Controller_Context_offspring_controller)) || (Controller_Context_offspring_vc == Controller_Context_offspring_demo_timer_manager)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
+    assert(((((Controller_Context_offspring_vc == Controller_Context_offspring_timer_manager) || (Controller_Context_offspring_vc == Controller_Context_offspring_actuator)) || (Controller_Context_offspring_vc == Controller_Context_offspring_controller)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
 }
 inline Controller_Context_assign_value(dst, src)
 {
@@ -412,27 +401,27 @@ inline Controller_Context_assign_value(dst, src)
     Controller_Context_sender_assign_value(dst.sender, src.sender);
     Controller_Context_offspring_assign_value(dst.offspring, src.offspring);
 }
-inline Demo_timer_manager_States_assign_value(dst, src)
+inline Timer_manager_States_assign_value(dst, src)
 {
     dst = src;
-    Demo_timer_manager_States_range_check(dst);
+    Timer_manager_States_range_check(dst);
 }
-inline Demo_timer_manager_States_range_check(Demo_timer_manager_States_vc)
+inline Timer_manager_States_range_check(Timer_manager_States_vc)
 {
-    assert((Demo_timer_manager_States_vc == Demo_timer_manager_States_wait));
+    assert((Timer_manager_States_vc == Timer_manager_States_wait));
 }
-inline Demo_timer_manager_Context_state_assign_value(dst, src)
+inline Timer_manager_Context_state_assign_value(dst, src)
 {
     dst = src;
-    Demo_timer_manager_Context_state_range_check(dst);
+    Timer_manager_Context_state_range_check(dst);
 }
-inline Demo_timer_manager_Context_state_range_check(Demo_timer_manager_Context_state_vc)
+inline Timer_manager_Context_state_range_check(Timer_manager_Context_state_vc)
 {
-    assert((Demo_timer_manager_Context_state_vc == Demo_timer_manager_Context_state_wait));
+    assert((Timer_manager_Context_state_vc == Timer_manager_Context_state_wait));
 }
-inline Demo_timer_manager_Context_assign_value(dst, src)
+inline Timer_manager_Context_assign_value(dst, src)
 {
-    Demo_timer_manager_Context_state_assign_value(dst.state, src.state);
+    Timer_manager_Context_state_assign_value(dst.state, src.state);
 }
 inline MyInteger_assign_value(dst, src)
 {
@@ -508,7 +497,7 @@ inline PID_assign_value(dst, src)
 }
 inline PID_range_check(PID_vc)
 {
-    assert(((((PID_vc == PID_actuator) || (PID_vc == PID_controller)) || (PID_vc == PID_demo_timer_manager)) || (PID_vc == PID_env)));
+    assert(((((PID_vc == PID_timer_manager) || (PID_vc == PID_actuator)) || (PID_vc == PID_controller)) || (PID_vc == PID_env)));
 }
 inline TimerData_timer_enabled_assign_value(dst, src)
 {

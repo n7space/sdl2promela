@@ -56,10 +56,10 @@
 #define Actuator_Mytestparam_Selection_snare_present 1
 #define Actuator_Mytestparam_Selection_kick_present 2
 #define Actuator_Mytestparam_Selection_ride_present 3
-#define Controller_States_wait 0
-#define Controller_States_operation 1
-#define Controller_Context_state_wait 0
-#define Controller_Context_state_operation 1
+#define Controller_States_operation 0
+#define Controller_States_wait 1
+#define Controller_Context_state_operation 0
+#define Controller_Context_state_wait 1
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_environ 2
@@ -294,7 +294,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((Controller_States_vc == Controller_States_wait) || (Controller_States_vc == Controller_States_operation)));
+    assert(((Controller_States_vc == Controller_States_operation) || (Controller_States_vc == Controller_States_wait)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -303,7 +303,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((Controller_Context_state_vc == Controller_Context_state_wait) || (Controller_Context_state_vc == Controller_Context_state_operation)));
+    assert(((Controller_Context_state_vc == Controller_Context_state_operation) || (Controller_Context_state_vc == Controller_Context_state_wait)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

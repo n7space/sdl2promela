@@ -15,23 +15,19 @@ chan Controller_pong_channel = [2] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_ping()
-{
-    Actuator_ping_channel!0;
-}
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
     printf("unhandled_input actuator ping\n");
     skip;
 }
-inline Controller_0_RI_0_testSignal()
-{
-    Actuator_testsignal_channel!0;
-}
 inline Actuator_0_PI_0_testSignal_unhandled_input()
 {
     printf("unhandled_input actuator testSignal\n");
     skip;
+}
+inline Actuator_0_RI_0_pong()
+{
+    Controller_pong_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -43,14 +39,18 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_pong()
-{
-    Controller_pong_channel!0;
-}
 inline Controller_0_PI_0_pong_unhandled_input()
 {
     printf("unhandled_input controller pong\n");
     skip;
+}
+inline Controller_0_RI_0_ping()
+{
+    Actuator_ping_channel!0;
+}
+inline Controller_0_RI_0_testSignal()
+{
+    Actuator_testsignal_channel!0;
 }
 inline Controller_check_queue()
 {

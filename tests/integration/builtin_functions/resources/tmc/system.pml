@@ -51,95 +51,67 @@ bool Controller_result_int_channel_used = 0;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_test_derived_length(actuator_test_derived_length_p1)
-{
-    Actuator_test_derived_length_channel!actuator_test_derived_length_p1;
-}
 inline Actuator_0_PI_0_test_derived_length_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_derived_length\n");
     skip;
-}
-inline Controller_0_RI_0_test_exist(actuator_test_exist_p1)
-{
-    Actuator_test_exist_channel!actuator_test_exist_p1;
 }
 inline Actuator_0_PI_0_test_exist_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_exist\n");
     skip;
 }
-inline Controller_0_RI_0_test_length(actuator_test_length_p1)
-{
-    Actuator_test_length_channel!actuator_test_length_p1;
-}
 inline Actuator_0_PI_0_test_length_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_length\n");
     skip;
-}
-inline Controller_0_RI_0_test_length_derived_fixed(actuator_test_length_derived_fixed_p1)
-{
-    Actuator_test_length_derived_fixed_channel!actuator_test_length_derived_fixed_p1;
 }
 inline Actuator_0_PI_0_test_length_derived_fixed_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_length_derived_fixed\n");
     skip;
 }
-inline Controller_0_RI_0_test_length_fixed(actuator_test_length_fixed_p1)
-{
-    Actuator_test_length_fixed_channel!actuator_test_length_fixed_p1;
-}
 inline Actuator_0_PI_0_test_length_fixed_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_length_fixed\n");
     skip;
-}
-inline Controller_0_RI_0_test_num(actuator_test_num_p1)
-{
-    Actuator_test_num_channel!actuator_test_num_p1;
 }
 inline Actuator_0_PI_0_test_num_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_num\n");
     skip;
 }
-inline Controller_0_RI_0_test_present(actuator_test_present_p1)
-{
-    Actuator_test_present_channel!actuator_test_present_p1;
-}
 inline Actuator_0_PI_0_test_present_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_present\n");
     skip;
-}
-inline Controller_0_RI_0_test_to_enum(actuator_test_to_enum_p1)
-{
-    Actuator_test_to_enum_channel!actuator_test_to_enum_p1;
 }
 inline Actuator_0_PI_0_test_to_enum_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_to_enum\n");
     skip;
 }
-inline Controller_0_RI_0_test_to_selector(actuator_test_to_selector_p1)
-{
-    Actuator_test_to_selector_channel!actuator_test_to_selector_p1;
-}
 inline Actuator_0_PI_0_test_to_selector_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_to_selector\n");
     skip;
 }
-inline Controller_0_RI_0_test_val(actuator_test_val_p1)
-{
-    Actuator_test_val_channel!actuator_test_val_p1;
-}
 inline Actuator_0_PI_0_test_val_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_val\n");
     skip;
+}
+inline Actuator_0_RI_0_result(actuator_result_Actuator_result_p1)
+{
+    Controller_result_channel!actuator_result_Actuator_result_p1;
+}
+inline Actuator_0_RI_0_result_enum(actuator_result_enum_Actuator_result_enum_p1)
+{
+    Controller_result_enum_channel!actuator_result_enum_Actuator_result_enum_p1;
+}
+inline Actuator_0_RI_0_result_int(actuator_result_int_Actuator_result_int_p1)
+{
+    Controller_result_int_channel!actuator_result_int_Actuator_result_int_p1;
 }
 inline Actuator_check_queue()
 {
@@ -151,32 +123,60 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result(controller_result_p1)
-{
-    Controller_result_channel!controller_result_p1;
-}
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
     printf("unhandled_input controller result\n");
     skip;
-}
-inline Actuator_0_RI_0_result_enum(controller_result_enum_p1)
-{
-    Controller_result_enum_channel!controller_result_enum_p1;
 }
 inline Controller_0_PI_0_result_enum_unhandled_input(p1)
 {
     printf("unhandled_input controller result_enum\n");
     skip;
 }
-inline Actuator_0_RI_0_result_int(controller_result_int_p1)
-{
-    Controller_result_int_channel!controller_result_int_p1;
-}
 inline Controller_0_PI_0_result_int_unhandled_input(p1)
 {
     printf("unhandled_input controller result_int\n");
     skip;
+}
+inline Controller_0_RI_0_test_derived_length(controller_test_derived_length_Controller_test_derived_length_p1)
+{
+    Actuator_test_derived_length_channel!controller_test_derived_length_Controller_test_derived_length_p1;
+}
+inline Controller_0_RI_0_test_exist(controller_test_exist_Controller_test_exist_p1)
+{
+    Actuator_test_exist_channel!controller_test_exist_Controller_test_exist_p1;
+}
+inline Controller_0_RI_0_test_length(controller_test_length_Controller_test_length_p1)
+{
+    Actuator_test_length_channel!controller_test_length_Controller_test_length_p1;
+}
+inline Controller_0_RI_0_test_length_derived_fixed(controller_test_length_derived_fixed_Controller_test_length_derived_fixed_p1)
+{
+    Actuator_test_length_derived_fixed_channel!controller_test_length_derived_fixed_Controller_test_length_derived_fixed_p1;
+}
+inline Controller_0_RI_0_test_length_fixed(controller_test_length_fixed_Controller_test_length_fixed_p1)
+{
+    Actuator_test_length_fixed_channel!controller_test_length_fixed_Controller_test_length_fixed_p1;
+}
+inline Controller_0_RI_0_test_num(controller_test_num_Controller_test_num_p1)
+{
+    Actuator_test_num_channel!controller_test_num_Controller_test_num_p1;
+}
+inline Controller_0_RI_0_test_present(controller_test_present_Controller_test_present_p1)
+{
+    Actuator_test_present_channel!controller_test_present_Controller_test_present_p1;
+}
+inline Controller_0_RI_0_test_to_enum(controller_test_to_enum_Controller_test_to_enum_p1)
+{
+    Actuator_test_to_enum_channel!controller_test_to_enum_Controller_test_to_enum_p1;
+}
+inline Controller_0_RI_0_test_to_selector(controller_test_to_selector_Controller_test_to_selector_p1)
+{
+    Actuator_test_to_selector_channel!controller_test_to_selector_Controller_test_to_selector_p1;
+}
+inline Controller_0_RI_0_test_val(controller_test_val_Controller_test_val_p1)
+{
+    Actuator_test_val_channel!controller_test_val_Controller_test_val_p1;
 }
 inline Controller_check_queue()
 {

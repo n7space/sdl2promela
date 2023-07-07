@@ -28,50 +28,34 @@ chan Controller_result_channel = [1] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_test_array(actuator_test_array_p1)
-{
-    Actuator_test_array_channel!actuator_test_array_p1;
-}
 inline Actuator_0_PI_0_test_array_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_array\n");
     skip;
-}
-inline Controller_0_RI_0_test_choice(actuator_test_choice_p1)
-{
-    Actuator_test_choice_channel!actuator_test_choice_p1;
 }
 inline Actuator_0_PI_0_test_choice_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_choice\n");
     skip;
 }
-inline Controller_0_RI_0_test_integer(actuator_test_integer_p1)
-{
-    Actuator_test_integer_channel!actuator_test_integer_p1;
-}
 inline Actuator_0_PI_0_test_integer_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_integer\n");
     skip;
-}
-inline Controller_0_RI_0_test_optional(actuator_test_optional_p1)
-{
-    Actuator_test_optional_channel!actuator_test_optional_p1;
 }
 inline Actuator_0_PI_0_test_optional_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_optional\n");
     skip;
 }
-inline Controller_0_RI_0_test_sequence(actuator_test_sequence_p1)
-{
-    Actuator_test_sequence_channel!actuator_test_sequence_p1;
-}
 inline Actuator_0_PI_0_test_sequence_unhandled_input(p1)
 {
     printf("unhandled_input actuator test_sequence\n");
     skip;
+}
+inline Actuator_0_RI_0_result()
+{
+    Controller_result_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -83,14 +67,30 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result()
-{
-    Controller_result_channel!0;
-}
 inline Controller_0_PI_0_result_unhandled_input()
 {
     printf("unhandled_input controller result\n");
     skip;
+}
+inline Controller_0_RI_0_test_array(controller_test_array_Controller_test_array_p1)
+{
+    Actuator_test_array_channel!controller_test_array_Controller_test_array_p1;
+}
+inline Controller_0_RI_0_test_choice(controller_test_choice_Controller_test_choice_p1)
+{
+    Actuator_test_choice_channel!controller_test_choice_Controller_test_choice_p1;
+}
+inline Controller_0_RI_0_test_integer(controller_test_integer_Controller_test_integer_p1)
+{
+    Actuator_test_integer_channel!controller_test_integer_Controller_test_integer_p1;
+}
+inline Controller_0_RI_0_test_optional(controller_test_optional_Controller_test_optional_p1)
+{
+    Actuator_test_optional_channel!controller_test_optional_Controller_test_optional_p1;
+}
+inline Controller_0_RI_0_test_sequence(controller_test_sequence_Controller_test_sequence_p1)
+{
+    Actuator_test_sequence_channel!controller_test_sequence_Controller_test_sequence_p1;
 }
 inline Controller_check_queue()
 {

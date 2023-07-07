@@ -12,6 +12,7 @@ Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    ping-param MyInteger,
    pong-param MyInteger
 }
@@ -32,6 +33,7 @@ Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
    sender PID,
+   offspring PID,
    ping-param MyInteger,
    pong-param MyInteger
 }
@@ -77,7 +79,9 @@ BEGIN
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
        actuator,
+       
        controller,
+       
        
        env
    }
@@ -119,6 +123,7 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -129,6 +134,7 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE { p1 MyInteger}
@@ -196,6 +202,7 @@ BEGIN
       actuator    Actuator-Context,
       controller  Controller-Context
    }
+
 
 END
 

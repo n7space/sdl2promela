@@ -11,10 +11,11 @@ typedef system_state {
 }
 
 int inited;
-chan Actuator_observer_actuator_trigger_channel = [1] of {int};
 chan Actuator_ping_channel = [1] of {int};
+chan Actuator_observer_actuator_trigger_channel = [1] of {int};
 chan Actuator_trigger_channel = [1] of {int};
 chan Controller_pong_channel = [1] of {int};
+chan Controller_test_channel = [1] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
@@ -34,10 +35,6 @@ inline Observer_0_RI_0_trigger_out()
 {
     Actuator_observer_actuator_trigger_channel!1;
 }
-inline Controller_0_RI_0_ping()
-{
-    Actuator_ping_channel!0;
-}
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
     printf("unhandled_input actuator ping\n");
@@ -47,6 +44,10 @@ inline Actuator_0_PI_0_trigger_unhandled_input()
 {
     printf("unhandled_input actuator trigger\n");
     skip;
+}
+inline Actuator_0_RI_0_pong()
+{
+    Controller_pong_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -58,24 +59,33 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_pong()
-{
-    Controller_pong_channel!0;
-}
 inline Controller_0_PI_0_pong_unhandled_input()
 {
     printf("unhandled_input controller pong\n");
     skip;
 }
+inline Controller_0_PI_0_test_unhandled_input()
+{
+    printf("unhandled_input controller test\n");
+    skip;
+}
+inline Controller_0_RI_0_ping()
+{
+    Actuator_ping_channel!0;
+}
 inline Controller_check_queue()
 {
     atomic {
-        empty(Controller_pong_channel);
+        (empty(Controller_pong_channel) && empty(Controller_test_channel));
     }
 }
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Egse_0_RI_0_test()
+{
+    Controller_test_channel!0;
 }
 active proctype timer_manager_proc() priority 1
 {
@@ -160,6 +170,35 @@ Controller_pong_loop:
             skip;
         fi;
         Controller_lock!1;
+    }
+    od;
+}
+active proctype Controller_test() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        nempty(Controller_test_channel);
+        Controller_lock?_;
+Controller_test_loop:
+        if
+        ::  nempty(Controller_test_channel);
+            Controller_test_channel?_;
+            Controller_0_PI_0_test();
+            goto Controller_test_loop;
+        ::  empty(Controller_test_channel);
+            skip;
+        fi;
+        Controller_lock!1;
+    }
+    od;
+}
+active proctype Egse_test() priority 1
+{
+    inited;
+    do
+    ::  atomic {
+        Egse_0_RI_0_test();
     }
     od;
 }

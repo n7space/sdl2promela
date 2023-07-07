@@ -11,7 +11,8 @@ Actuator-States ::= ENUMERATED {wait}
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 END
@@ -29,18 +30,19 @@ Controller-States ::= ENUMERATED {wait}
 Controller-Context ::= SEQUENCE {
    state Controller-States,
    init-done BOOLEAN,
-   sender PID
+   sender PID,
+   offspring PID
 }
 
 END
 
 -- Dummy data model for the timer manager (needed to populate observer.asn)
-Demo-timer-manager-Datamodel DEFINITIONS ::=
+Timer-manager-Datamodel DEFINITIONS ::=
 BEGIN
-Demo-timer-manager-States ::= ENUMERATED {wait}
+Timer-manager-States ::= ENUMERATED {wait}
 
-Demo-timer-manager-Context ::= SEQUENCE {
-   state Demo-timer-manager-States
+Timer-manager-Context ::= SEQUENCE {
+   state Timer-manager-States
 }
 
 END
@@ -79,12 +81,16 @@ System-Dataview DEFINITIONS ::=
 BEGIN
 
    -- Range of PID - type can be used to size arrays of PID type
-   PID-Range ::= INTEGER(0..2)
+   PID-Range ::= INTEGER(0..3)
 
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
+       timer-manager,
+       
        actuator,
+       
        controller,
+       
        
        env
    }
@@ -106,9 +112,9 @@ BEGIN
       -- Import timers
       AggregateTimerData FROM Simulation-Timers-DataView
       --  Import the SDL function states needed for the global system state
-      Actuator-Context           FROM Actuator-Datamodel
-      Controller-Context         FROM Controller-Datamodel
-      Demo-timer-manager-Context FROM Demo-timer-manager-Datamodel
+      Actuator-Context      FROM Actuator-Datamodel
+      Controller-Context    FROM Controller-Datamodel
+      Timer-manager-Context FROM Timer-manager-Datamodel
    ;
 
    --  Simulator needs to knows about cyclic interfaces
@@ -125,6 +131,7 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
+      -- Lang: SDL TRUE TRUE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE {  },
@@ -136,6 +143,7 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
+      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE {  }
@@ -145,20 +153,12 @@ BEGIN
       }
    }
    
-   Demo-Timer-Manager-Event ::= CHOICE {
-      msg-in CHOICE {
-         input-none SEQUENCE {},
-         tick SEQUENCE {  }
-      },
+   Timer-Manager-Event ::= CHOICE {
       msg-out CHOICE {
-         actuator-trigger SEQUENCE {   }
+         actuator-trigger       SEQUENCE {   },
+         actuator-trigger-reset SEQUENCE {   },
+         actuator-trigger-set   SEQUENCE { val T-UInt32 }
       }
-   }
-   Demo-Timer-Manager-Periodic-Events ::=
-      Periodic-Events {Demo-Timer-Manager-Event, 1}
-   
-   demo-timer-manager-periodic-events Demo-Timer-Manager-Periodic-Events ::= {
-      { period 10, event msg-in: tick : {} }
    }
    
 
@@ -172,9 +172,9 @@ BEGIN
 
    --  Event related to the execution of a PI or call of a RI in the functional code
    Function-Event ::= CHOICE {
-      actuator   Actuator-Event,
-      controller Controller-Event,
-      env        Demo-Timer-Manager-Event
+      actuator      Actuator-Event,
+      controller    Controller-Event,
+      timer-manager Timer-Manager-Event
    }
 
    --  Type used to store events in a database: associate a name to the event
@@ -217,10 +217,11 @@ BEGIN
       actuator-queue   Events-Ty (SIZE (0 .. actuator-queue-size)),
       controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
 
-      actuator            Actuator-Context,
-      controller          Controller-Context,
-      demo-timer-manager  Demo-timer-manager-Context
+      actuator       Actuator-Context,
+      controller     Controller-Context,
+      timer-manager  Timer-manager-Context
    }
+
 
 END
 
