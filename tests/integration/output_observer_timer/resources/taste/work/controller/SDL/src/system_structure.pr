@@ -6,6 +6,9 @@ use Datamodel;
 system Controller;
 
    signal pong;
+   
+   
+   signal test;
 
    signal ping;
 
@@ -15,14 +18,14 @@ system Controller;
    external;
 
    channel c
-      from env to Controller with pong;
+      from env to Controller with pong, test;
       from Controller to env with ping;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with pong;
+      from env to Controller with pong, test;
       from Controller to env with ping;
       connect c and r;
 

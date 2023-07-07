@@ -18,14 +18,14 @@ bool Controller_pong_channel_used = 0;
 system_state global_state;
 chan Actuatorinst_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_ping(actuatorinst_ping_p1)
-{
-    Actuatorinst_ping_channel!actuatorinst_ping_p1;
-}
 inline Actuatorinst_0_PI_0_ping_unhandled_input(p1)
 {
     printf("unhandled_input actuatorinst ping\n");
     skip;
+}
+inline Actuatorinst_0_RI_0_pong(actuatorinst_pong_Actuatorinst_pong_p1)
+{
+    Controller_pong_channel!actuatorinst_pong_Actuatorinst_pong_p1;
 }
 inline Actuatorinst_check_queue()
 {
@@ -37,14 +37,14 @@ inline Actuatorinst_0_RI_0_get_sender(Actuatorinst_sender_arg)
 {
     skip;
 }
-inline Actuatorinst_0_RI_0_pong(controller_pong_p1)
-{
-    Controller_pong_channel!controller_pong_p1;
-}
 inline Controller_0_PI_0_pong_unhandled_input(p1)
 {
     printf("unhandled_input controller pong\n");
     skip;
+}
+inline Controller_0_RI_0_ping(controller_ping_Controller_ping_p1)
+{
+    Actuatorinst_ping_channel!controller_ping_Controller_ping_p1;
 }
 inline Controller_check_queue()
 {

@@ -30,18 +30,18 @@
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_environ 2
 #define Actuator_Context_offspring_env 3
-#define Controller_States_success 0
-#define Controller_States_waitforboth 1
-#define Controller_States_waitforproc 2
-#define Controller_States_waitfortrans 3
-#define Controller_States_wait 4
-#define Controller_States_failure 5
-#define Controller_Context_state_success 0
-#define Controller_Context_state_waitforboth 1
-#define Controller_Context_state_waitforproc 2
-#define Controller_Context_state_waitfortrans 3
-#define Controller_Context_state_wait 4
-#define Controller_Context_state_failure 5
+#define Controller_States_failure 0
+#define Controller_States_wait 1
+#define Controller_States_success 2
+#define Controller_States_waitforproc 3
+#define Controller_States_waitfortrans 4
+#define Controller_States_waitforboth 5
+#define Controller_Context_state_failure 0
+#define Controller_Context_state_wait 1
+#define Controller_Context_state_success 2
+#define Controller_Context_state_waitforproc 3
+#define Controller_Context_state_waitfortrans 4
+#define Controller_Context_state_waitforboth 5
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_environ 2
@@ -166,7 +166,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((((((Controller_States_vc == Controller_States_success) || (Controller_States_vc == Controller_States_waitforboth)) || (Controller_States_vc == Controller_States_waitforproc)) || (Controller_States_vc == Controller_States_waitfortrans)) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_failure)));
+    assert(((((((Controller_States_vc == Controller_States_failure) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_success)) || (Controller_States_vc == Controller_States_waitforproc)) || (Controller_States_vc == Controller_States_waitfortrans)) || (Controller_States_vc == Controller_States_waitforboth)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -175,7 +175,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((((((Controller_Context_state_vc == Controller_Context_state_success) || (Controller_Context_state_vc == Controller_Context_state_waitforboth)) || (Controller_Context_state_vc == Controller_Context_state_waitforproc)) || (Controller_Context_state_vc == Controller_Context_state_waitfortrans)) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_failure)));
+    assert(((((((Controller_Context_state_vc == Controller_Context_state_failure) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_success)) || (Controller_Context_state_vc == Controller_Context_state_waitforproc)) || (Controller_Context_state_vc == Controller_Context_state_waitfortrans)) || (Controller_Context_state_vc == Controller_Context_state_waitforboth)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

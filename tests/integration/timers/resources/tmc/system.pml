@@ -26,10 +26,6 @@ inline Actuator_0_watchdog_reset()
     global_state.timers.actuator.watchdog.timer_enabled = false;
     printf("reset_timer actuator watchdog\n");
 }
-inline Controller_0_RI_0_ping()
-{
-    Actuator_ping_channel!0;
-}
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
     printf("unhandled_input actuator ping\n");
@@ -39,6 +35,10 @@ inline Actuator_0_PI_0_watchdog_unhandled_input()
 {
     printf("unhandled_input actuator watchdog\n");
     skip;
+}
+inline Actuator_0_RI_0_pong()
+{
+    Controller_pong_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -50,14 +50,14 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_pong()
-{
-    Controller_pong_channel!0;
-}
 inline Controller_0_PI_0_pong_unhandled_input()
 {
     printf("unhandled_input controller pong\n");
     skip;
+}
+inline Controller_0_RI_0_ping()
+{
+    Actuator_ping_channel!0;
 }
 inline Controller_check_queue()
 {

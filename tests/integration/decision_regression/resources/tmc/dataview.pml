@@ -60,11 +60,11 @@
 #define Observer_Observable_Event_Selection_input_event_present 3
 #define Observer_Observable_Event_Selection_output_event_present 4
 #define Observer_Observable_Event_Selection_unhandled_input_present 5
-#define Actuator_States_wait 0
-#define Actuator_States_left 1
+#define Actuator_States_left 0
+#define Actuator_States_wait 1
 #define Actuator_States_right 2
-#define Actuator_Context_state_wait 0
-#define Actuator_Context_state_left 1
+#define Actuator_Context_state_left 0
+#define Actuator_Context_state_wait 1
 #define Actuator_Context_state_right 2
 #define Actuator_Context_sender_actuator 0
 #define Actuator_Context_sender_controller 1
@@ -264,7 +264,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert((((Actuator_States_vc == Actuator_States_wait) || (Actuator_States_vc == Actuator_States_left)) || (Actuator_States_vc == Actuator_States_right)));
+    assert((((Actuator_States_vc == Actuator_States_left) || (Actuator_States_vc == Actuator_States_wait)) || (Actuator_States_vc == Actuator_States_right)));
 }
 inline Actuator_Context_state_assign_value(dst, src)
 {
@@ -273,7 +273,7 @@ inline Actuator_Context_state_assign_value(dst, src)
 }
 inline Actuator_Context_state_range_check(Actuator_Context_state_vc)
 {
-    assert((((Actuator_Context_state_vc == Actuator_Context_state_wait) || (Actuator_Context_state_vc == Actuator_Context_state_left)) || (Actuator_Context_state_vc == Actuator_Context_state_right)));
+    assert((((Actuator_Context_state_vc == Actuator_Context_state_left) || (Actuator_Context_state_vc == Actuator_Context_state_wait)) || (Actuator_Context_state_vc == Actuator_Context_state_right)));
 }
 inline Actuator_Context_init_done_assign_value(dst, src)
 {

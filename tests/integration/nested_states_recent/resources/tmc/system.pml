@@ -20,23 +20,23 @@ bool Controller_status_channel_used = 0;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_reset()
-{
-    Actuator_reset_channel!0;
-}
 inline Actuator_0_PI_0_reset_unhandled_input()
 {
     printf("unhandled_input actuator reset\n");
     skip;
 }
-inline Controller_0_RI_0_tick()
-{
-    Actuator_tick_channel!0;
-}
 inline Actuator_0_PI_0_tick_unhandled_input()
 {
     printf("unhandled_input actuator tick\n");
     skip;
+}
+inline Actuator_0_RI_0_result(actuator_result_Actuator_result_p1)
+{
+    Controller_result_channel!actuator_result_Actuator_result_p1;
+}
+inline Actuator_0_RI_0_status(actuator_status_Actuator_status_p1)
+{
+    Controller_status_channel!actuator_status_Actuator_status_p1;
 }
 inline Actuator_check_queue()
 {
@@ -48,23 +48,23 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result(controller_result_p1)
-{
-    Controller_result_channel!controller_result_p1;
-}
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
     printf("unhandled_input controller result\n");
     skip;
 }
-inline Actuator_0_RI_0_status(controller_status_p1)
-{
-    Controller_status_channel!controller_status_p1;
-}
 inline Controller_0_PI_0_status_unhandled_input(p1)
 {
     printf("unhandled_input controller status\n");
     skip;
+}
+inline Controller_0_RI_0_reset()
+{
+    Actuator_reset_channel!0;
+}
+inline Controller_0_RI_0_tick()
+{
+    Actuator_tick_channel!0;
 }
 inline Controller_check_queue()
 {

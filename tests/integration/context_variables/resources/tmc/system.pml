@@ -21,14 +21,14 @@ bool Controller_test_channel_used = 0;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_check(actuator_check_p1)
-{
-    Actuator_check_channel!actuator_check_p1;
-}
 inline Actuator_0_PI_0_check_unhandled_input(p1)
 {
     printf("unhandled_input actuator check\n");
     skip;
+}
+inline Actuator_0_RI_0_result(actuator_result_Actuator_result_p1)
+{
+    Controller_result_channel!actuator_result_Actuator_result_p1;
 }
 inline Actuator_check_queue()
 {
@@ -40,23 +40,19 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result(controller_result_p1)
-{
-    Controller_result_channel!controller_result_p1;
-}
 inline Controller_0_PI_0_result_unhandled_input(p1)
 {
     printf("unhandled_input controller result\n");
     skip;
 }
-inline Environ_0_RI_0_test(controller_test_p1)
-{
-    Controller_test_channel!controller_test_p1;
-}
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
     printf("unhandled_input controller test\n");
     skip;
+}
+inline Controller_0_RI_0_check(controller_check_Controller_check_p1)
+{
+    Actuator_check_channel!controller_check_Controller_check_p1;
 }
 inline Controller_check_queue()
 {
@@ -67,6 +63,10 @@ inline Controller_check_queue()
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
+{
+    Controller_test_channel!environ_test_Environ_test_p1;
 }
 active proctype Actuator_check() priority 1
 {

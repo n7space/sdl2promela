@@ -54,10 +54,10 @@
 #define Actuator_context_mysecondchoice_selection_lowercase_alternative_PRESENT 2
 #define Actuator_Mychoice_Selection_camelCaseAlternative_present 1
 #define Actuator_Mychoice_Selection_lowercase_alternative_present 2
-#define Controller_States_wait 0
-#define Controller_States_reached 1
-#define Controller_Context_state_wait 0
-#define Controller_Context_state_reached 1
+#define Controller_States_reached 0
+#define Controller_States_wait 1
+#define Controller_Context_state_reached 0
+#define Controller_Context_state_wait 1
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
 #define Controller_Context_sender_env 2
@@ -362,7 +362,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((Controller_States_vc == Controller_States_wait) || (Controller_States_vc == Controller_States_reached)));
+    assert(((Controller_States_vc == Controller_States_reached) || (Controller_States_vc == Controller_States_wait)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -371,7 +371,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((Controller_Context_state_vc == Controller_Context_state_wait) || (Controller_Context_state_vc == Controller_Context_state_reached)));
+    assert(((Controller_Context_state_vc == Controller_Context_state_reached) || (Controller_Context_state_vc == Controller_Context_state_wait)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

@@ -32,14 +32,14 @@
 #define Environ_test_p1 int
 #define TimerData_timer_enabled bool
 #define TimerData_interval int
-#define Controller_States_waitingforboth 0
-#define Controller_States_waitingfordown 1
-#define Controller_States_waitingforup 2
-#define Controller_States_wait 3
-#define Controller_Context_state_waitingforboth 0
-#define Controller_Context_state_waitingfordown 1
-#define Controller_Context_state_waitingforup 2
-#define Controller_Context_state_wait 3
+#define Controller_States_waitingforup 0
+#define Controller_States_wait 1
+#define Controller_States_waitingforboth 2
+#define Controller_States_waitingfordown 3
+#define Controller_Context_state_waitingforup 0
+#define Controller_Context_state_wait 1
+#define Controller_Context_state_waitingforboth 2
+#define Controller_Context_state_waitingfordown 3
 #define Controller_Context_sender_controller 0
 #define Controller_Context_sender_down 1
 #define Controller_Context_sender_environ 2
@@ -133,7 +133,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((((Controller_States_vc == Controller_States_waitingforboth) || (Controller_States_vc == Controller_States_waitingfordown)) || (Controller_States_vc == Controller_States_waitingforup)) || (Controller_States_vc == Controller_States_wait)));
+    assert(((((Controller_States_vc == Controller_States_waitingforup) || (Controller_States_vc == Controller_States_wait)) || (Controller_States_vc == Controller_States_waitingforboth)) || (Controller_States_vc == Controller_States_waitingfordown)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -142,7 +142,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((((Controller_Context_state_vc == Controller_Context_state_waitingforboth) || (Controller_Context_state_vc == Controller_Context_state_waitingfordown)) || (Controller_Context_state_vc == Controller_Context_state_waitingforup)) || (Controller_Context_state_vc == Controller_Context_state_wait)));
+    assert(((((Controller_Context_state_vc == Controller_Context_state_waitingforup) || (Controller_Context_state_vc == Controller_Context_state_wait)) || (Controller_Context_state_vc == Controller_Context_state_waitingforboth)) || (Controller_Context_state_vc == Controller_Context_state_waitingfordown)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

@@ -28,41 +28,41 @@ bool Controller_result_values_channel_used = 0;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
-inline Controller_0_RI_0_give_me_array()
-{
-    Actuator_give_me_array_channel!0;
-}
 inline Actuator_0_PI_0_give_me_array_unhandled_input()
 {
     printf("unhandled_input actuator give_me_array\n");
     skip;
-}
-inline Controller_0_RI_0_give_me_data()
-{
-    Actuator_give_me_data_channel!0;
 }
 inline Actuator_0_PI_0_give_me_data_unhandled_input()
 {
     printf("unhandled_input actuator give_me_data\n");
     skip;
 }
-inline Controller_0_RI_0_give_me_nested()
-{
-    Actuator_give_me_nested_channel!0;
-}
 inline Actuator_0_PI_0_give_me_nested_unhandled_input()
 {
     printf("unhandled_input actuator give_me_nested\n");
     skip;
 }
-inline Controller_0_RI_0_give_me_values()
-{
-    Actuator_give_me_values_channel!0;
-}
 inline Actuator_0_PI_0_give_me_values_unhandled_input()
 {
     printf("unhandled_input actuator give_me_values\n");
     skip;
+}
+inline Actuator_0_RI_0_result_array(actuator_result_array_Actuator_result_array_p1)
+{
+    Controller_result_array_channel!actuator_result_array_Actuator_result_array_p1;
+}
+inline Actuator_0_RI_0_result_data(actuator_result_data_Actuator_result_data_p1)
+{
+    Controller_result_data_channel!actuator_result_data_Actuator_result_data_p1;
+}
+inline Actuator_0_RI_0_result_nested(actuator_result_nested_Actuator_result_nested_p1)
+{
+    Controller_result_nested_channel!actuator_result_nested_Actuator_result_nested_p1;
+}
+inline Actuator_0_RI_0_result_values(actuator_result_values_Actuator_result_values_p1)
+{
+    Controller_result_values_channel!actuator_result_values_Actuator_result_values_p1;
 }
 inline Actuator_check_queue()
 {
@@ -74,41 +74,41 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_result_array(controller_result_array_p1)
-{
-    Controller_result_array_channel!controller_result_array_p1;
-}
 inline Controller_0_PI_0_result_array_unhandled_input(p1)
 {
     printf("unhandled_input controller result_array\n");
     skip;
-}
-inline Actuator_0_RI_0_result_data(controller_result_data_p1)
-{
-    Controller_result_data_channel!controller_result_data_p1;
 }
 inline Controller_0_PI_0_result_data_unhandled_input(p1)
 {
     printf("unhandled_input controller result_data\n");
     skip;
 }
-inline Actuator_0_RI_0_result_nested(controller_result_nested_p1)
-{
-    Controller_result_nested_channel!controller_result_nested_p1;
-}
 inline Controller_0_PI_0_result_nested_unhandled_input(p1)
 {
     printf("unhandled_input controller result_nested\n");
     skip;
 }
-inline Actuator_0_RI_0_result_values(controller_result_values_p1)
-{
-    Controller_result_values_channel!controller_result_values_p1;
-}
 inline Controller_0_PI_0_result_values_unhandled_input(p1)
 {
     printf("unhandled_input controller result_values\n");
     skip;
+}
+inline Controller_0_RI_0_give_me_array()
+{
+    Actuator_give_me_array_channel!0;
+}
+inline Controller_0_RI_0_give_me_data()
+{
+    Actuator_give_me_data_channel!0;
+}
+inline Controller_0_RI_0_give_me_nested()
+{
+    Actuator_give_me_nested_channel!0;
+}
+inline Controller_0_RI_0_give_me_values()
+{
+    Actuator_give_me_values_channel!0;
 }
 inline Controller_check_queue()
 {

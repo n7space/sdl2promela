@@ -30,10 +30,6 @@ chan Controller_lock = [1] of {int};
 chan Uh_function_observer_lock = [1] of {int};
 chan Uh_global_observer_lock = [1] of {int};
 chan Uh_signal_observer_lock = [1] of {int};
-inline Controller_0_RI_0_ping(actuator_ping_p1)
-{
-    Actuator_ping_channel!actuator_ping_p1;
-}
 inline Actuator_0_PI_0_ping_unhandled_input(p1)
 {
     printf("unhandled_input actuator ping\n");
@@ -43,6 +39,10 @@ inline Actuator_0_PI_0_ping_unhandled_input(p1)
     Uh_global_observer_lock?_;
     Uh_global_observer_0_PI_0_uh();
     Uh_global_observer_lock!1;
+}
+inline Actuator_0_RI_0_pong(actuator_pong_Actuator_pong_p1)
+{
+    Controller_pong_channel!actuator_pong_Actuator_pong_p1;
 }
 inline Actuator_check_queue()
 {
@@ -54,10 +54,6 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_pong(controller_pong_p1)
-{
-    Controller_pong_channel!controller_pong_p1;
-}
 inline Controller_0_PI_0_pong_unhandled_input(p1)
 {
     printf("unhandled_input controller pong\n");
@@ -67,10 +63,6 @@ inline Controller_0_PI_0_pong_unhandled_input(p1)
     Uh_global_observer_lock?_;
     Uh_global_observer_0_PI_0_uh();
     Uh_global_observer_lock!1;
-}
-inline Environ_0_RI_0_test(controller_test_p1)
-{
-    Controller_test_channel!controller_test_p1;
 }
 inline Controller_0_PI_0_test_unhandled_input(p1)
 {
@@ -82,6 +74,10 @@ inline Controller_0_PI_0_test_unhandled_input(p1)
     Uh_global_observer_0_PI_0_uh();
     Uh_global_observer_lock!1;
 }
+inline Controller_0_RI_0_ping(controller_ping_Controller_ping_p1)
+{
+    Actuator_ping_channel!controller_ping_Controller_ping_p1;
+}
 inline Controller_check_queue()
 {
     atomic {
@@ -91,6 +87,10 @@ inline Controller_check_queue()
 inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 {
     skip;
+}
+inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
+{
+    Controller_test_channel!environ_test_Environ_test_p1;
 }
 active proctype Actuator_ping() priority 1
 {

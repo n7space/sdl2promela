@@ -30,13 +30,13 @@
 #define Actuator_Context_offspring_actuator 0
 #define Actuator_Context_offspring_controller 1
 #define Actuator_Context_offspring_env 2
-#define Controller_States_secondcheck 0
+#define Controller_States_firstcheck 0
 #define Controller_States_finished 1
-#define Controller_States_firstcheck 2
+#define Controller_States_secondcheck 2
 #define Controller_States_error 3
-#define Controller_Context_state_secondcheck 0
+#define Controller_Context_state_firstcheck 0
 #define Controller_Context_state_finished 1
-#define Controller_Context_state_firstcheck 2
+#define Controller_Context_state_secondcheck 2
 #define Controller_Context_state_error 3
 #define Controller_Context_sender_actuator 0
 #define Controller_Context_sender_controller 1
@@ -171,7 +171,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((((Controller_States_vc == Controller_States_secondcheck) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_firstcheck)) || (Controller_States_vc == Controller_States_error)));
+    assert(((((Controller_States_vc == Controller_States_firstcheck) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_secondcheck)) || (Controller_States_vc == Controller_States_error)));
 }
 inline Controller_Context_state_assign_value(dst, src)
 {
@@ -180,7 +180,7 @@ inline Controller_Context_state_assign_value(dst, src)
 }
 inline Controller_Context_state_range_check(Controller_Context_state_vc)
 {
-    assert(((((Controller_Context_state_vc == Controller_Context_state_secondcheck) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_firstcheck)) || (Controller_Context_state_vc == Controller_Context_state_error)));
+    assert(((((Controller_Context_state_vc == Controller_Context_state_firstcheck) || (Controller_Context_state_vc == Controller_Context_state_finished)) || (Controller_Context_state_vc == Controller_Context_state_secondcheck)) || (Controller_Context_state_vc == Controller_Context_state_error)));
 }
 inline Controller_Context_init_done_assign_value(dst, src)
 {

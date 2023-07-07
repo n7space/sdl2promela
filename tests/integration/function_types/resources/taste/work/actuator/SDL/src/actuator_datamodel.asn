@@ -1,0 +1,20 @@
+Actuator-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   MyInteger, MyResultInteger, MyTestInteger FROM FUNCTION-TYPES-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   PID-Range, PID FROM System-Dataview;
+
+Actuator-States ::= ENUMERATED {operation, wait}
+
+Actuator-Context ::= SEQUENCE {
+   state Actuator-States,
+   init-done BOOLEAN,
+   sender PID,
+   offspring PID,
+   check-param MyInteger,
+   result-param MyResultInteger
+}
+
+END

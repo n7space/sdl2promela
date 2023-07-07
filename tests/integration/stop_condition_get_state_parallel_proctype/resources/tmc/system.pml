@@ -15,14 +15,18 @@ chan Inst_pong_channel = [1] of {int};
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Inst_lock = [1] of {int};
-inline Inst_0_RI_0_ping()
-{
-    Actuator_ping_channel!0;
-}
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
     printf("unhandled_input actuator ping\n");
     skip;
+}
+inline Actuator_0_RI_0_dummy()
+{
+    Inst_dummy_channel!0;
+}
+inline Actuator_0_RI_0_pong()
+{
+    Inst_pong_channel!0;
 }
 inline Actuator_check_queue()
 {
@@ -34,23 +38,19 @@ inline Actuator_0_RI_0_get_sender(Actuator_sender_arg)
 {
     skip;
 }
-inline Actuator_0_RI_0_dummy()
-{
-    Inst_dummy_channel!0;
-}
 inline Inst_0_PI_0_dummy_unhandled_input()
 {
     printf("unhandled_input inst dummy\n");
     skip;
 }
-inline Actuator_0_RI_0_pong()
-{
-    Inst_pong_channel!0;
-}
 inline Inst_0_PI_0_pong_unhandled_input()
 {
     printf("unhandled_input inst pong\n");
     skip;
+}
+inline Inst_0_RI_0_ping()
+{
+    Actuator_ping_channel!0;
 }
 inline Inst_check_queue()
 {
