@@ -242,7 +242,7 @@ def __fix_enum_value(name: str) -> str:
     If the name of value has a suffix _present in ASN, then in opengeode
     the suffix is _PRESENT. Making everything lowercase does not fix the issue.
     """
-    if name.endswith('_PRESENT'):
+    if name.endswith("_PRESENT"):
         elements = name.split("_")
         elements[-1] = elements[-1].lower()
         name = "_".join(elements)
