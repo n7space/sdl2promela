@@ -154,3 +154,7 @@ def test_translates_double_label():
 
 def test_sequence_field_escape():
     translate_and_verify("sequence_field_escape.pr", "sequence_field_escape.pml")
+
+
+def test_choice_selector_case():
+    translate_and_verify("choice_selector_case.pr", "choice_selector_case.pml")

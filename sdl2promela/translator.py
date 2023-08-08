@@ -235,6 +235,20 @@ def __escapeIv(name: str) -> str:
     return name.capitalize()
 
 
+def __fix_enum_value(name: str) -> str:
+    """
+    Fix enum valued name parsed by opengeode to name compatible with observer.asn
+    and dataview.pml.
+    If the name of value has a suffix _present in ASN, then in opengeode
+    the suffix is _PRESENT. Making everything lowercase does not fix the issue.
+    """
+    if name.endswith("_PRESENT"):
+        elements = name.split("_")
+        elements[-1] = elements[-1].lower()
+        name = "_".join(elements)
+    return name
+
+
 def __fix_type_name(name: str) -> str:
     """
     Fix type name parsed by opengeode to name compatible with observer.asn
@@ -839,7 +853,7 @@ def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
     candidates = [v for k, v in basic_type.EnumValues.items() if k.lower() == enumerant]
     if len(candidates) != 1:
         raise Exception(f"Invalid enum value {enumValue.value}")
-    value = "{}_{}".format(type_name, candidates[0].EnumID.lower())
+    value = "{}_{}".format(type_name, __fix_enum_value(candidates[0].EnumID))
     return VariableReferenceBuilder(value).build()
 
 

@@ -65,6 +65,11 @@ BEGIN
       long-name MyInteger
    }
 
+   TestChoice ::= CHOICE {
+      problematicName MyInteger,
+      secondName MyInteger
+   }
+
    myIntegerInitVal MyInteger ::= 3
 
    my-DataInitVal MyData ::= {1, 7}
