@@ -83,7 +83,8 @@ TESTS= \
 	observer_compatibility_empty \
 	observer_compatibility_param \
 	observer_compatibility_optional_param \
-	exported_procedure
+	exported_procedure \
+	real_expressions
 
 .PHONY: $(TESTS) check
 

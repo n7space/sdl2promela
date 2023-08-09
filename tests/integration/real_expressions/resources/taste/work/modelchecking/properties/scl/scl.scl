@@ -1,0 +1,10 @@
+never get_state(controller) = error;
+
+never actuator.scalar_p < 0.01 and actuator.scalar_p > -0.01;
+never actuator.scalar_var < 0.01 and actuator.scalar_var > -0.01;
+
+never actuator.vector_p(0) < 0.01 and actuator.vector_p(0) > -0.01;
+never actuator.vector_var(0) < 0.01 and actuator.vector_var(0) > -0.01;
+
+never actuator.matrix_p(0)(0) < 0.01 and actuator.matrix_p(0)(0) > -0.01;
+never actuator.matrix_var(0)(0) < 0.01 and actuator.matrix_var(0)(0) > -0.01;
