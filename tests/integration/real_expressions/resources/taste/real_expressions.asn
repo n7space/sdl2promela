@@ -1,0 +1,13 @@
+REAL-EXPRESSIONS-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyReal ::= REAL (-1.0 .. 1.0)
+
+   MyArray ::= SEQUENCE (SIZE(2)) OF MyReal
+
+   MyMatrix ::= SEQUENCE (SIZE(2)) OF MyArray
+
+END
+

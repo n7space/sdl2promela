@@ -1,0 +1,90 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+process Controller;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (433, 260), (267, 143) */
+    -- Text area for declarations and comments
+    
+    dcl param_scalar MyReal := 0.3;
+    
+    dcl param_vector MyArray := {-0.3, -0.3};
+    
+    dcl param_matrix MyArray := {0.3, -0.3};
+    
+    dcl r MyReal;
+    /* CIF ENDTEXT */
+    /* CIF START (919, 181), (70, 35) */
+    START;
+        /* CIF output (867, 236), (172, 35) */
+        output test_scalar(param_scalar);
+        /* CIF NEXTSTATE (919, 286), (70, 35) */
+        NEXTSTATE Case1;
+    /* CIF state (1621, 256), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Case2;
+        /* CIF input (1616, 311), (70, 35) */
+        input result(r);
+            /* CIF task (1597, 366), (109, 35) */
+            task r := abs(r + 0.3);
+            /* CIF decision (1580, 421), (142, 50) */
+            decision r < 0.01 and r > -0.01;
+                /* CIF ANSWER (1576, 491), (70, 23) */
+                (true):
+                /* CIF ANSWER (1666, 491), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1666, 534), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+            /* CIF output (1561, 585), (181, 35) */
+            output test_matrix(param_matrix);
+            /* CIF NEXTSTATE (1617, 640), (70, 35) */
+            NEXTSTATE Case3;
+    endstate;
+    /* CIF state (2003, 259), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Case3;
+        /* CIF input (1998, 314), (70, 35) */
+        input result(r);
+            /* CIF task (1981, 369), (105, 35) */
+            task r := abs(r - 0.3);
+            /* CIF decision (1962, 424), (142, 50) */
+            decision r < 0.01 and r > -0.01;
+                /* CIF ANSWER (2048, 494), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (2048, 537), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (1958, 494), (70, 23) */
+                (true):
+                    /* CIF NEXTSTATE (1956, 537), (72, 35) */
+                    NEXTSTATE Finished;
+            enddecision;
+    endstate;
+    /* CIF state (1216, 311), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Case1;
+        /* CIF input (1211, 366), (70, 35) */
+        input result(r);
+            /* CIF task (1194, 421), (105, 35) */
+            task r := abs(r - 0.3);
+            /* CIF decision (1175, 476), (142, 50) */
+            decision r < 0.01 and r > -0.01;
+                /* CIF ANSWER (1171, 546), (70, 23) */
+                (true):
+                /* CIF ANSWER (1261, 546), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1261, 589), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+            /* CIF output (1157, 640), (179, 35) */
+            output test_vector(param_vector);
+            /* CIF NEXTSTATE (1212, 695), (70, 35) */
+            NEXTSTATE Case2;
+    endstate;
+    /* CIF state (1370, 78), (72, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Finished;
+    endstate;
+    /* CIF state (1090, 69), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Error;
+    endstate;
+endprocess Controller;

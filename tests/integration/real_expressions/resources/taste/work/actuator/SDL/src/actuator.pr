@@ -1,0 +1,87 @@
+/* CIF PROCESS (250, 149), (150, 75) */
+process Actuator;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (356, 121), (267, 173) */
+    -- Text area for declarations and comments
+    
+    dcl scalar_p MyReal;
+    dcl vector_p MyArray;
+    dcl matrix_p MyMatrix;
+    
+    dcl scalar_var MyReal;
+    dcl vector_var MyArray;
+    dcl matrix_var MyMatrix;
+    
+    dcl r MyReal;
+    /* CIF ENDTEXT */
+    /* CIF START (803, 91), (70, 35) */
+    START;
+        /* CIF task (785, 146), (105, 35) */
+        task scalar_p := 1.0;
+        /* CIF task (767, 201), (141, 35) */
+        task vector_p := {1.0, 1.0};
+        /* CIF task (734, 256), (207, 35) */
+        task matrix_p := {{1.0, 1.0}, {1.0, 1.0}};
+        /* CIF task (779, 311), (116, 35) */
+        task scalar_var := 1.0;
+        /* CIF task (761, 366), (152, 35) */
+        task vector_var := {1.0, 1.0};
+        /* CIF task (728, 421), (218, 35) */
+        task matrix_var := {{1.0, 1.0}, {1.0, 1.0}};
+        /* CIF NEXTSTATE (803, 471), (70, 35) */
+        NEXTSTATE Idle;
+    /* CIF state (1706, 163), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Idle;
+        /* CIF input (1662, 218), (150, 35) */
+        input test_matrix(vector_p);
+            /* CIF task (1658, 273), (158, 35) */
+            task matrix_p(0) := vector_p;
+            /* CIF task (1660, 323), (154, 35) */
+            task matrix_var := matrix_p;
+            /* CIF task (1630, 378), (215, 35) */
+            task matrix_p := {{0.4, -0.3}, {-0.5, 0.6}};
+            /* CIF task (1666, 433), (143, 35) */
+            task matrix_p := matrix_p;
+            /* CIF task (1668, 488), (138, 35) */
+            task r := matrix_var(0)(0);
+            /* CIF output (1702, 543), (70, 35) */
+            output result(r);
+            /* CIF NEXTSTATE (1703, 598), (70, 35) */
+            NEXTSTATE Idle;
+    endstate;
+    /* CIF state (1399, 115), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Idle;
+        /* CIF input (1355, 170), (149, 35) */
+        input test_vector(vector_p);
+            /* CIF task (1354, 225), (152, 35) */
+            task vector_var := vector_p;
+            /* CIF task (1357, 280), (145, 35) */
+            task vector_p := {0.5, -0.3};
+            /* CIF task (1359, 335), (142, 35) */
+            task vector_p := vector_p;
+            /* CIF task (1369, 390), (122, 35) */
+            task r := vector_var(0);
+            /* CIF output (1395, 445), (70, 35) */
+            output result(r);
+            /* CIF NEXTSTATE (1395, 500), (70, 35) */
+            NEXTSTATE Idle;
+    endstate;
+    /* CIF state (1091, 123), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Idle;
+        /* CIF input (1050, 178), (142, 35) */
+        input test_scalar(scalar_p);
+            /* CIF task (1048, 233), (146, 35) */
+            task scalar_var := scalar_p;
+            /* CIF task (1069, 288), (105, 35) */
+            task scalar_p := 0.5;
+            /* CIF task (1054, 343), (135, 35) */
+            task scalar_p := scalar_p;
+            /* CIF output (1059, 398), (124, 35) */
+            output result(scalar_var);
+            /* CIF NEXTSTATE (1087, 453), (70, 35) */
+            NEXTSTATE Idle;
+    endstate;
+endprocess Actuator;
