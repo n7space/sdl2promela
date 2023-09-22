@@ -1502,7 +1502,7 @@ def _get_signal_sender_and_recipient(words: List[str]) -> Tuple[str, str]:
     recipientName = None
     if words[0].lower() == "from":
         senderName = words[1]
-        if words[2].lower() == "to":
+        if len(words) > 2 and words[2].lower() == "to":
             recipientName = words[3]
     elif words[0].lower() == "to":
         recipientName = words[1]
@@ -1565,7 +1565,7 @@ def _find_signal_parameter(
     if is_input:
         type_name = "{}-Event-msg-in".format(process_name.capitalize())
     else:
-        type_name = "{}-Event-msg-out".format(process_name.captitalize())
+        type_name = "{}-Event-msg-out".format(process_name.capitalize())
 
     if type_name not in types:
         raise Exception(f"The process {process_name} cannot be found")
