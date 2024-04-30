@@ -158,3 +158,9 @@ def test_sequence_field_escape():
 
 def test_choice_selector_case():
     translate_and_verify("choice_selector_case.pr", "choice_selector_case.pml")
+
+
+def test_empty_sequence_assignment():
+    translate_and_verify(
+        "empty_sequence_assignment.pr", "empty_sequence_assignment.pml"
+    )

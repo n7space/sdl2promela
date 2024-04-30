@@ -1852,6 +1852,9 @@ def __generate_assignment(
 
     elif finalType.kind == BIT_STRING_TYPE_NAME:
         raise NotImplementedError("Assignment to BIT STRING is not supported")
+    elif finalType.kind == SEQUENCE_TYPE_NAME:
+        # special case, an empty SEQUENCE, the input "{}" is parsed as empty string
+        return [promelamodel.Skip()]
     else:
         raise Exception(f"Unsupported assignment: {finalType.kind} EmptyString")
 
