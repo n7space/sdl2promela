@@ -70,6 +70,8 @@ BEGIN
       secondName MyInteger
    }
 
+   Empty-Sequence-Type ::= SEQUENCE { }
+
    myIntegerInitVal MyInteger ::= 3
 
    my-DataInitVal MyData ::= {1, 7}
