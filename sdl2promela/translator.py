@@ -632,6 +632,26 @@ def __build_assignment(
         return AssignmentBuilder().withTarget(left).withSource(right).build()
 
 
+def __build_member_assignment(
+    left: promelamodel.VariableReference,
+    right: promelamodel.Expression,
+    left_type: Any,
+    member_access: sdlmodel.MemberAccess,
+) -> promelamodel.Statement:
+    if __requires_assign_value_inline(left_type):
+        sequence_name = __type_name(member_access.sequence.type)
+        field_name = member_access.member.variableName
+        assignInlineName = f"{sequence_name}__{field_name}_assign_value"
+        return (
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(left)
+            .withParameter(right)
+            .build()
+        )
+    return AssignmentBuilder().withTarget(left).withSource(right).build()
+
+
 def __terminate_transition_statement(context: Context):
     return (
         AssignmentBuilder()
@@ -1752,13 +1772,23 @@ def __generate_assignment(
                 inlineCall.withParameter(__generate_expression(context, parameter))
             statements.append(inlineCall.build())
     else:
-        statements.append(
-            __build_assignment(
-                __generate_variable_name(context, left, True),
-                __generate_expression(context, right),
-                left_type,
+        if isinstance(left, sdlmodel.MemberAccess):
+            statements.append(
+                __build_member_assignment(
+                    __generate_variable_name(context, left, True),
+                    __generate_expression(context, right),
+                    left_type,
+                    left,
+                )
             )
-        )
+        else:
+            statements.append(
+                __build_assignment(
+                    __generate_variable_name(context, left, True),
+                    __generate_expression(context, right),
+                    left_type,
+                )
+            )
 
     return statements
 
