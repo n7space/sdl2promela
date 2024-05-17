@@ -36,8 +36,8 @@ inline Actuator_0_transition(id)
 inline Actuator_0_init()
 {
   MyInteger_assign_value(global_state.actuator.param, 3);
-  MyInteger_assign_value(global_state.actuator.seq.x, 1);
-  MyInteger_assign_value(global_state.actuator.seq.y, 2);
+  MySeq__x_assign_value(global_state.actuator.seq.x, 1);
+  MySeq__y_assign_value(global_state.actuator.seq.y, 2);
   MyInteger_assign_value(global_state.actuator.nested_0_z, 3);
   Actuator_0_transition(0);
 }
