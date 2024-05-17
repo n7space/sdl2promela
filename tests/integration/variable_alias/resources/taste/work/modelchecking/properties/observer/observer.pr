@@ -1,5 +1,6 @@
 system observer;
-    /* CIF TEXT (144, 214), (467, 140) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (144, 214), (466, 140) */
     use datamodel comment 'observer.asn';
     
     exported procedure observe;
@@ -10,14 +11,17 @@ system observer;
     signal my_ping(MyInteger) renames input ping from controller to actuator;
     /* CIF ENDTEXT */
     channel c
-        from env to observer with observe, my_ping;
+        from env to observer with observe,
+my_ping;
     endchannel;
     block observer;
         signalroute r
-            from env to observer with observe, my_ping;
+            from env to observer with observe,
+my_ping;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
+            /* CIF Keep Specific Geode Partition 'default' */
             /* CIF TEXT (30, 85), (336, 158) */
             monitor st System_State;
             
@@ -30,13 +34,31 @@ system observer;
             dcl act_arr MyArray renames st.actuator.arr;
             dcl act_alt MyUnion renames st.actuator.alt;
             /* CIF ENDTEXT */
+            /* CIF procedure (1021, 108), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            procedure observe;
+                /* CIF Keep Specific Geode Partition 'default' */
+                /* CIF TEXT (35, 195), (271, 140) */
+                fpar in/out model           System_State,
+                          in/out last_event  Observable_Event;
+                /* CIF ENDTEXT */
+                /* CIF START (413, 119), (70, 35) */
+                START;
+                    /* CIF return (430, 174), (35, 35) */
+                    return ;
+            endprocedure;
             /* CIF START (676, 51), (70, 35) */
             START;
                 /* CIF NEXTSTATE (676, 106), (70, 35) */
                 NEXTSTATE Idle;
+            /* CIF state (283, 32), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state error;
+            endstate;
             /* CIF state (516, 134), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state Idle;
-                /* CIF input (485, 189), (131, 35) */
+                /* CIF input (484, 189), (131, 35) */
                 input my_ping(a_param);
                     /* CIF decision (476, 244), (148, 50) */
                     decision act_param = a_param;
@@ -85,9 +107,6 @@ system observer;
                                     enddecision;
                             enddecision;
                     enddecision;
-            endstate;
-            /* CIF state (283, 32), (70, 35) */
-            state error;
             endstate;
         endprocess observer;
     endblock;

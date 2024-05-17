@@ -23,6 +23,9 @@ system Actuator;
    procedure get_sender;
       fpar out sender PID;
    external;
+   procedure get_last_error;
+      fpar out err T_Runtime_Error;
+   external;
 
    channel c
       from env to Actuator with ping, ping_enum;

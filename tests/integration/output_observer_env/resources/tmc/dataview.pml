@@ -1,8 +1,8 @@
 #define Observer_States int
-#define Observer_Context_state int
-#define Observer_Context_init_done bool
-#define Observer_Context_sender int
-#define Observer_Context_offspring int
+#define Observer_Context__state int
+#define Observer_Context__init_done bool
+#define Observer_Context__sender int
+#define Observer_Context__offspring int
 #define Observer_Controller_Event_Msg_In_Selection int
 #define Observer_Controller_Event_Msg_Out_Selection int
 #define Observer_Controller_Event_Selection int
@@ -12,32 +12,36 @@
 #define Observer_Function_Event_Selection int
 #define Observer_Observable_Event_Selection int
 #define Controller_States int
-#define Controller_Context_state int
-#define Controller_Context_init_done bool
-#define Controller_Context_sender int
-#define Controller_Context_offspring int
-#define Controller_Context_error int
-#define Controller_Context_param int
+#define Controller_Context__state int
+#define Controller_Context__init_done bool
+#define Controller_Context__sender int
+#define Controller_Context__offspring int
+#define Controller_Context__error int
+#define Controller_Context__param int
+#define Controller_T_Runtime_Error_Selection int
 #define MyInteger int
 #define T_Int32 int
 #define T_UInt32 int
 #define T_Int8 int
 #define T_UInt8 int
 #define T_Boolean bool
+#define T_Runtime_Error__noerror int
+#define T_Runtime_Error__encodeerror int
+#define T_Runtime_Error__decodeerror int
 #define PID_Range int
 #define PID int
 #define Environ_pong_p1 int
 #define Environ_ping_p1 int
-#define TimerData_timer_enabled bool
-#define TimerData_interval int
+#define TimerData__timer_enabled bool
+#define TimerData__interval int
 #define Observer_States_wait 0
-#define Observer_Context_state_wait 0
-#define Observer_Context_sender_controller 0
-#define Observer_Context_sender_environ 1
-#define Observer_Context_sender_env 2
-#define Observer_Context_offspring_controller 0
-#define Observer_Context_offspring_environ 1
-#define Observer_Context_offspring_env 2
+#define Observer_Context__state_wait 0
+#define Observer_Context__sender_controller 0
+#define Observer_Context__sender_environ 1
+#define Observer_Context__sender_env 2
+#define Observer_Context__offspring_controller 0
+#define Observer_Context__offspring_environ 1
+#define Observer_Context__offspring_env 2
 #define Observer_Controller_Event_Msg_In_Selection_input_none_present 1
 #define Observer_Controller_Event_Msg_In_Selection_ping_present 2
 #define Observer_Controller_Event_Msg_Out_Selection_pong_present 1
@@ -55,52 +59,73 @@
 #define Observer_Observable_Event_Selection_output_event_present 4
 #define Observer_Observable_Event_Selection_unhandled_input_present 5
 #define Controller_States_wait 0
-#define Controller_Context_state_wait 0
-#define Controller_Context_sender_controller 0
-#define Controller_Context_sender_environ 1
-#define Controller_Context_sender_env 2
-#define Controller_Context_offspring_controller 0
-#define Controller_Context_offspring_environ 1
-#define Controller_Context_offspring_env 2
+#define Controller_Context__state_wait 0
+#define Controller_Context__sender_controller 0
+#define Controller_Context__sender_environ 1
+#define Controller_Context__sender_env 2
+#define Controller_Context__offspring_controller 0
+#define Controller_Context__offspring_environ 1
+#define Controller_Context__offspring_env 2
+#define Controller_T_Runtime_Error_Selection_noerror_present 1
+#define Controller_T_Runtime_Error_Selection_encodeerror_present 2
+#define Controller_T_Runtime_Error_Selection_decodeerror_present 3
+#define T_Runtime_Error_NONE 0
+#define T_Runtime_Error_noerror_PRESENT 1
+#define T_runtime_error_selection_noerror_PRESENT 1
+#define T_Runtime_Error_encodeerror_PRESENT 2
+#define T_runtime_error_selection_encodeerror_PRESENT 2
+#define T_Runtime_Error_decodeerror_PRESENT 3
+#define T_runtime_error_selection_decodeerror_PRESENT 3
 #define PID_controller 0
 #define PID_environ 1
 #define PID_env 2
-typedef AggregateTimerData_controller {
+typedef AggregateTimerData__controller {
     bit dummy;
 }
 
-typedef AggregateTimerData_dummy_entry {
+typedef AggregateTimerData__dummy_entry {
     bit dummy;
 }
 
 typedef Controller_Context {
-    Controller_Context_state state;
-    Controller_Context_init_done init_done;
-    Controller_Context_sender sender;
-    Controller_Context_offspring offspring;
-    Controller_Context_error error;
-    Controller_Context_param param;
+    Controller_Context__state state;
+    Controller_Context__init_done init_done;
+    Controller_Context__sender sender;
+    Controller_Context__offspring offspring;
+    Controller_Context__error error;
+    Controller_Context__param param;
 }
 
 typedef Observer_Context {
-    Observer_Context_state state;
-    Observer_Context_init_done init_done;
-    Observer_Context_sender sender;
-    Observer_Context_offspring offspring;
+    Observer_Context__state state;
+    Observer_Context__init_done init_done;
+    Observer_Context__sender sender;
+    Observer_Context__offspring offspring;
 }
 
 typedef T_Null_Record {
     bit dummy;
 }
 
+typedef T_Runtime_Error_data {
+    T_Runtime_Error__noerror noerror;
+    T_Runtime_Error__encodeerror encodeerror;
+    T_Runtime_Error__decodeerror decodeerror;
+}
+
 typedef TimerData {
-    TimerData_timer_enabled timer_enabled;
-    TimerData_interval interval;
+    TimerData__timer_enabled timer_enabled;
+    TimerData__interval interval;
 }
 
 typedef AggregateTimerData {
-    AggregateTimerData_controller controller;
-    AggregateTimerData_dummy_entry dummy_entry;
+    AggregateTimerData__controller controller;
+    AggregateTimerData__dummy_entry dummy_entry;
+}
+
+typedef T_Runtime_Error {
+    T_Runtime_Error_data data;
+    int selection;
 }
 
 inline Observer_States_assign_value(dst, src)
@@ -112,48 +137,48 @@ inline Observer_States_range_check(Observer_States_vc)
 {
     assert((Observer_States_vc == Observer_States_wait));
 }
-inline Observer_Context_state_assign_value(dst, src)
+inline Observer_Context__state_assign_value(dst, src)
 {
     dst = src;
-    Observer_Context_state_range_check(dst);
+    Observer_Context__state_range_check(dst);
 }
-inline Observer_Context_state_range_check(Observer_Context_state_vc)
+inline Observer_Context__state_range_check(Observer_Context__state_vc)
 {
-    assert((Observer_Context_state_vc == Observer_Context_state_wait));
+    assert((Observer_Context__state_vc == Observer_Context__state_wait));
 }
-inline Observer_Context_init_done_assign_value(dst, src)
+inline Observer_Context__init_done_assign_value(dst, src)
 {
     dst = src;
-    Observer_Context_init_done_range_check(dst);
+    Observer_Context__init_done_range_check(dst);
 }
-inline Observer_Context_init_done_range_check(Observer_Context_init_done_vc)
+inline Observer_Context__init_done_range_check(Observer_Context__init_done_vc)
 {
     assert(true);
 }
-inline Observer_Context_sender_assign_value(dst, src)
+inline Observer_Context__sender_assign_value(dst, src)
 {
     dst = src;
-    Observer_Context_sender_range_check(dst);
+    Observer_Context__sender_range_check(dst);
 }
-inline Observer_Context_sender_range_check(Observer_Context_sender_vc)
+inline Observer_Context__sender_range_check(Observer_Context__sender_vc)
 {
-    assert((((Observer_Context_sender_vc == Observer_Context_sender_controller) || (Observer_Context_sender_vc == Observer_Context_sender_environ)) || (Observer_Context_sender_vc == Observer_Context_sender_env)));
+    assert((((Observer_Context__sender_vc == Observer_Context__sender_controller) || (Observer_Context__sender_vc == Observer_Context__sender_environ)) || (Observer_Context__sender_vc == Observer_Context__sender_env)));
 }
-inline Observer_Context_offspring_assign_value(dst, src)
+inline Observer_Context__offspring_assign_value(dst, src)
 {
     dst = src;
-    Observer_Context_offspring_range_check(dst);
+    Observer_Context__offspring_range_check(dst);
 }
-inline Observer_Context_offspring_range_check(Observer_Context_offspring_vc)
+inline Observer_Context__offspring_range_check(Observer_Context__offspring_vc)
 {
-    assert((((Observer_Context_offspring_vc == Observer_Context_offspring_controller) || (Observer_Context_offspring_vc == Observer_Context_offspring_environ)) || (Observer_Context_offspring_vc == Observer_Context_offspring_env)));
+    assert((((Observer_Context__offspring_vc == Observer_Context__offspring_controller) || (Observer_Context__offspring_vc == Observer_Context__offspring_environ)) || (Observer_Context__offspring_vc == Observer_Context__offspring_env)));
 }
 inline Observer_Context_assign_value(dst, src)
 {
-    Observer_Context_state_assign_value(dst.state, src.state);
-    Observer_Context_init_done_assign_value(dst.init_done, src.init_done);
-    Observer_Context_sender_assign_value(dst.sender, src.sender);
-    Observer_Context_offspring_assign_value(dst.offspring, src.offspring);
+    Observer_Context__state_assign_value(dst.state, src.state);
+    Observer_Context__init_done_assign_value(dst.init_done, src.init_done);
+    Observer_Context__sender_assign_value(dst.sender, src.sender);
+    Observer_Context__offspring_assign_value(dst.offspring, src.offspring);
 }
 inline Observer_Controller_Event_Msg_In_Selection_assign_value(dst, src)
 {
@@ -236,68 +261,77 @@ inline Controller_States_range_check(Controller_States_vc)
 {
     assert((Controller_States_vc == Controller_States_wait));
 }
-inline Controller_Context_state_assign_value(dst, src)
+inline Controller_Context__state_assign_value(dst, src)
 {
     dst = src;
-    Controller_Context_state_range_check(dst);
+    Controller_Context__state_range_check(dst);
 }
-inline Controller_Context_state_range_check(Controller_Context_state_vc)
+inline Controller_Context__state_range_check(Controller_Context__state_vc)
 {
-    assert((Controller_Context_state_vc == Controller_Context_state_wait));
+    assert((Controller_Context__state_vc == Controller_Context__state_wait));
 }
-inline Controller_Context_init_done_assign_value(dst, src)
+inline Controller_Context__init_done_assign_value(dst, src)
 {
     dst = src;
-    Controller_Context_init_done_range_check(dst);
+    Controller_Context__init_done_range_check(dst);
 }
-inline Controller_Context_init_done_range_check(Controller_Context_init_done_vc)
+inline Controller_Context__init_done_range_check(Controller_Context__init_done_vc)
 {
     assert(true);
 }
-inline Controller_Context_sender_assign_value(dst, src)
+inline Controller_Context__sender_assign_value(dst, src)
 {
     dst = src;
-    Controller_Context_sender_range_check(dst);
+    Controller_Context__sender_range_check(dst);
 }
-inline Controller_Context_sender_range_check(Controller_Context_sender_vc)
+inline Controller_Context__sender_range_check(Controller_Context__sender_vc)
 {
-    assert((((Controller_Context_sender_vc == Controller_Context_sender_controller) || (Controller_Context_sender_vc == Controller_Context_sender_environ)) || (Controller_Context_sender_vc == Controller_Context_sender_env)));
+    assert((((Controller_Context__sender_vc == Controller_Context__sender_controller) || (Controller_Context__sender_vc == Controller_Context__sender_environ)) || (Controller_Context__sender_vc == Controller_Context__sender_env)));
 }
-inline Controller_Context_offspring_assign_value(dst, src)
-{
-    dst = src;
-    Controller_Context_offspring_range_check(dst);
-}
-inline Controller_Context_offspring_range_check(Controller_Context_offspring_vc)
-{
-    assert((((Controller_Context_offspring_vc == Controller_Context_offspring_controller) || (Controller_Context_offspring_vc == Controller_Context_offspring_environ)) || (Controller_Context_offspring_vc == Controller_Context_offspring_env)));
-}
-inline Controller_Context_error_assign_value(dst, src)
+inline Controller_Context__offspring_assign_value(dst, src)
 {
     dst = src;
-    Controller_Context_error_range_check(dst);
+    Controller_Context__offspring_range_check(dst);
 }
-inline Controller_Context_error_range_check(Controller_Context_error_vc)
+inline Controller_Context__offspring_range_check(Controller_Context__offspring_vc)
 {
-    assert(((Controller_Context_error_vc >= 0) && (Controller_Context_error_vc <= 3)));
+    assert((((Controller_Context__offspring_vc == Controller_Context__offspring_controller) || (Controller_Context__offspring_vc == Controller_Context__offspring_environ)) || (Controller_Context__offspring_vc == Controller_Context__offspring_env)));
 }
-inline Controller_Context_param_assign_value(dst, src)
+inline Controller_Context__error_assign_value(dst, src)
 {
     dst = src;
-    Controller_Context_param_range_check(dst);
+    Controller_Context__error_range_check(dst);
 }
-inline Controller_Context_param_range_check(Controller_Context_param_vc)
+inline Controller_Context__error_range_check(Controller_Context__error_vc)
 {
-    assert(((Controller_Context_param_vc >= 0) && (Controller_Context_param_vc <= 3)));
+    assert(((Controller_Context__error_vc >= 0) && (Controller_Context__error_vc <= 3)));
+}
+inline Controller_Context__param_assign_value(dst, src)
+{
+    dst = src;
+    Controller_Context__param_range_check(dst);
+}
+inline Controller_Context__param_range_check(Controller_Context__param_vc)
+{
+    assert(((Controller_Context__param_vc >= 0) && (Controller_Context__param_vc <= 3)));
 }
 inline Controller_Context_assign_value(dst, src)
 {
-    Controller_Context_state_assign_value(dst.state, src.state);
-    Controller_Context_init_done_assign_value(dst.init_done, src.init_done);
-    Controller_Context_sender_assign_value(dst.sender, src.sender);
-    Controller_Context_offspring_assign_value(dst.offspring, src.offspring);
-    Controller_Context_error_assign_value(dst.error, src.error);
-    Controller_Context_param_assign_value(dst.param, src.param);
+    Controller_Context__state_assign_value(dst.state, src.state);
+    Controller_Context__init_done_assign_value(dst.init_done, src.init_done);
+    Controller_Context__sender_assign_value(dst.sender, src.sender);
+    Controller_Context__offspring_assign_value(dst.offspring, src.offspring);
+    Controller_Context__error_assign_value(dst.error, src.error);
+    Controller_Context__param_assign_value(dst.param, src.param);
+}
+inline Controller_T_Runtime_Error_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Controller_T_Runtime_Error_Selection_range_check(dst);
+}
+inline Controller_T_Runtime_Error_Selection_range_check(Controller_T_Runtime_Error_Selection_vc)
+{
+    assert((((Controller_T_Runtime_Error_Selection_vc == Controller_T_Runtime_Error_Selection_noerror_present) || (Controller_T_Runtime_Error_Selection_vc == Controller_T_Runtime_Error_Selection_encodeerror_present)) || (Controller_T_Runtime_Error_Selection_vc == Controller_T_Runtime_Error_Selection_decodeerror_present)));
 }
 inline MyInteger_assign_value(dst, src)
 {
@@ -315,7 +349,7 @@ inline T_Int32_assign_value(dst, src)
 }
 inline T_Int32_range_check(T_Int32_vc)
 {
-    assert(((T_Int32_vc >= -2147483648) && (T_Int32_vc <= 2147483647)));
+    assert((T_Int32_vc <= 2147483647));
 }
 inline T_UInt32_assign_value(dst, src)
 {
@@ -357,6 +391,51 @@ inline T_Null_Record_assign_value(dst, src)
 {
     skip;
 }
+inline T_Runtime_Error__noerror_assign_value(dst, src)
+{
+    dst = src;
+    T_Runtime_Error__noerror_range_check(dst);
+}
+inline T_Runtime_Error__noerror_range_check(T_Runtime_Error__noerror_vc)
+{
+    assert(((T_Runtime_Error__noerror_vc >= 0) && (T_Runtime_Error__noerror_vc <= -1)));
+}
+inline T_Runtime_Error__encodeerror_assign_value(dst, src)
+{
+    dst = src;
+    T_Runtime_Error__encodeerror_range_check(dst);
+}
+inline T_Runtime_Error__encodeerror_range_check(T_Runtime_Error__encodeerror_vc)
+{
+    assert((T_Runtime_Error__encodeerror_vc <= 2147483647));
+}
+inline T_Runtime_Error__decodeerror_assign_value(dst, src)
+{
+    dst = src;
+    T_Runtime_Error__decodeerror_range_check(dst);
+}
+inline T_Runtime_Error__decodeerror_range_check(T_Runtime_Error__decodeerror_vc)
+{
+    assert((T_Runtime_Error__decodeerror_vc <= 2147483647));
+}
+inline T_Runtime_Error_assign_value(dst, src)
+{
+    dst.selection = src.selection;
+    if
+    ::  (dst.selection == T_Runtime_Error_noerror_PRESENT);
+        T_Runtime_Error__noerror_assign_value(dst.data.noerror, src.data.noerror);
+    ::  (dst.selection == T_Runtime_Error_encodeerror_PRESENT);
+        T_Runtime_Error__encodeerror_assign_value(dst.data.encodeerror, src.data.encodeerror);
+    ::  (dst.selection == T_Runtime_Error_decodeerror_PRESENT);
+        T_Runtime_Error__decodeerror_assign_value(dst.data.decodeerror, src.data.decodeerror);
+    ::  else;
+        skip;
+    fi;
+}
+inline T_runtime_error_selection_assign_value(dst, src)
+{
+    dst = src;
+}
 inline PID_Range_assign_value(dst, src)
 {
     dst = src;
@@ -393,41 +472,41 @@ inline Environ_ping_p1_range_check(Environ_ping_p1_vc)
 {
     assert(((Environ_ping_p1_vc >= 0) && (Environ_ping_p1_vc <= 3)));
 }
-inline TimerData_timer_enabled_assign_value(dst, src)
+inline TimerData__timer_enabled_assign_value(dst, src)
 {
     dst = src;
-    TimerData_timer_enabled_range_check(dst);
+    TimerData__timer_enabled_range_check(dst);
 }
-inline TimerData_timer_enabled_range_check(TimerData_timer_enabled_vc)
+inline TimerData__timer_enabled_range_check(TimerData__timer_enabled_vc)
 {
     assert(true);
 }
-inline TimerData_interval_assign_value(dst, src)
+inline TimerData__interval_assign_value(dst, src)
 {
     dst = src;
-    TimerData_interval_range_check(dst);
+    TimerData__interval_range_check(dst);
 }
-inline TimerData_interval_range_check(TimerData_interval_vc)
+inline TimerData__interval_range_check(TimerData__interval_vc)
 {
-    assert(((TimerData_interval_vc >= 0) && (TimerData_interval_vc <= 50000)));
+    assert(((TimerData__interval_vc >= 0) && (TimerData__interval_vc <= 50000)));
 }
 inline TimerData_assign_value(dst, src)
 {
-    TimerData_timer_enabled_assign_value(dst.timer_enabled, src.timer_enabled);
-    TimerData_interval_assign_value(dst.interval, src.interval);
+    TimerData__timer_enabled_assign_value(dst.timer_enabled, src.timer_enabled);
+    TimerData__interval_assign_value(dst.interval, src.interval);
 }
-inline AggregateTimerData_controller_assign_value(dst, src)
+inline AggregateTimerData__controller_assign_value(dst, src)
 {
     skip;
 }
-inline AggregateTimerData_dummy_entry_assign_value(dst, src)
+inline AggregateTimerData__dummy_entry_assign_value(dst, src)
 {
     skip;
 }
 inline AggregateTimerData_assign_value(dst, src)
 {
-    AggregateTimerData_controller_assign_value(dst.controller, src.controller);
-    AggregateTimerData_dummy_entry_assign_value(dst.dummy_entry, src.dummy_entry);
+    AggregateTimerData__controller_assign_value(dst.controller, src.controller);
+    AggregateTimerData__dummy_entry_assign_value(dst.dummy_entry, src.dummy_entry);
 }
 inline global_dataview_init()
 {

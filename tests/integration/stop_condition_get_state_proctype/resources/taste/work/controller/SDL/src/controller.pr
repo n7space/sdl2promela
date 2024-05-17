@@ -6,14 +6,16 @@ process type Controller;
         output ping;
         /* CIF NEXTSTATE (410, 172), (70, 35) */
         NEXTSTATE Wait;
+    /* CIF state (857, 95), (73, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Reached;
+    endstate;
     /* CIF state (657, 73), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
         /* CIF input (657, 128), (70, 35) */
         input pong;
             /* CIF NEXTSTATE (655, 183), (73, 35) */
             NEXTSTATE Reached;
-    endstate;
-    /* CIF state (867, 94), (73, 35) */
-    state Reached;
     endstate;
 endprocess type Controller;

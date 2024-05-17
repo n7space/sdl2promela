@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    /* CIF Keep Specific Geode PARAMNAMES p1 */
    signal result (MyIntegerResult);
 
@@ -19,16 +22,19 @@ system Controller;
    procedure get_sender;
       fpar out sender PID;
    external;
+   procedure get_last_error;
+      fpar out err T_Runtime_Error;
+   external;
 
    channel c
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with check_binary, check_unary;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with check_binary, check_unary;
       connect c and r;
 

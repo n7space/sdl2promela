@@ -5,12 +5,13 @@ process Actuator;
         /* CIF NEXTSTATE (542, 275), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (874, 239), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
         /* CIF input (874, 294), (70, 35) */
         input ping;
             /* CIF output (874, 349), (70, 35) */
             output pong;
-            /* CIF NEXTSTATE (874, 404), (70, 35) */
+            /* CIF NEXTSTATE (874, 413), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Actuator;

@@ -1,21 +1,21 @@
-<InterfaceView asn1file="integer_expressions.acn">
-<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="8300 27400 68200 83100"/>
-<Provided_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<InterfaceView version="1.3" asn1file="integer_expressions.acn" UiFile="interfaceview.ui.xml" modifierHash="63b3d8304">
+<Function id="{598ca9ee-9456-4ebd-b42b-60f446cf6127}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" instances_max="1" instances_min="1" startup_priority="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{ab89f0cd-cf10-4d5b-bdab-ca4b05227cf3}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="MyIntegerResult" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="68200 69700"/>
 </Provided_Interface>
 
-<Required_Interface name="check_binary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<Provided_Interface id="{62023814-9712-4829-8da4-4139483686a6}" name="aux_pulse" kind="Cyclic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" stack_size="1024">
+</Provided_Interface>
+
+<Required_Interface id="{3bc3cb6b-ed57-426a-9794-2a5a74def14b}" name="check_binary" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="BinaryIntegerTestParam" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="68200 46800"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="check_unary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<Required_Interface id="{8d727913-8818-4f96-aac3-327fcfd463b6}" name="check_unary" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="UnaryIntegerTestParam" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="68200 51900"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="false"/>
 </Required_Interface>
@@ -25,21 +25,18 @@
     </Implementations>
 </Function>
 
-<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="107300 27000 155500 81400"/>
-<Provided_Interface name="check_binary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<Function id="{90a58a28-4fc5-4832-99ef-8f9f84aa62dd}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" instances_max="1" instances_min="1" startup_priority="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{4efe959e-620c-4a8f-89a8-db7c40f6d846}" name="check_binary" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="BinaryIntegerTestParam" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="107300 46900"/>
 </Provided_Interface>
 
-<Provided_Interface name="check_unary" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<Provided_Interface id="{6adb6b70-2147-4b31-a39c-b9fa90eabe94}" name="check_unary" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="UnaryIntegerTestParam" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="107300 51900"/>
 </Provided_Interface>
 
-<Required_Interface name="result" kind="Sporadic" layer="default" queue_size="1" miat="0" wcet="0" priority="1" stack_size="1024">
+<Required_Interface id="{fe366cb5-e0db-40d3-997f-5236b2b0b60c}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" miat="0" priority="1" stack_size="1024" queue_size="1">
     <Input_Parameter name="p1" type="MyIntegerResult" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="107300 69500"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -49,26 +46,24 @@
     </Implementations>
 </Function>
 
-<Connection >
-    <Source func_name="controller" ri_name="check_unary"/>
-    <Target func_name="actuator" pi_name="check_unary"/>
-    <Property name="Taste::coordinates" value="68800 51900 107000 51900"/>
+<Connection id="{b06c384b-0e03-44b2-a682-7bb8b1beed90}" required_system_element="NO">
+    <Source iface_id="{fe366cb5-e0db-40d3-997f-5236b2b0b60c}" func_name="actuator" ri_name="result" />
+    <Target iface_id="{ab89f0cd-cf10-4d5b-bdab-ca4b05227cf3}" func_name="controller" pi_name="result" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="check_binary"/>
-    <Target func_name="actuator" pi_name="check_binary"/>
-    <Property name="Taste::coordinates" value="68800 46800 87900 46800 107000 46900"/>
+<Connection id="{a650ad62-a333-4d34-b4bd-a594a9230a8c}" required_system_element="NO">
+    <Source iface_id="{3bc3cb6b-ed57-426a-9794-2a5a74def14b}" func_name="controller" ri_name="check_binary" />
+    <Target iface_id="{4efe959e-620c-4a8f-89a8-db7c40f6d846}" func_name="actuator" pi_name="check_binary" />
 </Connection>
 
-<Connection >
-    <Source func_name="actuator" ri_name="result"/>
-    <Target func_name="controller" pi_name="result"/>
-    <Property name="Taste::coordinates" value="106700 69500 87600 69500 68500 69700"/>
+<Connection id="{302bf631-8bd9-4084-8355-ef83c28b4ecc}" required_system_element="NO">
+    <Source iface_id="{8d727913-8818-4f96-aac3-327fcfd463b6}" func_name="controller" ri_name="check_unary" />
+    <Target iface_id="{6adb6b70-2147-4b31-a39c-b9fa90eabe94}" func_name="actuator" pi_name="check_unary" />
 </Connection>
 
-<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
-    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+<Comment id="{f0e21ebf-2ff9-4d0d-bd21-ee5bc15cbf83}" name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
 </Comment>
+
+<Layer name="default" is_visible="true"/>
 
 </InterfaceView>

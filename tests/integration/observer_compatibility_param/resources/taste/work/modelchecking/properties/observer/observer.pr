@@ -1,5 +1,6 @@
 system observer;
-    /* CIF TEXT (144, 214), (280, 140) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (137, 213), (280, 140) */
     use datamodel comment 'observer.asn';
     
     exported procedure observe;
@@ -16,6 +17,7 @@ system observer;
         connect c and r;
         /* CIF PROCESS (259, 87), (150, 75) */
         process observer;
+            /* CIF Keep Specific Geode Partition 'default' */
             /* CIF TEXT (0, 57), (222, 140) */
             monitor st System_State;
             
@@ -24,15 +26,37 @@ system observer;
             errorstates error;
             successstates reached;
             /* CIF ENDTEXT */
+            /* CIF procedure (121, 392), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            procedure observe;
+                /* CIF Keep Specific Geode Partition 'default' */
+                /* CIF TEXT (178, 174), (271, 140) */
+                fpar in/out model           System_State,
+                          in/out last_event  Observable_Event;
+                /* CIF ENDTEXT */
+                /* CIF START (458, 98), (70, 35) */
+                START;
+                    /* CIF return (475, 153), (35, 35) */
+                    return ;
+            endprocedure;
             /* CIF START (376, 64), (70, 35) */
             START;
                 /* CIF NEXTSTATE (376, 119), (70, 35) */
                 NEXTSTATE Idle;
+            /* CIF state (685, 50), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state error;
+            endstate;
+            /* CIF state (869, 67), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state reached;
+            endstate;
             /* CIF state (554, 149), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state Idle;
-                /* CIF provided (455, 204), (267, 35) */
+                /* CIF provided (454, 204), (267, 35) */
                 provided input pong(v) from actuator to controller;
-                    /* CIF decision (554, 259), (70, 50) */
+                    /* CIF decision (553, 259), (70, 50) */
                     decision v = 0;
                         /* CIF ANSWER (509, 329), (70, 23) */
                         (true):
@@ -43,12 +67,6 @@ system observer;
                             /* CIF NEXTSTATE (598, 372), (70, 35) */
                             NEXTSTATE reached;
                     enddecision;
-            endstate;
-            /* CIF state (870, 67), (70, 35) */
-            state reached;
-            endstate;
-            /* CIF state (685, 50), (70, 35) */
-            state error;
             endstate;
         endprocess observer;
     endblock;

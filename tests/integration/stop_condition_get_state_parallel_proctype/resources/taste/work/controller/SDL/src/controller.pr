@@ -2,6 +2,25 @@
 process type Controller;
     state aggregation Wait;
     substructure
+            state Left;
+            substructure
+                    /* CIF START (128, 100), (70, 35) */
+                    START;
+                        /* CIF NEXTSTATE (128, 155), (70, 35) */
+                        NEXTSTATE Wait;
+                    /* CIF state (717, 115), (73, 35) */
+                    /* CIF Keep Specific Geode Partition 'default' */
+                    state Reached;
+                    endstate;
+                    /* CIF state (352, 100), (70, 35) */
+                    /* CIF Keep Specific Geode Partition 'default' */
+                    state Wait;
+                        /* CIF input (352, 155), (70, 35) */
+                        input pong;
+                            /* CIF NEXTSTATE (350, 210), (73, 35) */
+                            NEXTSTATE Reached;
+                    endstate;
+            endsubstructure;
             state Right;
             substructure
                     /* CIF START (152, 77), (70, 35) */
@@ -9,6 +28,7 @@ process type Controller;
                         /* CIF NEXTSTATE (152, 132), (70, 35) */
                         NEXTSTATE Wait;
                     /* CIF state (385, 107), (70, 35) */
+                    /* CIF Keep Specific Geode Partition 'default' */
                     state Wait;
                         /* CIF input (385, 162), (70, 35) */
                         input dummy;
@@ -18,37 +38,23 @@ process type Controller;
                             NEXTSTATE Wait;
                     endstate;
             endsubstructure;
-            state Left;
-            substructure
-                    /* CIF START (128, 100), (70, 35) */
-                    START;
-                        /* CIF NEXTSTATE (128, 155), (70, 35) */
-                        NEXTSTATE Wait;
-                    /* CIF state (352, 100), (70, 35) */
-                    state Wait;
-                        /* CIF input (352, 155), (70, 35) */
-                        input pong;
-                            /* CIF NEXTSTATE (350, 210), (73, 35) */
-                            NEXTSTATE Reached;
-                    endstate;
-                    /* CIF state (718, 115), (73, 35) */
-                    state Reached;
-                    endstate;
-            endsubstructure;
-            /* CIF state (307, 288), (70, 35) */
-            state Left;
-            endstate;
             /* CIF state (725, 298), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
             state Right;
             endstate;
+            /* CIF state (307, 288), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state Left;
+            endstate;
     endsubstructure;
-    /* CIF START (558, 173), (70, 35) */
+    /* CIF START (572, 182), (70, 35) */
     START;
-        /* CIF output (558, 228), (70, 35) */
+        /* CIF output (572, 237), (70, 35) */
         output ping;
-        /* CIF NEXTSTATE (558, 278), (70, 35) */
+        /* CIF NEXTSTATE (572, 287), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (985, 176), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
     endstate;
 endprocess type Controller;

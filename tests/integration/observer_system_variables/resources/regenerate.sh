@@ -15,7 +15,7 @@ OUTPUTDIR_PATH="${DIR}/tmc"
 OBSERVER_PATH="${DIR}/taste/work/modelchecking/properties/observer/observer.pr"
 
 echo "Generating promela code"
-if ! "$TMC" -iv "$INTERFACEVIEW_PATH" -os "$OBSERVER_PATH" -o "$OUTPUTDIR_PATH"
+if ! "$TMC" -iv "$INTERFACEVIEW_PATH" -os "$OBSERVER_PATH" -o "$OUTPUTDIR_PATH" -ivl aux_pulse:0
 then
 	echo "CRITICAL: Cannot generate Promela code"
 	exit 1

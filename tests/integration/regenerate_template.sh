@@ -2,6 +2,8 @@
 
 pushd taste
 
+if [[ -n $REGENERATE_BUILD_PROJECT ]]
+then
 echo "INFO: project clean"
 if ! make clean
 then
@@ -9,11 +11,12 @@ then
 	exit 1
 fi
 
-echo "INFO: project build"
-if ! make
-then
-	echo "CRITICAL: Cannot build project."
-	exit 1
+	   echo "INFO: project build"
+	   if ! make
+	   then
+		   echo "CRITICAL: Cannot build project."
+		   exit 1
+	   fi
 fi
 
 echo "INFO: datamodel"
