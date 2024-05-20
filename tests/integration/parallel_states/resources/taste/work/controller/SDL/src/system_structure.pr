@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    /* CIF Keep Specific Geode PARAMNAMES p1 */
    signal result (MyStatus);
 
@@ -25,14 +28,14 @@ system Controller;
    external;
 
    channel c
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with tick, tick_left, tick_right;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with tick, tick_left, tick_right;
       connect c and r;
 

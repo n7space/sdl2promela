@@ -1,0 +1,26 @@
+Lock-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   T-UInt8, T-UInt16, T-Boolean, T-WriteAccess, T-ByteArray, T-MemBuffer, T-WriteRequest, T-ProcID FROM DEKKER1-DATAVIEW
+   T-UInt32, T-Null-Record FROM TASTE-BasicTypes;
+
+Lock-States ::= ENUMERATED {wait-turn, idle, writing, wait-nocontention}
+
+Lock-Context ::= SEQUENCE {
+   state Lock-States,
+   init-done BOOLEAN,
+   remotewantstoenter T-Boolean,
+   writesize T-UInt8,
+   myprocid T-ProcID,
+   remoteprocid T-ProcID,
+   turn T-ProcID,
+   mywritevalue T-WriteAccess,
+   writecount T-UInt8,
+   turnerror T-Boolean,
+   contentionerror T-Boolean,
+   writerequest T-WriteRequest,
+   startaddress T-UInt16
+}
+
+END

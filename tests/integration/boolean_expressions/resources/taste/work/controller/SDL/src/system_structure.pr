@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    /* CIF Keep Specific Geode PARAMNAMES p1 */
    signal result (MyBooleanResult);
 
@@ -24,14 +27,14 @@ system Controller;
    external;
 
    channel c
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with check_binary, check_unary;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with check_binary, check_unary;
       connect c and r;
 

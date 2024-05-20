@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash18
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -15,7 +15,7 @@ OUTPUTDIR_PATH="${DIR}/tmc"
 SCL_PATH="${DIR}/scl.txt"
 
 echo "Generating promela code"
-if ! "$TMC" -iv "$INTERFACEVIEW_PATH" -scl "$SCL_PATH" -o "$OUTPUTDIR_PATH"
+if ! "$TMC" -iv "$INTERFACEVIEW_PATH" -scl "$SCL_PATH" -o "$OUTPUTDIR_PATH" -ivl aux_pulse:0
 then
 	echo "CRITICAL: Cannot generate Promela code"
 	exit 1

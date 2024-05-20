@@ -1,14 +1,12 @@
-<InterfaceView asn1file="binary_xor.acn">
-<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1">
-    <Property name="Taste::coordinates" value="12800 1900 35700 27200"/>
-<Provided_Interface name="calculate" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" stack_size="1024" miat="0" priority="1" queue_size="1" wcet="0">
+<InterfaceView version="1.3" asn1file="binary_xor.acn" UiFile="interfaceview.ui.xml" modifierHash="63b3d8304">
+<Function id="{5dc709e1-c510-4e11-a08f-d851fbc6d42e}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1" instances_max="1" instances_min="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{c1954819-f7af-424a-88c0-834185ce980c}" name="calculate" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" miat="0" queue_size="1" wcet="0" priority="1" stack_size="1024">
     <Input_Parameter name="p1" type="MyCommand" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="12800 7900"/>
 </Provided_Interface>
 
-<Required_Interface name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" stack_size="1024" miat="0" priority="1" queue_size="1" wcet="0">
+<Required_Interface id="{4fb2e80a-1c2c-437d-924e-bba354642130}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" miat="0" queue_size="1" wcet="0" priority="1" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="12800 22100"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -18,16 +16,17 @@
     </Implementations>
 </Function>
 
-<Function name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1">
-    <Property name="Taste::coordinates" value="-43800 -5700 -17800 36200"/>
-<Provided_Interface name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" stack_size="1024" miat="0" priority="1" queue_size="1" wcet="0">
+<Function id="{cc1b0487-335c-459a-ab19-81edd84091c8}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1" instances_max="1" instances_min="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{ee390709-d069-412e-ae46-f378f57bf0b4}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" miat="0" queue_size="1" wcet="0" priority="1" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="-17800 21200"/>
 </Provided_Interface>
 
-<Required_Interface name="calculate" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" stack_size="1024" miat="0" priority="1" queue_size="1" wcet="0">
+<Provided_Interface id="{8947c084-f22f-4bfc-8cfc-fd911e95c617}" name="aux_pulse" kind="Cyclic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" stack_size="1024">
+</Provided_Interface>
+
+<Required_Interface id="{1907a294-48da-4344-bf34-4ba100499a61}" name="calculate" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" miat="0" queue_size="1" wcet="0" priority="1" stack_size="1024">
     <Input_Parameter name="p1" type="MyCommand" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="-17800 6300"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -37,22 +36,19 @@
     </Implementations>
 </Function>
 
-<Connection  required_system_element="NO">
-    <Source func_name="actuator" ri_name="result"/>
-    <Target func_name="controller" pi_name="result"/>
-    <Property name="Taste::coordinates" value="12200 22100 -2600 22100 -17500 21200"/>
+<Connection id="{fddc4418-4373-49d4-94a2-44e73396f199}" required_system_element="NO">
+    <Source iface_id="{4fb2e80a-1c2c-437d-924e-bba354642130}" func_name="actuator" ri_name="result" />
+    <Target iface_id="{ee390709-d069-412e-ae46-f378f57bf0b4}" func_name="controller" pi_name="result" />
 </Connection>
 
-<Connection  required_system_element="NO">
-    <Source func_name="controller" ri_name="calculate"/>
-    <Target func_name="actuator" pi_name="calculate"/>
-    <Property name="Taste::coordinates" value="-17200 6300 -2400 6300 -2400 7900 12500 7900"/>
+<Connection id="{bb3d2992-ac30-41b5-9ae1-4255d82fd2a0}" required_system_element="NO">
+    <Source iface_id="{1907a294-48da-4344-bf34-4ba100499a61}" func_name="controller" ri_name="calculate" />
+    <Target iface_id="{c1954819-f7af-424a-88c0-834185ce980c}" func_name="actuator" pi_name="calculate" />
 </Connection>
 
-<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
-    <Property name="Taste::coordinates" value="8100 -19200 49400 -3600"/>
+<Comment id="{89d45ce2-a4fe-446b-bfa6-9f9ea7ffd500}" name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
 </Comment>
 
-<Layer name="default"/>
+<Layer name="default" is_visible="true"/>
 
 </InterfaceView>

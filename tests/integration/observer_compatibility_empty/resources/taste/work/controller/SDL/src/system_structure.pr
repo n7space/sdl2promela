@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    signal pong;
 
    signal ping;
@@ -18,14 +21,14 @@ system Controller;
    external;
 
    channel c
-      from env to Controller with pong;
+      from env to Controller with aux_pulse, pong;
       from Controller to env with ping;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with pong;
+      from env to Controller with aux_pulse, pong;
       from Controller to env with ping;
       connect c and r;
 
