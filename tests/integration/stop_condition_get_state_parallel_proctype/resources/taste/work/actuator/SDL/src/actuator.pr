@@ -1,8 +1,8 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Actuator;
-    /* CIF START (537, 225), (80, 35) */
+    /* CIF START (546, 228), (80, 35) */
     START;
-        /* CIF NEXTSTATE (542, 275), (70, 35) */
+        /* CIF NEXTSTATE (551, 278), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (874, 239), (70, 35) */
     /* CIF Keep Specific Geode Partition 'default' */

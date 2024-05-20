@@ -7,20 +7,20 @@ process type Worker;
     dcl check_param MyInteger;
     dcl result_param MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (332, 26), (70, 35) */
+    /* CIF START (340, 33), (70, 35) */
     START;
-        /* CIF NEXTSTATE (332, 76), (70, 35) */
+        /* CIF NEXTSTATE (340, 83), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (1086, 169), (70, 35) */
     /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
-        /* CIF input (1048, 224), (141, 35) */
+        /* CIF input (1047, 224), (141, 35) */
         input check(check_param);
-            /* CIF task (962, 279), (313, 35) */
+            /* CIF task (961, 279), (313, 35) */
             task result_param := worker_ctxt.coeff + check_param;
-            /* CIF output (1047, 334), (143, 35) */
+            /* CIF output (1046, 334), (143, 35) */
             output result(result_param);
-            /* CIF NEXTSTATE (1084, 389), (70, 35) */
+            /* CIF NEXTSTATE (1083, 389), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess type Worker;

@@ -8,20 +8,20 @@ process Controller;
     dcl result_param MyInteger;
     dcl error MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (517, 227), (70, 35) */
+    /* CIF START (523, 223), (70, 35) */
     START;
-        /* CIF task (489, 282), (124, 35) */
+        /* CIF task (495, 278), (124, 35) */
         task check_param := 1;
-        /* CIF output (481, 337), (141, 35) */
+        /* CIF output (487, 333), (141, 35) */
         output check(check_param);
-        /* CIF NEXTSTATE (517, 387), (70, 35) */
+        /* CIF NEXTSTATE (523, 383), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (893, 204), (70, 35) */
     /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
-        /* CIF input (854, 259), (143, 35) */
+        /* CIF input (853, 259), (143, 35) */
         input result(result_param);
-            /* CIF decision (861, 314), (129, 50) */
+            /* CIF decision (860, 314), (129, 50) */
             decision result_param = 11;
                 /* CIF ANSWER (848, 384), (70, 23) */
                 (true):
