@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    signal pong;
 
    signal ping;
@@ -31,16 +34,19 @@ system Controller;
    procedure get_sender;
       fpar out sender PID;
    external;
+   procedure get_last_error;
+      fpar out err T_Runtime_Error;
+   external;
 
    channel c
-      from env to Controller with pong;
+      from env to Controller with aux_pulse, pong;
       from Controller to env with ping;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with pong;
+      from env to Controller with aux_pulse, pong;
       from Controller to env with ping;
       connect c and r;
 

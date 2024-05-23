@@ -6,6 +6,7 @@ from opengeode.AdaGenerator import SEPARATOR
 from opengeode import sdl92Lexer as lexer
 from enum import Enum
 from sdl2promela.utils import Asn1Type
+from . import type_info
 
 
 class State:
@@ -1675,6 +1676,7 @@ class Model:
         self.transitions = {}
         self.observer_attachments = []
         self.types = getattr(self.source.DV, "types", {})
+        self.type_info = type_info.build_type_info(self.types)
         self.variables = {}
         self.aliases = {}
         self.procedures = {}

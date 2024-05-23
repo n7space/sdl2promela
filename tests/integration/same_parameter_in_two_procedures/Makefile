@@ -38,6 +38,7 @@ test_same_parameter_in_two_procedures:
 	${CREATE_EMPTY_TEST_DIR}
 	${SDL2PROMELA} -o ${TEST_DIR}/actuator.pml --sdl ${RES_DIR}/actuator.pr
 	cp ${RES_DIR}/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cd ${TEST_DIR} && \
 	${SPIN} system.pml > system.output
 	grep -q "Result: 9" ${TEST_DIR}/system.output

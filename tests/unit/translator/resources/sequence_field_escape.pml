@@ -11,7 +11,7 @@ inline Complexsdl_0_transition(id)
       global_state.complexsdl.state = Complexsdl_States_wait;
       goto complexsdl_continuous_signals;
     ::(complexsdl_transition_id == 1)->
-      MyInteger_assign_value(global_state.complexsdl.param.long_name, global_state.complexsdl.tmp);
+      LongSequence__long_name_assign_value(global_state.complexsdl.param.long_name, global_state.complexsdl.tmp);
       complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
       goto complexsdl_continuous_signals;

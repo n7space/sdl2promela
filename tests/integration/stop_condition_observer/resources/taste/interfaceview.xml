@@ -1,14 +1,15 @@
-<InterfaceView asn1file="stop_condition_observer.acn">
-<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1">
-    <Property name="Taste::coordinates" value="91800 38000 132300 84600"/>
-<Provided_Interface name="ping" kind="Sporadic" layer="default" required_system_element="NO" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+<InterfaceView version="1.3" asn1file="stop_condition_observer.acn" UiFile="interfaceview.ui.xml" modifierHash="63b3d8304">
+<Function id="{2480ee07-ae21-4359-88bd-aead864171ab}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" startup_priority="1" instances_max="1" instances_min="1" FPGA_Configurations="">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{59ea99a0-7709-4937-8106-5a0ae08e601b}" name="pong" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" queue_size="1" miat="0" wcet="0" priority="1">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="91800 46300"/>
 </Provided_Interface>
 
-<Required_Interface name="pong" kind="Sporadic" layer="default" required_system_element="NO" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+<Provided_Interface id="{006647ef-d3a6-4d32-9af1-b92c08de5086}" name="aux_pulse" kind="Cyclic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" wcet="0" priority="1">
+</Provided_Interface>
+
+<Required_Interface id="{df4efb5b-d6ea-4420-9ccc-4eabdd9a28c6}" name="ping" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" queue_size="1" miat="0" wcet="0" priority="1">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="91800 78800"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -18,16 +19,14 @@
     </Implementations>
 </Function>
 
-<Function name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" FPGA_Configurations="" startup_priority="1">
-    <Property name="Taste::coordinates" value="22000 37900 58300 85100"/>
-<Provided_Interface name="pong" kind="Sporadic" layer="default" required_system_element="NO" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+<Function id="{470fd34c-2fa3-47b3-a68a-304c7108756a}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" startup_priority="1" instances_max="1" instances_min="1" FPGA_Configurations="">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{e66d25ca-1e0a-4147-a366-f388260c86e4}" name="ping" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" queue_size="1" miat="0" wcet="0" priority="1">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="58300 78800"/>
 </Provided_Interface>
 
-<Required_Interface name="ping" kind="Sporadic" layer="default" required_system_element="NO" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+<Required_Interface id="{e9bc4201-afa4-4b07-a836-be564b85d9d8}" name="pong" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" queue_size="1" miat="0" wcet="0" priority="1">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="58300 46300"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -37,22 +36,19 @@
     </Implementations>
 </Function>
 
-<Connection  required_system_element="NO">
-    <Source func_name="controller" ri_name="ping"/>
-    <Target func_name="actuator" pi_name="ping"/>
-    <Property name="Taste::coordinates" value="58900 46300 91500 46300"/>
+<Connection id="{fe05c186-e287-4020-969d-3f69a421e679}" required_system_element="NO">
+    <Source iface_id="{e9bc4201-afa4-4b07-a836-be564b85d9d8}" func_name="actuator" ri_name="pong" />
+    <Target iface_id="{59ea99a0-7709-4937-8106-5a0ae08e601b}" func_name="controller" pi_name="pong" />
 </Connection>
 
-<Connection  required_system_element="NO">
-    <Source func_name="actuator" ri_name="pong"/>
-    <Target func_name="controller" pi_name="pong"/>
-    <Property name="Taste::coordinates" value="91200 78800 58600 78800"/>
+<Connection id="{4f37ea09-eca9-48a4-8d75-9b6b47e6f02a}" required_system_element="NO">
+    <Source iface_id="{df4efb5b-d6ea-4420-9ccc-4eabdd9a28c6}" func_name="controller" ri_name="ping" />
+    <Target iface_id="{e66d25ca-1e0a-4147-a366-f388260c86e4}" func_name="actuator" pi_name="ping" />
 </Connection>
 
-<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
-    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+<Comment id="{47e0ee8d-dd3d-438c-96ce-d33b573c600b}" name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
 </Comment>
 
-<Layer name="default"/>
+<Layer name="default" is_visible="true"/>
 
 </InterfaceView>

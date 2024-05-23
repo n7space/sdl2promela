@@ -265,14 +265,16 @@ def __fix_type_name(name: str) -> str:
     return tmp.replace("_selection", "_Selection")
 
 
-def __type_name(datatype: Any) -> str:
+def __type_name(context: Context, datatype: Any) -> str:
     if datatype.kind == "ReferenceType":
         res = datatype.ReferencedTypeName.replace("-", "_")
+        res = context.sdl_model.type_info.fix_type_name(res)
         return __fix_type_name(res)
     if datatype.kind == "IntegerType":
         return "int"
     if datatype.kind == "EnumeratedType":
         res = datatype.value.replace("-", "_")
+        res = context.sdl_model.type_info.fix_type_name(res)
         return __fix_type_name(res)
 
     raise NotImplementedError(f"__type_name is not implemented for {datatype.kind}")
@@ -292,14 +294,14 @@ def __requires_assign_value_inline(datatype: Any) -> bool:
     return False
 
 
-def __get_assign_value_inline_name(datatype: Any) -> str:
+def __get_assign_value_inline_name(context: Context, datatype: Any) -> str:
     """
     Build name for the inline to assign value to variable with type `datatype`.
 
     :param datatype: Datatype of variable on left side.
     :returns: Name for the inline for value assignment.
     """
-    return "{}_assign_value".format(__type_name(datatype))
+    return "{}_assign_value".format(__type_name(context, datatype))
 
 
 def __get_promela_binary_operator(
@@ -523,7 +525,7 @@ def __is_system_state_monitor_variable(context: Context, variable: str) -> bool:
     """
     for name, monitor in context.sdl_model.monitors.items():
         if variable.lower() == name.lower():
-            return __type_name(monitor.type) == "System_State"
+            return __type_name(context, monitor.type) == "System_State"
     return False
 
 
@@ -607,7 +609,10 @@ def __get_constant_name(
 
 
 def __build_assignment(
-    left: promelamodel.VariableReference, right: promelamodel.Expression, left_type: Any
+    context: Context,
+    left: promelamodel.VariableReference,
+    right: promelamodel.Expression,
+    left_type: Any,
 ) -> promelamodel.Statement:
     """
     Build assignment where ``left` is target and `right` is source.
@@ -620,7 +625,7 @@ def __build_assignment(
     :returns: A promela statement, which performs actual assignment.
     """
     if __requires_assign_value_inline(left_type):
-        assignInlineName = __get_assign_value_inline_name(left_type)
+        assignInlineName = __get_assign_value_inline_name(context, left_type)
         return (
             CallBuilder()
             .withTarget(assignInlineName)
@@ -630,6 +635,27 @@ def __build_assignment(
         )
     else:
         return AssignmentBuilder().withTarget(left).withSource(right).build()
+
+
+def __build_member_assignment(
+    context: Context,
+    left: promelamodel.VariableReference,
+    right: promelamodel.Expression,
+    left_type: Any,
+    member_access: sdlmodel.MemberAccess,
+) -> promelamodel.Statement:
+    if __requires_assign_value_inline(left_type):
+        sequence_name = __type_name(context, member_access.sequence.type)
+        field_name = member_access.member.variableName
+        assignInlineName = f"{sequence_name}__{field_name}_assign_value"
+        return (
+            CallBuilder()
+            .withTarget(assignInlineName)
+            .withParameter(left)
+            .withParameter(right)
+            .build()
+        )
+    return AssignmentBuilder().withTarget(left).withSource(right).build()
 
 
 def __terminate_transition_statement(context: Context):
@@ -846,9 +872,9 @@ def __generate_expression(context: Context, enumValue: sdlmodel.EnumValue):
     basic_type = find_basic_type(context.sdl_model.source.dataview, enumValue.type)
     finalType = resolve_asn1_type(context.sdl_model.types, basic_type)
     if basic_type.kind == "EnumeratedType" and context.missing_type is not None:
-        type_name = __type_name(context.missing_type)
+        type_name = __type_name(context, context.missing_type)
     else:
-        type_name = __type_name(enumValue.type)
+        type_name = __type_name(context, enumValue.type)
     enumerant = enumValue.value.replace("_", "-").lower()
     candidates = [v for k, v in basic_type.EnumValues.items() if k.lower() == enumerant]
     if len(candidates) != 1:
@@ -1089,7 +1115,7 @@ def __generate_procedure_inline(
         blockBuilder.withStatement(
             VariableDeclarationBuilder(
                 localVariableName,
-                __type_name(localVariableInfo.type),
+                __type_name(context, localVariableInfo.type),
             ).build()
         )
         if localVariableInfo.value is not None:
@@ -1120,11 +1146,12 @@ def __generate_procedure_inline(
             blockBuilder.withStatement(
                 VariableDeclarationBuilder(
                     __get_procedure_local_variable_name(context, parameter.name),
-                    __type_name(parameter.typeObject),
+                    __type_name(context, parameter.typeObject),
                 ).build()
             )
             blockBuilder.withStatement(
                 __build_assignment(
+                    context,
                     VariableReferenceBuilder(
                         __get_procedure_local_variable_name(context, parameter.name)
                     ).build(),
@@ -1248,6 +1275,7 @@ def __generate_execute_transition(
         variable = context.sdl_model.variables[target_variable_ref.variableName]
         statements.append(
             __build_assignment(
+                context,
                 __generate_variable_name(context, target_variable_ref, True),
                 VariableReferenceBuilder(
                     __get_parameter_name(parameters[0].target_variable)
@@ -1532,7 +1560,7 @@ def __generate_for_over_sequenceof(
 
     result_statements.append(
         VariableDeclarationBuilder(
-            task.iteratorName.variableName, __type_name(range.type)
+            task.iteratorName.variableName, __type_name(context, range.type)
         ).build()
     )
 
@@ -1565,6 +1593,7 @@ def __generate_for_over_sequenceof(
     all_statements: List[promelamodel.Statement] = []
     all_statements.append(
         __build_assignment(
+            context,
             VariableReferenceBuilder(task.iteratorName.variableName).build(),
             ArrayAccessBuilder()
             .withArray(
@@ -1649,6 +1678,7 @@ def __generate_statement(
     statements = []
     statements.append(
         __build_assignment(
+            context,
             VariableReferenceBuilder(
                 __get_procedure_inline_return_name(context)
             ).build(),
@@ -1724,7 +1754,7 @@ def __generate_assignment(
         if builtins.is_builtin(right.name):
             assignInlineName: Optional[str] = None
             if __requires_assign_value_inline(left_type):
-                assignInlineName = __get_assign_value_inline_name(left_type)
+                assignInlineName = __get_assign_value_inline_name(context, left_type)
 
             left_side = __generate_variable_name(context, left, True)
 
@@ -1752,13 +1782,25 @@ def __generate_assignment(
                 inlineCall.withParameter(__generate_expression(context, parameter))
             statements.append(inlineCall.build())
     else:
-        statements.append(
-            __build_assignment(
-                __generate_variable_name(context, left, True),
-                __generate_expression(context, right),
-                left_type,
+        if isinstance(left, sdlmodel.MemberAccess):
+            statements.append(
+                __build_member_assignment(
+                    context,
+                    __generate_variable_name(context, left, True),
+                    __generate_expression(context, right),
+                    left_type,
+                    left,
+                )
             )
-        )
+        else:
+            statements.append(
+                __build_assignment(
+                    context,
+                    __generate_variable_name(context, left, True),
+                    __generate_expression(context, right),
+                    left_type,
+                )
+            )
 
     return statements
 
@@ -1986,6 +2028,7 @@ def __generate_assignment(
     elif finalType.kind == "IntegerType":
         return [
             __build_assignment(
+                context,
                 __generate_variable_name(context, left, True),
                 promelamodel.IntegerValue(right.integer_value()),
                 left_type,
@@ -2228,7 +2271,7 @@ def __generate_assignment(
     valueType = finalType.Children[selected_alternative].type
 
     selection = (
-        __type_name(left_type)
+        __type_name(context, left_type)
         + "_"
         + selected_alternative.replace("-", "_")
         + "_PRESENT"
@@ -2532,7 +2575,7 @@ def __generate_statement(
             tmp_variable_name = context.generate_temporary_variable()
             statements.append(
                 VariableDeclarationBuilder(
-                    tmp_variable_name, __type_name(output_parameter_type)
+                    tmp_variable_name, __type_name(context, output_parameter_type)
                 ).build()
             )
             tmp_variable_ref = sdlmodel.VariableReference(tmp_variable_name)
@@ -2853,7 +2896,7 @@ def __generate_implicit_variable_definition(
 ) -> promelamodel.VariableDeclaration:
     mangled_name = __get_implicit_variable_name(context, variable_name)
     return VariableDeclarationBuilder(
-        mangled_name, __type_name(variable_info.type)
+        mangled_name, __type_name(context, variable_info.type)
     ).build()
 
 

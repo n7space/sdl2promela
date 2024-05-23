@@ -1,87 +1,77 @@
-<InterfaceView asn1file="builtin_functions.asn">
-<Function name="controller" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="9100 27300 49000 112400"/>
-<Provided_Interface name="result" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<InterfaceView version="1.3" asn1file="builtin_functions.acn" UiFile="interfaceview.ui.xml" modifierHash="63b3d8304">
+<Function id="{afdb7db0-265e-41fd-b459-899a2f204f28}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" instances_min="1" startup_priority="1" FPGA_Configurations="" instances_max="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{a24aad39-b47a-4973-804c-2f02723ac9aa}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyBoolean" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 40300"/>
 </Provided_Interface>
 
-<Provided_Interface name="result_int" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{7a84f4eb-8e88-4899-9bfb-09474d4ea4c0}" name="result_int" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 54600"/>
 </Provided_Interface>
 
-<Provided_Interface name="result_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{13f15968-f6b4-41ed-96be-ef0aac87f4a9}" name="result_enum" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 72400"/>
 </Provided_Interface>
 
-<Required_Interface name="test_present" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{313cbc76-e47b-41d3-96e2-f987a9bf7a39}" name="aux_pulse" kind="Cyclic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" stack_size="1024">
+</Provided_Interface>
+
+<Required_Interface id="{7af429ee-8b25-4034-8fb7-5d3602a51277}" name="test_present" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 31500"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_length" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{689e83f0-7086-4621-9e08-cbddcdad2a45}" name="test_length" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyArray" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 45900"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_exist" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{7a9bfed7-26aa-44b0-a813-3ab369ec71c1}" name="test_exist" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyStruct" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 62000"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_to_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{fce09c0f-649a-467f-99dd-96426d6ea16a}" name="test_to_enum" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 67800"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_to_selector" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{b6019525-daef-4ed3-b067-144a65928cbd}" name="test_to_selector" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 76800"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_num" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{7cf99fff-deb3-4e5f-a422-b799997bb0be}" name="test_num" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 80400"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_val" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{dca76815-4e3d-43bf-9b25-49fb6424e5de}" name="test_val" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 85300"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_length_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{752201a3-f66d-4806-a438-604d7fa10c97}" name="test_length_fixed" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyFixed" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 92600"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_length_derived_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+<Required_Interface id="{fe92572a-7cbf-4bef-8e7b-f0538e8fa29e}" name="test_length_derived_fixed" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyDerivedFixed" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 98300"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="test_derived_length" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+<Required_Interface id="{13100572-b43b-4f91-96d6-03fe9638e341}" name="test_derived_length" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyDerivedArray" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="49000 105700"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -91,75 +81,62 @@
     </Implementations>
 </Function>
 
-<Function name="actuator" is_type="NO" language="SDL" default_implementation="default" FPGA_Configurations="">
-    <Property name="Taste::coordinates" value="93200 27900 133700 113400"/>
-<Provided_Interface name="test_present" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Function id="{81078b99-ba44-4766-b537-6a5478ad7b3b}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" instances_min="1" startup_priority="1" FPGA_Configurations="" instances_max="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{92c4529e-adf5-4133-be06-242790b82b5f}" name="test_present" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 31800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_length" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{0ad10d95-3576-4158-9a07-6a51cde62880}" name="test_length" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyArray" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 46800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_exist" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{7cfc0833-fde9-45c6-9fce-9350b27f8196}" name="test_exist" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyStruct" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 61500"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_to_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{1321d67f-d536-42b2-870e-70fd0d6ca6f7}" name="test_to_enum" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyUnion" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 67800"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_to_selector" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{43bc50c2-6997-4ff0-9dbf-5c7476328247}" name="test_to_selector" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 76900"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_num" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{76c9f091-c9f8-46f4-93f1-c9429495aeea}" name="test_num" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 81100"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_val" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{a79f89ba-836b-416b-a978-82f144f67754}" name="test_val" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 85300"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_length_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Provided_Interface id="{7d58b4b3-39bf-4726-80d6-2e283aaae6b4}" name="test_length_fixed" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyFixed" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 92600"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_length_derived_fixed" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+<Provided_Interface id="{304051d4-2378-42e1-9bd0-f5d0bcc14293}" name="test_length_derived_fixed" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyDerivedFixed" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 98300"/>
 </Provided_Interface>
 
-<Provided_Interface name="test_derived_length" kind="Sporadic" layer="default" queue_size="1" priority="1" stack_size="1024" wcet="0" miat="0">
+<Provided_Interface id="{417468ad-4695-4084-905a-80a5dcb958ee}" name="test_derived_length" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyDerivedArray" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 105500"/>
 </Provided_Interface>
 
-<Required_Interface name="result" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{3ec8dbf2-9c1a-4072-82a4-a8d6e64a1574}" name="result" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyBoolean" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 40500"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="result_int" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{ec927225-8448-4a3c-90c0-1b96ecf7bf7a}" name="result_int" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyInteger" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 54700"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
 
-<Required_Interface name="result_enum" kind="Sporadic" layer="default" queue_size="1" priority="1" wcet="0" stack_size="1024" miat="0">
+<Required_Interface id="{45df96c4-724a-462d-96f4-fc188021c39c}" name="result_enum" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" wcet="0" priority="1" queue_size="1" miat="0" stack_size="1024">
     <Input_Parameter name="p1" type="MyEnum" encoding="NATIVE"/>
-    <Property name="Taste::coordinates" value="93200 72200"/>
     <Property name="Taste::InheritPI" value="true"/>
     <Property name="Taste::Autonamed" value="true"/>
 </Required_Interface>
@@ -169,86 +146,74 @@
     </Implementations>
 </Function>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_num"/>
-    <Target func_name="actuator" pi_name="test_num"/>
-    <Property name="Taste::coordinates" value="49600 80400 92900 81100"/>
+<Connection id="{4eb6027a-c2d7-43c5-9e0d-40e1a0e50531}" required_system_element="NO">
+    <Source iface_id="{dca76815-4e3d-43bf-9b25-49fb6424e5de}" func_name="controller" ri_name="test_val" />
+    <Target iface_id="{a79f89ba-836b-416b-a978-82f144f67754}" func_name="actuator" pi_name="test_val" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_derived_length"/>
-    <Target func_name="actuator" pi_name="test_derived_length"/>
-    <Property name="Taste::coordinates" value="49600 105700 71200 105700 92900 105500"/>
+<Connection id="{390df7e2-9402-4214-b528-6a71497528f5}" required_system_element="NO">
+    <Source iface_id="{b6019525-daef-4ed3-b067-144a65928cbd}" func_name="controller" ri_name="test_to_selector" />
+    <Target iface_id="{43bc50c2-6997-4ff0-9dbf-5c7476328247}" func_name="actuator" pi_name="test_to_selector" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_length_fixed"/>
-    <Target func_name="actuator" pi_name="test_length_fixed"/>
-    <Property name="Taste::coordinates" value="49600 92600 92900 92600"/>
+<Connection id="{8afac45f-4425-4c1c-ae7c-e7f762c30e65}" required_system_element="NO">
+    <Source iface_id="{7af429ee-8b25-4034-8fb7-5d3602a51277}" func_name="controller" ri_name="test_present" />
+    <Target iface_id="{92c4529e-adf5-4133-be06-242790b82b5f}" func_name="actuator" pi_name="test_present" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_to_selector"/>
-    <Target func_name="actuator" pi_name="test_to_selector"/>
-    <Property name="Taste::coordinates" value="49600 76800 92900 76900"/>
+<Connection id="{00361baf-d96f-4316-8d3a-3a350d64d824}" required_system_element="NO">
+    <Source iface_id="{7a9bfed7-26aa-44b0-a813-3ab369ec71c1}" func_name="controller" ri_name="test_exist" />
+    <Target iface_id="{7cfc0833-fde9-45c6-9fce-9350b27f8196}" func_name="actuator" pi_name="test_exist" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_val"/>
-    <Target func_name="actuator" pi_name="test_val"/>
-    <Property name="Taste::coordinates" value="49600 85300 92900 85300"/>
+<Connection id="{9812775f-e195-4ff6-9b3f-d9666b67f9f9}" required_system_element="NO">
+    <Source iface_id="{ec927225-8448-4a3c-90c0-1b96ecf7bf7a}" func_name="actuator" ri_name="result_int" />
+    <Target iface_id="{7a84f4eb-8e88-4899-9bfb-09474d4ea4c0}" func_name="controller" pi_name="result_int" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_exist"/>
-    <Target func_name="actuator" pi_name="test_exist"/>
-    <Property name="Taste::coordinates" value="49600 62000 92900 61500"/>
+<Connection id="{bb65b019-0fd7-4735-886d-6b64094ad4f2}" required_system_element="NO">
+    <Source iface_id="{7cf99fff-deb3-4e5f-a422-b799997bb0be}" func_name="controller" ri_name="test_num" />
+    <Target iface_id="{76c9f091-c9f8-46f4-93f1-c9429495aeea}" func_name="actuator" pi_name="test_num" />
 </Connection>
 
-<Connection >
-    <Source func_name="actuator" ri_name="result_int"/>
-    <Target func_name="controller" pi_name="result_int"/>
-    <Property name="Taste::coordinates" value="92600 54700 49300 54600"/>
+<Connection id="{582dcac6-4f0c-4ba6-a68b-b5e76a7d2077}" required_system_element="NO">
+    <Source iface_id="{689e83f0-7086-4621-9e08-cbddcdad2a45}" func_name="controller" ri_name="test_length" />
+    <Target iface_id="{0ad10d95-3576-4158-9a07-6a51cde62880}" func_name="actuator" pi_name="test_length" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_to_enum"/>
-    <Target func_name="actuator" pi_name="test_to_enum"/>
-    <Property name="Taste::coordinates" value="49600 67800 92900 67800"/>
+<Connection id="{89308b41-6935-49b8-9b1e-2a4f8d3a4bf2}" required_system_element="NO">
+    <Source iface_id="{fe92572a-7cbf-4bef-8e7b-f0538e8fa29e}" func_name="controller" ri_name="test_length_derived_fixed" />
+    <Target iface_id="{304051d4-2378-42e1-9bd0-f5d0bcc14293}" func_name="actuator" pi_name="test_length_derived_fixed" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_length"/>
-    <Target func_name="actuator" pi_name="test_length"/>
-    <Property name="Taste::coordinates" value="49600 45900 92900 46800"/>
+<Connection id="{1d498f4d-1911-4d86-9b51-8ee6f2f3f8f7}" required_system_element="NO">
+    <Source iface_id="{fce09c0f-649a-467f-99dd-96426d6ea16a}" func_name="controller" ri_name="test_to_enum" />
+    <Target iface_id="{1321d67f-d536-42b2-870e-70fd0d6ca6f7}" func_name="actuator" pi_name="test_to_enum" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_present"/>
-    <Target func_name="actuator" pi_name="test_present"/>
-    <Property name="Taste::coordinates" value="49600 31500 92900 31800"/>
+<Connection id="{ba62c65f-5696-48c6-b0c8-2262fbfbfa64}" required_system_element="NO">
+    <Source iface_id="{752201a3-f66d-4806-a438-604d7fa10c97}" func_name="controller" ri_name="test_length_fixed" />
+    <Target iface_id="{7d58b4b3-39bf-4726-80d6-2e283aaae6b4}" func_name="actuator" pi_name="test_length_fixed" />
 </Connection>
 
-<Connection >
-    <Source func_name="actuator" ri_name="result_enum"/>
-    <Target func_name="controller" pi_name="result_enum"/>
-    <Property name="Taste::coordinates" value="92600 72200 49300 72400"/>
+<Connection id="{765dc2a1-1315-440a-9e3f-4d6dca3f917a}" required_system_element="NO">
+    <Source iface_id="{45df96c4-724a-462d-96f4-fc188021c39c}" func_name="actuator" ri_name="result_enum" />
+    <Target iface_id="{13f15968-f6b4-41ed-96be-ef0aac87f4a9}" func_name="controller" pi_name="result_enum" />
 </Connection>
 
-<Connection >
-    <Source func_name="controller" ri_name="test_length_derived_fixed"/>
-    <Target func_name="actuator" pi_name="test_length_derived_fixed"/>
-    <Property name="Taste::coordinates" value="49600 98300 92900 98300"/>
+<Connection id="{68bfd9a2-22b0-4fcf-aca1-b09b05ef5f13}" required_system_element="NO">
+    <Source iface_id="{3ec8dbf2-9c1a-4072-82a4-a8d6e64a1574}" func_name="actuator" ri_name="result" />
+    <Target iface_id="{a24aad39-b47a-4973-804c-2f02723ac9aa}" func_name="controller" pi_name="result" />
 </Connection>
 
-<Connection >
-    <Source func_name="actuator" ri_name="result"/>
-    <Target func_name="controller" pi_name="result"/>
-    <Property name="Taste::coordinates" value="92600 40500 49300 40300"/>
+<Connection id="{0bd01573-3f46-4e50-bd63-374c4345f576}" required_system_element="NO">
+    <Source iface_id="{13100572-b43b-4f91-96d6-03fe9638e341}" func_name="controller" ri_name="test_derived_length" />
+    <Target iface_id="{417468ad-4695-4084-905a-80a5dcb958ee}" func_name="actuator" pi_name="test_derived_length" />
 </Connection>
 
-<Comment name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3">
-    <Property name="Taste::coordinates" value="4800 5100 46100 20700"/>
+<Comment id="{43bf0379-9ca3-44b2-b393-7bc658d9bd6d}" name="Welcome to TASTE!\n============\n\nRight click to add a function, and use Ctrl-Click to connect functions together.\n\nYou can split the screen in multiple windows using Ctrl-E-3" required_system_element="NO">
 </Comment>
+
+<Layer name="default" is_visible="true"/>
 
 </InterfaceView>

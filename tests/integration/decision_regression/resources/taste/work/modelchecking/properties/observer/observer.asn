@@ -3,10 +3,10 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger FROM DECISION-REGRESSION-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Actuator-States ::= ENUMERATED {left, wait, right}
+Actuator-States ::= ENUMERATED {wait, left, right}
 
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,
@@ -16,6 +16,7 @@ Actuator-Context ::= SEQUENCE {
    param MyInteger
 }
 
+Actuator-T-Runtime-Error-Selection ::= ENUMERATED {noerror-present(1), encodeerror-present(2), decodeerror-present(3)}
 END
 
 Controller-Datamodel DEFINITIONS ::=
@@ -23,7 +24,7 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger FROM DECISION-REGRESSION-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
 Controller-States ::= ENUMERATED {wait}
@@ -34,6 +35,18 @@ Controller-Context ::= SEQUENCE {
    sender PID,
    offspring PID,
    param MyInteger
+}
+
+Controller-T-Runtime-Error-Selection ::= ENUMERATED {noerror-present(1), encodeerror-present(2), decodeerror-present(3)}
+END
+
+-- Dummy data model for the timer manager (needed to populate observer.asn)
+Timer-manager-Datamodel DEFINITIONS ::=
+BEGIN
+Timer-manager-States ::= ENUMERATED {wait}
+
+Timer-manager-Context ::= SEQUENCE {
+   state Timer-manager-States
 }
 
 END
@@ -63,8 +76,13 @@ T-Boolean ::= BOOLEAN
 
 T-Null-Record ::= SEQUENCE {}
 
-END
+T-Runtime-Error ::= CHOICE {
+   noerror T-UInt32, -- this shall be NULL, but DMT does not support NULL and SEDS does not support empty sequences
+   encodeerror T-Int32, -- the names shall be changed after fix in seds converter (space creator) will be merged
+   decodeerror T-Int32
+}
 
+END
 
 -- Dataview generated on-the-fly providing information on the system
 -- and made available to the user code.
@@ -72,10 +90,14 @@ System-Dataview DEFINITIONS ::=
 BEGIN
 
    -- Range of PID - type can be used to size arrays of PID type
-   PID-Range ::= INTEGER(0..2)
+   PID-Range ::= INTEGER(0..4)
 
    -- List of functions (instances) present in the system
    PID ::= ENUMERATED {
+       taste-user-interface,
+       
+       timer-manager,
+       
        actuator,
        
        controller,
@@ -83,6 +105,24 @@ BEGIN
        
        env
    }
+
+END
+
+TASTE-USER-INTERFACE-SUBTYPE DEFINITIONS ::=
+BEGIN
+
+IMPORTS 
+
+ ;
+
+
+
+
+
+
+
+
+
 
 END
 
@@ -95,14 +135,18 @@ BEGIN
       MyInteger FROM DECISION-REGRESSION-DATAVIEW
       
       
+      
+      
+      
       -- Import generic integer type (used for timers)
       T-UInt32 FROM TASTE-BasicTypes
       PID      FROM System-Dataview
       -- Import timers
       AggregateTimerData FROM Simulation-Timers-DataView
       --  Import the SDL function states needed for the global system state
-      Actuator-Context   FROM Actuator-Datamodel
-      Controller-Context FROM Controller-Datamodel
+      Actuator-Context      FROM Actuator-Datamodel
+      Controller-Context    FROM Controller-Datamodel
+      Timer-manager-Context FROM Timer-manager-Datamodel
    ;
 
    --  Simulator needs to knows about cyclic interfaces
@@ -119,7 +163,6 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
-      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -130,13 +173,29 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
-      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
-         pong SEQUENCE {  }
+         aux-pulse SEQUENCE {  },
+         pong      SEQUENCE {  }
       },
       msg-out CHOICE {
          ping SEQUENCE { p1 MyInteger }
+      }
+   }
+   
+   Taste-User-Interface-Event ::= CHOICE {
+      msg-out CHOICE {
+         tick SEQUENCE {   }
+      }
+   }
+   
+   Timer-Manager-Event ::= CHOICE {
+      msg-in CHOICE {
+         input-none SEQUENCE {},
+         tick       SEQUENCE {}
+      },
+      msg-out CHOICE {
+         controller-aux-pulse SEQUENCE {   }
       }
    }
    
@@ -151,8 +210,10 @@ BEGIN
 
    --  Event related to the execution of a PI or call of a RI in the functional code
    Function-Event ::= CHOICE {
-      actuator   Actuator-Event,
-      controller Controller-Event
+      actuator             Actuator-Event,
+      controller           Controller-Event,
+      taste-user-interface Taste-User-Interface-Event,
+      timer-manager        Timer-Manager-Event
    }
 
    --  Type used to store events in a database: associate a name to the event
@@ -168,13 +229,26 @@ BEGIN
       event  Function-Event
    }
 
+   --  Event generated when a function uses the CREATE symbol to start an instance
+   Create-Event  ::= SEQUENCE {
+      source PID,  --  parent
+      dest   PID   --  offspring
+   }
+
+   -- Event generated when a previously CREATed instance terminates
+   Delete-Event ::= SEQUENCE {
+      instance PID
+   }
+
    --  Event sent to the observers
    Observable-Event ::= CHOICE {
       no-event        SEQUENCE {},
       system-startup  SEQUENCE {},
       input-event     Interface-Event,   --  input event is evaluated after the transition
       output-event    Interface-Event,   --  output event is evaluated before the message is sent
-      unhandled-input Interface-Event    --  message received in a state where it is not expected
+      unhandled-input Interface-Event,   --  message received in a state where it is not expected
+      create-instance Create-Event,      --  sent after the instance creation
+      delete-instance Delete-Event
    }
 
    --  constant that can be used to refer to the absence of an input/output event
@@ -187,18 +261,25 @@ BEGIN
    --  Global system state (excluding observers, which are defined later)
    actuator-queue-size INTEGER ::= 2
    controller-queue-size INTEGER ::= 2
+   timer-manager-queue-size INTEGER ::= 1
 
    System-State ::= SEQUENCE {
       --  Timers
       timers AggregateTimerData,
       --  Message queues
-      actuator-queue   Events-Ty (SIZE (0 .. actuator-queue-size)),
-      controller-queue Events-Ty (SIZE (0 .. controller-queue-size)),
+      actuator-queue      Events-Ty (SIZE (0 .. actuator-queue-size)),
+      controller-queue    Events-Ty (SIZE (0 .. controller-queue-size)),
+      timer-manager-queue Events-Ty (SIZE (0 .. 1)),
 
-      actuator    Actuator-Context,
-      controller  Controller-Context
+      actuator       Actuator-Context,
+      controller     Controller-Context,
+      timer-manager  Timer-manager-Context
    }
 
+   --  List the GUI functions (environment of the system being simulated)
+   System-GUIs ::= ENUMERATED {
+      taste-user-interface
+   }
 
 END
 

@@ -3,10 +3,10 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger, MyTestInteger FROM OBSERVER-SIGNAL-LOSS-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Actuator-States ::= ENUMERATED {drop, wait}
+Actuator-States ::= ENUMERATED {wait, drop}
 
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,
@@ -16,6 +16,7 @@ Actuator-Context ::= SEQUENCE {
    my-value MyInteger
 }
 
+Actuator-T-Runtime-Error-Selection ::= ENUMERATED {noerror-present(1), encodeerror-present(2), decodeerror-present(3)}
 END
 
 Controller-Datamodel DEFINITIONS ::=
@@ -23,7 +24,7 @@ BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
    MyInteger, MyTestInteger FROM OBSERVER-SIGNAL-LOSS-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
 Controller-States ::= ENUMERATED {test, confirmation, idle}
@@ -37,6 +38,7 @@ Controller-Context ::= SEQUENCE {
    param MyInteger
 }
 
+Controller-T-Runtime-Error-Selection ::= ENUMERATED {noerror-present(1), encodeerror-present(2), decodeerror-present(3)}
 END
 
 OBSERVER-SIGNAL-LOSS-DATAVIEW DEFINITIONS ::=
@@ -66,8 +68,13 @@ T-Boolean ::= BOOLEAN
 
 T-Null-Record ::= SEQUENCE {}
 
-END
+T-Runtime-Error ::= CHOICE {
+   noerror T-UInt32, -- this shall be NULL, but DMT does not support NULL and SEDS does not support empty sequences
+   encodeerror T-Int32, -- the names shall be changed after fix in seds converter (space creator) will be merged
+   decodeerror T-Int32
+}
 
+END
 
 -- Dataview generated on-the-fly providing information on the system
 -- and made available to the user code.
@@ -152,7 +159,6 @@ BEGIN
    
    
    Actuator-Event ::= CHOICE {
-      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          ping SEQUENCE { p1 MyInteger}
@@ -163,7 +169,6 @@ BEGIN
    }
    
    Controller-Event ::= CHOICE {
-      -- Lang: SDL TRUE FALSE
       msg-in CHOICE {
          input-none SEQUENCE {},
          pong SEQUENCE { p1 MyInteger},
@@ -209,13 +214,26 @@ BEGIN
       event  Function-Event
    }
 
+   --  Event generated when a function uses the CREATE symbol to start an instance
+   Create-Event  ::= SEQUENCE {
+      source PID,  --  parent
+      dest   PID   --  offspring
+   }
+
+   -- Event generated when a previously CREATed instance terminates
+   Delete-Event ::= SEQUENCE {
+      instance PID
+   }
+
    --  Event sent to the observers
    Observable-Event ::= CHOICE {
       no-event        SEQUENCE {},
       system-startup  SEQUENCE {},
       input-event     Interface-Event,   --  input event is evaluated after the transition
       output-event    Interface-Event,   --  output event is evaluated before the message is sent
-      unhandled-input Interface-Event    --  message received in a state where it is not expected
+      unhandled-input Interface-Event,   --  message received in a state where it is not expected
+      create-instance Create-Event,      --  sent after the instance creation
+      delete-instance Delete-Event
    }
 
    --  constant that can be used to refer to the absence of an input/output event

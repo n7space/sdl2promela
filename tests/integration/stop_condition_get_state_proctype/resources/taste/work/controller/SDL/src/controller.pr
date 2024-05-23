@@ -1,19 +1,21 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process type Controller;
-    /* CIF START (410, 67), (70, 35) */
+    /* CIF START (430, 85), (70, 35) */
     START;
-        /* CIF output (410, 122), (70, 35) */
+        /* CIF output (430, 140), (70, 35) */
         output ping;
-        /* CIF NEXTSTATE (410, 172), (70, 35) */
+        /* CIF NEXTSTATE (430, 190), (70, 35) */
         NEXTSTATE Wait;
-    /* CIF state (657, 73), (70, 35) */
-    state Wait;
-        /* CIF input (657, 128), (70, 35) */
-        input pong;
-            /* CIF NEXTSTATE (655, 183), (73, 35) */
-            NEXTSTATE Reached;
-    endstate;
-    /* CIF state (867, 94), (73, 35) */
+    /* CIF state (855, 95), (73, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Reached;
+    endstate;
+    /* CIF state (673, 79), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Wait;
+        /* CIF input (673, 134), (70, 35) */
+        input pong;
+            /* CIF NEXTSTATE (671, 189), (73, 35) */
+            NEXTSTATE Reached;
     endstate;
 endprocess type Controller;

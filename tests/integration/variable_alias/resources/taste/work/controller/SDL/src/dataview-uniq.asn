@@ -15,8 +15,13 @@ T-Boolean ::= BOOLEAN
 
 T-Null-Record ::= SEQUENCE {}
 
-END
+T-Runtime-Error ::= CHOICE {
+   noerror T-UInt32, -- this shall be NULL, but DMT does not support NULL and SEDS does not support empty sequences
+   encodeerror T-Int32, -- the names shall be changed after fix in seds converter (space creator) will be merged
+   decodeerror T-Int32
+}
 
+END
 
 VARIABLE-ALIAS-DATAVIEW DEFINITIONS ::=
 BEGIN

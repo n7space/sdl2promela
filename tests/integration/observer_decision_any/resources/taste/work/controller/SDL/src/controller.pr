@@ -1,22 +1,24 @@
 /* CIF PROCESS (250, 150), (150, 75) */
 process Controller;
+    /* CIF Keep Specific Geode Partition 'default' */
     /* CIF TEXT (334, 278), (267, 140) */
     -- Text area for declarations and comments
     
     dcl param MyInteger := 0;
     dcl dummy MyInteger;
     /* CIF ENDTEXT */
-    /* CIF START (389, 43), (70, 35) */
+    /* CIF START (397, 49), (70, 35) */
     START;
-        /* CIF output (376, 98), (94, 35) */
+        /* CIF output (384, 104), (94, 35) */
         output ping(param);
-        /* CIF NEXTSTATE (389, 148), (70, 35) */
+        /* CIF NEXTSTATE (397, 154), (70, 35) */
         NEXTSTATE Wait;
     /* CIF state (833, 82), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
     state Wait;
-        /* CIF input (813, 137), (105, 35) */
+        /* CIF input (812, 137), (105, 35) */
         input pong(dummy);
-            /* CIF decision (825, 192), (81, 50) */
+            /* CIF decision (824, 192), (81, 50) */
             decision param = 6;
                 /* CIF ANSWER (757, 262), (70, 23) */
                 (true):
@@ -27,9 +29,9 @@ process Controller;
                     /* CIF task (845, 305), (135, 35) */
                     task param := param + 1;
             enddecision;
-            /* CIF output (819, 356), (94, 35) */
+            /* CIF output (818, 356), (94, 35) */
             output ping(param);
-            /* CIF NEXTSTATE (831, 411), (70, 35) */
+            /* CIF NEXTSTATE (830, 411), (70, 35) */
             NEXTSTATE Wait;
     endstate;
 endprocess Controller;

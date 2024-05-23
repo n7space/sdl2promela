@@ -5,6 +5,9 @@ use Datamodel;
 
 system Controller;
 
+   signal aux_pulse;
+   
+   
    signal result;
 
    signal test_excluded_state;
@@ -27,16 +30,19 @@ system Controller;
    procedure get_sender;
       fpar out sender PID;
    external;
+   procedure get_last_error;
+      fpar out err T_Runtime_Error;
+   external;
 
    channel c
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with test_excluded_state, test_simple_state, test_star, test_state_list, test_state_list2;
    endchannel;
 
    block Controller;
 
       signalroute r
-      from env to Controller with result;
+      from env to Controller with aux_pulse, result;
       from Controller to env with test_excluded_state, test_simple_state, test_star, test_state_list, test_state_list2;
       connect c and r;
 
