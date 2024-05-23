@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Set
 
 from sdl2promela.utils import Asn1Type
 
@@ -32,6 +32,8 @@ def build_type_info(all_types: Dict[str, Asn1Type]) -> TypeInfo:
     """
     type_info = TypeInfo()
 
+    handled_types: Set[str] = set()
+
     # The AddedType attribute is "True"
     # when the type is not top-level, i.e. it is
     # nested type definition.
@@ -40,6 +42,7 @@ def build_type_info(all_types: Dict[str, Asn1Type]) -> TypeInfo:
     for asn1_name, asn1_type in all_types.items():
         if asn1_type.AddedType == "False":
             type_info.all_types[asn1_name] = asn1_name.replace("-", "_")
+            handled_types.add(asn1_name.replace("-", "_"))
 
     # try to add composite types
     # e.g. ASN.1: MyData ::= SEQUENCE { v : INTEGER (0 .. 2) }
@@ -47,12 +50,14 @@ def build_type_info(all_types: Dict[str, Asn1Type]) -> TypeInfo:
     #      the intention of this loop is to add mapping from MyData_v to MyData__v
     # To support multiple levels of composition, the operation is repeated until no change is possible
     changed = True
+    possible_parents: Dict[str, str] = dict(type_info.all_types)
+    inserted_types: Dict[str, str] = {}
     while changed:
         changed = False
         for asn1_name, asn1_type in all_types.items():
             escaped_name = asn1_name.replace("-", "_")
-            if asn1_type.AddedType == "True" and escaped_name not in all_types.keys():
-                for existing_mapping in iter(type_info.all_types):
+            if asn1_type.AddedType == "True" and escaped_name not in handled_types:
+                for existing_mapping in iter(possible_parents):
                     if escaped_name.startswith(existing_mapping):
                         part_name = escaped_name.removeprefix(
                             existing_mapping
@@ -60,7 +65,11 @@ def build_type_info(all_types: Dict[str, Asn1Type]) -> TypeInfo:
                         type_info.all_types[
                             escaped_name
                         ] = f"{existing_mapping}_{part_name}"
+                        inserted_types[escaped_name] = f"{existing_mapping}_{part_name}"
+                        handled_types.add(escaped_name)
                         changed = True
                         break
+        possible_parents = dict(inserted_types)
+        inserted_types = {}
 
     return type_info
