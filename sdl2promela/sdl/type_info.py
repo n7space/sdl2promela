@@ -59,9 +59,9 @@ def build_type_info(all_types: Dict[str, Asn1Type]) -> TypeInfo:
             if asn1_type.AddedType == "True" and escaped_name not in handled_types:
                 for existing_mapping in iter(possible_parents):
                     if escaped_name.startswith(existing_mapping):
-                        part_name = escaped_name.removeprefix(
-                            existing_mapping
-                        )  # part_name shall start with '_'
+                        part_name = escaped_name[
+                            len(existing_mapping) :
+                        ]  # part_name shall start with '_'
                         type_info.all_types[
                             escaped_name
                         ] = f"{existing_mapping}_{part_name}"
