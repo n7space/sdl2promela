@@ -195,6 +195,14 @@ class Context:
         return self.sdl_model.process_name.lower() + "_continuous_signals"
 
 
+def _create_promela_length_member() -> promelamodel.VariableReference:
+    return VariableReferenceBuilder(SEQUENCEOF_LENGTH_MEMBER_NAME).build()
+
+
+def _create_sdl_length_member() -> sdlmodel.VariableReference:
+    return sdlmodel.VariableReference(SEQUENCEOF_LENGTH_MEMBER_NAME)
+
+
 def _get_type_kind(context: Context, t: Asn1Type) -> str:
     while True:
         if t.kind == "ReferenceType":
@@ -799,7 +807,7 @@ def __generate_variable_name(
         )
     else:
         error = f"Invalid attempt to access field of type '{left_type.CName}'"
-        error += " {left_type.Kind}"
+        error += f" {left_type.Kind}"
         error += ", which is not ChoiceType nor SequenceType"
         raise Exception(error)
 
@@ -951,6 +959,8 @@ def __generate_expression(context: Context, expression: sdlmodel.BinaryExpressio
             )
             .build()
         )
+    elif expression.operator == sdlmodel.BinaryOperator.APPEND:
+        raise NotImplementedError("binary APPEND operator not supported here")
     else:
         return (
             BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
@@ -1729,6 +1739,66 @@ def __generate_statement(
     return block.build()
 
 
+def flatten_sequenceof_parts(
+    expression: sdlmodel.BinaryExpression,
+) -> List[sdlmodel.Expression]:
+    if (
+        isinstance(expression, sdlmodel.BinaryExpression)
+        and expression.operator == sdlmodel.BinaryOperator.APPEND
+    ):
+        return flatten_sequenceof_parts(expression.left) + flatten_sequenceof_parts(
+            expression.right
+        )
+    return [expression]
+
+
+def check_seq_assignment_type_compatibility(
+    destination: type, sources: List[type]
+) -> bool:
+    if destination.kind == SEQUENCEOF_TYPE_NAME:
+        return all(
+            part.kind == SEQUENCEOF_TYPE_NAME and part.type == destination.type
+            for part in sources
+        )
+    if destination.kind in [
+        IA5_STRING_TYPE_NAME,
+        OCTET_STRING_TYPE_NAME,
+        BIT_STRING_TYPE_NAME,
+    ]:
+        return all(destination.kind == part.kind for part in sources)
+    return False
+
+
+@dispatch
+def refers_to_same_entity(
+    left: sdlmodel.Expression, right: sdlmodel.Expression
+) -> bool:
+    return False
+
+
+@dispatch(sdlmodel.VariableReference, sdlmodel.VariableReference)
+def refers_to_same_entity(
+    left: sdlmodel.VariableReference, right: sdlmodel.VariableReference
+) -> bool:
+    return left.variableName == right.variableName
+
+
+@dispatch(sdlmodel.ArrayAccess, sdlmodel.ArrayAccess)
+def refers_to_same_entity(
+    left: sdlmodel.ArrayAccess, right: sdlmodel.ArrayAccess
+) -> bool:
+    return refers_to_same_entity(left.array, right.array)
+
+
+@dispatch(sdlmodel.MemberAccess, sdlmodel.MemberAccess)
+def refers_to_same_entity(
+    left: sdlmodel.MemberAccess, right: sdlmodel.MemberAccess
+) -> bool:
+    return refers_to_same_entity(left.sequence, right.sequence) and (
+        left.member.variableName == right.member.variableName
+    )
+
+
 @dispatch(
     Context,
     (
@@ -1777,10 +1847,224 @@ def __generate_assignment(
         else:
             inlineCall = CallBuilder()
             inlineCall.withTarget(__get_procedure_inline_name(context, right.name))
-            inlineCall.withParameter(__generate_variable_name(context, left, True))
+            inlineCall.withParameter(
+                __generate_variable_name(context, left, True)
+            )  # TODO check struct.member := fn()
             for parameter in right.parameters:
                 inlineCall.withParameter(__generate_expression(context, parameter))
             statements.append(inlineCall.build())
+    elif (
+        isinstance(right, sdlmodel.BinaryExpression)
+        and right.operator == sdlmodel.BinaryOperator.APPEND
+    ):
+        destination = __generate_variable_name(context, left, True)
+        destination_type = resolve_asn1_type(context.sdl_model.types, left.type)
+
+        parts = flatten_sequenceof_parts(right)
+
+        part_types = [
+            resolve_asn1_type(context.sdl_model.types, part.type) for part in parts
+        ]
+
+        if not check_seq_assignment_type_compatibility(destination_type, part_types):
+            raise Exception("Invalid type used in APPEND (//) operator")
+
+        if refers_to_same_entity(left, parts[0]):
+            # iterator variable
+            iterator_name = "i" + str(context.loop_level)
+            statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
+            length_field = (
+                MemberAccessBuilder()
+                .withUtypeReference(destination)
+                .withMember(_create_promela_length_member())
+                .build()
+            )
+
+            for part, part_type in zip(parts[:1], part_types[:1]):  # Skip first element
+                if isinstance(part, sdlmodel.SequenceOf):
+                    part_length = len(part.elements)
+                    for index in range(part_length):
+                        field = sdlmodel.ArrayAccess(
+                            destination, _create_sdl_length_member()
+                        )
+                        statements.extend(
+                            __generate_assignment(
+                                context,
+                                field,
+                                part.elements[index],
+                                destination_type.type,
+                            )
+                        )
+                        statements.append(
+                            AssignmentBuilder()
+                            .withTarget(length_field)
+                            .withSource(
+                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                                .withLeft(length_field)
+                                .withRight(promelamodel.IntegerValue(1))
+                                .build()
+                            )
+                            .build()
+                        )
+                else:
+                    for_loop_builder = ForLoopBuilder()
+                    for_loop_builder.withIterator(
+                        VariableReferenceBuilder(iterator_name).build()
+                    )
+                    for_loop_builder.withFirst(0)
+                    if int(part_type.Min) == int(part_type.Max):
+                        for_loop_builder.withLast(int(part_type.Max))
+                    else:
+                        for_loop_builder.withLast(
+                            MemberAccessBuilder()
+                            .withUtypeReference(__generate_expression(context, part))
+                            .withMember(_create_promela_length_member())
+                            .build()
+                        )
+
+                        left_element = sdlmodel.ArrayAccess(
+                            left,
+                            sdlmodel.MemberAccess(left, _create_sdl_length_member()),
+                        )
+                        left_element.type = destination_type.type
+                        right_element = sdlmodel.ArrayAccess(
+                            part, sdlmodel.VariableReference(iterator_name)
+                        )
+                        right_element.type = destination_type.type
+                        for_loop_builder.withBody(
+                            [
+                                __generate_assignment(  # BUG
+                                    context,
+                                    left_element,
+                                    right_element,
+                                    destination_type.type,
+                                ),
+                                AssignmentBuilder()
+                                .withTarget(length_field)
+                                .withSource(
+                                    BinaryExpressionBuilder(
+                                        promelamodel.BinaryOperator.ADD
+                                    )
+                                    .withLeft(length_field)
+                                    .withRight(promelamodel.IntegerValue(1))
+                                    .build()
+                                )
+                                .build(),
+                            ]
+                        )
+
+                    statements.append(for_loop_builder.build())
+
+        else:
+            # TODO in some cases, tmp variable is not necessary
+            # Use temporary variable
+            tmp_variable_name = context.generate_temporary_variable()
+            # iterator variable
+            iterator_name = "i" + str(context.loop_level)
+            statements.append(
+                VariableDeclarationBuilder(
+                    tmp_variable_name, __type_name(context, destination_type)
+                ).build()
+            )
+            statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
+            # Fill temporary variable
+            length_field = (
+                MemberAccessBuilder()
+                .withUtypeReference(VariableReferenceBuilder(tmp_variable_name).build())
+                .withMember(_create_promela_length_member())
+                .build()
+            )
+
+            statements.append(
+                AssignmentBuilder()
+                .withTarget(length_field)
+                .withSource(promelamodel.IntegerValue(0))
+                .build()
+            )
+
+            for part, part_type in zip(parts, part_types):
+                if isinstance(part, sdlmodel.SequenceOf):
+                    part_length = len(part.elements)
+                    for index in range(part_length):
+                        field = sdlmodel.ArrayAccess(
+                            destination, _create_sdl_length_member()
+                        )
+                        statements.extend(
+                            __generate_assignment(
+                                context,
+                                field,
+                                part.elements[index],
+                                destination_type.type,
+                            )
+                        )
+                        statements.append(
+                            AssignmentBuilder()
+                            .withTarget(length_field)
+                            .withSource(
+                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                                .withLeft(length_field)
+                                .withRight(promelamodel.IntegerValue(1))
+                                .build()
+                            )
+                            .build()
+                        )
+                else:
+                    for_loop_builder = ForLoopBuilder()
+                    for_loop_builder.withIterator(
+                        VariableReferenceBuilder(iterator_name).build()
+                    )
+                    for_loop_builder.withFirst(0)
+                    if part_type.Min == part_type.Max:
+                        # this is a sequence of with fixed size
+                        for_loop_builder.withLast(int(part_type.Max))
+                    else:
+                        for_loop_builder.withLast(
+                            MemberAccessBuilder()
+                            .withUtypeReference(__generate_expression(context, part))
+                            .withMember(_create_promela_length_member())
+                            .build()
+                        )
+
+                    left_element = sdlmodel.ArrayAccess(
+                        left,
+                        sdlmodel.MemberAccess(left, _create_sdl_length_member()),
+                    )
+                    left_element.type = destination.type
+                    right_element = sdlmodel.ArrayAccess(
+                        part, sdlmodel.VariableReference(iterator_name)
+                    )
+                    right_element.type = destination.type
+                    for_loop_builder.withBody(
+                        [
+                            __generate_assignment(
+                                context,
+                                left_element,
+                                right_element,
+                                destination_type.type,
+                            ),
+                            AssignmentBuilder()
+                            .withTarget(length_field)
+                            .withSource(
+                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                                .withLeft(length_field)
+                                .withRight(promelamodel.IntegerValue(1))
+                                .build()
+                            )
+                            .build(),
+                        ]
+                    )
+
+                    statements.append(for_loop_builder.build())
+
+            # destination := temporary
+            statements.append(
+                __build_assignment(
+                    context,
+                    destination,
+                    VariableReferenceBuilder(tmp_variable_name).build(),
+                    destination.type,
+                )
+            )
     else:
         if isinstance(left, sdlmodel.MemberAccess):
             statements.append(

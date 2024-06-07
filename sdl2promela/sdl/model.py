@@ -362,6 +362,8 @@ class BinaryOperator(Enum):
     """and"""
     IMPLIES = 16
     "=>"
+    APPEND = 17
+    "//"
 
 
 class UnaryOperator(Enum):
@@ -910,6 +912,7 @@ __STR_BINARY_OPERATOR_DICTIONARY = {
     "or": BinaryOperator.OR,
     "and": BinaryOperator.AND,
     "=>": BinaryOperator.IMPLIES,
+    "//": BinaryOperator.APPEND,
 }
 
 
@@ -938,6 +941,7 @@ __AST_BINARY_OPERATOR_DICTIONARY = {
     ogAST.ExprOr: BinaryOperator.OR,
     ogAST.ExprAnd: BinaryOperator.AND,
     ogAST.ExprImplies: BinaryOperator.IMPLIES,
+    ogAST.ExprAppend: BinaryOperator.APPEND,
 }
 
 
@@ -1265,6 +1269,18 @@ def convert(source: ogAST.ExprImplies):
     expression = BinaryExpression()
     expression.left = convert(source.left)
     expression.operator = BinaryOperator.IMPLIES
+    expression.right = convert(source.right)
+    expression.type = source.exprType
+    return expression
+
+
+@dispatch(ogAST.ExprAppend)
+def convert(source: ogAST.ExprAppend):
+    # __make_binary_expression does not work here
+    # The required property 'operand' isn't present in source
+    expression = BinaryExpression()
+    expression.left = convert(source.left)
+    expression.operator = BinaryOperator.APPEND
     expression.right = convert(source.right)
     expression.type = source.exprType
     return expression
