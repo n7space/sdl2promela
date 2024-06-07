@@ -164,3 +164,13 @@ def test_empty_sequence_assignment():
     translate_and_verify(
         "empty_sequence_assignment.pr", "empty_sequence_assignment.pml"
     )
+
+
+def test_alternative():
+    translate_and_verify("alternative.pr", "alternative.pml")
+
+
+def test_alternative_with_terminator():
+    translate_and_verify(
+        "alternative_with_terminator.pr", "alternative_with_terminator.pml"
+    )

@@ -1,0 +1,65 @@
+system Complexsdl;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (552, 9), (291, 140) */
+    use Datamodel comment 'dataview-uniq.asn';
+    
+    signal impulse(MyInteger);
+    
+    signal response(MyInteger);
+    /* CIF ENDTEXT */
+    channel c
+        from env to Complexsdl with impulse;
+        from Complexsdl to env with response;
+    endchannel;
+    block Complexsdl;
+        signalroute r
+            from env to Complexsdl with impulse;
+            from Complexsdl to env with response;
+        connect c and r;
+        /* CIF PROCESS (250, 150), (150, 75) */
+        
+        process Complexsdl;
+            /* CIF Keep Specific Geode Partition 'default' */
+            /* CIF TEXT (1263, 53), (267, 140) */
+            -- Text area for declarations and comments
+            
+            DCL tmp MyInteger;
+            
+            DCL param MyInteger;
+            /* CIF ENDTEXT */
+            /* CIF START (320, 21), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (320, 71), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (726, 194), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state Wait;
+                /* CIF input (702, 249), (101, 35) */
+                input impulse(tmp);
+                    /* CIF alternative (674, 304), (157, 50) */
+                    alternative my_capability_enabled;
+                        /* CIF ANSWER (651, 374), (70, 23) */
+                        (false):
+                            /* CIF task (644, 417), (84, 35) */
+                            task param := 0;
+                            /* CIF output (625, 472), (122, 35) */
+                            output response(param);
+                            /* CIF NEXTSTATE (651, 527), (70, 35) */
+                            NEXTSTATE Wait;
+                        /* CIF ANSWER (784, 374), (70, 23) */
+                        (true):
+                            /* CIF task (770, 417), (98, 35) */
+                            task param := 100;
+                            /* CIF output (758, 472), (122, 35) */
+                            output response(param);
+                            /* CIF NEXTSTATE (771, 527), (96, 35) */
+                            NEXTSTATE WithFeature;
+                    endalternative;
+            endstate;
+            /* CIF state (1160, 259), (96, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state WithFeature;
+            endstate;
+        endprocess Complexsdl;
+    endblock;
+endsystem;
