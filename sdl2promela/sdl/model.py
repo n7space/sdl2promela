@@ -1480,6 +1480,12 @@ def convert(source: ogAST.Decision) -> Action:
     elif source.kind == "informal_text":
         # Ignore decision with informal text
         return None
+    elif source.kind == "alternative":
+        actions = Actions()
+        if source.alternative is not None:
+            # the parser has selected enabled alternative
+            appendAllActions(actions, source.alternative)
+        return actions
     else:
         raise ValueError("Unsupported decision type: " + source.kind)
     return None
