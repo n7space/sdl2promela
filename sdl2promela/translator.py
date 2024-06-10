@@ -199,6 +199,10 @@ def _create_promela_length_member() -> promelamodel.VariableReference:
     return VariableReferenceBuilder(SEQUENCEOF_LENGTH_MEMBER_NAME).build()
 
 
+def _create_promela_sequenceof_data_member() -> promelamodel.VariableReference:
+    return VariableReferenceBuilder(SEQUENCEOF_DATA_MEMBER_NAME).build()
+
+
 def _create_sdl_length_member() -> sdlmodel.VariableReference:
     return sdlmodel.VariableReference(SEQUENCEOF_LENGTH_MEMBER_NAME)
 
@@ -805,10 +809,22 @@ def __generate_variable_name(
             .withMember(member)
             .build()
         )
+    elif (
+        left_type.kind == "SequenceOfType"
+        and member_access.member.variableName == SEQUENCEOF_LENGTH_MEMBER_NAME
+    ):
+        return (
+            MemberAccessBuilder()
+            .withUtypeReference(
+                __generate_variable_name(context, member_access.sequence, toplevel)
+            )
+            .withMember(VariableReferenceBuilder("length").build())
+            .build()
+        )
     else:
-        error = f"Invalid attempt to access field of type '{left_type.CName}'"
-        error += f" {left_type.Kind}"
-        error += ", which is not ChoiceType nor SequenceType"
+        error = f"Invalid attempt to access member '{member_access.member.variableName}' of type '{left_type.CName}' "
+        error += f"({left_type.kind})"
+        error += ", which is not ChoiceType nor SequenceType,"
         raise Exception(error)
 
 
@@ -1879,14 +1895,14 @@ def __generate_assignment(
                 .withMember(_create_promela_length_member())
                 .build()
             )
+            sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
 
-            for part, part_type in zip(parts[:1], part_types[:1]):  # Skip first element
+            for part, part_type in zip(parts[1:], part_types[1:]):  # Skip first element
                 if isinstance(part, sdlmodel.SequenceOf):
                     part_length = len(part.elements)
                     for index in range(part_length):
-                        field = sdlmodel.ArrayAccess(
-                            destination, _create_sdl_length_member()
-                        )
+                        field = sdlmodel.ArrayAccess(left, sdl_length_field)
+                        field.type = destination_type.type
                         statements.extend(
                             __generate_assignment(
                                 context,
@@ -1921,24 +1937,36 @@ def __generate_assignment(
                             .withMember(_create_promela_length_member())
                             .build()
                         )
-
-                        left_element = sdlmodel.ArrayAccess(
-                            left,
-                            sdlmodel.MemberAccess(left, _create_sdl_length_member()),
-                        )
-                        left_element.type = destination_type.type
-                        right_element = sdlmodel.ArrayAccess(
-                            part, sdlmodel.VariableReference(iterator_name)
-                        )
-                        right_element.type = destination_type.type
                         for_loop_builder.withBody(
                             [
-                                __generate_assignment(  # BUG
-                                    context,
-                                    left_element,
-                                    right_element,
-                                    destination_type.type,
-                                ),
+                                AssignmentBuilder()
+                                .withTarget(
+                                    ArrayAccessBuilder()
+                                    .withArray(
+                                        MemberAccessBuilder()
+                                        .withUtypeReference(destination)
+                                        .withMember(
+                                            _create_promela_sequenceof_data_member()
+                                        )
+                                        .build()
+                                    )
+                                    .withIndex(
+                                        MemberAccessBuilder()
+                                        .withUtypeReference(destination)
+                                        .withMember(_create_promela_length_member())
+                                        .build()
+                                    )
+                                    .build()
+                                )
+                                .withSource(
+                                    ArrayAccessBuilder()
+                                    .withArray(part)
+                                    .withIndex(
+                                        VariableReferenceBuilder(iterator_name).build()
+                                    )
+                                    .build()
+                                )
+                                .build(),
                                 AssignmentBuilder()
                                 .withTarget(length_field)
                                 .withSource(
@@ -1987,7 +2015,7 @@ def __generate_assignment(
                     part_length = len(part.elements)
                     for index in range(part_length):
                         field = sdlmodel.ArrayAccess(
-                            destination, _create_sdl_length_member()
+                            destination, sdl_length_field
                         )
                         statements.extend(
                             __generate_assignment(
@@ -2026,8 +2054,7 @@ def __generate_assignment(
                         )
 
                     left_element = sdlmodel.ArrayAccess(
-                        left,
-                        sdlmodel.MemberAccess(left, _create_sdl_length_member()),
+                        left, sdl_length_field  # TODO fix
                     )
                     left_element.type = destination.type
                     right_element = sdlmodel.ArrayAccess(
