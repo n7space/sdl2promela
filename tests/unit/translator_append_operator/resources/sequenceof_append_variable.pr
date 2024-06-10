@@ -1,0 +1,58 @@
+system Complexsdl;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (552, 9), (291, 140) */
+    use Datamodel comment 'dataview-uniq.asn';
+    
+    signal impulse(MyInteger);
+    
+    signal response(MyInteger);
+    /* CIF ENDTEXT */
+    channel c
+        from env to Complexsdl with impulse;
+        from Complexsdl to env with response;
+    endchannel;
+    block Complexsdl;
+        signalroute r
+            from env to Complexsdl with impulse;
+            from Complexsdl to env with response;
+        connect c and r;
+        /* CIF PROCESS (250, 150), (150, 75) */
+        
+        process Complexsdl;
+            /* CIF Keep Specific Geode Partition 'default' */
+            /* CIF TEXT (1263, 53), (267, 143) */
+            -- Text area for declarations and comments
+            
+            DCL tmp MyInteger;
+            
+            DCL param MyInteger;
+            
+            dcl data MyIntegerSequence;
+            
+            dcl source_data MyIntegerSequence;
+            /* CIF ENDTEXT */
+            /* CIF START (320, 21), (70, 35) */
+            START;
+                /* CIF NEXTSTATE (320, 71), (70, 35) */
+                NEXTSTATE Wait;
+            /* CIF state (726, 194), (70, 35) */
+            /* CIF Keep Specific Geode Partition 'default' */
+            state Wait;
+                /* CIF input (701, 249), (101, 35) */
+                input impulse(tmp);
+                    /* CIF task (698, 304), (108, 35) */
+                    task data := {1, 2, 3};
+                    /* CIF task (672, 359), (160, 35) */
+                    task source_data := { 3, 4, 5 };
+                    /* CIF task (662, 409), (180, 35) */
+                    task data := data // source_data;
+                    /* CIF task (692, 464), (119, 35) */
+                    task param := data(0);
+                    /* CIF output (691, 514), (122, 35) */
+                    output response(param);
+                    /* CIF NEXTSTATE (717, 564), (70, 35) */
+                    NEXTSTATE Wait;
+            endstate;
+        endprocess Complexsdl;
+    endblock;
+endsystem;

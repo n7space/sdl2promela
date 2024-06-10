@@ -1785,7 +1785,7 @@ def check_seq_assignment_type_compatibility(
     return False
 
 
-@dispatch
+@dispatch(object, object)
 def refers_to_same_entity(
     left: sdlmodel.Expression, right: sdlmodel.Expression
 ) -> bool:
@@ -1937,49 +1937,31 @@ def __generate_assignment(
                             .withMember(_create_promela_length_member())
                             .build()
                         )
-                        for_loop_builder.withBody(
-                            [
-                                AssignmentBuilder()
-                                .withTarget(
-                                    ArrayAccessBuilder()
-                                    .withArray(
-                                        MemberAccessBuilder()
-                                        .withUtypeReference(destination)
-                                        .withMember(
-                                            _create_promela_sequenceof_data_member()
-                                        )
-                                        .build()
-                                    )
-                                    .withIndex(
-                                        MemberAccessBuilder()
-                                        .withUtypeReference(destination)
-                                        .withMember(_create_promela_length_member())
-                                        .build()
-                                    )
-                                    .build()
-                                )
-                                .withSource(
-                                    ArrayAccessBuilder()
-                                    .withArray(part)
-                                    .withIndex(
-                                        VariableReferenceBuilder(iterator_name).build()
-                                    )
-                                    .build()
-                                )
-                                .build(),
-                                AssignmentBuilder()
-                                .withTarget(length_field)
-                                .withSource(
-                                    BinaryExpressionBuilder(
-                                        promelamodel.BinaryOperator.ADD
-                                    )
-                                    .withLeft(length_field)
-                                    .withRight(promelamodel.IntegerValue(1))
-                                    .build()
-                                )
-                                .build(),
-                            ]
+                        field = sdlmodel.ArrayAccess(left, sdl_length_field)
+                        field.type = destination_type.type
+                        body = []
+                        body.extend(
+                            __generate_assignment(
+                                context,
+                                field,
+                                sdlmodel.ArrayAccess(
+                                    part, sdlmodel.VariableReference(iterator_name)
+                                ),
+                                destination_type.type,
+                            )
                         )
+                        body.append(
+                            AssignmentBuilder()
+                            .withTarget(length_field)
+                            .withSource(
+                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                                .withLeft(length_field)
+                                .withRight(promelamodel.IntegerValue(1))
+                                .build()
+                            )
+                            .build(),
+                        )
+                        for_loop_builder.withBody(body)
 
                     statements.append(for_loop_builder.build())
 
@@ -1991,7 +1973,7 @@ def __generate_assignment(
             iterator_name = "i" + str(context.loop_level)
             statements.append(
                 VariableDeclarationBuilder(
-                    tmp_variable_name, __type_name(context, destination_type)
+                    tmp_variable_name, __type_name(context, left_type)
                 ).build()
             )
             statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
@@ -2010,13 +1992,13 @@ def __generate_assignment(
                 .build()
             )
 
+            sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
+
             for part, part_type in zip(parts, part_types):
                 if isinstance(part, sdlmodel.SequenceOf):
                     part_length = len(part.elements)
                     for index in range(part_length):
-                        field = sdlmodel.ArrayAccess(
-                            destination, sdl_length_field
-                        )
+                        field = sdlmodel.ArrayAccess(left, sdl_length_field)
                         statements.extend(
                             __generate_assignment(
                                 context,
@@ -2054,44 +2036,45 @@ def __generate_assignment(
                         )
 
                     left_element = sdlmodel.ArrayAccess(
-                        left, sdl_length_field  # TODO fix
+                        left, sdl_length_field
                     )
-                    left_element.type = destination.type
+                    left_element.type = destination_type.type
                     right_element = sdlmodel.ArrayAccess(
                         part, sdlmodel.VariableReference(iterator_name)
                     )
-                    right_element.type = destination.type
-                    for_loop_builder.withBody(
-                        [
-                            __generate_assignment(
-                                context,
-                                left_element,
-                                right_element,
-                                destination_type.type,
-                            ),
-                            AssignmentBuilder()
-                            .withTarget(length_field)
-                            .withSource(
-                                BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
-                                .withLeft(length_field)
-                                .withRight(promelamodel.IntegerValue(1))
-                                .build()
-                            )
-                            .build(),
-                        ]
+                    right_element.type = destination_type.type
+                    body = []
+                    body.extend(
+                        __generate_assignment(
+                            context,
+                            left_element,
+                            right_element,
+                            destination_type.type,
+                        )
                     )
+                    body.append(
+                        AssignmentBuilder()
+                        .withTarget(length_field)
+                        .withSource(
+                            BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
+                            .withLeft(length_field)
+                            .withRight(promelamodel.IntegerValue(1))
+                            .build()
+                        )
+                        .build()
+                    )
+                    for_loop_builder.withBody(body)
 
                     statements.append(for_loop_builder.build())
 
             # destination := temporary
-            statements.append(
-                __build_assignment(
+            step = __generate_assignment(
                     context,
-                    destination,
-                    VariableReferenceBuilder(tmp_variable_name).build(),
-                    destination.type,
+                    left,
+                    sdlmodel.VariableReference(tmp_variable_name),
+                    left_type
                 )
-            )
+            statements.extend(step)
     else:
         if isinstance(left, sdlmodel.MemberAccess):
             statements.append(

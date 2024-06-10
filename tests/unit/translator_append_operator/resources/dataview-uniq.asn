@@ -1,0 +1,30 @@
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+END
+
+
+TESTBENCH2-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyBoolean ::= BOOLEAN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   MyIntegerSequence ::= SEQUENCE (SIZE(0..16)) OF MyInteger
+
+END
