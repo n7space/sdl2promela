@@ -15,15 +15,15 @@ inline Complexsdl_0_transition(id)
         int i0;
         MyIntegerSequence _tmp_0;
         _tmp_0.length = 0;
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 3);
+        MyInteger_assign_value(_tmp_0.data[_tmp_0.length], 3);
         _tmp_0.length = (_tmp_0.length + 1);
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 4);
+        MyInteger_assign_value(_tmp_0.data[_tmp_0.length], 4);
         _tmp_0.length = (_tmp_0.length + 1);
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 5);
+        MyInteger_assign_value(_tmp_0.data[_tmp_0.length], 5);
         _tmp_0.length = (_tmp_0.length + 1);
         for(i0 : 0 .. global_state.complexsdl.data.length)
         {
-          MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], global_state.complexsdl.data.data[i0]);
+          MyInteger_assign_value(_tmp_0.data[_tmp_0.length], global_state.complexsdl.data.data[i0]);
           _tmp_0.length = (_tmp_0.length + 1);
         };
         MyIntegerSequence_assign_value(global_state.complexsdl.data, _tmp_0);

@@ -1724,39 +1724,47 @@ def __generate_statement(
 
 def __generate_append_steps(
     context: Context,
-    left,
-    destination_type,
-    parts,
-    part_types,
-    length_field,
-    sdl_length_field,
-    iterator_name,
+    target: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    translated_target: Union[
+        promelamodel.VariableReference,
+        promelamodel.ArrayAccess,
+        promelamodel.MemberAccess,
+    ],
+    element_type: type,
+    parts: List[sdlmodel.Expression],
+    part_types: List[type],
+    iterator_name: str,
 ):
     statements = []
+
+    length_field = sdlmodel.MemberAccess(target, _create_sdl_length_member())
+
+    translated_length_field = (
+        MemberAccessBuilder()
+        .withUtypeReference(translated_target)
+        .withMember(_create_promela_length_member())
+        .build()
+    )
 
     for part, part_type in zip(parts, part_types):
         if isinstance(part, sdlmodel.SequenceOf):
             part_length = len(part.elements)
             for index in range(part_length):
-                field = sdlmodel.ArrayAccess(left, sdl_length_field)
+                field = sdlmodel.ArrayAccess(target, length_field)
                 statements.extend(
                     __generate_assignment(
                         context,
                         field,
                         part.elements[index],
-                        destination_type.type,
+                        element_type,
                     )
                 )
                 statements.append(
-                    AssignmentBuilder()
-                    .withTarget(length_field)
-                    .withSource(
-                        BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
-                        .withLeft(length_field)
-                        .withRight(promelamodel.IntegerValue(1))
-                        .build()
+                    append_operator_helpers.create_increment_step(
+                        translated_length_field
                     )
-                    .build()
                 )
         else:
             for_loop_builder = ForLoopBuilder()
@@ -1775,31 +1783,23 @@ def __generate_append_steps(
                     .build()
                 )
 
-            left_element = sdlmodel.ArrayAccess(left, sdl_length_field)
-            left_element.type = destination_type.type
+            left_element = sdlmodel.ArrayAccess(target, length_field)
+            left_element.type = element_type
             right_element = sdlmodel.ArrayAccess(
                 part, sdlmodel.VariableReference(iterator_name)
             )
-            right_element.type = destination_type.type
+            right_element.type = element_type
             body = []
             body.extend(
                 __generate_assignment(
                     context,
                     left_element,
                     right_element,
-                    destination_type.type,
+                    element_type,
                 )
             )
             body.append(
-                AssignmentBuilder()
-                .withTarget(length_field)
-                .withSource(
-                    BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
-                    .withLeft(length_field)
-                    .withRight(promelamodel.IntegerValue(1))
-                    .build()
-                )
-                .build()
+                append_operator_helpers.create_increment_step(translated_length_field)
             )
             for_loop_builder.withBody(body)
 
@@ -1847,24 +1847,15 @@ def __generate_assignment_with_append(
         append_operator_helpers.refers_to_same_entity(left, part) for part in parts[1:]
     ):
         # If the first element on the right side refers to the same entity as left side
-        # Append other parts directly to the left
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(destination)
-            .withMember(_create_promela_length_member())
-            .build()
-        )
-        sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
-
+        # Append all the other parts directly to the left
         statements.extend(
             __generate_append_steps(
                 context,
                 left,
-                destination_type,
+                destination,
+                destination_type.type,
                 parts[1:],
                 part_types[1:],
-                length_field,
-                sdl_length_field,
                 iterator_name,
             )
         )
@@ -1879,71 +1870,63 @@ def __generate_assignment_with_append(
                 tmp_variable_name, __type_name(context, left_type)
             ).build()
         )
-        # Fill temporary variable
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(VariableReferenceBuilder(tmp_variable_name).build())
-            .withMember(_create_promela_length_member())
-            .build()
-        )
-
+        tmp_variable = sdlmodel.VariableReference(tmp_variable_name)
+        tmp_variable.type = left.type
+        translated_tmp_variable = VariableReferenceBuilder(tmp_variable_name).build()
+        # Zero temporary variable
         statements.append(
             AssignmentBuilder()
-            .withTarget(length_field)
+            .withTarget(
+                MemberAccessBuilder()
+                .withUtypeReference(translated_tmp_variable)
+                .withMember(_create_promela_length_member())
+                .build()
+            )
             .withSource(promelamodel.IntegerValue(0))
             .build()
         )
 
-        sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
-
+        # Assign parts to the temporary variable
         statements.extend(
             __generate_append_steps(
                 context,
-                left,
-                destination_type,
+                tmp_variable,
+                translated_tmp_variable,
+                destination_type.type,
                 parts,
                 part_types,
-                length_field,
-                sdl_length_field,
                 iterator_name,
             )
         )
 
         # destination := temporary
-        step = __generate_assignment(
-            context, left, sdlmodel.VariableReference(tmp_variable_name), left_type
-        )
-        statements.extend(step)
+        statements.extend(__generate_assignment(context, left, tmp_variable, left_type))
     else:
         # It is possible to zero left side
         # and append all the elements from the right side to the left
-        # TODO in some cases, tmp variable is not necessary
 
-        length_field = (
-            MemberAccessBuilder()
-            .withUtypeReference(destination)
-            .withMember(_create_promela_length_member())
-            .build()
-        )
-
+        # Zero target
         statements.append(
             AssignmentBuilder()
-            .withTarget(length_field)
+            .withTarget(
+                MemberAccessBuilder()
+                .withUtypeReference(destination)
+                .withMember(_create_promela_length_member())
+                .build()
+            )
             .withSource(promelamodel.IntegerValue(0))
             .build()
         )
 
-        sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
-
+        # Append parts to target
         statements.extend(
             __generate_append_steps(
                 context,
                 left,
-                destination_type,
+                destination,
+                destination_type.type,
                 parts,
                 part_types,
-                length_field,
-                sdl_length_field,
                 iterator_name,
             )
         )

@@ -23,12 +23,12 @@ inline Complexsdl_0_transition(id)
         _tmp_0.length = 0;
         for(i0 : 0 .. global_state.complexsdl.source_data.length)
         {
-          MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], global_state.complexsdl.source_data.data[i0]);
+          MyInteger_assign_value(_tmp_0.data[_tmp_0.length], global_state.complexsdl.source_data.data[i0]);
           _tmp_0.length = (_tmp_0.length + 1);
         };
         for(i0 : 0 .. global_state.complexsdl.data.length)
         {
-          MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], global_state.complexsdl.data.data[i0]);
+          MyInteger_assign_value(_tmp_0.data[_tmp_0.length], global_state.complexsdl.data.data[i0]);
           _tmp_0.length = (_tmp_0.length + 1);
         };
         MyIntegerSequence_assign_value(global_state.complexsdl.data, _tmp_0);
