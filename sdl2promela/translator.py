@@ -156,18 +156,6 @@ class Context:
         return self.sdl_model.process_name.lower() + "_continuous_signals"
 
 
-def _create_promela_length_member() -> promelamodel.VariableReference:
-    return VariableReferenceBuilder(constants.SEQUENCEOF_LENGTH_MEMBER_NAME).build()
-
-
-def _create_promela_sequenceof_data_member() -> promelamodel.VariableReference:
-    return VariableReferenceBuilder(constants.SEQUENCEOF_DATA_MEMBER_NAME).build()
-
-
-def _create_sdl_length_member() -> sdlmodel.VariableReference:
-    return sdlmodel.VariableReference(constants.SEQUENCEOF_LENGTH_MEMBER_NAME)
-
-
 def _get_type_kind(context: Context, t: Asn1Type) -> str:
     while True:
         if t.kind == "ReferenceType":
@@ -1739,13 +1727,12 @@ def __generate_append_steps(
 ):
     statements = []
 
-    length_field = sdlmodel.MemberAccess(target, _create_sdl_length_member())
+    length_field = sdlmodel.MemberAccess(
+        target, append_operator_helpers.create_sdl_length_member()
+    )
 
-    translated_length_field = (
-        MemberAccessBuilder()
-        .withUtypeReference(translated_target)
-        .withMember(_create_promela_length_member())
-        .build()
+    translated_length_field = append_operator_helpers.create_promela_length_access(
+        translated_target
     )
 
     for part, part_type in zip(parts, part_types):
@@ -1777,10 +1764,9 @@ def __generate_append_steps(
                 for_loop_builder.withLast(int(part_type.Max))
             else:
                 for_loop_builder.withLast(
-                    MemberAccessBuilder()
-                    .withUtypeReference(__generate_expression(context, part))
-                    .withMember(_create_promela_length_member())
-                    .build()
+                    append_operator_helpers.create_promela_length_access(
+                        __generate_expression(context, part)
+                    )
                 )
 
             left_element = sdlmodel.ArrayAccess(target, length_field)
@@ -1877,10 +1863,9 @@ def __generate_assignment_with_append(
         statements.append(
             AssignmentBuilder()
             .withTarget(
-                MemberAccessBuilder()
-                .withUtypeReference(translated_tmp_variable)
-                .withMember(_create_promela_length_member())
-                .build()
+                append_operator_helpers.create_promela_length_access(
+                    translated_tmp_variable
+                )
             )
             .withSource(promelamodel.IntegerValue(0))
             .build()
@@ -1909,10 +1894,7 @@ def __generate_assignment_with_append(
         statements.append(
             AssignmentBuilder()
             .withTarget(
-                MemberAccessBuilder()
-                .withUtypeReference(destination)
-                .withMember(_create_promela_length_member())
-                .build()
+                append_operator_helpers.create_promela_length_access(destination)
             )
             .withSource(promelamodel.IntegerValue(0))
             .build()
@@ -2420,13 +2402,8 @@ def __generate_assignment(
 
     check_length_constraint(finalType, length)
 
-    length_field = (
-        MemberAccessBuilder()
-        .withUtypeReference(__generate_variable_name(context, left, True))
-        .withMember(
-            VariableReferenceBuilder(constants.SEQUENCEOF_LENGTH_MEMBER_NAME).build()
-        )
-        .build()
+    length_field = append_operator_helpers.create_promela_length_access(
+        __generate_variable_name(context, left, True)
     )
 
     if int(finalType.Min) != int(finalType.Max):
