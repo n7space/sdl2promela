@@ -32,7 +32,8 @@ from .promela.modelbuilder import PrintfBuilder
 from .utils import resolve_asn1_type
 from .utils import Asn1Type
 
-import sdl2promela.constants as constants
+from sdl2promela import constants
+from sdl2promela import append_operator_helpers
 
 
 class Context:
@@ -1721,71 +1722,6 @@ def __generate_statement(
     return block.build()
 
 
-def flatten_sequenceof_parts(
-    expression: sdlmodel.BinaryExpression,
-) -> List[sdlmodel.Expression]:
-    if (
-        isinstance(expression, sdlmodel.BinaryExpression)
-        and expression.operator == sdlmodel.BinaryOperator.APPEND
-    ):
-        return flatten_sequenceof_parts(expression.left) + flatten_sequenceof_parts(
-            expression.right
-        )
-    return [expression]
-
-
-def check_iterator_is_required(sources: List[type]) -> bool:
-    return not all(part.kind == constants.SEQUENCEOF_TYPE_NAME for part in sources)
-
-
-def check_seq_assignment_type_compatibility(
-    destination: type, sources: List[type]
-) -> bool:
-    if destination.kind == constants.SEQUENCEOF_TYPE_NAME:
-        return all(
-            part.kind == constants.SEQUENCEOF_TYPE_NAME
-            and part.type == destination.type
-            for part in sources
-        )
-    if destination.kind in [
-        constants.IA5_STRING_TYPE_NAME,
-        constants.OCTET_STRING_TYPE_NAME,
-        constants.BIT_STRING_TYPE_NAME,
-    ]:
-        return all(destination.kind == part.kind for part in sources)
-    return False
-
-
-@dispatch(object, object)
-def refers_to_same_entity(
-    left: sdlmodel.Expression, right: sdlmodel.Expression
-) -> bool:
-    return False
-
-
-@dispatch(sdlmodel.VariableReference, sdlmodel.VariableReference)
-def refers_to_same_entity(
-    left: sdlmodel.VariableReference, right: sdlmodel.VariableReference
-) -> bool:
-    return left.variableName == right.variableName
-
-
-@dispatch(sdlmodel.ArrayAccess, sdlmodel.ArrayAccess)
-def refers_to_same_entity(
-    left: sdlmodel.ArrayAccess, right: sdlmodel.ArrayAccess
-) -> bool:
-    return refers_to_same_entity(left.array, right.array)
-
-
-@dispatch(sdlmodel.MemberAccess, sdlmodel.MemberAccess)
-def refers_to_same_entity(
-    left: sdlmodel.MemberAccess, right: sdlmodel.MemberAccess
-) -> bool:
-    return refers_to_same_entity(left.sequence, right.sequence) and (
-        left.member.variableName == right.member.variableName
-    )
-
-
 def __generate_append_steps(
     context: Context,
     left,
@@ -1880,23 +1816,38 @@ def __generate_assignment_with_append(
     right: sdlmodel.Expression,
     left_type: type,
 ):
-    statements = []
     destination = __generate_variable_name(context, left, True)
     destination_type = resolve_asn1_type(context.sdl_model.types, left.type)
 
-    parts = flatten_sequenceof_parts(right)
+    parts = append_operator_helpers.flatten_sequenceof_parts(right)
 
     part_types = [
         resolve_asn1_type(context.sdl_model.types, part.type) for part in parts
     ]
 
-    if not check_seq_assignment_type_compatibility(destination_type, part_types):
+    if destination_type.kind != constants.SEQUENCEOF_TYPE_NAME:
+        raise NotImplementedError(
+            f"The APPEND (//) operator is not implemented for {destination_type.kind} type"
+        )
+
+    if not append_operator_helpers.check_seq_assignment_type_compatibility(
+        destination_type, part_types
+    ):
         raise Exception("Invalid type used in APPEND (//) operator")
 
-    if refers_to_same_entity(left, parts[0]):
-        # iterator variable
+    statements = []
+
+    # Iterator is required only if one of the parts refers to something else than ASN.1 value notation
+    iterator_name: str = ""
+    if append_operator_helpers.check_seq_append_requires_iterator(part_types):
         iterator_name = "i" + str(context.loop_level)
         statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
+
+    if append_operator_helpers.refers_to_same_entity(left, parts[0]) and not any(
+        append_operator_helpers.refers_to_same_entity(left, part) for part in parts[1:]
+    ):
+        # If the first element on the right side refers to the same entity as left side
+        # Append other parts directly to the left
         length_field = (
             MemberAccessBuilder()
             .withUtypeReference(destination)
@@ -1917,18 +1868,17 @@ def __generate_assignment_with_append(
                 iterator_name,
             )
         )
-    else:
-        # TODO in some cases, tmp variable is not necessary
+    elif any(
+        append_operator_helpers.refers_to_same_entity(left, part) for part in parts
+    ):
+        # If at least one of the elements on the right side refers to left
         # Use temporary variable
         tmp_variable_name = context.generate_temporary_variable()
-        # iterator variable
-        iterator_name = "i" + str(context.loop_level)
         statements.append(
             VariableDeclarationBuilder(
                 tmp_variable_name, __type_name(context, left_type)
             ).build()
         )
-        statements.append(VariableDeclarationBuilder(iterator_name, "int").build())
         # Fill temporary variable
         length_field = (
             MemberAccessBuilder()
@@ -1964,6 +1914,40 @@ def __generate_assignment_with_append(
             context, left, sdlmodel.VariableReference(tmp_variable_name), left_type
         )
         statements.extend(step)
+    else:
+        # It is possible to zero left side
+        # and append all the elements from the right side to the left
+        # TODO in some cases, tmp variable is not necessary
+
+        length_field = (
+            MemberAccessBuilder()
+            .withUtypeReference(destination)
+            .withMember(_create_promela_length_member())
+            .build()
+        )
+
+        statements.append(
+            AssignmentBuilder()
+            .withTarget(length_field)
+            .withSource(promelamodel.IntegerValue(0))
+            .build()
+        )
+
+        sdl_length_field = sdlmodel.MemberAccess(left, _create_sdl_length_member())
+
+        statements.extend(
+            __generate_append_steps(
+                context,
+                left,
+                destination_type,
+                parts,
+                part_types,
+                length_field,
+                sdl_length_field,
+                iterator_name,
+            )
+        )
+
     return statements
 
 

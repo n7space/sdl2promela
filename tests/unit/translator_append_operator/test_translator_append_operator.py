@@ -59,3 +59,16 @@ def test_translates_sequenceof_concatenate_variable():
     translate_and_verify(
         "sequenceof_concatenate_variable.pr", "sequenceof_concatenate_variable.pml"
     )
+
+
+def test_translates_sequenceof_concatenate_asn_self():
+    translate_and_verify(
+        "sequenceof_concatenate_asn_self.pr", "sequenceof_concatenate_asn_self.pml"
+    )
+
+
+def test_translates_sequenceof_concatenate_variable_self():
+    translate_and_verify(
+        "sequenceof_concatenate_variable_self.pr",
+        "sequenceof_concatenate_variable_self.pml",
+    )

@@ -13,19 +13,20 @@ inline Complexsdl_0_transition(id)
     ::(complexsdl_transition_id == 1)->
       {
         int i0;
-        global_state.complexsdl.data.length = 0;
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 1);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 2);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
+        MyIntegerSequence _tmp_0;
+        _tmp_0.length = 0;
         MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 3);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
-        MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 3);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
+        _tmp_0.length = (_tmp_0.length + 1);
         MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 4);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
+        _tmp_0.length = (_tmp_0.length + 1);
         MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], 5);
-        global_state.complexsdl.data.length = (global_state.complexsdl.data.length + 1);
+        _tmp_0.length = (_tmp_0.length + 1);
+        for(i0 : 0 .. global_state.complexsdl.data.length)
+        {
+          MyInteger_assign_value(global_state.complexsdl.data.data[global_state.complexsdl.data.length], global_state.complexsdl.data.data[i0]);
+          _tmp_0.length = (_tmp_0.length + 1);
+        };
+        MyIntegerSequence_assign_value(global_state.complexsdl.data, _tmp_0);
       }
       MyInteger_assign_value(global_state.complexsdl.param, global_state.complexsdl.data.data[0]);
       Complexsdl_0_RI_0_response(global_state.complexsdl.param);
