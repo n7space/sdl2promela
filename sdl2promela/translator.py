@@ -1821,8 +1821,13 @@ def __generate_assignment_with_append_using_temporary(
     tmp_variable.type = left.type
     translated_tmp_variable = VariableReferenceBuilder(tmp_variable_name).build()
     # Zero temporary variable
-    __build_promela_integer_assignment(
-        append_operator_helpers.create_promela_length_access(translated_tmp_variable), 0
+    statements.append(
+        __build_promela_integer_assignment(
+            append_operator_helpers.create_promela_length_access(
+                translated_tmp_variable
+            ),
+            0,
+        )
     )
 
     # Assign parts to the temporary variable

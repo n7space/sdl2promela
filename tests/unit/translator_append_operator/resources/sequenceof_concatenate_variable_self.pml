@@ -20,6 +20,7 @@ inline Complexsdl_0_transition(id)
       {
         int i0;
         MyIntegerSequence _tmp_0;
+        _tmp_0.length = 0;
         for(i0 : 0 .. global_state.complexsdl.source_data.length)
         {
           MyInteger_assign_value(_tmp_0.data[_tmp_0.length], global_state.complexsdl.source_data.data[i0]);

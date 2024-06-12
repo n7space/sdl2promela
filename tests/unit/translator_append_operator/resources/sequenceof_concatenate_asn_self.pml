@@ -14,6 +14,7 @@ inline Complexsdl_0_transition(id)
       {
         int i0;
         MyIntegerSequence _tmp_0;
+        _tmp_0.length = 0;
         MyInteger_assign_value(_tmp_0.data[_tmp_0.length], 3);
         _tmp_0.length = (_tmp_0.length + 1);
         MyInteger_assign_value(_tmp_0.data[_tmp_0.length], 4);
