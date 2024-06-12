@@ -571,6 +571,18 @@ def __get_constant_name(
         return candidates[0]
 
 
+def __build_promela_assignment(
+    left: promelamodel.VariableReference, right: promelamodel.Expression
+) -> promelamodel.Assignment:
+    return AssignmentBuilder().withTarget(left).withSource(right).build()
+
+
+def __build_promela_integer_assignment(
+    left: promelamodel.VariableReference, right: int
+) -> promelamodel.Assignment:
+    __build_promela_assignment(left, promelamodel.IntegerValue(right))
+
+
 def __build_assignment(
     context: Context,
     left: promelamodel.VariableReference,
@@ -597,7 +609,7 @@ def __build_assignment(
             .build()
         )
     else:
-        return AssignmentBuilder().withTarget(left).withSource(right).build()
+        return __build_promela_assignment(left, right)
 
 
 def __build_member_assignment(
@@ -618,15 +630,13 @@ def __build_member_assignment(
             .withParameter(right)
             .build()
         )
-    return AssignmentBuilder().withTarget(left).withSource(right).build()
+    return __build_promela_assignment(left, right)
 
 
 def __terminate_transition_statement(context: Context):
-    return (
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(context.get_transition_variable()).build())
-        .withSource(promelamodel.IntegerValue(int(constants.INVALID_ID)))
-        .build()
+    return __build_promela_integer_assignment(
+        VariableReferenceBuilder(context.get_transition_variable()).build(),
+        int(constants.INVALID_ID),
     )
 
 
@@ -929,7 +939,9 @@ def __generate_expression(context: Context, expression: sdlmodel.BinaryExpressio
             .build()
         )
     elif expression.operator == sdlmodel.BinaryOperator.APPEND:
-        raise NotImplementedError("binary APPEND operator not supported here")
+        raise NotImplementedError(
+            "Binary APPEND operator is supported only for assignments"
+        )
     else:
         return (
             BinaryExpressionBuilder(__get_promela_binary_operator(expression.operator))
@@ -1483,14 +1495,7 @@ def __generate_for_over_a_numeric_range(
     else:
         start_expression = promelamodel.IntegerValue(0)
 
-    statements.extend(
-        [
-            AssignmentBuilder()
-            .withTarget(iteratorReference)
-            .withSource(start_expression)
-            .build()
-        ]
-    )
+    statements.append(__build_promela_assignment(iteratorReference, start_expression))
     statements.extend(
         [
             DoBuilder()
@@ -1505,15 +1510,13 @@ def __generate_for_over_a_numeric_range(
                 .withStatements(inner_statements)
                 .withStatements(
                     [
-                        AssignmentBuilder()
-                        .withTarget(iteratorReference)
-                        .withSource(
+                        __build_promela_assignment(
+                            iteratorReference,
                             BinaryExpressionBuilder(promelamodel.BinaryOperator.ADD)
                             .withLeft(iteratorReference)
                             .withRight(__generate_expression(context, range.step))
-                            .build()
+                            .build(),
                         )
-                        .build()
                     ]
                 )
                 .build()
@@ -1794,6 +1797,53 @@ def __generate_append_steps(
     return statements
 
 
+def __generate_assignment_with_append_using_temporary(
+    context: Context,
+    left: Union[
+        sdlmodel.VariableReference, sdlmodel.ArrayAccess, sdlmodel.MemberAccess
+    ],
+    left_type: type,
+    destination_type: type,
+    parts: List[sdlmodel.Expression],
+    part_types: List[type],
+    iterator_name: str,
+):
+    statements = []
+    # If at least one of the elements on the right side refers to left
+    # Use temporary variable
+    tmp_variable_name = context.generate_temporary_variable()
+    statements.append(
+        VariableDeclarationBuilder(
+            tmp_variable_name, __type_name(context, left_type)
+        ).build()
+    )
+    tmp_variable = sdlmodel.VariableReference(tmp_variable_name)
+    tmp_variable.type = left.type
+    translated_tmp_variable = VariableReferenceBuilder(tmp_variable_name).build()
+    # Zero temporary variable
+    __build_promela_integer_assignment(
+        append_operator_helpers.create_promela_length_access(translated_tmp_variable), 0
+    )
+
+    # Assign parts to the temporary variable
+    statements.extend(
+        __generate_append_steps(
+            context,
+            tmp_variable,
+            translated_tmp_variable,
+            destination_type.type,
+            parts,
+            part_types,
+            iterator_name,
+        )
+    )
+
+    # destination := temporary
+    statements.extend(__generate_assignment(context, left, tmp_variable, left_type))
+
+    return statements
+
+
 def __generate_assignment_with_append(
     context: Context,
     left: Union[
@@ -1819,7 +1869,7 @@ def __generate_assignment_with_append(
     if not append_operator_helpers.check_seq_assignment_type_compatibility(
         destination_type, part_types
     ):
-        raise Exception("Invalid type used in APPEND (//) operator")
+        raise Exception("Incompatible types used in APPEND (//) operator")
 
     statements = []
 
@@ -1850,54 +1900,26 @@ def __generate_assignment_with_append(
     ):
         # If at least one of the elements on the right side refers to left
         # Use temporary variable
-        tmp_variable_name = context.generate_temporary_variable()
-        statements.append(
-            VariableDeclarationBuilder(
-                tmp_variable_name, __type_name(context, left_type)
-            ).build()
-        )
-        tmp_variable = sdlmodel.VariableReference(tmp_variable_name)
-        tmp_variable.type = left.type
-        translated_tmp_variable = VariableReferenceBuilder(tmp_variable_name).build()
-        # Zero temporary variable
-        statements.append(
-            AssignmentBuilder()
-            .withTarget(
-                append_operator_helpers.create_promela_length_access(
-                    translated_tmp_variable
-                )
-            )
-            .withSource(promelamodel.IntegerValue(0))
-            .build()
-        )
-
-        # Assign parts to the temporary variable
         statements.extend(
-            __generate_append_steps(
+            __generate_assignment_with_append_using_temporary(
                 context,
-                tmp_variable,
-                translated_tmp_variable,
-                destination_type.type,
+                left,
+                left_type,
+                destination_type,
                 parts,
                 part_types,
                 iterator_name,
             )
         )
-
-        # destination := temporary
-        statements.extend(__generate_assignment(context, left, tmp_variable, left_type))
     else:
         # It is possible to zero left side
         # and append all the elements from the right side to the left
 
         # Zero target
         statements.append(
-            AssignmentBuilder()
-            .withTarget(
-                append_operator_helpers.create_promela_length_access(destination)
+            __build_promela_integer_assignment(
+                append_operator_helpers.create_promela_length_access(destination), 0
             )
-            .withSource(promelamodel.IntegerValue(0))
-            .build()
         )
 
         # Append parts to target
@@ -2019,12 +2041,7 @@ def append_length_assignment_for_string_type(
     if int(target_type.Min) != int(target_type.Max):
         # Add assignment to the length member, it exists when
         # string is variable length
-        statements.append(
-            AssignmentBuilder()
-            .withTarget(length_field)
-            .withSource(promelamodel.IntegerValue(length))
-            .build()
-        )
+        statements.append(__build_promela_integer_assignment(length_field, length))
 
 
 @dispatch(
@@ -2081,12 +2098,7 @@ def __generate_assignment(
                     .withIndex(promelamodel.IntegerValue(index))
                     .build()
                 )
-                statements.append(
-                    AssignmentBuilder()
-                    .withTarget(element)
-                    .withSource(promelamodel.IntegerValue(0))
-                    .build()
-                )
+                statements.append(__build_promela_integer_assignment(element, 0))
 
         return statements
 
@@ -2148,9 +2160,6 @@ def __generate_assignment(
         )
 
         for index in range(int(finalType.Max)):
-            value = promelamodel.IntegerValue(
-                ord(right.value[index]) if index < length else 0
-            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(data_field)
@@ -2158,7 +2167,9 @@ def __generate_assignment(
                 .build()
             )
             statements.append(
-                AssignmentBuilder().withTarget(element).withSource(value).build()
+                __build_promela_integer_assignment(
+                    element, ord(right.value[index]) if index < length else 0
+                )
             )
 
         return statements
@@ -2211,9 +2222,6 @@ def __generate_assignment(
         )
 
         for index in range(int(finalType.Max)):
-            value = promelamodel.IntegerValue(
-                right.elements[index] if index < length else 0
-            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(data_field)
@@ -2221,7 +2229,9 @@ def __generate_assignment(
                 .build()
             )
             statements.append(
-                AssignmentBuilder().withTarget(element).withSource(value).build()
+                __build_promela_integer_assignment(
+                    element, right.elements[index] if index < length else 0
+                )
             )
 
         return statements
@@ -2273,9 +2283,6 @@ def __generate_assignment(
         )
 
         for index in range(int(finalType.Max)):
-            value = promelamodel.IntegerValue(
-                right.elements[index] if index < length else 0
-            )
             element = (
                 ArrayAccessBuilder()
                 .withArray(__generate_variable_name(context, left, True))
@@ -2283,7 +2290,9 @@ def __generate_assignment(
                 .build()
             )
             statements.append(
-                AssignmentBuilder().withTarget(element).withSource(value).build()
+                __build_promela_integer_assignment(
+                    element, right.elements[index] if index < length else 0
+                )
             )
 
         return statements
@@ -2409,12 +2418,7 @@ def __generate_assignment(
     if int(finalType.Min) != int(finalType.Max):
         # Add assignment to the length member, it exists when
         # SEQUENCE OF is variable length
-        statements.append(
-            AssignmentBuilder()
-            .withTarget(length_field)
-            .withSource(promelamodel.IntegerValue(length))
-            .build()
-        )
+        statements.append(__build_promela_integer_assignment(length_field, length))
 
     for index in range(length):
         field = sdlmodel.ArrayAccess(left, sdlmodel.Constant(str(index)))
@@ -2495,10 +2499,9 @@ def __generate_assignment(
     data_field.type = right.type
 
     statements.append(
-        AssignmentBuilder()
-        .withTarget(selection_field)
-        .withSource(VariableReferenceBuilder(selection).build())
-        .build()
+        __build_promela_assignment(
+            selection_field, VariableReferenceBuilder(selection).build()
+        )
     )
 
     statements.extend(
@@ -2576,10 +2579,10 @@ def __generate_statement(
     if not context.state_aggregation:
         statements.append(__terminate_transition_statement(context))
     statements.append(
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(state_variable).build())
-        .withSource(VariableReferenceBuilder(state_name).build())
-        .build()
+        __build_promela_assignment(
+            VariableReferenceBuilder(state_variable).build(),
+            VariableReferenceBuilder(state_name).build(),
+        )
     )
     if not context.state_aggregation:
         statements.append(promelamodel.GoTo(context.get_continuous_signals_label()))
@@ -2606,10 +2609,10 @@ def __generate_statement(
                 state_name = __get_state_name(context, state)
 
                 statements.append(
-                    AssignmentBuilder()
-                    .withTarget(VariableReferenceBuilder(state_variable).build())
-                    .withSource(VariableReferenceBuilder(state_name).build())
-                    .build()
+                    __build_promela_assignment(
+                        VariableReferenceBuilder(state_variable).build(),
+                        VariableReferenceBuilder(state_name).build(),
+                    )
                 )
             statements.append(inlineCall.build())
             statements.append(__terminate_transition_statement(context))
@@ -2630,11 +2633,9 @@ def __generate_statement(
             )
     else:
         transition_id = next_transition.transition_id
-    return (
-        AssignmentBuilder()
-        .withTarget(VariableReferenceBuilder(context.get_transition_variable()).build())
-        .withSource(VariableReferenceBuilder(str(transition_id)).build())
-        .build()
+    return __build_promela_assignment(
+        VariableReferenceBuilder(context.get_transition_variable()).build(),
+        VariableReferenceBuilder(str(transition_id)).build(),
     )
 
 
@@ -2666,14 +2667,12 @@ def __generate_statement(
             )
             .withStatements(
                 [
-                    AssignmentBuilder()
-                    .withTarget(
+                    __build_promela_integer_assignment(
                         VariableReferenceBuilder(
                             context.get_transition_variable()
-                        ).build()
+                        ).build(),
+                        transition_id,
                     )
-                    .withSource(promelamodel.IntegerValue(transition_id))
-                    .build()
                 ]
             )
             .build()
@@ -2872,10 +2871,10 @@ def __generate_continuous_signals_alternative(
                         PrintfBuilder()
                         .withParameter(promelamodel.StringValue(message))
                         .build(),
-                        AssignmentBuilder()
-                        .withTarget(VariableReferenceBuilder(transition_id).build())
-                        .withSource(promelamodel.IntegerValue(signal.transition))
-                        .build(),
+                        __build_promela_integer_assignment(
+                            VariableReferenceBuilder(transition_id).build(),
+                            signal.transition,
+                        ),
                     ]
                 )
                 .build()
@@ -2930,14 +2929,12 @@ def __generate_continuous_signals_block_for_observer(
         if len(signals) > 0:
             statements: List[promelamodel.Statement] = []
             statements.append(
-                AssignmentBuilder()
-                .withTarget(
+                __build_promela_integer_assignment(
                     VariableReferenceBuilder(
                         context.get_observer_transition_variable()
-                    ).build()
+                    ).build(),
+                    -1,
                 )
-                .withSource(promelamodel.IntegerValue(-1))
-                .build()
             )
             statements.extend(
                 __generate_continuous_signals_alternative(
@@ -3054,12 +3051,10 @@ def __generate_transition_function(context: Context) -> promelamodel.Inline:
             VariableDeclarationBuilder(
                 context.get_transition_variable(), constants.TRANSITION_TYPE_NAME
             ).build(),
-            AssignmentBuilder()
-            .withTarget(
-                VariableReferenceBuilder(context.get_transition_variable()).build()
-            )
-            .withSource(VariableReferenceBuilder(constants.TRANSITION_ARGUMENT).build())
-            .build(),
+            __build_promela_assignment(
+                VariableReferenceBuilder(context.get_transition_variable()).build(),
+                VariableReferenceBuilder(constants.TRANSITION_ARGUMENT).build(),
+            ),
             do_builder.build(),
         ]
     )

@@ -5,7 +5,7 @@ TESTS = \
 	promela/test_model.py \
 	translator/test_translator.py \
 	stop_condition/test_scl_parser.py \
-    translator_append_operator/test_translator_append_operator.py
+	translator_append_operator/test_translator_append_operator.py
 
 .PHONY : \
 	check \
