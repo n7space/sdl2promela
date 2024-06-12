@@ -580,7 +580,7 @@ def __build_promela_assignment(
 def __build_promela_integer_assignment(
     left: promelamodel.VariableReference, right: int
 ) -> promelamodel.Assignment:
-    __build_promela_assignment(left, promelamodel.IntegerValue(right))
+    return __build_promela_assignment(left, promelamodel.IntegerValue(right))
 
 
 def __build_assignment(
