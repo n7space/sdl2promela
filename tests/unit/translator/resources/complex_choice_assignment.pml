@@ -15,8 +15,8 @@ inline Complexassignment_0_transition(id)
         DataItem_assign_value(global_state.complexassignment.x, global_state.complexassignment.cmd.data.goToOperational.threshold2);
         {
           global_state.complexassignment.cmd.selection = SystemCommand_goToOperational_PRESENT;
-          SystemCommand__threshold1_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold1, global_state.complexassignment.x);
-          SystemCommand__threshold2_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold2, 1);
+          ActuatorConfiguration__threshold1_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold1, global_state.complexassignment.x);
+          ActuatorConfiguration__threshold2_assign_value(global_state.complexassignment.cmd.data.goToOperational.threshold2, 1);
         }
       }
       complexassignment_transition_id = -1;
