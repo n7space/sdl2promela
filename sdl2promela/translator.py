@@ -2977,7 +2977,9 @@ def __generate_continuous_signals_block_for_observer(
 def __generate_continuous_signals(context: Context) -> promelamodel.Statement:
     block = __generate_continuous_signals_block(context)
 
-    check_queue_inline = "{}_check_queue".format(context.sdl_model.process_name.capitalize())
+    check_queue_inline = "{}_check_queue".format(
+        context.sdl_model.process_name.capitalize()
+    )
     switch_builder = SwitchBuilder()
     switch_builder.withAlternative(
         AlternativeBuilder()
