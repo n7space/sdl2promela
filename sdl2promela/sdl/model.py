@@ -806,6 +806,11 @@ class Procedure:
     after procedure main transition.
     """
 
+    floating_labels: Dict[str, FloatingLabel]
+    """
+    The procedure can have internal floating labels like model.
+    """
+
     def __init__(self):
         self.name = ""
         self.parameters = []
@@ -814,6 +819,7 @@ class Procedure:
         self.returnType = None
         self.type = ProcedureType.INTERNAL
         self.transitions = {}
+        self.floating_labels = {}
 
 
 class ObservedSignalKind(Enum):
@@ -2014,6 +2020,14 @@ class Model:
                     for single_input in input_block.inputlist:
                         if single_input.lower() == procedure.name.lower():
                             procedure.transitions[target] = InputBlock(id)
+
+            for src_label in src_procedure.labels:
+                dst_label = FloatingLabel()
+                dst_label.name = src_label.inputString
+                src_transition = src_label.transition
+                if src_transition is not None:
+                    appendAllActions(dst_label, src_transition)
+                procedure.floating_labels[dst_label.name] = dst_label
 
             self.procedures[procedure.name.lower()] = procedure
 
