@@ -29,8 +29,7 @@ from .promela.modelbuilder import ArrayAccessBuilder
 from .promela.modelbuilder import ForLoopBuilder
 from .promela.modelbuilder import ConditionalExpressionBuilder
 from .promela.modelbuilder import PrintfBuilder
-from .utils import resolve_asn1_type
-from .utils import Asn1Type
+from .utils import *
 
 from sdl2promela import constants
 from sdl2promela import append_operator_helpers
@@ -1159,6 +1158,22 @@ def __generate_procedure_inline(
                 __get_procedure_local_variable_name(context, parameter.name)
             )
     blockBuilder.withStatements(__generate_transition(context, procedure.transition))
+
+    if procedure.floating_labels:
+        statements = []
+
+        for name, label in procedure.floating_labels.items():
+            if len(label.actions) == 0:
+                # if label has no actions, it is useless or was defined in procedure transition, so it was already generated
+                continue
+            statements.append(promelamodel.Label(name.lower()))
+            fake_transition = sdlmodel.Transition()
+            fake_transition.actions = label.actions
+            fake_transition.parent = procedure
+            statements.extend(__generate_transition(context, fake_transition))
+
+        blockBuilder.withStatements(statements)
+
     # This can be optimized - not needed if there is only one return, but both the return statement
     # and this part must be aware of the decision.
     blockBuilder.withStatement(
@@ -2357,9 +2372,26 @@ def __generate_assignment(
                     dataType.type,
                 )
             )
+        else:
+            field = sdlmodel.MemberAccess(
+                left, sdlmodel.VariableReference(name.replace("-", "_").lower())
+            )
+            field.type = dataType
+            name
+            # use default value from dataview.pml
+            statements.extend(
+                __generate_assignment(
+                    context,
+                    field,  # to fix, not set
+                    sdlmodel.VariableReference(
+                        default_value_variable_name_for_type(dataType.type)
+                    ),
+                    dataType.type,
+                )
+            )
 
         if is_optional:
-            value = promelamodel.IntegerValue(1 if name in right.elements else 0)
+            value = promelamodel.IntegerValue(1 if len(candidates) == 1 else 0)
             statements.append(
                 AssignmentBuilder()
                 .withTarget(
@@ -2376,7 +2408,9 @@ def __generate_assignment(
                         )
                         .build()
                     )
-                    .withMember(VariableReferenceBuilder(name).build())
+                    .withMember(
+                        VariableReferenceBuilder(name.replace("-", "_").lower()).build()
+                    )
                     .build()
                 )
                 .withSource(value)
