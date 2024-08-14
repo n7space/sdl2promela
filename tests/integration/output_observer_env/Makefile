@@ -43,10 +43,13 @@ test_output_observer_env:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/observer/observer.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -n -f -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output

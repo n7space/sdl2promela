@@ -50,7 +50,7 @@ test_stop_condition_eventually_error:
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "pan:1: acceptance cycle" ${TEST_DIR}/system.output
@@ -71,7 +71,7 @@ test_stop_condition_eventually_ok:
 	cp ${RES_DIR}/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output

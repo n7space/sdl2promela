@@ -52,5 +52,5 @@ dekker:
 	cp ${RES_DIR}/dataview.pml ${TEST_DIR}/dataview.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m harness.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	${DELETE_TEST_DIR}

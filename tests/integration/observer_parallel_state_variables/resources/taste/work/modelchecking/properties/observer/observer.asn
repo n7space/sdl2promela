@@ -6,7 +6,7 @@ IMPORTS
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Actuator-States ::= ENUMERATED {wait-0-right, wait-0-left, state-0-end, wait, wait-0-left-0-one, wait-0-right-0-red, wait-0-left-0-two}
+Actuator-States ::= ENUMERATED {wait, wait-0-right-0-red, wait-0-left, state-0-end, wait-0-left-0-one, wait-0-right, wait-0-left-0-two}
 
 Actuator-Context ::= SEQUENCE {
    state Actuator-States,

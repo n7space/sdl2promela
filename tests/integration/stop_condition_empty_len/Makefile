@@ -47,10 +47,13 @@ test_stop_condition_empty_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -65,10 +68,13 @@ test_stop_condition_empty_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_sends_test.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -83,10 +89,13 @@ test_stop_condition_queue_length_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_queue_length.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_sends_test.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -101,10 +110,13 @@ test_stop_condition_queue_length_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_queue_length.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output

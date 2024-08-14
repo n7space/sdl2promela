@@ -11,7 +11,7 @@ IMPORTS
    Actuator-Event, Controller-Event, Taste-User-Interface-Event, Timer-Manager-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Create-Event, Delete-Event, Observable-Event, Events-Ty, System-State, System-GUIs FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
-Observer-States ::= ENUMERATED {idle, error, reached}
+Observer-States ::= ENUMERATED {idle, reached, error}
 
 Observer-Context ::= SEQUENCE {
    state Observer-States,

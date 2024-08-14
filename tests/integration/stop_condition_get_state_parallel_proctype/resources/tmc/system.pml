@@ -2,6 +2,10 @@
 #include "actuator.pml"
 #include "inst.pml"
 #include "env_inlines.pml"
+#include "message_sizes.pml"
+c_decl {
+    \#include "dataview-uniq.h"
+}
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context inst;
@@ -23,10 +27,12 @@ inline Actuator_0_PI_0_ping_unhandled_input()
 inline Actuator_0_RI_0_dummy()
 {
     Inst_dummy_channel!0;
+    printf("channel_send Inst_dummy_channel: 1\n");
 }
 inline Actuator_0_RI_0_pong()
 {
     Inst_pong_channel!0;
+    printf("channel_send Inst_pong_channel: 1\n");
 }
 inline Actuator_check_queue()
 {
@@ -51,6 +57,7 @@ inline Inst_0_PI_0_pong_unhandled_input()
 inline Inst_0_RI_0_ping()
 {
     Actuator_ping_channel!0;
+    printf("channel_send Actuator_ping_channel: 1\n");
 }
 inline Inst_check_queue()
 {
@@ -73,6 +80,7 @@ Actuator_ping_loop:
         if
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?_;
+            printf("channel_recv Actuator_ping_channel: 1\n");
             Actuator_0_PI_0_ping();
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
@@ -93,6 +101,7 @@ Inst_dummy_loop:
         if
         ::  nempty(Inst_dummy_channel);
             Inst_dummy_channel?_;
+            printf("channel_recv Inst_dummy_channel: 1\n");
             Inst_0_PI_0_dummy();
             goto Inst_dummy_loop;
         ::  empty(Inst_dummy_channel);
@@ -113,6 +122,7 @@ Inst_pong_loop:
         if
         ::  nempty(Inst_pong_channel);
             Inst_pong_channel?_;
+            printf("channel_recv Inst_pong_channel: 1\n");
             Inst_0_PI_0_pong();
             goto Inst_pong_loop;
         ::  empty(Inst_pong_channel);

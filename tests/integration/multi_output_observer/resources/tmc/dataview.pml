@@ -3,6 +3,7 @@
 #define Change_observer_Context__init_done bool
 #define Change_observer_Context__sender int
 #define Change_observer_Context__offspring int
+#define Change_Observer_T_Runtime_Error_Selection int
 #define Change_Observer_Actuator_Event_Msg_In_Selection int
 #define Change_Observer_Actuator_Event_Msg_Out_Selection int
 #define Change_Observer_Actuator_Event_Selection int
@@ -18,6 +19,7 @@
 #define Zero_observer_Context__init_done bool
 #define Zero_observer_Context__sender int
 #define Zero_observer_Context__offspring int
+#define Zero_Observer_T_Runtime_Error_Selection int
 #define Zero_Observer_Actuator_Event_Msg_In_Selection int
 #define Zero_Observer_Actuator_Event_Msg_Out_Selection int
 #define Zero_Observer_Actuator_Event_Selection int
@@ -70,6 +72,9 @@
 #define Change_observer_Context__offspring_controller 1
 #define Change_observer_Context__offspring_environ 2
 #define Change_observer_Context__offspring_env 3
+#define Change_Observer_T_Runtime_Error_Selection_noerror_present 1
+#define Change_Observer_T_Runtime_Error_Selection_encodeerror_present 2
+#define Change_Observer_T_Runtime_Error_Selection_decodeerror_present 3
 #define Change_Observer_Actuator_Event_Msg_In_Selection_input_none_present 1
 #define Change_Observer_Actuator_Event_Msg_In_Selection_f1_present 2
 #define Change_Observer_Actuator_Event_Msg_In_Selection_f2_present 3
@@ -93,6 +98,8 @@
 #define Change_Observer_Observable_Event_Selection_input_event_present 3
 #define Change_Observer_Observable_Event_Selection_output_event_present 4
 #define Change_Observer_Observable_Event_Selection_unhandled_input_present 5
+#define Change_Observer_Observable_Event_Selection_create_instance_present 6
+#define Change_Observer_Observable_Event_Selection_delete_instance_present 7
 #define Zero_observer_States_wait 0
 #define Zero_observer_Context__state_wait 0
 #define Zero_observer_Context__sender_actuator 0
@@ -103,6 +110,9 @@
 #define Zero_observer_Context__offspring_controller 1
 #define Zero_observer_Context__offspring_environ 2
 #define Zero_observer_Context__offspring_env 3
+#define Zero_Observer_T_Runtime_Error_Selection_noerror_present 1
+#define Zero_Observer_T_Runtime_Error_Selection_encodeerror_present 2
+#define Zero_Observer_T_Runtime_Error_Selection_decodeerror_present 3
 #define Zero_Observer_Actuator_Event_Msg_In_Selection_input_none_present 1
 #define Zero_Observer_Actuator_Event_Msg_In_Selection_f1_present 2
 #define Zero_Observer_Actuator_Event_Msg_In_Selection_f2_present 3
@@ -126,6 +136,8 @@
 #define Zero_Observer_Observable_Event_Selection_input_event_present 3
 #define Zero_Observer_Observable_Event_Selection_output_event_present 4
 #define Zero_Observer_Observable_Event_Selection_unhandled_input_present 5
+#define Zero_Observer_Observable_Event_Selection_create_instance_present 6
+#define Zero_Observer_Observable_Event_Selection_delete_instance_present 7
 #define Actuator_States_wait 0
 #define Actuator_Context__state_wait 0
 #define Actuator_Context__sender_actuator 0
@@ -139,10 +151,10 @@
 #define Actuator_T_Runtime_Error_Selection_noerror_present 1
 #define Actuator_T_Runtime_Error_Selection_encodeerror_present 2
 #define Actuator_T_Runtime_Error_Selection_decodeerror_present 3
-#define Controller_States_wait 0
-#define Controller_States_test 1
-#define Controller_Context__state_wait 0
-#define Controller_Context__state_test 1
+#define Controller_States_test 0
+#define Controller_States_wait 1
+#define Controller_Context__state_test 0
+#define Controller_Context__state_wait 1
 #define Controller_Context__sender_actuator 0
 #define Controller_Context__sender_controller 1
 #define Controller_Context__sender_environ 2
@@ -288,6 +300,15 @@ inline Change_observer_Context_assign_value(dst, src)
     Change_observer_Context__sender_assign_value(dst.sender, src.sender);
     Change_observer_Context__offspring_assign_value(dst.offspring, src.offspring);
 }
+inline Change_Observer_T_Runtime_Error_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Change_Observer_T_Runtime_Error_Selection_range_check(dst);
+}
+inline Change_Observer_T_Runtime_Error_Selection_range_check(Change_Observer_T_Runtime_Error_Selection_vc)
+{
+    assert((((Change_Observer_T_Runtime_Error_Selection_vc == Change_Observer_T_Runtime_Error_Selection_noerror_present) || (Change_Observer_T_Runtime_Error_Selection_vc == Change_Observer_T_Runtime_Error_Selection_encodeerror_present)) || (Change_Observer_T_Runtime_Error_Selection_vc == Change_Observer_T_Runtime_Error_Selection_decodeerror_present)));
+}
 inline Change_Observer_Actuator_Event_Msg_In_Selection_assign_value(dst, src)
 {
     dst = src;
@@ -376,7 +397,7 @@ inline Change_Observer_Observable_Event_Selection_assign_value(dst, src)
 }
 inline Change_Observer_Observable_Event_Selection_range_check(Change_Observer_Observable_Event_Selection_vc)
 {
-    assert((((((Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_no_event_present) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_system_startup_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_input_event_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_output_event_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_unhandled_input_present)));
+    assert((((((((Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_no_event_present) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_system_startup_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_input_event_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_output_event_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_unhandled_input_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_create_instance_present)) || (Change_Observer_Observable_Event_Selection_vc == Change_Observer_Observable_Event_Selection_delete_instance_present)));
 }
 inline Zero_observer_States_assign_value(dst, src)
 {
@@ -429,6 +450,15 @@ inline Zero_observer_Context_assign_value(dst, src)
     Zero_observer_Context__init_done_assign_value(dst.init_done, src.init_done);
     Zero_observer_Context__sender_assign_value(dst.sender, src.sender);
     Zero_observer_Context__offspring_assign_value(dst.offspring, src.offspring);
+}
+inline Zero_Observer_T_Runtime_Error_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Zero_Observer_T_Runtime_Error_Selection_range_check(dst);
+}
+inline Zero_Observer_T_Runtime_Error_Selection_range_check(Zero_Observer_T_Runtime_Error_Selection_vc)
+{
+    assert((((Zero_Observer_T_Runtime_Error_Selection_vc == Zero_Observer_T_Runtime_Error_Selection_noerror_present) || (Zero_Observer_T_Runtime_Error_Selection_vc == Zero_Observer_T_Runtime_Error_Selection_encodeerror_present)) || (Zero_Observer_T_Runtime_Error_Selection_vc == Zero_Observer_T_Runtime_Error_Selection_decodeerror_present)));
 }
 inline Zero_Observer_Actuator_Event_Msg_In_Selection_assign_value(dst, src)
 {
@@ -518,7 +548,7 @@ inline Zero_Observer_Observable_Event_Selection_assign_value(dst, src)
 }
 inline Zero_Observer_Observable_Event_Selection_range_check(Zero_Observer_Observable_Event_Selection_vc)
 {
-    assert((((((Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_no_event_present) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_system_startup_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_input_event_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_output_event_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_unhandled_input_present)));
+    assert((((((((Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_no_event_present) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_system_startup_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_input_event_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_output_event_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_unhandled_input_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_create_instance_present)) || (Zero_Observer_Observable_Event_Selection_vc == Zero_Observer_Observable_Event_Selection_delete_instance_present)));
 }
 inline Actuator_States_assign_value(dst, src)
 {
@@ -598,7 +628,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((Controller_States_vc == Controller_States_wait) || (Controller_States_vc == Controller_States_test)));
+    assert(((Controller_States_vc == Controller_States_test) || (Controller_States_vc == Controller_States_wait)));
 }
 inline Controller_Context__state_assign_value(dst, src)
 {
@@ -607,7 +637,7 @@ inline Controller_Context__state_assign_value(dst, src)
 }
 inline Controller_Context__state_range_check(Controller_Context__state_vc)
 {
-    assert(((Controller_Context__state_vc == Controller_Context__state_wait) || (Controller_Context__state_vc == Controller_Context__state_test)));
+    assert(((Controller_Context__state_vc == Controller_Context__state_test) || (Controller_Context__state_vc == Controller_Context__state_wait)));
 }
 inline Controller_Context__init_done_assign_value(dst, src)
 {
@@ -717,7 +747,7 @@ inline T_Int32_assign_value(dst, src)
 }
 inline T_Int32_range_check(T_Int32_vc)
 {
-    assert((T_Int32_vc <= 2147483647));
+    assert(1);
 }
 inline T_UInt32_assign_value(dst, src)
 {
@@ -726,7 +756,7 @@ inline T_UInt32_assign_value(dst, src)
 }
 inline T_UInt32_range_check(T_UInt32_vc)
 {
-    assert(((T_UInt32_vc >= 0) && (T_UInt32_vc <= -1)));
+    assert((T_UInt32_vc >= 0));
 }
 inline T_Int8_assign_value(dst, src)
 {
@@ -766,7 +796,7 @@ inline T_Runtime_Error__noerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__noerror_range_check(T_Runtime_Error__noerror_vc)
 {
-    assert(((T_Runtime_Error__noerror_vc >= 0) && (T_Runtime_Error__noerror_vc <= -1)));
+    assert((T_Runtime_Error__noerror_vc >= 0));
 }
 inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 {
@@ -775,7 +805,7 @@ inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__encodeerror_range_check(T_Runtime_Error__encodeerror_vc)
 {
-    assert((T_Runtime_Error__encodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 {
@@ -784,7 +814,7 @@ inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__decodeerror_range_check(T_Runtime_Error__decodeerror_vc)
 {
-    assert((T_Runtime_Error__decodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error_assign_value(dst, src)
 {
