@@ -42,7 +42,7 @@ internal_procedures:
 	cp ${RES_DIR}/harness.pml ${TEST_DIR}/harness.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m harness.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output

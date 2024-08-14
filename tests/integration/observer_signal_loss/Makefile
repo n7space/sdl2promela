@@ -48,10 +48,13 @@ test_observer_signal_loss:
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_uh_signal_observer.txt --os --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_function_observer/uh_function_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_global_observer/uh_global_observer.pr
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -68,10 +71,13 @@ test_observer_signal_loss_function:
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_uh_function_observer.txt --os --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_function_observer/uh_function_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_global_observer/uh_global_observer.pr
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -88,10 +94,13 @@ test_observer_signal_loss_global:
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_uh_global_observer.txt --os --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_signal_observer/uh_signal_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_function_observer/uh_function_observer.pr --sdl ${RES_DIR}/taste/work/modelchecking/properties/uh_global_observer/uh_global_observer.pr
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output

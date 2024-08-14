@@ -2,12 +2,13 @@ Observer-Datamodel DEFINITIONS ::=
 BEGIN
 --  This file was generated automatically by OpenGEODE
 IMPORTS
-   Actuator-States, Actuator-Context FROM Actuator-Datamodel
-   Controller-States, Controller-Context FROM Controller-Datamodel
+   Actuator-States, Actuator-Context, Actuator-T-Runtime-Error-Selection FROM Actuator-Datamodel
+   Controller-States, Controller-Context, Controller-T-Runtime-Error-Selection FROM Controller-Datamodel
+   Timer-manager-States, Timer-manager-Context FROM Timer-manager-Datamodel
    MyInteger FROM OBSERVER-ERRORSTATES-DATAVIEW
-   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview
-   Actuator-Event, Controller-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Observable-Event, Events-Ty, System-State FROM Simulation-DataView
+   Actuator-Event, Controller-Event, Taste-User-Interface-Event, Timer-Manager-Event, Observer-State-Kind, Function-Event, Named-Function-Event, Interface-Event, Create-Event, Delete-Event, Observable-Event, Events-Ty, System-State, System-GUIs FROM Simulation-DataView
    TimerData, AggregateTimerData FROM Simulation-Timers-DataView;
 
 Observer-States ::= ENUMERATED {wait, error}
@@ -19,12 +20,18 @@ Observer-Context ::= SEQUENCE {
    offspring PID
 }
 
-Observer-Actuator-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), ping-present(2)}
-Observer-Actuator-Event-Msg-Out-Selection  ::= ENUMERATED {pong-present(1)}
-Observer-Actuator-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
-Observer-Controller-Event-Msg-In-Selection  ::= ENUMERATED {input-none-present(1), pong-present(2)}
-Observer-Controller-Event-Msg-Out-Selection  ::= ENUMERATED {ping-present(1)}
-Observer-Controller-Event-Selection  ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
-Observer-Function-Event-Selection  ::= ENUMERATED {actuator-present(1), controller-present(2)}
-Observer-Observable-Event-Selection  ::= ENUMERATED {no-event-present(1), system-startup-present(2), input-event-present(3), output-event-present(4), unhandled-input-present(5)}
+Observer-T-Runtime-Error-Selection ::= ENUMERATED {noerror-present(1), encodeerror-present(2), decodeerror-present(3)}
+Observer-Actuator-Event-Msg-In-Selection ::= ENUMERATED {input-none-present(1), ping-present(2)}
+Observer-Actuator-Event-Msg-Out-Selection ::= ENUMERATED {pong-present(1)}
+Observer-Actuator-Event-Selection ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
+Observer-Controller-Event-Msg-In-Selection ::= ENUMERATED {input-none-present(1), aux-pulse-present(2), pong-present(3)}
+Observer-Controller-Event-Msg-Out-Selection ::= ENUMERATED {ping-present(1)}
+Observer-Controller-Event-Selection ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
+Observer-Taste-User-Interface-Event-Msg-Out-Selection ::= ENUMERATED {tick-present(1)}
+Observer-Taste-User-Interface-Event-Selection ::= ENUMERATED {msg-out-present(1)}
+Observer-Timer-Manager-Event-Msg-In-Selection ::= ENUMERATED {input-none-present(1), tick-present(2)}
+Observer-Timer-Manager-Event-Msg-Out-Selection ::= ENUMERATED {controller-aux-pulse-present(1)}
+Observer-Timer-Manager-Event-Selection ::= ENUMERATED {msg-in-present(1), msg-out-present(2)}
+Observer-Function-Event-Selection ::= ENUMERATED {actuator-present(1), controller-present(2), taste-user-interface-present(3), timer-manager-present(4)}
+Observer-Observable-Event-Selection ::= ENUMERATED {no-event-present(1), system-startup-present(2), input-event-present(3), output-event-present(4), unhandled-input-present(5), create-instance-present(6), delete-instance-present(7)}
 END

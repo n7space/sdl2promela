@@ -61,10 +61,10 @@
 #define PID int
 #define TimerData__timer_enabled bool
 #define TimerData__interval int
-#define Observer_States_error 0
-#define Observer_States_idle 1
-#define Observer_Context__state_error 0
-#define Observer_Context__state_idle 1
+#define Observer_States_idle 0
+#define Observer_States_error 1
+#define Observer_Context__state_idle 0
+#define Observer_Context__state_error 1
 #define Observer_Context__sender_taste_user_interface 0
 #define Observer_Context__sender_timer_manager 1
 #define Observer_Context__sender_actuator 2
@@ -290,7 +290,7 @@ inline Observer_States_assign_value(dst, src)
 }
 inline Observer_States_range_check(Observer_States_vc)
 {
-    assert(((Observer_States_vc == Observer_States_error) || (Observer_States_vc == Observer_States_idle)));
+    assert(((Observer_States_vc == Observer_States_idle) || (Observer_States_vc == Observer_States_error)));
 }
 inline Observer_Context__state_assign_value(dst, src)
 {
@@ -299,7 +299,7 @@ inline Observer_Context__state_assign_value(dst, src)
 }
 inline Observer_Context__state_range_check(Observer_Context__state_vc)
 {
-    assert(((Observer_Context__state_vc == Observer_Context__state_error) || (Observer_Context__state_vc == Observer_Context__state_idle)));
+    assert(((Observer_Context__state_vc == Observer_Context__state_idle) || (Observer_Context__state_vc == Observer_Context__state_error)));
 }
 inline Observer_Context__init_done_assign_value(dst, src)
 {
@@ -754,7 +754,7 @@ inline T_Int32_assign_value(dst, src)
 }
 inline T_Int32_range_check(T_Int32_vc)
 {
-    assert((T_Int32_vc <= 2147483647));
+    assert(1);
 }
 inline T_UInt32_assign_value(dst, src)
 {
@@ -763,7 +763,7 @@ inline T_UInt32_assign_value(dst, src)
 }
 inline T_UInt32_range_check(T_UInt32_vc)
 {
-    assert(((T_UInt32_vc >= 0) && (T_UInt32_vc <= -1)));
+    assert((T_UInt32_vc >= 0));
 }
 inline T_Int8_assign_value(dst, src)
 {
@@ -803,7 +803,7 @@ inline T_Runtime_Error__noerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__noerror_range_check(T_Runtime_Error__noerror_vc)
 {
-    assert(((T_Runtime_Error__noerror_vc >= 0) && (T_Runtime_Error__noerror_vc <= -1)));
+    assert((T_Runtime_Error__noerror_vc >= 0));
 }
 inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 {
@@ -812,7 +812,7 @@ inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__encodeerror_range_check(T_Runtime_Error__encodeerror_vc)
 {
-    assert((T_Runtime_Error__encodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 {
@@ -821,7 +821,7 @@ inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__decodeerror_range_check(T_Runtime_Error__decodeerror_vc)
 {
-    assert((T_Runtime_Error__decodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error_assign_value(dst, src)
 {

@@ -55,10 +55,13 @@ test_stop_condition_queue_last_integer_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -73,10 +76,13 @@ test_stop_condition_queue_last_integer_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -92,10 +98,13 @@ test_stop_condition_queue_last_sequence1_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_sequence1.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -110,10 +119,13 @@ test_stop_condition_queue_last_sequence1_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_sequence1.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -128,10 +140,13 @@ test_stop_condition_queue_last_sequence2_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_sequence2.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -146,10 +161,13 @@ test_stop_condition_queue_last_sequence2_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_sequence2.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -164,10 +182,13 @@ test_stop_condition_queue_last_choice_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_choice.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -182,10 +203,13 @@ test_stop_condition_queue_last_choice_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_choice.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -200,10 +224,13 @@ test_stop_condition_queue_last_array_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_array.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -218,10 +245,13 @@ test_stop_condition_queue_last_array_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_array.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output
@@ -236,10 +266,13 @@ test_stop_condition_queue_last_optional_ok:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_optional.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 0" ${TEST_DIR}/system.output
@@ -254,10 +287,13 @@ test_stop_condition_queue_last_optional_error:
 	${SDL2PROMELA} -v -o ${TEST_DIR}/scl.pml --scl ${RES_DIR}/scl_optional.txt --sdl ${RES_DIR}/taste/work/controller/SDL/src/system_structure.pr ${RES_DIR}/taste/work/controller/SDL/src/controller_bad.pr --sdl ${RES_DIR}/taste/work/actuator/SDL/src/system_structure.pr ${RES_DIR}/taste/work/actuator/SDL/src/actuator.pr
 	cp ${RES_DIR}/tmc/dataview.pml ${TEST_DIR}/dataview.pml
 	cp ${RES_DIR}/tmc/system.pml ${TEST_DIR}/system.pml
+	cp ${RES_DIR}/tmc/message_sizes.pml ${TEST_DIR}/message_sizes.pml
+	cp ${RES_DIR}/tmc/*.h ${TEST_DIR}/
+	cp ${RES_DIR}/tmc/*.c ${TEST_DIR}/
 	cp ${RES_DIR}/tmc/env_inlines.pml ${TEST_DIR}/env_inlines.pml
 	cd ${TEST_DIR} && \
 	${SPIN} -a -m system.pml
-	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/pan.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
+	$(CC) -o ${TEST_DIR}/pan ${TEST_DIR}/*.c $(CFLAGS) -DNFAIR=3 -DVECTORSZ=2048
 	cd ${TEST_DIR} && \
 	./pan -a -f -n -m1000000 > system.output
 	grep -q "errors: 1" ${TEST_DIR}/system.output

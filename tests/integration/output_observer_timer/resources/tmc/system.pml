@@ -3,6 +3,10 @@
 #include "controller.pml"
 #include "Observer.pml"
 #include "env_inlines.pml"
+#include "message_sizes.pml"
+c_decl {
+    \#include "dataview-uniq.h"
+}
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context controller;
@@ -34,6 +38,7 @@ inline Actuator_0_trigger_reset()
 inline Observer_0_RI_0_trigger_out()
 {
     Actuator_observer_actuator_trigger_channel!1;
+    printf("channel_send Actuator_observer_actuator_trigger_channel: 1\n");
 }
 inline Actuator_0_PI_0_ping_unhandled_input()
 {
@@ -48,6 +53,7 @@ inline Actuator_0_PI_0_trigger_unhandled_input()
 inline Actuator_0_RI_0_pong()
 {
     Controller_pong_channel!0;
+    printf("channel_send Controller_pong_channel: 1\n");
 }
 inline Actuator_check_queue()
 {
@@ -72,6 +78,7 @@ inline Controller_0_PI_0_test_unhandled_input()
 inline Controller_0_RI_0_ping()
 {
     Actuator_ping_channel!0;
+    printf("channel_send Actuator_ping_channel: 1\n");
 }
 inline Controller_check_queue()
 {
@@ -86,6 +93,7 @@ inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 inline Egse_0_RI_0_test()
 {
     Controller_test_channel!0;
+    printf("channel_send Controller_test_channel: 1\n");
 }
 active proctype timer_manager_proc() priority 1
 {
@@ -114,6 +122,7 @@ Actuator_ping_loop:
         if
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?_;
+            printf("channel_recv Actuator_ping_channel: 1\n");
             Actuator_0_PI_0_ping();
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
@@ -134,6 +143,7 @@ Actuator_trigger_loop:
         if
         ::  nempty(Actuator_observer_actuator_trigger_channel);
             Actuator_observer_actuator_trigger_channel?_;
+            printf("channel_recv Actuator_observer_actuator_trigger_channel: 1\n");
             Actuator_0_PI_0_trigger();
             goto Actuator_trigger_loop;
         ::  empty(Actuator_observer_actuator_trigger_channel);
@@ -142,6 +152,7 @@ Actuator_trigger_loop:
         if
         ::  nempty(Actuator_trigger_channel);
             Actuator_trigger_channel?_;
+            printf("channel_recv Actuator_trigger_channel: 1\n");
             Observer_lock?_;
             Observer_0_PI_0_trigger_out();
             Observer_lock!1;
@@ -164,6 +175,7 @@ Controller_pong_loop:
         if
         ::  nempty(Controller_pong_channel);
             Controller_pong_channel?_;
+            printf("channel_recv Controller_pong_channel: 1\n");
             Controller_0_PI_0_pong();
             goto Controller_pong_loop;
         ::  empty(Controller_pong_channel);
@@ -184,6 +196,7 @@ Controller_test_loop:
         if
         ::  nempty(Controller_test_channel);
             Controller_test_channel?_;
+            printf("channel_recv Controller_test_channel: 1\n");
             Controller_0_PI_0_test();
             goto Controller_test_loop;
         ::  empty(Controller_test_channel);

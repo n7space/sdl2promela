@@ -2,6 +2,10 @@
 #include "actuator.pml"
 #include "controller.pml"
 #include "env_inlines.pml"
+#include "message_sizes.pml"
+c_decl {
+    \#include "dataview-uniq.h"
+}
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context controller;
@@ -22,6 +26,7 @@ inline Actuator_0_PI_0_ping_unhandled_input()
 inline Actuator_0_RI_0_pong()
 {
     Controller_pong_channel!0;
+    printf("channel_send Controller_pong_channel: 1\n");
 }
 inline Actuator_check_queue()
 {
@@ -51,6 +56,7 @@ inline Controller_0_RI_0_test_unprotected(Controller_test_unprotected_result, Co
 inline Controller_0_RI_0_ping()
 {
     Actuator_ping_channel!0;
+    printf("channel_send Actuator_ping_channel: 1\n");
 }
 inline Controller_check_queue()
 {
@@ -73,6 +79,7 @@ Actuator_ping_loop:
         if
         ::  nempty(Actuator_ping_channel);
             Actuator_ping_channel?_;
+            printf("channel_recv Actuator_ping_channel: 1\n");
             Actuator_0_PI_0_ping();
             goto Actuator_ping_loop;
         ::  empty(Actuator_ping_channel);
@@ -93,6 +100,7 @@ Controller_pong_loop:
         if
         ::  nempty(Controller_pong_channel);
             Controller_pong_channel?_;
+            printf("channel_recv Controller_pong_channel: 1\n");
             Controller_0_PI_0_pong();
             goto Controller_pong_loop;
         ::  empty(Controller_pong_channel);

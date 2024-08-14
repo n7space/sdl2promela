@@ -27,7 +27,7 @@ IMPORTS
    T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record, T-Runtime-Error FROM TASTE-BasicTypes
    PID-Range, PID FROM System-Dataview;
 
-Controller-States ::= ENUMERATED {test, confirmation, idle}
+Controller-States ::= ENUMERATED {idle, test, confirmation}
 
 Controller-Context ::= SEQUENCE {
    state Controller-States,

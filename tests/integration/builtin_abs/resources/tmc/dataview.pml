@@ -44,16 +44,16 @@
 #define Actuator_T_Runtime_Error_Selection_noerror_present 1
 #define Actuator_T_Runtime_Error_Selection_encodeerror_present 2
 #define Actuator_T_Runtime_Error_Selection_decodeerror_present 3
-#define Controller_States_waitforzero 0
-#define Controller_States_finished 1
-#define Controller_States_waitfornegative 2
-#define Controller_States_waitforpositive 3
-#define Controller_States_error 4
-#define Controller_Context__state_waitforzero 0
-#define Controller_Context__state_finished 1
-#define Controller_Context__state_waitfornegative 2
-#define Controller_Context__state_waitforpositive 3
-#define Controller_Context__state_error 4
+#define Controller_States_waitforpositive 0
+#define Controller_States_waitforzero 1
+#define Controller_States_error 2
+#define Controller_States_waitfornegative 3
+#define Controller_States_finished 4
+#define Controller_Context__state_waitforpositive 0
+#define Controller_Context__state_waitforzero 1
+#define Controller_Context__state_error 2
+#define Controller_Context__state_waitfornegative 3
+#define Controller_Context__state_finished 4
 #define Controller_Context__sender_taste_user_interface 0
 #define Controller_Context__sender_timer_manager 1
 #define Controller_Context__sender_actuator 2
@@ -229,7 +229,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert((((((Controller_States_vc == Controller_States_waitforzero) || (Controller_States_vc == Controller_States_finished)) || (Controller_States_vc == Controller_States_waitfornegative)) || (Controller_States_vc == Controller_States_waitforpositive)) || (Controller_States_vc == Controller_States_error)));
+    assert((((((Controller_States_vc == Controller_States_waitforpositive) || (Controller_States_vc == Controller_States_waitforzero)) || (Controller_States_vc == Controller_States_error)) || (Controller_States_vc == Controller_States_waitfornegative)) || (Controller_States_vc == Controller_States_finished)));
 }
 inline Controller_Context__state_assign_value(dst, src)
 {
@@ -238,7 +238,7 @@ inline Controller_Context__state_assign_value(dst, src)
 }
 inline Controller_Context__state_range_check(Controller_Context__state_vc)
 {
-    assert((((((Controller_Context__state_vc == Controller_Context__state_waitforzero) || (Controller_Context__state_vc == Controller_Context__state_finished)) || (Controller_Context__state_vc == Controller_Context__state_waitfornegative)) || (Controller_Context__state_vc == Controller_Context__state_waitforpositive)) || (Controller_Context__state_vc == Controller_Context__state_error)));
+    assert((((((Controller_Context__state_vc == Controller_Context__state_waitforpositive) || (Controller_Context__state_vc == Controller_Context__state_waitforzero)) || (Controller_Context__state_vc == Controller_Context__state_error)) || (Controller_Context__state_vc == Controller_Context__state_waitfornegative)) || (Controller_Context__state_vc == Controller_Context__state_finished)));
 }
 inline Controller_Context__init_done_assign_value(dst, src)
 {
@@ -341,7 +341,7 @@ inline T_Int32_assign_value(dst, src)
 }
 inline T_Int32_range_check(T_Int32_vc)
 {
-    assert((T_Int32_vc <= 2147483647));
+    assert(1);
 }
 inline T_UInt32_assign_value(dst, src)
 {
@@ -350,7 +350,7 @@ inline T_UInt32_assign_value(dst, src)
 }
 inline T_UInt32_range_check(T_UInt32_vc)
 {
-    assert(((T_UInt32_vc >= 0) && (T_UInt32_vc <= -1)));
+    assert((T_UInt32_vc >= 0));
 }
 inline T_Int8_assign_value(dst, src)
 {
@@ -390,7 +390,7 @@ inline T_Runtime_Error__noerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__noerror_range_check(T_Runtime_Error__noerror_vc)
 {
-    assert(((T_Runtime_Error__noerror_vc >= 0) && (T_Runtime_Error__noerror_vc <= -1)));
+    assert((T_Runtime_Error__noerror_vc >= 0));
 }
 inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 {
@@ -399,7 +399,7 @@ inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__encodeerror_range_check(T_Runtime_Error__encodeerror_vc)
 {
-    assert((T_Runtime_Error__encodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 {
@@ -408,7 +408,7 @@ inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__decodeerror_range_check(T_Runtime_Error__decodeerror_vc)
 {
-    assert((T_Runtime_Error__decodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error_assign_value(dst, src)
 {

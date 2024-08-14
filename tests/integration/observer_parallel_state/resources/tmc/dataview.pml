@@ -3,6 +3,7 @@
 #define Observer_Context__init_done bool
 #define Observer_Context__sender int
 #define Observer_Context__offspring int
+#define Observer_T_Runtime_Error_Selection int
 #define Observer_Actuator_Event_Msg_In_Selection int
 #define Observer_Actuator_Event_Msg_Out_Selection int
 #define Observer_Actuator_Event_Selection int
@@ -47,10 +48,10 @@
 #define Environ_test_p1 int
 #define TimerData__timer_enabled bool
 #define TimerData__interval int
-#define Observer_States_error 0
-#define Observer_States_idle 1
-#define Observer_Context__state_error 0
-#define Observer_Context__state_idle 1
+#define Observer_States_idle 0
+#define Observer_States_error 1
+#define Observer_Context__state_idle 0
+#define Observer_Context__state_error 1
 #define Observer_Context__sender_actuator 0
 #define Observer_Context__sender_controller 1
 #define Observer_Context__sender_environ 2
@@ -59,6 +60,9 @@
 #define Observer_Context__offspring_controller 1
 #define Observer_Context__offspring_environ 2
 #define Observer_Context__offspring_env 3
+#define Observer_T_Runtime_Error_Selection_noerror_present 1
+#define Observer_T_Runtime_Error_Selection_encodeerror_present 2
+#define Observer_T_Runtime_Error_Selection_decodeerror_present 3
 #define Observer_Actuator_Event_Msg_In_Selection_input_none_present 1
 #define Observer_Actuator_Event_Msg_In_Selection_dummy_present 2
 #define Observer_Actuator_Event_Msg_In_Selection_ping_present 3
@@ -82,34 +86,36 @@
 #define Observer_Observable_Event_Selection_input_event_present 3
 #define Observer_Observable_Event_Selection_output_event_present 4
 #define Observer_Observable_Event_Selection_unhandled_input_present 5
-#define Actuator_States_state_0_end 0
-#define Actuator_States_operation_0_left_0_repeat 1
-#define Actuator_States_operation_0_left 2
+#define Observer_Observable_Event_Selection_create_instance_present 6
+#define Observer_Observable_Event_Selection_delete_instance_present 7
+#define Actuator_States_operation_0_right 0
+#define Actuator_States_operation_0_left 1
+#define Actuator_States_operation_0_right_0_red 2
 #define Actuator_States_operation_0_left_0_add 3
 #define Actuator_States_operation 4
-#define Actuator_States_operation_0_right_0_red 5
-#define Actuator_States_operation_0_right 6
-#define Actuator_Context__state_state_0_end 0
-#define Actuator_Context__state_operation_0_left_0_repeat 1
-#define Actuator_Context__state_operation_0_left 2
+#define Actuator_States_operation_0_left_0_repeat 5
+#define Actuator_States_state_0_end 6
+#define Actuator_Context__state_operation_0_right 0
+#define Actuator_Context__state_operation_0_left 1
+#define Actuator_Context__state_operation_0_right_0_red 2
 #define Actuator_Context__state_operation_0_left_0_add 3
 #define Actuator_Context__state_operation 4
-#define Actuator_Context__state_operation_0_right_0_red 5
-#define Actuator_Context__state_operation_0_right 6
-#define Actuator_Context__operation_0_right_0_state_state_0_end 0
-#define Actuator_Context__operation_0_right_0_state_operation_0_left_0_repeat 1
-#define Actuator_Context__operation_0_right_0_state_operation_0_left 2
+#define Actuator_Context__state_operation_0_left_0_repeat 5
+#define Actuator_Context__state_state_0_end 6
+#define Actuator_Context__operation_0_right_0_state_operation_0_right 0
+#define Actuator_Context__operation_0_right_0_state_operation_0_left 1
+#define Actuator_Context__operation_0_right_0_state_operation_0_right_0_red 2
 #define Actuator_Context__operation_0_right_0_state_operation_0_left_0_add 3
 #define Actuator_Context__operation_0_right_0_state_operation 4
-#define Actuator_Context__operation_0_right_0_state_operation_0_right_0_red 5
-#define Actuator_Context__operation_0_right_0_state_operation_0_right 6
-#define Actuator_Context__operation_0_left_0_state_state_0_end 0
-#define Actuator_Context__operation_0_left_0_state_operation_0_left_0_repeat 1
-#define Actuator_Context__operation_0_left_0_state_operation_0_left 2
+#define Actuator_Context__operation_0_right_0_state_operation_0_left_0_repeat 5
+#define Actuator_Context__operation_0_right_0_state_state_0_end 6
+#define Actuator_Context__operation_0_left_0_state_operation_0_right 0
+#define Actuator_Context__operation_0_left_0_state_operation_0_left 1
+#define Actuator_Context__operation_0_left_0_state_operation_0_right_0_red 2
 #define Actuator_Context__operation_0_left_0_state_operation_0_left_0_add 3
 #define Actuator_Context__operation_0_left_0_state_operation 4
-#define Actuator_Context__operation_0_left_0_state_operation_0_right_0_red 5
-#define Actuator_Context__operation_0_left_0_state_operation_0_right 6
+#define Actuator_Context__operation_0_left_0_state_operation_0_left_0_repeat 5
+#define Actuator_Context__operation_0_left_0_state_state_0_end 6
 #define Actuator_Context__sender_actuator 0
 #define Actuator_Context__sender_controller 1
 #define Actuator_Context__sender_environ 2
@@ -121,10 +127,10 @@
 #define Actuator_T_Runtime_Error_Selection_noerror_present 1
 #define Actuator_T_Runtime_Error_Selection_encodeerror_present 2
 #define Actuator_T_Runtime_Error_Selection_decodeerror_present 3
-#define Controller_States_operation 0
-#define Controller_States_wait 1
-#define Controller_Context__state_operation 0
-#define Controller_Context__state_wait 1
+#define Controller_States_wait 0
+#define Controller_States_operation 1
+#define Controller_Context__state_wait 0
+#define Controller_Context__state_operation 1
 #define Controller_Context__sender_actuator 0
 #define Controller_Context__sender_controller 1
 #define Controller_Context__sender_environ 2
@@ -220,7 +226,7 @@ inline Observer_States_assign_value(dst, src)
 }
 inline Observer_States_range_check(Observer_States_vc)
 {
-    assert(((Observer_States_vc == Observer_States_error) || (Observer_States_vc == Observer_States_idle)));
+    assert(((Observer_States_vc == Observer_States_idle) || (Observer_States_vc == Observer_States_error)));
 }
 inline Observer_Context__state_assign_value(dst, src)
 {
@@ -229,7 +235,7 @@ inline Observer_Context__state_assign_value(dst, src)
 }
 inline Observer_Context__state_range_check(Observer_Context__state_vc)
 {
-    assert(((Observer_Context__state_vc == Observer_Context__state_error) || (Observer_Context__state_vc == Observer_Context__state_idle)));
+    assert(((Observer_Context__state_vc == Observer_Context__state_idle) || (Observer_Context__state_vc == Observer_Context__state_error)));
 }
 inline Observer_Context__init_done_assign_value(dst, src)
 {
@@ -264,6 +270,15 @@ inline Observer_Context_assign_value(dst, src)
     Observer_Context__init_done_assign_value(dst.init_done, src.init_done);
     Observer_Context__sender_assign_value(dst.sender, src.sender);
     Observer_Context__offspring_assign_value(dst.offspring, src.offspring);
+}
+inline Observer_T_Runtime_Error_Selection_assign_value(dst, src)
+{
+    dst = src;
+    Observer_T_Runtime_Error_Selection_range_check(dst);
+}
+inline Observer_T_Runtime_Error_Selection_range_check(Observer_T_Runtime_Error_Selection_vc)
+{
+    assert((((Observer_T_Runtime_Error_Selection_vc == Observer_T_Runtime_Error_Selection_noerror_present) || (Observer_T_Runtime_Error_Selection_vc == Observer_T_Runtime_Error_Selection_encodeerror_present)) || (Observer_T_Runtime_Error_Selection_vc == Observer_T_Runtime_Error_Selection_decodeerror_present)));
 }
 inline Observer_Actuator_Event_Msg_In_Selection_assign_value(dst, src)
 {
@@ -353,7 +368,7 @@ inline Observer_Observable_Event_Selection_assign_value(dst, src)
 }
 inline Observer_Observable_Event_Selection_range_check(Observer_Observable_Event_Selection_vc)
 {
-    assert((((((Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_no_event_present) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_system_startup_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_input_event_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_output_event_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_unhandled_input_present)));
+    assert((((((((Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_no_event_present) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_system_startup_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_input_event_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_output_event_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_unhandled_input_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_create_instance_present)) || (Observer_Observable_Event_Selection_vc == Observer_Observable_Event_Selection_delete_instance_present)));
 }
 inline Actuator_States_assign_value(dst, src)
 {
@@ -362,7 +377,7 @@ inline Actuator_States_assign_value(dst, src)
 }
 inline Actuator_States_range_check(Actuator_States_vc)
 {
-    assert((((((((Actuator_States_vc == Actuator_States_state_0_end) || (Actuator_States_vc == Actuator_States_operation_0_left_0_repeat)) || (Actuator_States_vc == Actuator_States_operation_0_left)) || (Actuator_States_vc == Actuator_States_operation_0_left_0_add)) || (Actuator_States_vc == Actuator_States_operation)) || (Actuator_States_vc == Actuator_States_operation_0_right_0_red)) || (Actuator_States_vc == Actuator_States_operation_0_right)));
+    assert((((((((Actuator_States_vc == Actuator_States_operation_0_right) || (Actuator_States_vc == Actuator_States_operation_0_left)) || (Actuator_States_vc == Actuator_States_operation_0_right_0_red)) || (Actuator_States_vc == Actuator_States_operation_0_left_0_add)) || (Actuator_States_vc == Actuator_States_operation)) || (Actuator_States_vc == Actuator_States_operation_0_left_0_repeat)) || (Actuator_States_vc == Actuator_States_state_0_end)));
 }
 inline Actuator_Context__state_assign_value(dst, src)
 {
@@ -371,7 +386,7 @@ inline Actuator_Context__state_assign_value(dst, src)
 }
 inline Actuator_Context__state_range_check(Actuator_Context__state_vc)
 {
-    assert((((((((Actuator_Context__state_vc == Actuator_Context__state_state_0_end) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left_0_repeat)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left_0_add)) || (Actuator_Context__state_vc == Actuator_Context__state_operation)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_right_0_red)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_right)));
+    assert((((((((Actuator_Context__state_vc == Actuator_Context__state_operation_0_right) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_right_0_red)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left_0_add)) || (Actuator_Context__state_vc == Actuator_Context__state_operation)) || (Actuator_Context__state_vc == Actuator_Context__state_operation_0_left_0_repeat)) || (Actuator_Context__state_vc == Actuator_Context__state_state_0_end)));
 }
 inline Actuator_Context__init_done_assign_value(dst, src)
 {
@@ -389,7 +404,7 @@ inline Actuator_Context__operation_0_right_0_state_assign_value(dst, src)
 }
 inline Actuator_Context__operation_0_right_0_state_range_check(Actuator_Context__operation_0_right_0_state_vc)
 {
-    assert((((((((Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_state_0_end) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left_0_repeat)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left_0_add)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_right_0_red)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_right)));
+    assert((((((((Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_right) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_right_0_red)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left_0_add)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_operation_0_left_0_repeat)) || (Actuator_Context__operation_0_right_0_state_vc == Actuator_Context__operation_0_right_0_state_state_0_end)));
 }
 inline Actuator_Context__operation_0_left_0_state_assign_value(dst, src)
 {
@@ -398,7 +413,7 @@ inline Actuator_Context__operation_0_left_0_state_assign_value(dst, src)
 }
 inline Actuator_Context__operation_0_left_0_state_range_check(Actuator_Context__operation_0_left_0_state_vc)
 {
-    assert((((((((Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_state_0_end) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left_0_repeat)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left_0_add)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_right_0_red)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_right)));
+    assert((((((((Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_right) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_right_0_red)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left_0_add)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_operation_0_left_0_repeat)) || (Actuator_Context__operation_0_left_0_state_vc == Actuator_Context__operation_0_left_0_state_state_0_end)));
 }
 inline Actuator_Context__sender_assign_value(dst, src)
 {
@@ -463,7 +478,7 @@ inline Controller_States_assign_value(dst, src)
 }
 inline Controller_States_range_check(Controller_States_vc)
 {
-    assert(((Controller_States_vc == Controller_States_operation) || (Controller_States_vc == Controller_States_wait)));
+    assert(((Controller_States_vc == Controller_States_wait) || (Controller_States_vc == Controller_States_operation)));
 }
 inline Controller_Context__state_assign_value(dst, src)
 {
@@ -472,7 +487,7 @@ inline Controller_Context__state_assign_value(dst, src)
 }
 inline Controller_Context__state_range_check(Controller_Context__state_vc)
 {
-    assert(((Controller_Context__state_vc == Controller_Context__state_operation) || (Controller_Context__state_vc == Controller_Context__state_wait)));
+    assert(((Controller_Context__state_vc == Controller_Context__state_wait) || (Controller_Context__state_vc == Controller_Context__state_operation)));
 }
 inline Controller_Context__init_done_assign_value(dst, src)
 {
@@ -572,7 +587,7 @@ inline T_Int32_assign_value(dst, src)
 }
 inline T_Int32_range_check(T_Int32_vc)
 {
-    assert((T_Int32_vc <= 2147483647));
+    assert(1);
 }
 inline T_UInt32_assign_value(dst, src)
 {
@@ -581,7 +596,7 @@ inline T_UInt32_assign_value(dst, src)
 }
 inline T_UInt32_range_check(T_UInt32_vc)
 {
-    assert(((T_UInt32_vc >= 0) && (T_UInt32_vc <= -1)));
+    assert((T_UInt32_vc >= 0));
 }
 inline T_Int8_assign_value(dst, src)
 {
@@ -621,7 +636,7 @@ inline T_Runtime_Error__noerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__noerror_range_check(T_Runtime_Error__noerror_vc)
 {
-    assert(((T_Runtime_Error__noerror_vc >= 0) && (T_Runtime_Error__noerror_vc <= -1)));
+    assert((T_Runtime_Error__noerror_vc >= 0));
 }
 inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 {
@@ -630,7 +645,7 @@ inline T_Runtime_Error__encodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__encodeerror_range_check(T_Runtime_Error__encodeerror_vc)
 {
-    assert((T_Runtime_Error__encodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 {
@@ -639,7 +654,7 @@ inline T_Runtime_Error__decodeerror_assign_value(dst, src)
 }
 inline T_Runtime_Error__decodeerror_range_check(T_Runtime_Error__decodeerror_vc)
 {
-    assert((T_Runtime_Error__decodeerror_vc <= 2147483647));
+    assert(1);
 }
 inline T_Runtime_Error_assign_value(dst, src)
 {

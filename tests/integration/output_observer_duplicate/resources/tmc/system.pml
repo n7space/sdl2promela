@@ -3,6 +3,26 @@
 #include "controller.pml"
 #include "Observer.pml"
 #include "env_inlines.pml"
+#include "message_sizes.pml"
+c_decl {
+    \#include "dataview-uniq.h"
+}
+typedef MyIntegerMessage {
+#if asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING == 0
+    byte data[1];
+#else
+    byte data[asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING];
+#endif
+}
+
+typedef MyTestIntegerMessage {
+#if asn1SccMyTestInteger_REQUIRED_BYTES_FOR_ENCODING == 0
+    byte data[1];
+#else
+    byte data[asn1SccMyTestInteger_REQUIRED_BYTES_FOR_ENCODING];
+#endif
+}
+
 typedef system_state {
     Actuator_Context actuator;
     Controller_Context controller;
@@ -11,23 +31,53 @@ typedef system_state {
 }
 
 int inited;
-chan Actuator_observer_ping_channel = [2] of {MyInteger};
-chan Actuator_ping_channel = [2] of {MyInteger};
+MyIntegerMessage observer_actuator_p1_message;
+MyInteger observer_actuator_p1_var;
+chan Actuator_observer_ping_channel = [2] of {MyIntegerMessage};
+chan Actuator_ping_channel = [2] of {MyIntegerMessage};
 MyInteger Actuator_ping_signal_parameter;
+MyIntegerMessage Actuator_ping_signal_parameter_message;
 bool Actuator_ping_channel_used = 0;
-chan Controller_pong_channel = [4] of {MyInteger};
+MyIntegerMessage actuator_pong_Actuator_pong_p1_message;
+MyInteger actuator_pong_Actuator_pong_p1_var;
+chan Controller_pong_channel = [4] of {MyIntegerMessage};
 MyInteger Controller_pong_signal_parameter;
+MyIntegerMessage Controller_pong_signal_parameter_message;
 bool Controller_pong_channel_used = 0;
-chan Controller_test_channel = [1] of {MyTestInteger};
+chan Controller_test_channel = [1] of {MyTestIntegerMessage};
 MyTestInteger Controller_test_signal_parameter;
+MyTestIntegerMessage Controller_test_signal_parameter_message;
 bool Controller_test_channel_used = 0;
+MyIntegerMessage controller_ping_Controller_ping_p1_message;
+MyInteger controller_ping_Controller_ping_p1_var;
+MyTestIntegerMessage environ_test_Environ_test_p1_message;
+MyTestInteger environ_test_Environ_test_p1_var;
 system_state global_state;
 chan Actuator_lock = [1] of {int};
 chan Controller_lock = [1] of {int};
 chan Observer_lock = [1] of {int};
 inline Observer_0_RI_0_ping_in(observer_actuator_p1)
 {
-    Actuator_observer_ping_channel!observer_actuator_p1;
+    MyInteger_assign_value(observer_actuator_p1_var, observer_actuator_p1);
+    c_code {
+        {
+        asn1SccMyInteger observer_actuator_p1_c_var;
+        BitStream observer_actuator_p1_stream;
+        int observer_actuator_p1_rc;
+        
+        observer_actuator_p1_c_var = now.observer_actuator_p1_var;
+        
+        BitStream_Init(&observer_actuator_p1_stream,
+            now.observer_actuator_p1_message.data,
+            asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+        asn1SccMyInteger_Encode(&observer_actuator_p1_c_var,
+            &observer_actuator_p1_stream,
+            &observer_actuator_p1_rc,
+            0);
+        }
+    }
+    Actuator_observer_ping_channel!observer_actuator_p1_message;
+    printf("channel_send Actuator_observer_ping_channel: %d\n", observer_actuator_p1_var);
 }
 inline Actuator_0_PI_0_ping_unhandled_input(p1)
 {
@@ -36,7 +86,26 @@ inline Actuator_0_PI_0_ping_unhandled_input(p1)
 }
 inline Actuator_0_RI_0_pong(actuator_pong_Actuator_pong_p1)
 {
-    Controller_pong_channel!actuator_pong_Actuator_pong_p1;
+    MyInteger_assign_value(actuator_pong_Actuator_pong_p1_var, actuator_pong_Actuator_pong_p1);
+    c_code {
+        {
+        asn1SccMyInteger actuator_pong_Actuator_pong_p1_c_var;
+        BitStream actuator_pong_Actuator_pong_p1_stream;
+        int actuator_pong_Actuator_pong_p1_rc;
+        
+        actuator_pong_Actuator_pong_p1_c_var = now.actuator_pong_Actuator_pong_p1_var;
+        
+        BitStream_Init(&actuator_pong_Actuator_pong_p1_stream,
+            now.actuator_pong_Actuator_pong_p1_message.data,
+            asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+        asn1SccMyInteger_Encode(&actuator_pong_Actuator_pong_p1_c_var,
+            &actuator_pong_Actuator_pong_p1_stream,
+            &actuator_pong_Actuator_pong_p1_rc,
+            0);
+        }
+    }
+    Controller_pong_channel!actuator_pong_Actuator_pong_p1_message;
+    printf("channel_send Controller_pong_channel: %d\n", actuator_pong_Actuator_pong_p1_var);
 }
 inline Actuator_check_queue()
 {
@@ -60,7 +129,26 @@ inline Controller_0_PI_0_test_unhandled_input(p1)
 }
 inline Controller_0_RI_0_ping(controller_ping_Controller_ping_p1)
 {
-    Actuator_ping_channel!controller_ping_Controller_ping_p1;
+    MyInteger_assign_value(controller_ping_Controller_ping_p1_var, controller_ping_Controller_ping_p1);
+    c_code {
+        {
+        asn1SccMyInteger controller_ping_Controller_ping_p1_c_var;
+        BitStream controller_ping_Controller_ping_p1_stream;
+        int controller_ping_Controller_ping_p1_rc;
+        
+        controller_ping_Controller_ping_p1_c_var = now.controller_ping_Controller_ping_p1_var;
+        
+        BitStream_Init(&controller_ping_Controller_ping_p1_stream,
+            now.controller_ping_Controller_ping_p1_message.data,
+            asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+        asn1SccMyInteger_Encode(&controller_ping_Controller_ping_p1_c_var,
+            &controller_ping_Controller_ping_p1_stream,
+            &controller_ping_Controller_ping_p1_rc,
+            0);
+        }
+    }
+    Actuator_ping_channel!controller_ping_Controller_ping_p1_message;
+    printf("channel_send Actuator_ping_channel: %d\n", controller_ping_Controller_ping_p1_var);
 }
 inline Controller_check_queue()
 {
@@ -74,7 +162,26 @@ inline Controller_0_RI_0_get_sender(Controller_sender_arg)
 }
 inline Environ_0_RI_0_test(environ_test_Environ_test_p1)
 {
-    Controller_test_channel!environ_test_Environ_test_p1;
+    MyTestInteger_assign_value(environ_test_Environ_test_p1_var, environ_test_Environ_test_p1);
+    c_code {
+        {
+        asn1SccMyTestInteger environ_test_Environ_test_p1_c_var;
+        BitStream environ_test_Environ_test_p1_stream;
+        int environ_test_Environ_test_p1_rc;
+        
+        environ_test_Environ_test_p1_c_var = now.environ_test_Environ_test_p1_var;
+        
+        BitStream_Init(&environ_test_Environ_test_p1_stream,
+            now.environ_test_Environ_test_p1_message.data,
+            asn1SccMyTestInteger_REQUIRED_BYTES_FOR_ENCODING);
+        asn1SccMyTestInteger_Encode(&environ_test_Environ_test_p1_c_var,
+            &environ_test_Environ_test_p1_stream,
+            &environ_test_Environ_test_p1_rc,
+            0);
+        }
+    }
+    Controller_test_channel!environ_test_Environ_test_p1_message;
+    printf("channel_send Controller_test_channel: %d\n", environ_test_Environ_test_p1_var);
 }
 active proctype Actuator_ping() priority 1
 {
@@ -86,7 +193,21 @@ active proctype Actuator_ping() priority 1
 Actuator_ping_loop:
         if
         ::  nempty(Actuator_observer_ping_channel);
-            Actuator_observer_ping_channel?Actuator_ping_signal_parameter;
+            Actuator_observer_ping_channel?Actuator_ping_signal_parameter_message;
+            c_code {
+                {
+                asn1SccMyInteger Actuator_ping_signal_parameter_c_var;
+                BitStream Actuator_ping_signal_parameter_stream;
+                int Actuator_ping_signal_parameter_rc;BitStream_AttachBuffer(&Actuator_ping_signal_parameter_stream,
+                    now.Actuator_ping_signal_parameter_message.data,
+                    asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+                asn1SccMyInteger_Decode(&Actuator_ping_signal_parameter_c_var,
+                    &Actuator_ping_signal_parameter_stream,
+                    &Actuator_ping_signal_parameter_rc);
+                now.Actuator_ping_signal_parameter = Actuator_ping_signal_parameter_c_var;
+                }
+            }
+            printf("channel_recv Actuator_observer_ping_channel: %d\n", Actuator_ping_signal_parameter);
             Actuator_ping_channel_used = 1;
             Actuator_0_PI_0_ping(Actuator_ping_signal_parameter);
             goto Actuator_ping_loop;
@@ -95,7 +216,21 @@ Actuator_ping_loop:
         fi;
         if
         ::  nempty(Actuator_ping_channel);
-            Actuator_ping_channel?Actuator_ping_signal_parameter;
+            Actuator_ping_channel?Actuator_ping_signal_parameter_message;
+            c_code {
+                {
+                asn1SccMyInteger Actuator_ping_signal_parameter_c_var;
+                BitStream Actuator_ping_signal_parameter_stream;
+                int Actuator_ping_signal_parameter_rc;BitStream_AttachBuffer(&Actuator_ping_signal_parameter_stream,
+                    now.Actuator_ping_signal_parameter_message.data,
+                    asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+                asn1SccMyInteger_Decode(&Actuator_ping_signal_parameter_c_var,
+                    &Actuator_ping_signal_parameter_stream,
+                    &Actuator_ping_signal_parameter_rc);
+                now.Actuator_ping_signal_parameter = Actuator_ping_signal_parameter_c_var;
+                }
+            }
+            printf("channel_recv Actuator_ping_channel: %d\n", Actuator_ping_signal_parameter);
             Observer_lock?_;
             Observer_0_PI_0_ping_in(Actuator_ping_signal_parameter);
             Observer_lock!1;
@@ -117,7 +252,21 @@ active proctype Controller_pong() priority 2
 Controller_pong_loop:
         if
         ::  nempty(Controller_pong_channel);
-            Controller_pong_channel?Controller_pong_signal_parameter;
+            Controller_pong_channel?Controller_pong_signal_parameter_message;
+            c_code {
+                {
+                asn1SccMyInteger Controller_pong_signal_parameter_c_var;
+                BitStream Controller_pong_signal_parameter_stream;
+                int Controller_pong_signal_parameter_rc;BitStream_AttachBuffer(&Controller_pong_signal_parameter_stream,
+                    now.Controller_pong_signal_parameter_message.data,
+                    asn1SccMyInteger_REQUIRED_BYTES_FOR_ENCODING);
+                asn1SccMyInteger_Decode(&Controller_pong_signal_parameter_c_var,
+                    &Controller_pong_signal_parameter_stream,
+                    &Controller_pong_signal_parameter_rc);
+                now.Controller_pong_signal_parameter = Controller_pong_signal_parameter_c_var;
+                }
+            }
+            printf("channel_recv Controller_pong_channel: %d\n", Controller_pong_signal_parameter);
             Controller_pong_channel_used = 1;
             Controller_0_PI_0_pong(Controller_pong_signal_parameter);
             goto Controller_pong_loop;
@@ -138,7 +287,21 @@ active proctype Controller_test() priority 1
 Controller_test_loop:
         if
         ::  nempty(Controller_test_channel);
-            Controller_test_channel?Controller_test_signal_parameter;
+            Controller_test_channel?Controller_test_signal_parameter_message;
+            c_code {
+                {
+                asn1SccMyTestInteger Controller_test_signal_parameter_c_var;
+                BitStream Controller_test_signal_parameter_stream;
+                int Controller_test_signal_parameter_rc;BitStream_AttachBuffer(&Controller_test_signal_parameter_stream,
+                    now.Controller_test_signal_parameter_message.data,
+                    asn1SccMyTestInteger_REQUIRED_BYTES_FOR_ENCODING);
+                asn1SccMyTestInteger_Decode(&Controller_test_signal_parameter_c_var,
+                    &Controller_test_signal_parameter_stream,
+                    &Controller_test_signal_parameter_rc);
+                now.Controller_test_signal_parameter = Controller_test_signal_parameter_c_var;
+                }
+            }
+            printf("channel_recv Controller_test_channel: %d\n", Controller_test_signal_parameter);
             Controller_test_channel_used = 1;
             Controller_0_PI_0_test(Controller_test_signal_parameter);
             goto Controller_test_loop;
