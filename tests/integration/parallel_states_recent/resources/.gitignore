@@ -44,3 +44,5 @@ tmc/*
 !tmc/asn1crt.c
 !tmc/asn1crt_encoding.h
 !tmc/asn1crt_encoding.c
+!tmc/asn1crt_encoding_uper.h
+!tmc/asn1crt_encoding_uper.c
