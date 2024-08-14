@@ -62,3 +62,10 @@ tmc/*
 !tmc/system.pml
 !tmc/dataview.pml
 !tmc/env_inlines.pml
+!tmc/message_sizes.pml
+!tmc/dataview-uniq.h
+!tmc/dataview-uniq.c
+!tmc/asn1crt.h
+!tmc/asn1crt.c
+!tmc/asn1crt_encoding.h
+!tmc/asn1crt_encoding.c
