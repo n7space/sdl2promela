@@ -2372,29 +2372,6 @@ def __generate_assignment(
                     dataType.type,
                 )
             )
-        else:
-            # If the component of the right side is not present
-            # then the value of the corresponding component of the left side is set to default value
-            # The main purpose of this is to preclude possible constraint violations for complex datatypes.
-            # This is also an optimization, the spin, if the component value is not set,
-            # sees two different values if the actual component values differ.
-            # With this change if all present component values are the same, then the value of whole structure is the same,
-            # regardless of the value of not-present component (the value is always there, even if it is hidden).
-            # Use default value from dataview.pml to assign component value.
-            field = sdlmodel.MemberAccess(
-                left, sdlmodel.VariableReference(name.replace("-", "_").lower())
-            )
-            field.type = dataType
-            statements.extend(
-                __generate_assignment(
-                    context,
-                    field,  # to fix, not set
-                    sdlmodel.VariableReference(
-                        default_value_variable_name_for_type(dataType.type)
-                    ),
-                    dataType.type,
-                )
-            )
 
         if is_optional:
             value = promelamodel.IntegerValue(
