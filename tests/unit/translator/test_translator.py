@@ -174,3 +174,8 @@ def test_alternative_with_terminator():
     translate_and_verify(
         "alternative_with_terminator.pr", "alternative_with_terminator.pml"
     )
+
+def test_translates_procedure_labels():
+    translate_and_verify(
+        "procedure_labels.pr", "procedure_labels.pml"
+    )

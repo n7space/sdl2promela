@@ -67,6 +67,11 @@ BEGIN
       long-name MyInteger
    }
 
+   SequenceWithOptional ::= SEQUENCE {
+      mandatory-field MyInteger,
+      optional-field MyInteger OPTIONAL
+   }
+
    TestChoice ::= CHOICE {
       problematicName MyInteger,
       secondName MyInteger

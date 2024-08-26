@@ -1,3 +1,15 @@
+inline Complexsdl_0_test_proc()
+{
+  MyInteger test_proc_counter;
+  goto part_one;
+  part_one: 
+  MyInteger_assign_value(test_proc_counter, 1);
+  goto part_two;
+  part_two: 
+  MyInteger_assign_value(test_proc_counter, 2);
+  Complexsdl_0_test_proc_0_end: 
+  skip;
+}
 inline Complexsdl_0_transition(id)
 {
   int complexsdl_transition_id;
@@ -11,16 +23,6 @@ inline Complexsdl_0_transition(id)
       global_state.complexsdl.state = Complexsdl_States_wait;
       goto complexsdl_continuous_signals;
     ::(complexsdl_transition_id == 1)->
-      LongSequence__long_name_assign_value(global_state.complexsdl.param.long_name, global_state.complexsdl.tmp);
-      {
-        SequenceWithOptional__mandatory_field_assign_value(global_state.complexsdl.with_optional.mandatory_field, 2);
-        global_state.complexsdl.with_optional.exist.optional_field = 0;
-      }
-      {
-        SequenceWithOptional__mandatory_field_assign_value(global_state.complexsdl.with_optional.mandatory_field, 2);
-        SequenceWithOptional__optional_field_assign_value(global_state.complexsdl.with_optional.optional_field, 100);
-        global_state.complexsdl.with_optional.exist.optional_field = 1;
-      }
       complexsdl_transition_id = -1;
       global_state.complexsdl.state = Complexsdl_States_wait;
       goto complexsdl_continuous_signals;
