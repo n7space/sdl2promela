@@ -1,0 +1,18 @@
+Controller-Datamodel DEFINITIONS ::=
+BEGIN
+--  This file was generated automatically by OpenGEODE
+IMPORTS
+   MyInteger, InternalInteger, InternalFlag FROM ENV-TRIVIAL-DATAVIEW
+   T-Int32, T-UInt32, T-Int8, T-UInt8, T-Boolean, T-Null-Record FROM TASTE-BasicTypes;
+
+Controller-States ::= ENUMERATED {first}
+
+Controller-Context ::= SEQUENCE {
+   state Controller-States,
+   init-done BOOLEAN,
+   param MyInteger,
+   my InternalInteger,
+   myflag InternalFlag
+}
+
+END
