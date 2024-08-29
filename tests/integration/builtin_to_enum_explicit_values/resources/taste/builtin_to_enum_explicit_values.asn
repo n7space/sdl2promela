@@ -1,0 +1,22 @@
+BUILTIN-TO-ENUM-EXPLICIT-VALUES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   ALPHA-EMPTY ::= SEQUENCE {}
+
+   ALPHA-MEMORY-IDENTIFIER ::= ENUMERATED {
+      ram-memory (1),
+      db-memory (2),
+      spare-memory (100)
+   }
+
+
+   ALPHA-MEMORY-BASE ::= CHOICE {
+      ram-memory ALPHA-EMPTY,
+      db-memory MyInteger,
+      spare-memory MyInteger
+   }
+
+END
+

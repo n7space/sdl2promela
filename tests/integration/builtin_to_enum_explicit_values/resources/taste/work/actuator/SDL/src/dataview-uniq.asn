@@ -1,0 +1,70 @@
+BUILTIN-TO-ENUM-EXPLICIT-VALUES-DATAVIEW DEFINITIONS ::=
+BEGIN
+
+   MyInteger ::= INTEGER (0 .. 10000)
+
+   ALPHA-EMPTY ::= SEQUENCE {}
+
+   ALPHA-MEMORY-IDENTIFIER ::= ENUMERATED {
+      ram-memory (1),
+      db-memory (2),
+      spare-memory (100)
+   }
+
+
+   ALPHA-MEMORY-BASE ::= CHOICE {
+      ram-memory ALPHA-EMPTY,
+      db-memory MyInteger,
+      spare-memory MyInteger
+   }
+
+END
+
+
+TASTE-BasicTypes DEFINITIONS ::=
+BEGIN
+
+-- Set of TASTE predefined basic types
+
+T-Int32 ::=  INTEGER (-2147483648 .. 2147483647)
+
+T-UInt32 ::= INTEGER (0 .. 4294967295)
+
+T-Int8 ::= INTEGER (-128 .. 127)
+
+T-UInt8 ::= INTEGER (0 .. 255)
+
+T-Boolean ::= BOOLEAN
+
+T-Null-Record ::= SEQUENCE {}
+
+T-Runtime-Error ::= CHOICE {
+   noerror T-UInt32, -- this shall be NULL, but DMT does not support NULL and SEDS does not support empty sequences
+   encodeerror T-Int32, -- the names shall be changed after fix in seds converter (space creator) will be merged
+   decodeerror T-Int32
+}
+
+END
+
+-- Dataview generated on-the-fly providing information on the system
+-- and made available to the user code.
+System-Dataview DEFINITIONS ::=
+BEGIN
+
+   -- Range of PID - type can be used to size arrays of PID type
+   PID-Range ::= INTEGER(0..3)
+
+   -- List of functions (instances) present in the system
+   PID ::= ENUMERATED {
+       actuator,
+       
+       controller,
+       
+       environ,
+       
+       
+       env
+   }
+
+END
+
