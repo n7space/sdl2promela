@@ -1,0 +1,25 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+
+process Actuator;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (406, 341), (273, 140) */
+    dcl mem_base ALPHA_MEMORY_BASE;
+    dcl mem_id ALPHA_MEMORY_IDENTIFIER;
+    /* CIF ENDTEXT */
+    /* CIF START (320, 10), (70, 35) */
+    START;
+        /* CIF NEXTSTATE (320, 60), (70, 35) */
+        NEXTSTATE Wait;
+    /* CIF state (1078, 269), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Wait;
+        /* CIF input (998, 324), (229, 35) */
+        input determine_memory_id(mem_base);
+            /* CIF task (888, 379), (449, 35) */
+            task mem_id := to_enum(present(mem_base), ALPHA_MEMORY_IDENTIFIER);
+            /* CIF output (1032, 434), (160, 35) */
+            output memory_id_is(mem_id);
+            /* CIF NEXTSTATE (1078, 489), (70, 35) */
+            NEXTSTATE Wait;
+    endstate;
+endprocess Actuator;

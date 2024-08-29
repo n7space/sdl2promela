@@ -1,0 +1,84 @@
+/* CIF PROCESS (250, 150), (150, 75) */
+
+process Controller;
+    /* CIF Keep Specific Geode Partition 'default' */
+    /* CIF TEXT (372, 46), (273, 140) */
+    dcl mem_base ALPHA_MEMORY_BASE;
+    dcl mem_id ALPHA_MEMORY_IDENTIFIER;
+    /* CIF ENDTEXT */
+    /* CIF START (859, 52), (70, 35) */
+    START;
+        /* CIF task (793, 107), (200, 35) */
+        task mem_base := ram_memory : {};
+        /* CIF output (779, 162), (229, 35) */
+        output determine_memory_id(mem_base);
+        /* CIF NEXTSTATE (846, 212), (95, 35) */
+        NEXTSTATE WaitForRam;
+    /* CIF state (1553, 351), (103, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForSpare;
+        /* CIF input (1524, 406), (160, 35) */
+        input memory_id_is(mem_id);
+            /* CIF decision (1518, 461), (172, 50) */
+            decision mem_id = spare_memory;
+                /* CIF ANSWER (1685, 531), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1685, 574), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (1525, 531), (70, 23) */
+                (true):
+                    /* CIF task (1459, 574), (200, 35) */
+                    task mem_base := ram_memory : {};
+                    /* CIF output (1445, 629), (229, 35) */
+                    output determine_memory_id(mem_base);
+                    /* CIF NEXTSTATE (1512, 684), (95, 35) */
+                    NEXTSTATE WaitForRam;
+            enddecision;
+    endstate;
+    /* CIF state (1087, 348), (86, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForDb;
+        /* CIF input (1050, 403), (160, 35) */
+        input memory_id_is(mem_id);
+            /* CIF decision (1053, 458), (155, 50) */
+            decision mem_id = db_memory;
+                /* CIF ANSWER (1051, 528), (70, 23) */
+                (true):
+                    /* CIF task (976, 571), (219, 35) */
+                    task mem_base := spare_memory: 200;
+                    /* CIF output (971, 626), (229, 35) */
+                    output determine_memory_id(mem_base);
+                    /* CIF NEXTSTATE (1034, 681), (103, 35) */
+                    NEXTSTATE WaitForSpare;
+                /* CIF ANSWER (1206, 528), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (1206, 571), (70, 35) */
+                    NEXTSTATE Error;
+            enddecision;
+    endstate;
+    /* CIF state (566, 368), (95, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state WaitForRam;
+        /* CIF input (533, 423), (160, 35) */
+        input memory_id_is(mem_id);
+            /* CIF decision (532, 478), (162, 50) */
+            decision mem_id = ram_memory;
+                /* CIF ANSWER (694, 548), (70, 23) */
+                (false):
+                    /* CIF NEXTSTATE (694, 591), (70, 35) */
+                    NEXTSTATE Error;
+                /* CIF ANSWER (534, 548), (70, 23) */
+                (true):
+                    /* CIF task (468, 591), (201, 35) */
+                    task mem_base := db_memory: 100;
+                    /* CIF output (454, 646), (229, 35) */
+                    output determine_memory_id(mem_base);
+                    /* CIF NEXTSTATE (525, 701), (86, 35) */
+                    NEXTSTATE WaitForDb;
+            enddecision;
+    endstate;
+    /* CIF state (1328, 56), (70, 35) */
+    /* CIF Keep Specific Geode Partition 'default' */
+    state Error;
+    endstate;
+endprocess Controller;

@@ -1,0 +1,68 @@
+<InterfaceView version="1.3" asn1file="builtin_to_enum_explicit_values.acn" UiFile="interfaceview.ui.xml" modifierHash="71aa363">
+<Function id="{dfeb6944-9595-494d-acc3-480bcaa664b6}" name="actuator" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" instances_max="1" instances_min="1" startup_priority="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{ce5564bb-ad6e-4516-943e-542ad008b0c5}" name="determine_memory_id" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+    <Input_Parameter name="mem_base" type="ALPHA-MEMORY-BASE" encoding="NATIVE"/>
+</Provided_Interface>
+
+<Required_Interface id="{fa949cb8-3cad-48ff-a5aa-7fc464a6663c}" name="memory_id_is" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+    <Input_Parameter name="mem_id" type="ALPHA-MEMORY-IDENTIFIER" encoding="NATIVE"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function id="{4ad5d6a1-d57f-4cef-897b-348e98788e81}" name="controller" is_type="NO" language="SDL" default_implementation="default" fixed_system_element="NO" required_system_element="NO" instances_max="1" instances_min="1" startup_priority="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Provided_Interface id="{a1ad2010-0de7-4648-869f-397ffc4019c9}" name="do_test" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+</Provided_Interface>
+
+<Provided_Interface id="{bd1887a8-3ae0-4bf9-b100-102f6765c232}" name="memory_id_is" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+    <Input_Parameter name="mem_id" type="ALPHA-MEMORY-IDENTIFIER" encoding="NATIVE"/>
+</Provided_Interface>
+
+<Required_Interface id="{f4a80ece-96df-460a-87ca-b63c9843e0bb}" name="determine_memory_id" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+    <Input_Parameter name="mem_base" type="ALPHA-MEMORY-BASE" encoding="NATIVE"/>
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="SDL"/>
+    </Implementations>
+</Function>
+
+<Function id="{3b08694e-14d9-4bb5-bddf-e1d72fab21e2}" name="environ" is_type="NO" language="GUI" default_implementation="default" fixed_system_element="NO" required_system_element="NO" instances_max="1" instances_min="1" startup_priority="1">
+    <Property name="TASTE_IV_Properties::Default_Codegen" value="Ada"/>
+<Required_Interface id="{94f0cad3-7d40-461f-9c1c-a8da9ed0e9be}" name="do_test" kind="Sporadic" enable_multicast="true" layer="default" required_system_element="NO" is_simulink_interface="false" stack_size="1024" priority="1" queue_size="1" miat="0" wcet="0">
+    <Property name="Taste::InheritPI" value="true"/>
+    <Property name="Taste::Autonamed" value="true"/>
+</Required_Interface>
+
+    <Implementations>
+        <Implementation name="default" language="GUI"/>
+    </Implementations>
+</Function>
+
+<Connection id="{f7b8d2c6-4eae-4264-95a5-1d2dbc247c26}" name="controller_determine_memory_id____actuator_determine_memory_id" required_system_element="NO">
+    <Source iface_id="{f4a80ece-96df-460a-87ca-b63c9843e0bb}" func_name="controller" ri_name="determine_memory_id" />
+    <Target iface_id="{ce5564bb-ad6e-4516-943e-542ad008b0c5}" func_name="actuator" pi_name="determine_memory_id" />
+</Connection>
+
+<Connection id="{459a37a4-8add-4705-8b2f-55e00d8566d1}" name="environ_do_test____controller_do_test" required_system_element="NO">
+    <Source iface_id="{94f0cad3-7d40-461f-9c1c-a8da9ed0e9be}" func_name="environ" ri_name="do_test" />
+    <Target iface_id="{a1ad2010-0de7-4648-869f-397ffc4019c9}" func_name="controller" pi_name="do_test" />
+</Connection>
+
+<Connection id="{c000b399-88a5-4245-a3f2-faacc4445896}" name="actuator_memory_id_is____controller_memory_id_is" required_system_element="NO">
+    <Source iface_id="{fa949cb8-3cad-48ff-a5aa-7fc464a6663c}" func_name="actuator" ri_name="memory_id_is" />
+    <Target iface_id="{bd1887a8-3ae0-4bf9-b100-102f6765c232}" func_name="controller" pi_name="memory_id_is" />
+</Connection>
+
+<Layer name="default" is_visible="true"/>
+
+</InterfaceView>
