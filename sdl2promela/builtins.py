@@ -1,5 +1,5 @@
 import copy
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
 from .utils import Asn1Type, resolve_asn1_type
@@ -10,6 +10,8 @@ from .promela.modelbuilder import (
     VariableReferenceBuilder,
     BinaryExpressionBuilder,
     ConditionalExpressionBuilder,
+    SwitchBuilder,
+    AlternativeBuilder,
 )
 
 __BUILTIN_NAMES = [
@@ -103,7 +105,6 @@ def __translate_present(
         and not isinstance(parameters[0], promelamodel.ArrayAccess)
     ):
         raise ValueError("Invalid type of parameter for present")
-
     return (
         MemberAccessBuilder()
         .withUtypeReference(parameters[0])
@@ -113,19 +114,95 @@ def __translate_present(
 
 
 def __translate_to_enum(
-    call: sdlmodel.ProcedureCall, parameters: List[promelamodel.Expression]
+    call: sdlmodel.ProcedureCall,
+    parameters: List[promelamodel.Expression],
+    allTypes: Dict[str, Asn1Type],
 ) -> promelamodel.Expression:
     __check_parameters(parameters, 2, "to_enum")
-    # The first argument is a choice determinant, the second is enum type
-    # which is ignored.
-    # The current implementation does not support enumerated with
-    # explicit declared values.
     return (
         BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
         .withLeft(parameters[0])
         .withRight(promelamodel.IntegerValue(1))
         .build()
     )
+
+
+def __translate_to_enum_assignment(
+    inlineName: Optional[str],
+    left: Union[
+        promelamodel.VariableReference,
+        promelamodel.MemberAccess,
+        promelamodel.ArrayAccess,
+    ],
+    call: sdlmodel.ProcedureCall,
+    parameters: List[promelamodel.Expression],
+    parameterTypes: List[Asn1Type],
+    allTypes: Dict[str, Asn1Type],
+) -> promelamodel.Statement:
+    # The first argument is a choice determinant, the second is enum type name (lowercase)
+    if isinstance(parameters[1], promelamodel.VariableReference):
+        try:
+            enumerated_type = next(
+                iter(
+                    [
+                        type
+                        for name, type in allTypes.items()
+                        if name.lower().replace("-", "_") == parameters[1].name
+                    ]
+                )
+            )
+        except StopIteration:
+            enumerated_type = None
+    else:
+        enumerated_type = None
+
+    if enumerated_type:
+        # Note: The obtained enumerated_type does not contain ReferencedTypeName attribute
+        # hence, CName is used here
+        builder = SwitchBuilder()
+
+        for index, (name, type) in enumerate(enumerated_type.type.EnumValues.items()):
+            condition = (
+                BinaryExpressionBuilder(promelamodel.BinaryOperator.EQUAL)
+                .withLeft(parameters[0])
+                .withRight(promelamodel.IntegerValue(index + 1))
+                .build()
+            )
+            enumerantName = "{}_{}".format(
+                enumerated_type.CName, name.replace("-", "_").lower()
+            )
+            if inlineName:
+                assignment = (
+                    CallBuilder()
+                    .withTarget(inlineName)
+                    .withParameter(left)
+                    .withParameter(VariableReferenceBuilder(enumerantName).build())
+                    .build()
+                )
+            else:
+                assignment = (
+                    AssignmentBuilder()
+                    .withTarget(left)
+                    .withSource(VariableReferenceBuilder(enumerantName).build())
+                    .build()
+                )
+
+            builder.withAlternative(
+                AlternativeBuilder()
+                .withCondition(condition)
+                .withStatements([assignment])
+                .build()
+            )
+
+        return builder.build()
+        # assert 1 == 0
+    else:
+        return (
+            BinaryExpressionBuilder(promelamodel.BinaryOperator.SUBTRACT)
+            .withLeft(parameters[0])
+            .withRight(promelamodel.IntegerValue(1))
+            .build()
+        )
 
 
 def __translate_to_selector(
@@ -254,7 +331,7 @@ def translate_builtin(
     elif call.name.lower() == "present":
         return __translate_present(call, parameters)
     elif call.name.lower() == "to_enum":
-        return __translate_to_enum(call, parameters)
+        return __translate_to_enum(call, parameters, allTypes)
     elif call.name.lower() == "to_selector":
         return __translate_to_selector(call, parameters)
     elif call.name.lower() == "val":
@@ -275,7 +352,11 @@ def translate_builtin(
 def translate_assignment(
     inlineName: Optional[str],
     call: sdlmodel.ProcedureCall,
-    left: promelamodel.VariableReference,
+    left: Union[
+        promelamodel.VariableReference,
+        promelamodel.MemberAccess,
+        promelamodel.ArrayAccess,
+    ],
     parameters: List[promelamodel.Expression],
     types: List[Asn1Type],
     allTypes: Dict[str, Asn1Type],
@@ -291,6 +372,11 @@ def translate_assignment(
     :param allTypes: All available asn1 datatypes
     :returns: promela statement, which is translated version of SDL assignment
     """
+    if call.name.lower() == "to_enum":
+        # special case, the switch may be generated
+        return __translate_to_enum_assignment(
+            inlineName, left, call, parameters, types, allTypes
+        )
     right = translate_builtin(call, parameters, types, allTypes)
     if right is None:
         raise Exception(
