@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 import logging
 import opengeode
 import sys
@@ -12,6 +12,7 @@ from . import __version__
 from .stop_condition import parser as scl_parser
 from .stop_condition import translator as scl_translator
 from .stop_condition import model as scl_model
+from .system_capability import SystemCapability
 
 __log = logging.getLogger("sdl2promela")
 
@@ -23,6 +24,8 @@ class ProgramOptions:
     """Output file."""
     observer_info_filename: str
     """Name of the file containing the extracted observer information."""
+    system_capabilities_output_filename: str
+    """Name of the file where required system capabilities will be saved."""
     verbose: bool
     """Show verbose output."""
     sdl_files: List[List[str]]
@@ -37,6 +40,7 @@ class ProgramOptions:
     def __init__(self):
         self.output_filename = None
         self.observer_info_filename = None
+        self.system_capabilities_output_filename = None
         self.verbose = False
         self.include_observers = False
         self.sdl_files = []
@@ -81,6 +85,8 @@ optional arguments:
                         output file name
   -oi INFO_FILENAME,  --observer-info INFO_FILENAME
                         observer info output file name
+  -c SYS_CAP_FILENAME, --system-capabilities SYS_CAP_FILENAME
+                        output for required system capabilities, like math functions and other auxiliary objects.
   -v, --verbose         verbose output
   --version             show program's version number and exit
   --scl SCL_FILE
@@ -136,6 +142,17 @@ def __parse_arguments_impl() -> ProgramOptions:
                     "Observer info output file already specified."
                 )
             options.observer_info_filename = argv[index]
+        elif argv[index] == "-c" or argv[index] == "--system-capabilities":
+            if index + 1 >= len(argv):
+                raise ProgramOptionsParseException(
+                    "{} requires filename".format(argv[index])
+                )
+            index = index + 1
+            if options.system_capabilities_output_filename is not None:
+                raise ProgramOptionsParseException(
+                    "Required system capabilities output filename is already specified."
+                )
+            options.system_capabilities_output_filename = argv[index]
         elif argv[index] == "-v" or argv[index] == "--verbose":
             options.verbose = True
         elif argv[index] == "-h" or argv[index] == "--help":
@@ -214,6 +231,16 @@ def __export_observer_attachment_infos(
         traceback.print_exc()
 
 
+def __export_required_system_capabilities(
+    file_name: str, capabilities: Set[SystemCapability]
+):
+    __log.info("Opening %s for writing attachment infos", file_name)
+    with open(file_name, "w", encoding="utf-8") as cap_file:
+        for cap in capabilities:
+            cap_file.write(f"{cap.name}\n")
+    __log.info("Writing done")
+
+
 def read_process(sdl_files: List[str]) -> ogAST.Process:
     """
     Read a single SDL process from a list of files.
@@ -255,16 +282,15 @@ def read_process(sdl_files: List[str]) -> ogAST.Process:
     return ast.processes[0]
 
 
-def translate(
-    sdl_files: List[str], output_file_name: str, attachment_info_file_name: str
-) -> bool:
+def translate(sdl_files: List[str], arguments: ProgramOptions) -> bool:
     """
     Translate a list of SDL files describing a single process into a Promela model.
     :param sdl_files: List of files describing a single SDL process.
-    :param output_file_name: Name of the file to write the output Promela model to.
-    :param attachment_info_file_name: Name of the file to write the attachment info to.
+    :param arguments: Program Options.
     :returns: Whether the translation was succesful.
     """
+    # group, arguments.output_filename, arguments.observer_info_filename
+    required_system_capabilities = None
     __log.info(f"Reading process from {sdl_files}")
     process = read_process(sdl_files)
     __log.info("Reading done")
@@ -280,8 +306,10 @@ def translate(
 
     try:
         __log.info("Translating SDL into Promela")
-        is_observer = attachment_info_file_name is not None
-        promela_model = translator.translate(sdl_model, is_observer)
+        is_observer = arguments.observer_info_filename is not None
+        promela_model, required_system_capabilities = translator.translate(
+            sdl_model, is_observer
+        )
     except Exception:
         __log.error("SDL to Promela model translation failed")
         traceback.print_exc()
@@ -289,8 +317,10 @@ def translate(
     __log.info("Translating SDL into Promela done")
 
     try:
-        __log.info(f"Opening {output_file_name} for writing and generating output")
-        with open(output_file_name, "w") as file:
+        __log.info(
+            f"Opening {arguments.output_filename} for writing and generating output"
+        )
+        with open(arguments.output_filename, "w") as file:
             promelagenerator.generate_model(promela_model, file)
         __log.info("Generation done")
     except Exception:
@@ -298,11 +328,15 @@ def translate(
         traceback.print_exc()
         return False
 
-    if attachment_info_file_name is not None:
+    if arguments.observer_info_filename is not None:
         __export_observer_attachment_infos(
             sdl_model.process_name,
-            attachment_info_file_name,
+            arguments.observer_info_filename,
             sdl_model.observer_attachments,
+        )
+    if arguments.system_capabilities_output_filename:
+        __export_required_system_capabilities(
+            arguments.system_capabilities_output_filename, required_system_capabilities
         )
     return True
 
@@ -375,9 +409,7 @@ def main():
             sys.exit(1)
     else:
         for group in arguments.sdl_files:
-            if not translate(
-                group, arguments.output_filename, arguments.observer_info_filename
-            ):
+            if not translate(group, arguments):
                 sys.exit(1)
 
 

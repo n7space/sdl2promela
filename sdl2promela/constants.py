@@ -42,3 +42,5 @@ IA5_STRING_TYPE_NAME = "IA5StringType"
 OCTET_STRING_TYPE_NAME = "OctetStringType"
 BIT_STRING_TYPE_NAME = "BitStringType"
 CHOICE_TYPE_NAME = "ChoiceType"
+
+SYSTEM_CAPABILITY_POWER_INT_INLINE = "system_capability_power_int"

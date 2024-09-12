@@ -1,9 +1,12 @@
 import copy
+from sdl2promela import constants
+from sdl2promela.system_capability import SystemCapability
 from typing import List, Dict, Optional, Union
-from .sdl import model as sdlmodel
-from .promela import model as promelamodel
-from .utils import Asn1Type, resolve_asn1_type
-from .promela.modelbuilder import (
+from sdl2promela.sdl import model as sdlmodel
+from sdl2promela.promela import model as promelamodel
+from sdl2promela.utils import Asn1Type, resolve_asn1_type
+from sdl2promela.context import Context
+from sdl2promela.promela.modelbuilder import (
     CallBuilder,
     AssignmentBuilder,
     MemberAccessBuilder,
@@ -26,6 +29,7 @@ __BUILTIN_NAMES = [
     "float",
     "fix",
     "abs",
+    "power",
 ]
 
 
@@ -301,6 +305,29 @@ def __translate_abs(
     )
 
 
+def __translate_power_assignment(
+    left: Union[
+        promelamodel.VariableReference,
+        promelamodel.MemberAccess,
+        promelamodel.ArrayAccess,
+    ],
+    call: sdlmodel.ProcedureCall,
+    parameters: List[promelamodel.Expression],
+    context: Context,
+) -> promelamodel.Expression:
+
+    __check_parameters(parameters, 2, "power")
+    context.required_capabilities.add(SystemCapability.SYSTEM_CAPABILITY_POWER_INT)
+    return (
+        CallBuilder()
+        .withTarget(constants.SYSTEM_CAPABILITY_POWER_INT_INLINE)
+        .withParameter(left)
+        .withParameter(parameters[0])
+        .withParameter(parameters[1])
+        .build()
+    )
+
+
 def is_builtin(call_name: str) -> bool:
     """
     Is the given call referring to a built-in function?
@@ -326,25 +353,25 @@ def translate_builtin(
     """
     if call.name.lower() == "writeln":
         return __translate_writeln(call, parameters)
-    elif call.name.lower() == "length":
+    if call.name.lower() == "length":
         return __translate_length(call, parameters, types, allTypes)
-    elif call.name.lower() == "present":
+    if call.name.lower() == "present":
         return __translate_present(call, parameters)
-    elif call.name.lower() == "to_enum":
+    if call.name.lower() == "to_enum":
         return __translate_to_enum(call, parameters, allTypes)
-    elif call.name.lower() == "to_selector":
+    if call.name.lower() == "to_selector":
         return __translate_to_selector(call, parameters)
-    elif call.name.lower() == "val":
+    if call.name.lower() == "val":
         return __translate_val(call, parameters)
-    elif call.name.lower() == "num":
+    if call.name.lower() == "num":
         return __translate_num(call, parameters)
-    elif call.name.lower() == "exist":
+    if call.name.lower() == "exist":
         return __translate_exist(call, parameters)
-    elif call.name.lower() == "float":
+    if call.name.lower() == "float":
         return __translate_float(call, parameters)
-    elif call.name.lower() == "fix":
+    if call.name.lower() == "fix":
         return __translate_fix(call, parameters)
-    elif call.name.lower() == "abs":
+    if call.name.lower() == "abs":
         return __translate_abs(call, parameters)
     raise NotImplementedError(f"Builtin {call.name} is not yet implemented")
 
@@ -359,7 +386,7 @@ def translate_assignment(
     ],
     parameters: List[promelamodel.Expression],
     types: List[Asn1Type],
-    allTypes: Dict[str, Asn1Type],
+    context: Context,
 ) -> promelamodel.Statement:
     """
     Translate an assignment, where right side is built-in function.
@@ -369,14 +396,18 @@ def translate_assignment(
     :param call: Call to be translated.
     :param parameters: List of translated call parameters.
     :param types: List of types of parameters.
-    :param allTypes: All available asn1 datatypes
+    :param context: Translator context
     :returns: promela statement, which is translated version of SDL assignment
     """
+    allTypes: Dict[str, Asn1Type] = context.sdl_model.types
+
     if call.name.lower() == "to_enum":
         # special case, the switch may be generated
         return __translate_to_enum_assignment(
             inlineName, left, call, parameters, types, allTypes
         )
+    if call.name.lower() == "power":
+        return __translate_power_assignment(left, call, parameters, context)
     right = translate_builtin(call, parameters, types, allTypes)
     if right is None:
         raise Exception(

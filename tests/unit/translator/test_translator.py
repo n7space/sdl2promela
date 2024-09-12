@@ -29,7 +29,7 @@ def translate_and_verify(
     process = sdl2promela.read_process([effective_path_to_source])
     sdl_model = sdlmodel.Model(process)
 
-    promela_model = translator.translate(sdl_model, is_observer)
+    promela_model, _ = translator.translate(sdl_model, is_observer)
 
     stream = io.StringIO()
     promelagenerator.generate_model(promela_model, stream)
