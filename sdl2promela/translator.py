@@ -1,4 +1,4 @@
-from typing import List, Union, Any, Optional, Tuple, Dict
+from typing import List, Union, Any, Optional, Tuple, Dict, Set
 from multipledispatch import dispatch
 
 from opengeode.AdaGenerator import SEPARATOR
@@ -7,7 +7,7 @@ from opengeode.Helper import find_basic_type
 import copy
 import typing
 
-from . import builtins
+from sdl2promela import builtins
 from .sdl import model as sdlmodel
 from .promela import model as promelamodel
 from .promela.modelbuilder import (
@@ -30,129 +30,11 @@ from .promela.modelbuilder import ForLoopBuilder
 from .promela.modelbuilder import ConditionalExpressionBuilder
 from .promela.modelbuilder import PrintfBuilder
 from .utils import *
+from .system_capability import SystemCapability
+from .context import Context
 
 from sdl2promela import constants
 from sdl2promela import append_operator_helpers
-
-
-class Context:
-    """Translator context."""
-
-    sdl_model: sdlmodel.Model
-    """Model that is being translated."""
-
-    is_observer: bool
-    """Flag to  indicate if translated model is observer."""
-
-    parents: List[Any]
-    """Stack of objects that are being translated."""
-
-    in_transition_chain: bool
-    """
-    Flag to specify if a chain of transitions is generated.
-    It is used for generation of entry inlines for parallel states.
-    """
-
-    loop_level: int
-    """
-    Level for nested loops.
-    """
-
-    missing_type: Optional[Asn1Type]
-
-    state_aggregation: bool
-
-    _temporary_variable_counter: int
-
-    def __init__(self, sdl_model: sdlmodel.Model):
-        self.sdl_model = sdl_model
-        self.is_observer = False
-        self.parents = []
-        self.in_transition_chain = False
-        self.loop_level = 0
-        self.missing_type = None
-        self.state_aggregation = False
-        self._temporary_variable_counter = 0
-
-    def push_parent(self, parent: Any):
-        """
-        Push parent onto the parent stack.
-        :param parent: Parent to be pushed.
-        """
-        self.parents.append(parent)
-
-    def pop_parent(self):
-        """
-        Remove the current parent from the stack.
-        """
-        self.parents.pop()
-
-    def get_parent_transition(self) -> Optional[sdlmodel.Transition]:
-        """
-        Return the current parent transition.
-        :returns: Current parent transition, or None if outside of any.
-        """
-        for parent in reversed(self.parents):
-            if isinstance(parent, sdlmodel.Transition):
-                return parent
-        return None
-
-    def get_parent_procedure(self) -> Optional[sdlmodel.Procedure]:
-        """
-        Return the current parent procedure.
-        :returns: Current parent procedure, or None if outside of any.
-        """
-        for parent in reversed(self.parents):
-            if isinstance(parent, sdlmodel.Procedure):
-                return parent
-        return None
-
-    def enter_loop(self):
-        """
-        Increment loop_level counter.
-        """
-        self.loop_level = self.loop_level + 1
-
-    def leave_loop(self):
-        """
-        Decrement loop_level counter.
-        """
-        self.loop_level = self.loop_level - 1
-
-    def generate_temporary_variable(self) -> str:
-        """
-        Generate name for temporary variable.
-
-        :returns: Unique name for temporary variable.
-        """
-        result = f"_tmp_{self._temporary_variable_counter}"
-        self._temporary_variable_counter = self._temporary_variable_counter + 1
-        return result
-
-    def get_transition_variable(self) -> str:
-        """
-        Getter for name of variable transition.
-
-        :reutnrs: Name of transition id variable associated with SDL process.
-        """
-
-        return self.sdl_model.process_name.lower() + "_transition_id"
-
-    def get_observer_transition_variable(self) -> str:
-        """
-        Getter for name of variable transition for observer.
-
-        :reutnrs: Name of transition id variable associated with observer SDL.
-        """
-        return self.sdl_model.process_name.lower() + "_observer_transition_id"
-
-    def get_continuous_signals_label(self) -> str:
-        """
-        Getter for name label for continuous_signals
-
-        :reutnrs: Name of label.
-        """
-        return self.sdl_model.process_name.lower() + "_continuous_signals"
 
 
 def _get_type_kind(context: Context, t: Asn1Type) -> str:
@@ -2000,7 +1882,7 @@ def __generate_assignment(
                     left_side,
                     parameters,
                     types,
-                    context.sdl_model.types,
+                    context,
                 )
             )
         else:
@@ -3150,7 +3032,7 @@ def __generate_aggregate_inline(
 
 def translate(
     sdl_model: sdlmodel.Model, is_observer: bool = False
-) -> promelamodel.Model:
+) -> Tuple[promelamodel.Model, Set[SystemCapability]]:
     """
     Translate an SDL model into a Promela model.
     :param sdl_model: SDL model to be translated.
@@ -3191,4 +3073,4 @@ def translate(
     for name, input in sdl_model.inputs.items():
         builder.withInline(__generate_input_function(context, input))
     model = builder.build()
-    return model
+    return model, context.required_capabilities
